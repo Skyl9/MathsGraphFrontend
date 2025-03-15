@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
-import { useFrame, useThree } from "@react-three/fiber";
-import {Frustum, Matrix4, Vector3} from "three";
+import {useFrame, useThree} from "@react-three/fiber";
+import {Vector3} from "three";
 import Node from "./Node";
 import Edge from "./Edge";
 import NodeDetails from "./NodeDetails";
-import { GraphData } from "../type";
+import {useAppContext} from "../AppContext";
 
 
 // 📌 Fonction pour obtenir la couleur d'un nœud
@@ -15,74 +15,68 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
     return "purple";
 };
 
-const getNodeLOD = (nodePosition: Vector3, camera:any) => {
-    const distance = nodePosition.distanceTo(camera.position);
+export default function Scene() {
+    const {colorLemme,
+        colorAxiome,
+        colortheoreme,
+        graphData,
+        filters,
+        isPosInitial,
+        setIsPosInitial,
+        setInitialPosition,
+        selectedNodeId,
+        setSelectedNodeId,
+        targetPosition,
+        setHistory,
+        currentIndex,
+        setCurrentIndex,
+        ref,
+        history,
+        setDebugMode,
+        debugMode,
+        setTargetPosition,
+        colorSides,
+    } = useAppContext();
 
-    if (distance < 5) return "high"; // Détail maximum (proche)
-    if (distance < 15) return "medium"; // Détail intermédiaire
-    return "low"; // Détail minimum (éloigné)
-};
-
-// 📌 Props du composant Scene
-interface SceneProps {
-    colorAxiome: string;
-    colorLemme: string;
-    colortheoreme: string;
-    colorSides: string;
-    targetPosition: Vector3 | null;
-    setTargetPosition: React.Dispatch<React.SetStateAction<Vector3 | null>>;
-    setInitialPosition: (pos: Vector3) => void;
-    isPosInitial:boolean;
-    setIsPosInitial:any;
-    ref:any;
-    setHistory:any,
-    setCurrentIndex:any,
-    currentIndex:any,
-    history:Vector3[],
-    needToSetHistory:any,
-    moveToPosition:any,
-    graphData:GraphData,
-    filters: {
-        axiome: boolean;
-        theoreme: boolean;
-        lemme: boolean;
-    };
-}
-
-export default function Scene({
-                                  colorAxiome,
-                                  colorLemme,
-                                  colortheoreme,
-                                  colorSides,
-                                  targetPosition,
-                                  setTargetPosition,
-                                  setInitialPosition,
-                                  isPosInitial,
-                                  setIsPosInitial,
-    ref,
-    setHistory,
-    setCurrentIndex,
-    currentIndex,
-    history,
-                                  moveToPosition,
-    graphData,
-    filters
-                              }: SceneProps) {
     const { camera, gl } = useThree();
-    const nodes = useMemo(() => graphData.nodes, [graphData.nodes]);
-    const edges = useMemo(() => graphData.edges, [graphData.edges]);
+    const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
+    const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
 
-    const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
-    const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
-    const selectedNode = nodes.find((node) => node.id === selectedNodeId);
+    const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [
+        colorLemme,
+        colorAxiome,
+        colortheoreme
+    ]);
 
-    const [debugMode, setDebugMode] = useState(false);
+    const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId), [
+        nodes,
+        selectedNodeId
+    ]);
+
+    // Calcul des noeuds visibles en fonction des filtres
     const visibleNodes = useMemo(() => {
-        return nodes.filter(node => filters[node.typeMath as keyof typeof  filters]);
+        return nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
     }, [nodes, filters]);
 
-    const [nodeLODs, setNodeLODs] = useState<{ [key: number]: "high" | "medium" | "low" }>({});
-    const [visibleNodesCamera, setVisibleNodesCamera] = useState<Set<number>>(new Set());
+    // Gestion des événements clavier pour contrôler la caméra
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (!camera || !event) return;
+
+            const velocity = new Vector3(0, 0, 0);
+            if (event.key === "z") velocity.z -= 1; // Avancer
+            if (event.key === "s") velocity.z += 1; // Reculer
+            if (event.key === "q") velocity.x -= 1; // Gauche
+            if (event.key === "d") velocity.x += 1; // Droite
+
+            camera.position.add(velocity);
+        };
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown); // Nettoyage
+        };
+    }, [camera]);
 
 
 
@@ -102,6 +96,38 @@ export default function Scene({
 
         // 📌 Position initiale de la caméra
         const initialPos = new Vector3(center.x, center.y + defaultDistance, center.z + defaultDistance);
+
+        const velocity = new Vector3(0, 0, 0);
+        const damping = 0.95; // Coefficient d'amortissement (0 = arrêt instantané, 1 = pas d'amortissement)
+        const accelerationFactor = 0.1; // Intensité du mouvement
+
+        useFrame(() => {
+            if (velocity.lengthSq() > 0.0001) {
+                camera.position.add(velocity);
+                velocity.multiplyScalar(damping); // Réduit progressivement la vitesse
+            }
+        });
+
+        const moveCamera2 = (direction: Vector3) => {
+            velocity.addScaledVector(direction, accelerationFactor);
+        };
+
+// Exemple : Déplacer avec ZQSD / WASD
+        useEffect(() => {
+            const handleKeyDown = (event: KeyboardEvent) => {
+                const moveSpeed = new Vector3(0, 0, 0);
+                if (event.key === "z") moveSpeed.z -= 1;
+                if (event.key === "s") moveSpeed.z += 1;
+                if (event.key === "q") moveSpeed.x -= 1;
+                if (event.key === "d") moveSpeed.x += 1;
+
+                moveSpeed.normalize().multiplyScalar(0.2); // Ajuste la force du déplacement
+                moveCamera2(moveSpeed);
+            };
+
+            window.addEventListener("keydown", handleKeyDown);
+            return () => window.removeEventListener("keydown", handleKeyDown);
+        }, []);
 
 
 
@@ -196,7 +222,7 @@ export default function Scene({
             }
         });
     }
-
+    /*
     useFrame(() => {
         const frustum = new Frustum();
         const cameraMatrix = new Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
@@ -210,8 +236,8 @@ export default function Scene({
             }
         });
         setVisibleNodesCamera(newVisibleNodes);
-    });
-
+    }); */
+    /*
     useFrame(() => {
         setNodeLODs((prevLODs) => {
             const newLODs: { [key: number]: "high" | "medium" | "low" } = {};
@@ -220,7 +246,7 @@ export default function Scene({
             });
             return newLODs;
         });
-    });
+    });*/
     function normalizeString(str:string) {
         return str
             .normalize("NFD") // Décompose les caractères accentués
@@ -229,18 +255,25 @@ export default function Scene({
     }
 
     MoveCamera()
+
+
     // 📌 Gestion du déplacement de la caméra (zoom progressif vers le nœud sélectionné)
+    /* En cas de problème affiche tout les positions :
     useEffect(()=> {
         console.table(nodes.map(node => ({id: node.id,x: node.position[0], y:node.position[1],z:node.position[2]})));
     },[]
-)
+    )
+    */
+    if (!graphData) {
+        return <group>Pas de données pour la scène.</group>;
+    }
 
     return (
         <group onPointerMissed={handleCanvasClick}>
             {/* 🔴 Nœuds */}
             {
                 nodes
-                .filter(node => filters[normalizeString(node.typeMath) as keyof typeof filters] && visibleNodesCamera.has(node.id))
+                .filter(node => filters[normalizeString(node.typeMath) as keyof typeof filters] )
                     .map((node) => (
 
 
@@ -256,8 +289,6 @@ export default function Scene({
                         setTargetPosition(new Vector3(...node.position));
                     }}
                     debug={debugMode}
-                    detailLevel={nodeLODs[node.id] || "high"} // Transmet le LOD au nœud
-
                 />
 
             ))}
@@ -268,8 +299,7 @@ export default function Scene({
                     const startNode = visibleNodes.find(node => node.id === edge.start);
                     const endNode = visibleNodes.find(node => node.id === edge.end);
 
-                    return startNode && endNode && visibleNodesCamera.has(edge.start) &&
-                        visibleNodesCamera.has(edge.end) ; // On garde l'arête seulement si les 2 nœuds existent
+                    return startNode && endNode ; // On garde l'arête seulement si les 2 nœuds existent
                 })
                 .map((edge, index) => {
                     const startNode = visibleNodes.find(node => node.id === edge.start)!;

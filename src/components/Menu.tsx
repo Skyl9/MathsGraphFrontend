@@ -1,44 +1,47 @@
 import React from 'react';
-import {Vector3} from "three";
+import {Box3, Vector3} from "three";
+import {useAppContext} from "../AppContext";
+import { Html } from "@react-three/drei";
 
-class Menu extends React.Component<{ setColor: any,  setColorSides:any, setColorLemme:any, setColorAxiome:any,setColorTheoreme:any,
-    setTargetPosition:any,
-    initialPosition:any,
-    setInitialPosition:any,
-    setIsPosInitial:any
-    moveToPosition:any,
-    goBack:any,
-    goForward:any,
-    history:Vector3[],
-    currentIndex:number,
-    exportGraph:any,
-    importGraph:any,
-    filters:any,
-    setFilters:any,
+export default function Menu(){
+        const {color,
+            setColor,
+            setColorSides,
+            setColorLemme,
+            setColorAxiome,
+            setColorTheoreme,
+            // Positions et état de la caméra
+            setInitialPosition,
+            setIsPosInitial,
 
-}> {
-    render() {
-        let {setColor} = this.props;
-        let {setColorSides} = this.props;
-        let {setColorLemme} = this.props;
-        let {setColorAxiome} = this.props;
-        let {setColorTheoreme} = this.props;
-        let {initialPosition} = this.props;
-        let {setIsPosInitial} = this.props;
-        let {goBack} = this.props;
-        let {goForward} = this.props;
-        let {history} = this.props;
-        let {currentIndex} = this.props;
-        let {exportGraph}= this.props;
-        let {importGraph} = this.props;
-        let {filters} = this.props;
-        let {setFilters}= this.props;
+            // Historique
+            history,
+            currentIndex,
 
+            // Navigation
+            goBack,
+            goForward,
 
+            // Graphe
+            exportGraph,
+            importGraph,
+            setFilters,
+            filters} = useAppContext();
 
         function resetCamera() {
-            if (initialPosition) {
-                setIsPosInitial(true)
+            const positions = history.map((pos) => new Vector3(pos.x, pos.y, pos.z)); // Positions du graphe passées à votre `Menu`
+            if (positions.length > 0) {
+                const bbox = new Box3().setFromPoints(positions); // Boîte englobante pour inclure tous les points visibles
+                const center = new Vector3();
+                bbox.getCenter(center); // Centre de tous les nœuds
+                const size = bbox.getSize(new Vector3()).length(); // Taille de la scène
+                const distance = size * 1.5; // Calcul d'une distance adéquate pour inclure tous les points mécaniquement
+
+                // Mettez à jour la position initiale pour recentrer la caméra
+                setInitialPosition(
+                    new Vector3(center.x, center.y, center.z + distance)
+                );
+                setIsPosInitial(true); // Change l'état pour permettre le recentrage
             }
         }
 
@@ -106,7 +109,5 @@ class Menu extends React.Component<{ setColor: any,  setColorSides:any, setColor
                 </div>
             </div>
         );
-    }
-}
 
-export default Menu;
+}

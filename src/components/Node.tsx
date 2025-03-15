@@ -1,8 +1,6 @@
 // src/components/Node.tsx
 import React, {useState} from "react";
 import {Text} from "@react-three/drei";
-import {useThree} from "@react-three/fiber";
-
 
 interface NodeProps {
     id : number;
@@ -12,16 +10,12 @@ interface NodeProps {
     isSelected : boolean;
     onClick: () => void;
     debug : boolean;
-    detailLevel:any
 }
 
-export default function Node({ id, position, color,isSelected, nom,onClick,debug,detailLevel }: NodeProps) {
+export default function Node({ id, position, color,isSelected, nom,onClick,debug, }: NodeProps) {
     const [hovered, setHovered] = useState(false);
-    const { camera } = useThree();
     const [pos, setPos] = useState(position);
-    const sphereSize = detailLevel === "high" ? 0.3 : detailLevel === "medium" ? 0.2 : 0.1;
-    const textVisible = detailLevel === "high";
-
+    const sphereSize = 0.3 ;
     return (
         <group position={pos}
                onClick = {onClick}
@@ -31,8 +25,11 @@ export default function Node({ id, position, color,isSelected, nom,onClick,debug
             <mesh>
                 <sphereGeometry args={[sphereSize, 16, 16]}/>
                 <meshStandardMaterial color={hovered ? "lightblue" : color } emissive={isSelected ? "yellow" : "black"} />
-            </mesh>{textVisible &&
-            <Text position={[0, 0.4, 0]} fontSize={0.3} color="white">
+            </mesh>{
+            <Text position={[0, 0.5, 0]} fontSize={0.3} color="white"
+                  outlineWidth={0.001}  // Largeur du contour
+                  outlineColor="black" // Couleur du contour
+                >
                 {nom}
             </Text>}
             {/* Hitbox en mode debug */}
