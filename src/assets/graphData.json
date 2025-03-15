@@ -1,0 +1,24 @@
+{
+"nodes": [
+{ "id": 1, "position": [-2, 0, 0],"nom":"Test1","typeMath":"axiome" },
+{ "id": 2, "position": [2, 0, 0],"nom":"Test2","typeMath":"axiome" },
+{ "id": 3, "position": [0, 2, 1], "nom":"Test3" ,"typeMath":"theoreme"},
+  { "id": 4, "position": [0, 3, 0], "nom":"Test3" ,"typeMath":"theoreme"},
+  { "id": 5, "position": [0, 4, 0], "nom":"Test3" ,"typeMath":"theoreme"}
+],
+"edges": [
+{ "start": 1, "end": 2,
+  "type": "équivalence"
+},
+{ "start": 2, "end": 3,
+  "type": "équivalence"
+},
+{ "start": 3, "end": 1,
+  "type": "implication"
+}
+]
+}
+
+
+
+
