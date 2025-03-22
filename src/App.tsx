@@ -37,7 +37,6 @@ const AppContent: React.FC = () => {
                 <Canvas style={{ background: "lightgrey" }}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} />
-                    <OrbitControls enableZoom={true} maxDistance={2000} minDistance={5} />
                     <Scene />
                 </Canvas>
 

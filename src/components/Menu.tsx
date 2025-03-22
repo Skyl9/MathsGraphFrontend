@@ -95,8 +95,8 @@ export default function Menu(){
                     <label>
                         <input
                             type="checkbox"
-                            checked={filters.theoreme}
-                            onChange={() => setFilters((prev:any) => ({...prev, theoreme: !prev.theoreme}))}
+                            checked={filters.théorème}
+                            onChange={() => setFilters((prev:any) => ({...prev, théorème: !prev.théorème}))}
                         /> Théorèmes
                     </label>
                     <label>

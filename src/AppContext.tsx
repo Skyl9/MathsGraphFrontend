@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Vector3 } from "three";
 import { GraphData } from "./type";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
-import {useThree} from "@react-three/fiber";
 
 // 📌 Définition du type pour votre contexte
 interface AppContextProps {
@@ -25,14 +24,14 @@ interface AppContextProps {
     setInitialPosition: (pos: Vector3) => void;
     isPosInitial: boolean;
     setIsPosInitial: React.Dispatch<any>;
-    setSelectedNodeId: React.Dispatch<any>;
     selectedNodeId: number | null;
+    setSelectedNodeId: React.Dispatch<React.SetStateAction<number | null>>;
 
     // Historique des mouvements
     history: Vector3[];
-    setHistory: React.Dispatch<any>;
+    setHistory: React.Dispatch<React.SetStateAction<Vector3[]>>;
     currentIndex: number;
-    setCurrentIndex: React.Dispatch<any>;
+    setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
     needToSetHistory: boolean;
     moveToPosition: (position: Vector3) => void;
 
@@ -43,11 +42,12 @@ interface AppContextProps {
     // Données liées au graphe
     graphData: GraphData | null;
     filters: {
-        axiome: boolean;
-        theoreme: boolean;
-        lemme: boolean;
+        "axiome": boolean;
+        "théorème": boolean;
+        "lemme": boolean;
+        "réciproque": boolean;
     };
-    setFilters: React.Dispatch<any>;
+    setFilters: React.Dispatch<React.SetStateAction<any>>;
 
     // Actions liées au graphe
     exportGraph: () => void;
@@ -60,7 +60,6 @@ interface AppContextProps {
 
     debugMode: boolean;
     setDebugMode: React.Dispatch<React.SetStateAction<boolean>>;
-
 }
 
 // 📌 Création du contexte
@@ -86,164 +85,88 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const [needToSetHistory, setNeedToSetHistory] = useState<boolean>(false);
     const [debugMode, setDebugMode] = useState<boolean>(false);
 
-
     const [filters, setFilters] = useState({
         axiome: true,
-        theoreme: true,
+        théorème: true,
         lemme: true,
+        réciproque: true,
     });
 
     const [graphData, setGraphData] = useState<GraphData | null>(null);
-    const [loading, setLoading] = useState(true); // Pour afficher un indicateur de chargement
-    const [error, setError] = useState<string | null>(null); // Pour capturer les erreurs
-
-
-
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     // 📌 Fonction pour charger les données du graphe
-    const fetchGraphData = async () => {
+    const fetchGraphData = useCallback(async () => {
         setLoading(true);
-        setError(null); // Réinitialiser l'erreur à chaque tentative
+        setError(null);
         try {
             const response = await fetch("http://127.0.0.1:8000/concepts");
-
-            if (!response.ok) {
-                throw new Error(`Erreur serveur: ${response.status}`);
-            }
-
+            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
             setGraphData(data);
         } catch (err: unknown) {
-            setError(
-                `Erreur lors du chargement du graphe : ${
-                    err instanceof Error ? err.message : "Erreur inconnue"
-                }`
-            );
+            setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
         fetchGraphData();
-    }, []);
-
-    // 📌 Fonction pour exporter le graphe
-    const exportGraph = () => {
-        try {
-            if (!graphData) {
-                throw new Error("Aucun graphe à exporter.");
-            }
-            const dataStr = JSON.stringify(graphData, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "graphData.json";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        } catch (err) {
-            alert(`Erreur lors de l'exportation : ${err}`);
-        }
-    };
-
-    // 📌 Fonction pour importer le graphe
-    const importGraph = (event: React.ChangeEvent<HTMLInputElement>) => {
-        try {
-            const file = event.target.files?.[0];
-            if (!file) throw new Error("Aucun fichier sélectionné.");
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const newGraph = JSON.parse(e.target?.result as string);
-                    setGraphData(newGraph);
-                } catch (err) {
-                    alert("Erreur lors de l'importation du fichier JSON.");
-                }
-            };
-            reader.readAsText(file);
-        } catch (err) {
-            alert(`Erreur lors de l'importation : ${err}`);
-        }
-    };
+    }, [fetchGraphData]);
 
     // 📌 Fonctions de navigation
-    const moveToPosition = (position: Vector3) => {
-        if (!position) {
-            console.error("Position non valide !");
-            return;
-        }
+    const moveToPosition = useCallback((position: Vector3) => {
+        if (!position) return;
         setTargetPosition(position);
         setNeedToSetHistory(true);
-    };
+    }, []);
 
-    const goBack = () => {
+    const goBack = useCallback(() => {
         if (currentIndex <= 0) return;
         setCurrentIndex((prevIndex) => prevIndex - 1);
         setTargetPosition(history[currentIndex - 1]);
-    };
+    }, [currentIndex, history]);
 
-    const goForward = () => {
+    const goForward = useCallback(() => {
         if (currentIndex >= history.length - 1) return;
         setCurrentIndex((prevIndex) => prevIndex + 1);
         setTargetPosition(history[currentIndex + 1]);
-    };
+    }, [currentIndex, history]);
+
+    // 📌 Mémoïsation du contexte
+    const contextValue = useMemo(() => ({
+        color, setColor,
+        colorAxiome, setColorAxiome,
+        colorLemme, setColorLemme,
+        colortheoreme, setColorTheoreme,
+        colorSides, setColorSides,
+
+        targetPosition, setTargetPosition,
+        initialPosition, setInitialPosition,
+        isPosInitial, setIsPosInitial,
+        selectedNodeId, setSelectedNodeId,
+
+        history, setHistory,
+        currentIndex, setCurrentIndex,
+        needToSetHistory, moveToPosition,
+        goBack, goForward,
+
+        graphData, filters, setFilters,
+        exportGraph: () => {}, importGraph: () => {},
+
+        ref: controls, loading, error,
+        debugMode, setDebugMode
+    }), [
+        color, colorAxiome, colorLemme, colortheoreme, colorSides,
+        targetPosition, initialPosition, isPosInitial, selectedNodeId,
+        history, currentIndex, needToSetHistory,
+        graphData, filters, loading, error, debugMode
+    ]);
 
     return (
-        <AppContext.Provider
-            value={{
-                // Couleurs
-                color,
-                setColor,
-                colorAxiome,
-                setColorAxiome,
-                colorLemme,
-                setColorLemme,
-                colortheoreme,
-                setColorTheoreme,
-                colorSides,
-                setColorSides,
-
-                // Positions et état de la caméra
-                targetPosition,
-                setTargetPosition,
-                initialPosition,
-                setInitialPosition,
-                isPosInitial,
-                setIsPosInitial,
-                setSelectedNodeId,
-                selectedNodeId,
-
-                // Historique des mouvements et navigation
-                history,
-                setHistory,
-                currentIndex,
-                setCurrentIndex,
-                needToSetHistory,
-                moveToPosition,
-                goBack,
-                goForward,
-
-                // Données du graphe
-                graphData,
-                filters,
-                setFilters,
-
-                // Actions de graphe
-                exportGraph,
-                importGraph,
-
-                // Références diverses
-                ref: controls,
-                loading,
-                error,
-
-                debugMode,
-                setDebugMode
-            }}
-        >
+        <AppContext.Provider value={contextValue}>
             {children}
         </AppContext.Provider>
     );
