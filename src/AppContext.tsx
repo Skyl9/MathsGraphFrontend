@@ -41,6 +41,7 @@ interface AppContextProps {
 
     // Données liées au graphe
     graphData: GraphData | null;
+    setGraphData: React.Dispatch<any>;
     filters: {
         "axiome": boolean;
         "théorème": boolean;
@@ -153,11 +154,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         needToSetHistory, moveToPosition,
         goBack, goForward,
 
-        graphData, filters, setFilters,
+        graphData,setGraphData,
+        filters, setFilters,
         exportGraph: () => {}, importGraph: () => {},
 
         ref: controls, loading, error,
         debugMode, setDebugMode
+
     }), [
         color, colorAxiome, colorLemme, colortheoreme, colorSides,
         targetPosition, initialPosition, isPosInitial, selectedNodeId,

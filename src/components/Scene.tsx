@@ -71,7 +71,7 @@ export default function Scene() {
                 z: selectedNode.position[2] + 3,
                 duration: 1.5,
                 onUpdate: () => {
-                    controlsRef.current.target.lerp(targetPosition, 0.1); // Mise à jour pendant l'animation
+                    controlsRef.current.target.lerp(targetPosition, 1); // Mise à jour pendant l'animation
                     controlsRef.current.update(); // Synchronisation
                 },
 
@@ -91,11 +91,7 @@ export default function Scene() {
                     console.log("Camera is null");
                     return;}
             console.log("selectedNodeId :", selectedNodeId);
-            console.log("visibleNodes :", visibleNodes);
-
             let positionListe = visibleNodes.findIndex((node: NodeData) => node.id === selectedNodeId);
-            console.log("position Liste",positionListe);
-            console.log(visibleNodes.length);
                 setShouldBeShowNode(true);
                 if (positionListe===-1){
                     console.log("erreur de position dans la liste, élément non trouvé")
@@ -160,10 +156,9 @@ export default function Scene() {
 
                 return prevHistory;
             });
-
             // ✅ Ne pas incrémenter si la position ne change pas
             setCurrentIndex((prevIndex: number) =>
-                history.length === 0 || !history[prevIndex].equals(targetPosition)
+                history.length === 0 || (history[currentIndex] && !history[currentIndex].equals(targetPosition))
                     ? prevIndex + 1
                     : prevIndex
             );

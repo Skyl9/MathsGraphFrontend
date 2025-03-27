@@ -1,10 +1,10 @@
 import React from 'react';
 import {Box3, Vector3} from "three";
 import {useAppContext} from "../AppContext";
-import { Html } from "@react-three/drei";
+
 
 export default function Menu(){
-        const {color,
+        const {
             setColor,
             setColorSides,
             setColorLemme,
