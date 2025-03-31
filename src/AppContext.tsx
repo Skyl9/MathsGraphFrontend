@@ -51,8 +51,6 @@ interface AppContextProps {
     setFilters: React.Dispatch<React.SetStateAction<any>>;
 
     // Actions liées au graphe
-    exportGraph: () => void;
-    importGraph: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
     // Références diverses
     ref: React.MutableRefObject<OrbitControlsImpl | null>;
@@ -156,7 +154,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         graphData,setGraphData,
         filters, setFilters,
-        exportGraph: () => {}, importGraph: () => {},
 
         ref: controls, loading, error,
         debugMode, setDebugMode

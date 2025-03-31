@@ -1,0 +1,19 @@
+/* Style du lien */
+.node-id {
+    color: #007bff; /* Bleu */
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+/* Effet au survol */
+.node-id:hover {
+    color: #0056b3; /* Bleu foncé */
+    text-decoration: underline;
+}
+
+/* Ajout d'un léger padding pour espacer */
+.node-id {
+    padding: 5px;
+    text-align: center;
+}

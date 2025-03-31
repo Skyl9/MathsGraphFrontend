@@ -1,13 +1,16 @@
 import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
+import {Link} from "react-router-dom";
+import {ZIPS_COMPRESSION} from "three/examples/jsm/exporters/EXRExporter";
 
 interface NodeDetailsProps {
     position: [number, number, number];
     nom: string;
     typeMath: string;
+    id: number;
 }
 
-export default function NodeDetails({ position, nom, typeMath }: NodeDetailsProps) {
+export default function NodeDetails({ position, nom, typeMath,id }: NodeDetailsProps) {
     return (
         <Html position={position}>
             <motion.div
@@ -24,8 +27,11 @@ export default function NodeDetails({ position, nom, typeMath }: NodeDetailsProp
                     textAlign: "center",
                 }}
             >
-                <h3 style={{ margin: 0 }}>{nom}</h3>
-                <p style={{ margin: 0 }}>Type : {typeMath}</p>
+                <a href={"/node/"+id}>
+                    <h3 style={{ margin: 0 }}>{nom}</h3>
+                </a>
+                    <p style={{ margin: 0 }}>Type : {typeMath}</p>
+
             </motion.div>
         </Html>
     );

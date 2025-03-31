@@ -29,5 +29,5 @@ export interface AllNodeData {
     x:number;
     y:number;
     z:number;
-
+    verification:boolean;
 }

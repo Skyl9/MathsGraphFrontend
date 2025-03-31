@@ -32,6 +32,7 @@ export default function Table({ data, editData, handleEdit, saveChanges, handleS
                     <div className="cell" onClick={() => handleSort("categorie") }>Catégorie {sortColumn === "categorie" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</div>
                     <div className="cell" onClick={() => handleSort("mathematicien") }>Mathématicien {sortColumn === "mathematicien" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</div>
                     <div className="cell" onClick={() => handleSort("demonstration") }>Démonstration {sortColumn === "demonstration" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</div>
+                    <div className="cell" onClick={() => handleSort("verification") }>Vérification {sortColumn === "verification" ? (sortOrder === "asc" ? "↑" : "↓") : ""}</div>
                     <div className="cell">Actions</div>
                 </div>
             </div>

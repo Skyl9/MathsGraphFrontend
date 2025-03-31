@@ -248,6 +248,7 @@ export default function Scene() {
                     position={selectedNode.position}
                     nom={selectedNode.nom}
                     typeMath={selectedNode.typeMath}
+                    id={selectedNode.id}
                 />
 
             )}

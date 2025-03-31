@@ -1,6 +1,9 @@
 import React from "react";
 import { MathJax } from "better-react-mathjax";
 import { AllNodeData } from "../type";
+import {Link} from "react-router-dom";
+import './Lien.css'
+import {stringify} from "node:querystring";
 
 interface RowProps {
     node: AllNodeData;
@@ -13,8 +16,10 @@ interface RowProps {
 const TableRow = React.memo(({ node, handleEdit, saveChanges, editData, style }: RowProps) => {
     return (
         <div className="table-row" style={style}>
-            <div className="cell">{node.id}</div>
-            <div className="cell" contentEditable onBlur={e => handleEdit(node.id, "nom", e.target.innerText)}>
+            <Link className="node-id" to={`/node/${node.id}`}>
+                <div className="cell">{node.id}</div>
+            </Link>
+            <div className="cell" contentEditable onBlur={e => handleEdit(node.id, "nom", e.target.innerText)} >
                 {editData[node.id]?.nom ?? node.nom}
             </div>
             <div className="cell" contentEditable onBlur={e => handleEdit(node.id, "type", e.target.innerText)}>
@@ -31,6 +36,9 @@ const TableRow = React.memo(({ node, handleEdit, saveChanges, editData, style }:
             </div>
             <div className="cell" contentEditable onBlur={e => handleEdit(node.id, "demonstration", e.target.innerText)}>
                 {editData[node.id]?.demonstration ?? node.demonstration}
+            </div>
+            <div className="cell" >
+                {node.verification ? "✅" : "❌"}
             </div>
             <div className="cell">
                 <button className="save-button" onClick={() => saveChanges(node.id)}>💾</button>

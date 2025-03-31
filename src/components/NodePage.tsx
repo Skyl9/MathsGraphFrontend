@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAppContext } from "../AppContext";
 import { AllNodeData } from "../type";
 import EditNodeModal from "./EditNodeModal"; // Import du modal
-import "./EditNodeModal.css";
+import "./NodePage.css";
 
 
 const NodePage: React.FC = () => {
@@ -41,29 +41,36 @@ const NodePage: React.FC = () => {
     if (error) return <p>{error}</p>;
 
     return (
-        <div>
-            <h1>{data?.nom}</h1>
-            <p>Type : {data?.type}</p>
-            <p>Enoncé : {data?.enonce}</p>
-            <p>Démonstration : {data?.demonstration}</p>
-            <p>Mathématicien : {data?.mathematicien}</p>
-            <p>Catégorie : {data?.categorie}</p>
-            <p>Id : {data?.id}</p>
+        <div className="node-container">
+            <h1 className="node-title">{data?.nom}</h1>
 
-            <h2>Relations :</h2>
-            <ul>
-                {graphData && graphData.edges
-                    .filter(edge => edge.start === node.id || edge.end === node.id)
-                    .map((edge, index) => (
-                        <li key={index}>
-                            Lien avec le nœud {edge.start === node.id ? edge.end : edge.start}
-                        </li>
-                    ))}
-            </ul>
+            <div className="node-info">
+                <p><strong>Type :</strong> {data?.type}</p>
+                <p><strong>Énoncé :</strong> {data?.enonce}</p>
+                <p><strong>Démonstration :</strong> {data?.demonstration}</p>
+                <p><strong>Mathématicien :</strong> {data?.mathematicien}</p>
+                <p><strong>Catégorie :</strong> {data?.categorie}</p>
+                <p><strong>ID :</strong> {data?.id}</p>
+            </div>
 
-            {/* 📌 Bouton pour ouvrir la fenêtre de modification */}
-            <button onClick={() => setIsModalOpen(true)}>Modifier</button>
-            <button onClick={() => window.history.back()}>Retour</button>
+            <div className="node-relations">
+                <h2>Relations :</h2>
+                <ul>
+                    {graphData && graphData.edges
+                        .filter(edge => edge.start === node.id || edge.end === node.id)
+                        .map((edge, index) => (
+                            <li key={index}>
+                                Lien avec le nœud {edge.start === node.id ? edge.end : edge.start}
+                            </li>
+                        ))}
+                </ul>
+            </div>
+
+            <div className="node-buttons">
+                {/* 📌 Bouton pour ouvrir la fenêtre de modification */}
+                <button className="edit-button" onClick={() => setIsModalOpen(true)}>Modifier</button>
+                <button className="back-button" onClick={() => window.history.back()}>Retour</button>
+            </div>
 
             {/* 📌 Affichage du modal */}
             {isModalOpen && data && (

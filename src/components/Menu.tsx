@@ -13,6 +13,8 @@ export default function Menu(){
             // Positions et état de la caméra
             setInitialPosition,
             setIsPosInitial,
+            setGraphData,
+            graphData,
 
             // Historique
             history,
@@ -23,8 +25,6 @@ export default function Menu(){
             goForward,
 
             // Graphe
-            exportGraph,
-            importGraph,
             setFilters,
             filters} = useAppContext();
 
@@ -43,9 +43,38 @@ export default function Menu(){
                 );
                 setIsPosInitial(true); // Change l'état pour permettre le recentrage
             }
-        }
 
-        return (
+        }
+        const exportGraph = () => {
+        const dataStr = JSON.stringify(graphData, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "graphData.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+    const importGraph = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const newGraph = JSON.parse(e.target?.result as string);
+                setGraphData(newGraph); // Met à jour l'état du graphe
+            } catch (error) {
+                console.error("Erreur lors du chargement du fichier JSON", error);
+            }
+        };
+        reader.readAsText(file);
+    };
+
+
+
+    return (
             <div style={{position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '50'}}>
                 <h2>Menu d'Options</h2>
                 <h3>Couleur du fond : </h3>
