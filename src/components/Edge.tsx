@@ -69,7 +69,7 @@ export default function Edge({ start, end, color = "white", type, debug }: EdgeP
                 <>
                     <mesh position={midPoint}>
                         <boxGeometry args={[0.2, 0.2, 0.2]}/>
-                        <meshBasicMaterial color="green" wireframe/>
+                        <meshBasicMaterial color="green" wireframe={true}/>
                     </mesh>
                 </>
             )}

@@ -16,25 +16,46 @@ const NodePage: React.FC = () => {
 
     const node = graphData?.nodes.find(n => n.id === Number(id));
 
+
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
+
+        const backendLink = process.env.REACT_APP_BACKEND_LINK;
+        if (!backendLink) {
+            setError("Lien du backend non défini");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const response = await fetch(process.env.REACT_APP_BACKEND_LINK + `/getNode/${id}`);
-            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            const response = await fetch(`${backendLink}/getNode/${id}`);
+            if (!response.ok) {
+                setError(`Erreur serveur: ${response.status}`);
+                return;
+            }
+
             const fetchedData: AllNodeData = await response.json();
             setData(fetchedData);
-        } catch (err) {
-            console.error(err);
-            setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error(err);
+                setError(`Erreur : ${err.message}`);
+            } else {
+                console.error("Erreur inconnue", err);
+                setError("Erreur inconnue");
+            }
         } finally {
             setLoading(false);
         }
     }, [id]);
 
+
     useEffect(() => {
-        fetchData();
+        fetchData().catch((err) => console.error("Erreur dans useEffect:", err));
     }, [fetchData]);
+
+
 
     if (!node) return <p>Nœud introuvable.</p>;
     if (loading) return <p>Chargement...</p>;

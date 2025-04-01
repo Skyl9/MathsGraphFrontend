@@ -33,7 +33,9 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ nodeData, onClose, onSave
                 body: JSON.stringify(formData),
             });
 
-            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            if (!response.ok) {
+                console.log(`Erreur serveur: ${response.status}`);
+            }
 
             onSave(); // Recharge les données après modification
             onClose(); // Ferme la fenêtre modale

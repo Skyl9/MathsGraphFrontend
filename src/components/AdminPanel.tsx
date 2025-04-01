@@ -20,22 +20,40 @@ export default function AdminPanel() {
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
+
+        const backendLink = process.env.REACT_APP_BACKEND_LINK;
+        if (!backendLink) {
+            setError("Lien du backend non défini");
+            setLoading(false);
+            return;
+        }
+
         try {
-            const response = await fetch("http://127.0.0.1:8000/getAlldatabaseInfo");
-            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            const response = await fetch(`${backendLink}/getAlldatabaseInfo/`);
+            if (!response.ok) {
+                setError(`Erreur serveur: ${response.status}`);
+                return;
+            }
+
             const fetchedData: AllNodeData[] = await response.json();
             setData(fetchedData);
-        } catch (err) {
-            console.error(err);
-            setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error(err);
+                setError(`Erreur : ${err.message}`);
+            } else {
+                console.error("Erreur inconnue", err);
+                setError("Erreur inconnue");
+            }
         } finally {
             setLoading(false);
         }
     }, []);
 
+
     useEffect(() => {
-        fetchData();
-    }, []);
+        fetchData().catch((err) => console.error("Erreur dans useEffect:", err));
+    }, [fetchData]);
 
     // 📌 Gestion des modifications locales avant envoi à l'API
     const handleEdit = (id: number, field: keyof AllNodeData, value: string) => {
@@ -54,7 +72,9 @@ export default function AdminPanel() {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(editData[id])
             });
-            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            if (!response.ok) {
+                setError(`Erreur serveur: ${response.status}`)
+            }
 
             // Mise à jour locale des données après validation du serveur
             setData(prev => prev ? prev.map(node => node.id === id ? { ...node, ...editData[id] } : node) : prev);
