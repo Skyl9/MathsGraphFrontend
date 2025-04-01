@@ -1,40 +1,8 @@
 # Liste des fournisseurs à utiliser lors de la construction
 providers = ["...", "nodejs"]
-
-# Image de base à utiliser pour la construction
-buildImage = "ghcr.io/railwayapp/nixpacks:latest"
-
 # Variables d'environnement à définir lors de la construction
 [variables]
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
 
-# Phase de configuration initiale (setup)
-[phases.setup]
-# Paquets Nix à installer
-nixPkgs = ["...", "nodejs_20", "openssl"]
-# Paquets Apt à installer
-aptPkgs = ["wget"]
-# Commandes à exécuter pendant la phase de setup
-cmds = ["echo 'Configuration initiale terminée'"]
-
-# Phase d'installation des dépendances
-[phases.install]
-# Commandes à exécuter pendant la phase d'installation
-cmds = ["npm install --production"]
-# Répertoires à mettre en cache pour accélérer les builds futurs
-cacheDirectories = ["node_modules/.cache"]
-# Répertoires à inclure dans le PATH
-paths = ["/app/node_modules/.bin"]
-
-# Phase de construction de l'application
-[phases.build]
-# Commandes à exécuter pendant la phase de build
-cmds = ["npm run build"]
-# Répertoires à mettre en cache
-cacheDirectories = ["node_modules/.cache"]
-
-# Phase de démarrage de l'application
-[start]
-# Commande à exécuter pour démarrer l'application
-cmd = "npm start"
+NIXPACKS_NODE_VERSION= "20"
