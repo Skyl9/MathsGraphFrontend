@@ -1,3 +1,2 @@
 [build]
-builder = "nodejs"
-node_version = "20"
+NIXPACKS_NODE_VERSION=20
