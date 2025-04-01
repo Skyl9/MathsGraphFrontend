@@ -1,7 +1,5 @@
 import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
-import {Link} from "react-router-dom";
-import {ZIPS_COMPRESSION} from "three/examples/jsm/exporters/EXRExporter";
 
 interface NodeDetailsProps {
     position: [number, number, number];

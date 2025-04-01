@@ -3,7 +3,6 @@ import { MathJax } from "better-react-mathjax";
 import { AllNodeData } from "../type";
 import {Link} from "react-router-dom";
 import './Lien.css'
-import {stringify} from "node:querystring";
 
 interface RowProps {
     node: AllNodeData;

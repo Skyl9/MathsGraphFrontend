@@ -20,7 +20,7 @@ const NodePage: React.FC = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(`http://127.0.0.1:8000/getNode/${id}`);
+            const response = await fetch(process.env.REACT_APP_BACKEND_LINK + `/getNode/${id}`);
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const fetchedData: AllNodeData = await response.json();
             setData(fetchedData);

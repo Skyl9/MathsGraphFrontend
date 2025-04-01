@@ -27,7 +27,7 @@ const EditNodeModal: React.FC<EditNodeModalProps> = ({ nodeData, onClose, onSave
     // 📌 Envoi des modifications au serveur
     const handleSave = async () => {
         try {
-            const response = await fetch(`http://127.0.0.1:8000/updateNodes/${nodeData.id}`, {
+            const response = await fetch(process.env.REACT_APP_BACKEND_LINK + `/updateNodes/${nodeData.id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

@@ -62,11 +62,13 @@ interface AppContextProps {
 }
 
 // 📌 Création du contexte
+
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
 // 📌 Fournisseur de contexte (englobe tout le composant principal)
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // États globaux partagés via le contexte
+    const backend_link = process.env.REACT_APP_BACKEND_LINK || "";
     const [color, setColor] = useState("lightgrey");
     const [colorSides, setColorSides] = useState("black");
     const [colorAxiome, setColorAxiome] = useState("black");
@@ -100,7 +102,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("http://127.0.0.1:8000/concepts");
+            console.log("Fetching GraphData...",backend_link,'b');
+            const response = await fetch(backend_link + "/concepts");
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
             setGraphData(data);
