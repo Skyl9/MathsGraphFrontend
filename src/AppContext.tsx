@@ -69,6 +69,7 @@ const AppContext = createContext<AppContextProps | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // États globaux partagés via le contexte
     const backend_link = process.env.REACT_APP_BACKEND_LINK || "";
+    const port = process.env.REACT_APP_PORT || "8000";
     const [color, setColor] = useState("lightgrey");
     const [colorSides, setColorSides] = useState("black");
     const [colorAxiome, setColorAxiome] = useState("black");
@@ -103,7 +104,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setError(null);
         try {
             console.log("Fetching GraphData...",backend_link,'b');
-            const response = await fetch(backend_link + "/concepts");
+            const response = await fetch(backend_link + port+  "/concepts");
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
             setGraphData(data);

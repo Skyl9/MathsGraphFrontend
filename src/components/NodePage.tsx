@@ -21,7 +21,9 @@ const NodePage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        const backendLink = process.env.REACT_APP_BACKEND_LINK;
+        const backendLink = process.env.REACT_APP_BACKEND_LINK||"";
+        const port = process.env.REACT_APP_PORT || "8000";
+
         if (!backendLink) {
             setError("Lien du backend non défini");
             setLoading(false);
@@ -29,7 +31,7 @@ const NodePage: React.FC = () => {
         }
 
         try {
-            const response = await fetch(`${backendLink}/getNode/${id}`);
+            const response = await fetch(`${backendLink+port}/getNode/${id}`);
             if (!response.ok) {
                 setError(`Erreur serveur: ${response.status}`);
                 return;
