@@ -30,7 +30,7 @@ const NodePage: React.FC = () => {
         }
 
         try {
-            const response = await fetch(`${backendLink}/getNode/${id}`);
+            const response = await fetch(backendLink + "/getNode/"+id);
             if (!response.ok) {
                 setError(`Erreur serveur: ${response.status}`);
                 return;
