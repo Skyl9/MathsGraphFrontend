@@ -22,7 +22,6 @@ export default function AdminPanel() {
         setError(null);
 
         const backendLink = process.env.REACT_APP_BACKEND_LINK || "";
-        const port = process.env.REACT_APP_PORT || "8000";
         if (!backendLink) {
             setError("Lien du backend non défini");
             setLoading(false);
@@ -30,7 +29,7 @@ export default function AdminPanel() {
         }
 
         try {
-            const response = await fetch(`${backendLink + port}/getAlldatabaseInfo/`);
+            const response = await fetch(`${backendLink}/getAlldatabaseInfo/`);
             if (!response.ok) {
                 setError(`Erreur serveur: ${response.status}`);
                 return;
