@@ -29,7 +29,7 @@ export default function AdminPanel() {
         }
 
         try {
-            const response = await fetch(backendLink + '/getAlldatabaseInfo/');
+            const response = await fetch(backendLink + '/getAlldatabaseInfo');
             if (!response.ok) {
                 setError(`Erreur serveur: ${response.status}`);
                 return;
