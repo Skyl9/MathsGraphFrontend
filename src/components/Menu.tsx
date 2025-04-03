@@ -1,19 +1,24 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Box3, Vector3} from "three";
+import {
+    Drawer,
+    IconButton,
+    Typography,
+    Box,
+    Button,
+    FormControlLabel,
+    Checkbox,
+    Divider,
+} from '@mui/material';
 import {useAppContext} from "../AppContext";
+import MenuIcon from '@mui/icons-material/Menu';
 
 
 export default function Menu(){
         const {
-            setColor,
-            setColorSides,
-            setColorLemme,
-            setColorAxiome,
-            setColorTheoreme,
             // Positions et état de la caméra
             setInitialPosition,
             setIsPosInitial,
-            setGraphData,
             graphData,
 
             // Historique
@@ -56,87 +61,88 @@ export default function Menu(){
         a.click();
         document.body.removeChild(a);
     };
-    const importGraph = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
+        const [open, setOpen] = useState(false);
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const newGraph = JSON.parse(e.target?.result as string);
-                setGraphData(newGraph); // Met à jour l'état du graphe
-            } catch (error) {
-                console.error("Erreur lors du chargement du fichier JSON", error);
-            }
-        };
-        reader.readAsText(file);
-    };
-
+        const toggleDrawer = (newOpen:boolean) => () => {
+            setOpen(newOpen);
+        }
 
 
     return (
-            <div style={{position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '50'}}>
-                <h2>Menu d'Options</h2>
-                <h3>Couleur du fond : </h3>
-                <button onClick={() => setColor('red')}>Rouge</button>
-                <button onClick={() => setColor('green')}>Vert</button>
-                <button onClick={() => setColor('blue')}>Bleu</button>
+        <div style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '50' }}>
+            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+                <MenuIcon />
+            </IconButton>
+            <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+                <Box sx={{ width: 250, p: 2 }} role="presentation">
+                    <Typography variant="h5" sx={{ mb: 2 }}>
+                        Menu d'Options
+                    </Typography>
 
-                <h3>Couleur des arrêtes : </h3>
-                <button onClick={() => setColorSides('red')}>Rouge</button>
-                <button onClick={() => setColorSides('green')}>Vert</button>
-                <button onClick={() => setColorSides('blue')}>Bleu</button>
+                    <Button variant="outlined" onClick={resetCamera} sx={{ mb: 1 }}>
+                        Réinitialiser la caméra
+                    </Button>
 
-                <h3>Couleur des axiomes : </h3>
-                <button onClick={() => setColorAxiome('red')}>Rouge</button>
-                <h3>Couleur des théorèmes : </h3>
-                <button onClick={() => setColorTheoreme('red')}>Rouge</button>
-                <h3>Couleur des lemmes : </h3>
-                <button onClick={() => setColorLemme('red')}>Rouge</button>
-                {/* Bouton de réinitialisation */}
-                <br/>
-                <button
-                    style={{
-                        background: "black",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer",
-                        borderRadius: "5px"
-                    }}
-                    onClick={resetCamera}
-                >
-                    Réinitialiser la caméra
-                </button>
-                <div>
-                    <button onClick={goBack} disabled={currentIndex <= 0}>⬅ Précédent</button>
-                    <button onClick={goForward} disabled={currentIndex >= history.length - 1}>Suivant ➡</button>
-                </div>
-                <button onClick={exportGraph}>📤 Exporter le graphe</button>
-                <input type="file" accept=".json" onChange={importGraph}/>
-                <div>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={filters.axiome}
-                            onChange={() => setFilters((prev:any) => ({...prev, axiome: !prev.axiome}))}
-                        /> Axiomes
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={filters.théorème}
-                            onChange={() => setFilters((prev:any) => ({...prev, théorème: !prev.théorème}))}
-                        /> Théorèmes
-                    </label>
-                    <label>
-                        <input
-                            type="checkbox"
-                            checked={filters.lemme}
-                            onChange={() => setFilters((prev:any) => ({...prev, lemme: !prev.lemme}))}
-                        /> Lemmes
-                    </label>
-                </div>
-            </div>
-        );
+                    <Divider sx={{ my: 2 }} />
 
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                        Navigation
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                        <Button variant="outlined" onClick={goBack} disabled={currentIndex <= 0}>
+                            ⬅ Précédent
+                        </Button>
+                        <Button variant="outlined" onClick={goForward} disabled={currentIndex >= history.length - 1}>
+                            ➡ Suivant
+                        </Button>
+                    </Box>
+
+                    <Divider sx={{ my: 2 }} />
+
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                        Téléchargement du fichier JSON :
+                    </Typography>
+                    <Button variant="outlined" onClick={exportGraph} sx={{ mb: 1 }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
+                        Télécharger le graphe
+                    </Button>
+
+                    <Divider sx={{ my: 2 }} />
+
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                        Filtre :
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={filters.axiome}
+                                    onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))}
+                                />
+                            }
+                            label="Axiomes"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={filters.théorème}
+                                    onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))}
+                                />
+                            }
+                            label="Théorèmes"
+                        />
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={filters.lemme}
+                                    onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))}
+                                />
+                            }
+                            label="Lemmes"
+                        />
+                    </Box>
+                </Box>
+            </Drawer>
+        </div>
+    );
 }
