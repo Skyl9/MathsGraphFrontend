@@ -1,41 +1,47 @@
-// src/components/Node.tsx
-import React, {useState} from "react";
-import {Text} from "@react-three/drei";
+import React, { useState, useRef } from "react";
+import { Text } from "@react-three/drei";
+import { Mesh, MeshStandardMaterial } from "three";
+import { PointerEvent } from "react";
 
 interface NodeProps {
-    id : number;
+    id: number;
     position: [number, number, number];
     color: string;
     nom: string;
-    isSelected : boolean;
+    isSelected: boolean;
     onClick: () => void;
-    debug : boolean;
+    debug: boolean;
 }
 
-export default function Node({ id, position, color,isSelected, nom,onClick,debug, }: NodeProps) {
+export default function Node({ id, position, color, isSelected, nom, onClick, debug }: NodeProps) {
     const [hovered, setHovered] = useState(false);
-    const [pos, setPos] = useState(position);
-    const sphereSize = 0.3 ;
+    const sphereSize = 0.3;
+    const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
+
     return (
-        <group position={pos}
-               onClick = {onClick}
-               onPointerOver={() => setHovered(true)}
-               onPointerOut={() => setHovered(false)}
+        <group position={position} onClick={onClick}
+               onPointerOver={(event: PointerEvent<HTMLCanvasElement>) => {
+                   event.stopPropagation();
+                   setHovered(true);
+               }}
+               onPointerOut={(event: PointerEvent<HTMLCanvasElement>) => {
+                   event.stopPropagation();
+                   setHovered(false);
+               }}
         >
-            <mesh>
-                <sphereGeometry args={[sphereSize, 16, 16]}/>
-                <meshStandardMaterial color={hovered ? "lightblue" : color } emissive={isSelected ? "yellow" : "black"} />
-            </mesh>{
-            <Text position={[0, 0.5, 0]} fontSize={0.3} color="white"
-                  outlineWidth={0.001}  // Largeur du contour
-                  outlineColor="black" // Couleur du contour
-                >
+            <mesh ref={meshRef}>
+                <sphereGeometry args={[sphereSize, 16, 16]} />
+                <meshStandardMaterial color={hovered ? "#99C2FF" : color} emissive={isSelected ? "#99c2ff" : color} />
+            </mesh>
+            <Text position={[0, sphereSize + 0.2, 0]} fontSize={0.3} color="white"
+                  outlineWidth={0.001}
+                  outlineColor="#333333"
+            >
                 {nom}
-            </Text>}
-            {/* Hitbox en mode debug */}
+            </Text>
             {debug && (
-                <mesh >
-                    <sphereGeometry args={[0.21, 16, 16]} />
+                <mesh>
+                    <sphereGeometry args={[sphereSize * 0.7, 16, 16]} />
                     <meshBasicMaterial color="red" wireframe />
                 </mesh>
             )}

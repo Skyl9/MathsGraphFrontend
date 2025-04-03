@@ -46,7 +46,7 @@ export default function Scene() {
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
     const controlsRef = useRef<any>(null); // Référence pour OrbitControls
     const [shouldBeShowNode, setShouldBeShowNode] = useState(false);
-
+    /* Les couleurs ne sont plus modifiables mais je laisses ces variables pour de futur modification */
     const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [
         colorLemme,
         colorAxiome,
@@ -140,7 +140,7 @@ export default function Scene() {
         window.addEventListener("keydown", toggleDebug);
         return () => window.removeEventListener("keydown", toggleDebug);
     },);
-
+    /* Gère l'historique à chaque modification */
     useEffect(() => {
         if (targetPosition) {
             setHistory((prevHistory: Vector3[]) => {
@@ -165,6 +165,15 @@ export default function Scene() {
         }
     },);
 
+    const handleNodeClick = (node: any) => {
+        setSelectedNodeId(node);
+        setShouldBeShowNode(true);
+    };
+
+    const handleCloseNodeDetails = () => {
+        setSelectedNodeId(null);
+        setShouldBeShowNode(false);
+    };
 
 
     // 📌 Gestion du clic hors nœuds (désélection)
@@ -179,15 +188,7 @@ export default function Scene() {
         console.log("targetPosition changé :", targetPosition);
     }, [targetPosition]);
 
-
-    /*
-    // 📌 Gestion du déplacement de la caméra (zoom progressif vers le nœud sélectionné)
-    /* En cas de problème affiche tout les positions :
-    useEffect(()=> {
-        console.table(nodes.map(node => ({id: node.id,x: node.position[0], y:node.position[1],z:node.position[2]})));
-    },[]
-    )
-    */
+    /* Gère les problèmes de chargement du graphique (backend non actif ou bdd en erreur) */
     if (!graphData) {
         return <group>Pas de données pour la scène.</group>;
     }
@@ -211,7 +212,7 @@ export default function Scene() {
                     onClick={() => {
                         console.log("Nœud sélectionné :", node.id);
                         setSelectedNodeId(node.id);
-                        setTargetPosition(new Vector3(...node.position));
+                         (new Vector3(...node.position));
                     }}
                     debug={debugMode}
                 />
@@ -249,7 +250,7 @@ export default function Scene() {
                     nom={selectedNode.nom}
                     typeMath={selectedNode.typeMath}
                     id={selectedNode.id}
-                />
+                    onClose={handleCloseNodeDetails}                />
 
             )}
         </group>

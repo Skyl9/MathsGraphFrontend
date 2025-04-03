@@ -68,12 +68,11 @@ const AppContext = createContext<AppContextProps | undefined>(undefined);
 // 📌 Fournisseur de contexte (englobe tout le composant principal)
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // États globaux partagés via le contexte
-    const backend_link = process.env.REACT_APP_BACKEND_LINK || "";
-    const [color, setColor] = useState("lightgrey");
+    const [color, setColor] = useState("#F5F5F5");
     const [colorSides, setColorSides] = useState("black");
-    const [colorAxiome, setColorAxiome] = useState("black");
-    const [colortheoreme, setColorTheoreme] = useState("black");
-    const [colorLemme, setColorLemme] = useState("black");
+    const [colorAxiome, setColorAxiome] = useState("#52C575");
+    const [colortheoreme, setColorTheoreme] = useState("#F99D1C");
+    const [colorLemme, setColorLemme] = useState("#AE66CC");
 
     const [targetPosition, setTargetPosition] = useState<Vector3 | null>(null);
     const [initialPosition, setInitialPosition] = useState<Vector3 | null>(null);
@@ -99,6 +98,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     // 📌 Fonction pour charger les données du graphe
     const fetchGraphData = useCallback(async () => {
+        const backend_link = process.env.REACT_APP_BACKEND_LINK || "";
         setLoading(true);
         setError(null);
         try {
@@ -115,7 +115,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, []);
 
     useEffect(() => {
-        fetchGraphData();
+        fetchGraphData().then(r => console.log("Fetching GraphData...",r));
     }, [fetchGraphData]);
 
     // 📌 Fonctions de navigation
@@ -161,12 +161,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         ref: controls, loading, error,
         debugMode, setDebugMode
 
-    }), [
-        color, colorAxiome, colorLemme, colortheoreme, colorSides,
-        targetPosition, initialPosition, isPosInitial, selectedNodeId,
-        history, currentIndex, needToSetHistory,
-        graphData, filters, loading, error, debugMode
-    ]);
+    }), [color, colorAxiome, colorLemme, colortheoreme, colorSides, targetPosition, initialPosition, isPosInitial, selectedNodeId, history, currentIndex, needToSetHistory, moveToPosition, goBack, goForward, graphData, filters, loading, error, debugMode]);
 
     return (
         <AppContext.Provider value={contextValue}>
