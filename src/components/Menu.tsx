@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Box3, Vector3} from "three";
 import {
     Drawer,
@@ -12,7 +12,9 @@ import {
 } from '@mui/material';
 import {useAppContext} from "../AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
-
+import SearchBar from "./SearchBar";
+import {NodeData} from "../type";
+import "./Menu.css";
 
 export default function Menu(){
         const {
@@ -20,6 +22,8 @@ export default function Menu(){
             setInitialPosition,
             setIsPosInitial,
             graphData,
+            setSelectedNodeId,
+            setTargetPosition,
 
             // Historique
             history,
@@ -66,10 +70,31 @@ export default function Menu(){
         const toggleDrawer = (newOpen:boolean) => () => {
             setOpen(newOpen);
         }
+    const [searchResults, setSearchResults] = useState<NodeData[]>([]); // Typage précis
+
+    const handleSearch = useCallback((query: string) => {
+        if (graphData) {
+            const results = graphData.nodes.filter((node) => node.nom.toLowerCase().includes(query.toLowerCase()));
+            setSearchResults(results);
+        } else {
+            setSearchResults([]);
+        }
+    }, [graphData]);
+
+    function handleResultsSearch (node:NodeData) {
+        if (node){
+            setTargetPosition(new Vector3(...node.position));
+            setSelectedNodeId(node.id);
+            console.log("test ",node);
+
+        }
+
+    }
 
 
     return (
-        <div style={{ position: 'absolute', top: '20px', left: '20px', padding: '10px', zIndex: '50' }}>
+        <div>
+        <div className='menu-container'>
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
                 <MenuIcon />
             </IconButton>
@@ -143,6 +168,20 @@ export default function Menu(){
                     </Box>
                 </Box>
             </Drawer>
+
         </div>
+            <div className="search-bar-container"> {/* Conteneur pour la barre de recherche */}
+                <SearchBar onSearch={handleSearch} />
+                {searchResults.length > 0 && (
+                    <div className="search-results">
+                        {searchResults.map((result) => (
+                            <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
+                                {result.nom} ({result.typeMath})
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+    </div>
     );
 }

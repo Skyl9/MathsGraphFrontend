@@ -1,0 +1,37 @@
+/* Styles pour le conteneur du menu */
+.menu-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    z-index: 50;
+}
+
+/* Styles pour le conteneur de la barre de recherche */
+.search-bar-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 50;
+}
+.search-results {
+    position: absolute;
+    top: 60px; /* Position sous la barre de recherche */
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    z-index: 51; /* Au-dessus de la barre de recherche */
+    width: 200px; /* Ajustez la largeur selon vos besoins */
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-result-item {
+    padding: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
