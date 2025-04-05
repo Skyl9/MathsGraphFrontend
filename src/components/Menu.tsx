@@ -8,7 +8,7 @@ import {
     Button,
     FormControlLabel,
     Checkbox,
-    Divider,
+    Divider, Switch,
 } from '@mui/material';
 import {useAppContext} from "../AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -16,7 +16,13 @@ import SearchBar from "./SearchBar";
 import {NodeData} from "../type";
 import "./Menu.css";
 
-export default function Menu(){
+interface MenuProps {
+
+    darkMode: boolean;
+    setDarkMode: (value: boolean) => void;
+}
+
+export default function Menu( { darkMode, setDarkMode }: MenuProps){
         const {
             // Positions et état de la caméra
             setInitialPosition,
@@ -93,8 +99,8 @@ export default function Menu(){
 
 
     return (
-        <div>
-        <div className='menu-container'>
+    <div className={darkMode ? 'dark-mode' : ''}>
+        <div className="menu-container">
             <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
                 <MenuIcon />
             </IconButton>
@@ -128,7 +134,10 @@ export default function Menu(){
                         Téléchargement du fichier JSON :
                     </Typography>
                     <Button variant="outlined" onClick={exportGraph} sx={{ mb: 1 }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
+                        </svg>
                         Télécharger le graphe
                     </Button>
 
@@ -166,22 +175,26 @@ export default function Menu(){
                             label="Lemmes"
                         />
                     </Box>
+                    <Divider sx={{ my: 2 }} />
+                    <FormControlLabel
+                        control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                        label="Mode sombre"
+                    />
                 </Box>
             </Drawer>
-
         </div>
-            <div className="search-bar-container"> {/* Conteneur pour la barre de recherche */}
-                <SearchBar onSearch={handleSearch} />
-                {searchResults.length > 0 && (
-                    <div className="search-results">
-                        {searchResults.map((result) => (
-                            <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
-                                {result.nom} ({result.typeMath})
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+        <div className="search-bar-container">
+            <SearchBar onSearch={handleSearch} />
+            {searchResults.length > 0 && (
+                <div className="search-results">
+                    {searchResults.map((result) => (
+                        <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
+                            {result.nom} ({result.typeMath})
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
     </div>
     );
 }
