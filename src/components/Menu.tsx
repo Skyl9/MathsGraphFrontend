@@ -185,7 +185,7 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
         </div>
         <div className="search-bar-container">
             <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch} />
-            {searchResults.length > 0 && (
+            {searchResults.length > 0 && isSearch && (
                 <div className="search-results">
                     {searchResults.map((result) => (
                         <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
