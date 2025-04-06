@@ -3,9 +3,10 @@ import { TextField, Button, Box } from '@mui/material';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
+    setIsSearch:  React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, setIsSearch }) => {
     const [query, setQuery] = useState('');
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,6 +15,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             onSearch(query);
+            setIsSearch(true);
+        }
+        else{
+            setIsSearch(false);
         }
     };
 

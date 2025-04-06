@@ -72,7 +72,7 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
         document.body.removeChild(a);
     };
         const [open, setOpen] = useState(false);
-
+        const [isSearch, setIsSearch] = useState(false);
         const toggleDrawer = (newOpen:boolean) => () => {
             setOpen(newOpen);
         }
@@ -184,7 +184,7 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
             </Drawer>
         </div>
         <div className="search-bar-container">
-            <SearchBar onSearch={handleSearch} />
+            <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch} />
             {searchResults.length > 0 && (
                 <div className="search-results">
                     {searchResults.map((result) => (
@@ -192,6 +192,11 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
                             {result.nom} ({result.typeMath})
                         </div>
                     ))}
+                </div>
+            )}
+            {searchResults.length === 0 && isSearch && (
+                <div className="search-results">
+                    Pas de démonstration trouvé
                 </div>
             )}
         </div>
