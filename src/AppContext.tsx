@@ -132,14 +132,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const goBack = useCallback(() => {
         if (currentIndex <= 0) return;
         setCurrentIndex((prevIndex) => prevIndex - 1);
-        setTargetPosition(history[currentIndex - 1]);
-    }, [currentIndex, history]);
+        const newTargetPosition = history[currentIndex - 1];
+        setTargetPosition(newTargetPosition);
+
+        const newNode = graphData?.nodes.find(node =>
+            node.position[currentView].x === newTargetPosition.x &&
+            node.position[currentView].y === newTargetPosition.y &&
+            node.position[currentView].z === newTargetPosition.z
+        );
+
+        if (newNode) {
+            setSelectedNodeId(newNode.id);
+        }
+
+    }, [currentIndex, currentView, graphData?.nodes, history]);
 
     const goForward = useCallback(() => {
         if (currentIndex >= history.length - 1) return;
         setCurrentIndex((prevIndex) => prevIndex + 1);
-        setTargetPosition(history[currentIndex + 1]);
-    }, [currentIndex, history]);
+        const newTargetPosition = history[currentIndex + 1];
+        setTargetPosition(newTargetPosition);
+
+        // Trouver le nœud correspondant à la nouvelle position cible
+        const newNode = graphData?.nodes.find(node =>
+            node.position[currentView].x === newTargetPosition.x &&
+            node.position[currentView].y === newTargetPosition.y &&
+            node.position[currentView].z === newTargetPosition.z
+        );
+
+        if (newNode) {
+            setSelectedNodeId(newNode.id);
+        }
+    }, [currentIndex, currentView, graphData?.nodes, history]);
 
     // 📌 Mémoïsation du contexte
     const contextValue = useMemo(() => ({
