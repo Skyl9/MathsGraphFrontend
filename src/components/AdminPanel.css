@@ -1,5 +1,5 @@
 /* Conteneur principal du tableau */
-html, body {
+html, body,#root, .admin-container {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -7,15 +7,15 @@ html, body {
 }
 
 .table-container {
-    width: 100%;
-    max-width: 95%;
-    margin: 20px auto;
-    background-color: #1a1a2e;
-    color: #e0e0e0;
-    font-family: Arial, sans-serif;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    display:flex;
+    justify-content: center;
+    height:80%;
+    margin-left:10%;
+    margin-right:10%;
+}
+.enonce-cell{
+    white-space: pre-wrap!important; /* Permet le retour à la ligne */
+    line-height: 1.5!important; /* Ajustez l'espacement entre les lignes si nécessaire */
 }
 
 /* En-tête du tableau */

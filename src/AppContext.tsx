@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useRef, useState,
 import { Vector3 } from "three";
 import { GraphData } from "./type";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
+import {useTexture} from "@react-three/drei";
 
 // 📌 Définition du type pour votre contexte
 interface AppContextProps {
@@ -59,6 +60,8 @@ interface AppContextProps {
 
     debugMode: boolean;
     setDebugMode: React.Dispatch<React.SetStateAction<boolean>>;
+    currentView:string;
+    setCurrentView: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // 📌 Création du contexte
@@ -84,6 +87,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const [needToSetHistory, setNeedToSetHistory] = useState<boolean>(false);
     const [debugMode, setDebugMode] = useState<boolean>(false);
+    const [currentView, setCurrentView] = useState<string>("grille");
 
     const [filters, setFilters] = useState({
         axiome: true,
@@ -102,7 +106,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading(true);
         setError(null);
         try {
-            console.log("Fetching GraphData...",backend_link,'b');
             const response = await fetch(backend_link + "/concepts");
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
@@ -113,6 +116,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             setLoading(false);
         }
     }, []);
+
 
     useEffect(() => {
         fetchGraphData().then(r => console.log("Fetching GraphData...",r));
@@ -159,9 +163,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         filters, setFilters,
 
         ref: controls, loading, error,
-        debugMode, setDebugMode
+        debugMode, setDebugMode,
+        currentView, setCurrentView,
 
-    }), [color, colorAxiome, colorLemme, colortheoreme, colorSides, targetPosition, initialPosition, isPosInitial, selectedNodeId, history, currentIndex, needToSetHistory, moveToPosition, goBack, goForward, graphData, filters, loading, error, debugMode]);
+    }), [color, colorAxiome, colorLemme, colortheoreme, colorSides, targetPosition, initialPosition, isPosInitial, selectedNodeId, history, currentIndex, needToSetHistory, moveToPosition, goBack, goForward, graphData, filters, loading, error, debugMode, currentView]);
 
     return (
         <AppContext.Provider value={contextValue}>

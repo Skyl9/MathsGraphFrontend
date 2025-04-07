@@ -17,7 +17,7 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
 };
 
 export default function Scene() {
-    const { colorLemme, colorAxiome, colortheoreme, graphData, filters, targetPosition, setHistory, currentIndex, setCurrentIndex, history, setDebugMode, debugMode, setTargetPosition, colorSides, selectedNodeId, setSelectedNodeId } = useAppContext();
+    const { currentView, setCurrentView, colorLemme, colorAxiome, colortheoreme, graphData, filters, targetPosition, setHistory, currentIndex, setCurrentIndex, history, setDebugMode, debugMode, setTargetPosition, colorSides, selectedNodeId, setSelectedNodeId } = useAppContext();
 
     const { camera, gl } = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
@@ -37,9 +37,9 @@ export default function Scene() {
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
             gsap.to(camera.position, {
-                x: selectedNode.position[0],
-                y: selectedNode.position[1],
-                z: selectedNode.position[2] + 3,
+                x: selectedNode.position[currentView].x,
+                y: selectedNode.position[currentView].y,
+                z: selectedNode.position[currentView].z + 3,
                 duration: 1.5,
                 onUpdate: () => {
                     controlsRef.current.target.lerp(targetPosition, 1);
@@ -68,13 +68,14 @@ export default function Scene() {
             } else {
                 if (event.key === "d" || event.key === "ArrowRight") {
                     setSelectedNodeId(visibleNodes[(positionListe + 1) % visibleNodes.length].id); // Utilisation de modulo pour boucler
-                    setTargetPosition(new Vector3(...visibleNodes[(positionListe + 1) % visibleNodes.length].position));
+                    const { x, y, z } = visibleNodes[(positionListe + 1) % visibleNodes.length].position[currentView];
+                    setTargetPosition(new Vector3(x, y, z));
                     setShouldBeShowNode(true);
                 }
                 if (event.key === "q" || event.key === "ArrowLeft") {
                     setSelectedNodeId(visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].id); // Utilisation de modulo pour boucler
-                    setTargetPosition(new Vector3(...visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].position));
-                    setShouldBeShowNode(true);
+                    const { x, y, z } = visibleNodes[(positionListe - 1) % visibleNodes.length].position[currentView];
+                    setTargetPosition(new Vector3(x, y, z));                    setShouldBeShowNode(true);
                 }
             }
         };
@@ -114,7 +115,8 @@ export default function Scene() {
 
     useEffect(() => {
         if (selectedNode) {
-            setTargetPosition(new Vector3(...selectedNode.position));
+            const { x, y, z } = selectedNode.position[currentView];
+            setTargetPosition(new Vector3(x, y, z));
         }
     }, [selectedNode, setTargetPosition]);
 
@@ -140,7 +142,7 @@ export default function Scene() {
                     <Node
                         key={node.id}
                         id={node.id}
-                        position={node.position as [number, number, number]}
+                        position={ [node.position[currentView].x,node.position[currentView].y,node.position[currentView].z] }
                         color={getNodeColor(node.typeMath, colors)}
                         nom={node.nom}
                         isSelected={shouldBeShowNode && selectedNodeId === node.id}
@@ -163,8 +165,8 @@ export default function Scene() {
                         return (
                             <Edge
                                 key={index}
-                                start={startNode.position}
-                                end={endNode.position}
+                                start={[startNode.position[currentView].x, startNode.position[currentView].y,startNode.position[currentView].z]}
+                                end={[endNode.position[currentView].x,endNode.position[currentView].y,endNode.position[currentView].z]}
                                 type={edge.type}
                                 color={colorSides}
                                 debug={debugMode}
@@ -173,7 +175,7 @@ export default function Scene() {
                     })}
                 {selectedNode && shouldBeShowNode && (
                     <NodeDetails
-                        position={selectedNode.position}
+                        position={[selectedNode.position[currentView].x,selectedNode.position[currentView].y,selectedNode.position[currentView].z]}
                         nom={selectedNode.nom}
                         typeMath={selectedNode.typeMath}
                         id={selectedNode.id}

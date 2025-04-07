@@ -41,7 +41,8 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
 
             // Graphe
             setFilters,
-            filters} = useAppContext();
+            filters,
+        currentView} = useAppContext();
 
         function resetCamera() {
             const positions = history.map((pos) => new Vector3(pos.x, pos.y, pos.z)); // Positions du graphe passées à votre `Menu`
@@ -89,7 +90,8 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
 
     function handleResultsSearch (node:NodeData) {
         if (node){
-            setTargetPosition(new Vector3(...node.position));
+            const {x,y,z} = node.position.currentView
+            setTargetPosition(new Vector3(x,y,z));
             setSelectedNodeId(node.id);
             console.log("test ",node);
 

@@ -1,22 +1,18 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { MathJaxContext } from "better-react-mathjax";
-import Table from "./Table";
+import {DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel} from "@mui/x-data-grid";
 import { AllNodeData } from "../type";
-import "./AdminPanel.css"; // Assure-toi que les styles sont adaptés
+import "./AdminPanel.css";
 
 export default function AdminPanel() {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [data, setData] = useState<AllNodeData[] | null>(null);
     const [editData, setEditData] = useState<{ [key: number]: Partial<AllNodeData> }>({});
 
-    // États pour tri, filtre et recherche
-    const [sortColumn, setSortColumn] = useState<keyof AllNodeData | null>(null);
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
     const [filterType, setFilterType] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
-    // 📌 Récupération des données depuis l'API
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -50,63 +46,68 @@ export default function AdminPanel() {
         }
     }, []);
 
-
     useEffect(() => {
         fetchData().catch((err) => console.error("Erreur dans useEffect:", err));
     }, [fetchData]);
 
-    // 📌 Gestion des modifications locales avant envoi à l'API
-    const handleEdit = (id: number, field: keyof AllNodeData, value: string) => {
+    const handleEdit = (id: GridRowId, field: keyof AllNodeData, value: string) => {
+        const numericId = typeof id === 'string' ? parseInt(id, 10) : id; // Conversion de id en nombre
+
         setEditData(prev => ({
             ...prev,
-            [id]: { ...prev[id], [field]: value }
+            [numericId]: { ...prev[numericId], [field]: value }
         }));
     };
-
-    // 📌 Envoi des modifications au serveur
     const saveChanges = async (id: number) => {
-        if (!editData[id]) return;
+        console.log("id ", id, "  editData: ", editData);
+
+        if (!data) return;
+        const rowToUpdate = data.find(row => row.id === id);
+        if (!rowToUpdate) return;
         try {
+            console.log("id Intérieur", id, "  data: ", rowToUpdate);
+
             const response = await fetch(process.env.REACT_APP_BACKEND_LINK + `/updateNodes/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(editData[id])
+                body: JSON.stringify(rowToUpdate)
             });
             if (!response.ok) {
-                setError(`Erreur serveur: ${response.status}`)
+                setError(`Erreur serveur: ${response.status}`);
             }
 
-            // Mise à jour locale des données après validation du serveur
-            setData(prev => prev ? prev.map(node => node.id === id ? { ...node, ...editData[id] } : node) : prev);
-            setEditData(prev => ({ ...prev, [id]: {} }));
+            // setData(prev => prev ? prev.map(node => node.id === id ? { ...node, ...editData[id] } : node) : prev);
+            // setEditData(prev => ({ ...prev, [id]: {} }));
         } catch (err) {
             console.error("Erreur lors de l'enregistrement :", err);
         }
     };
 
-    // 📌 Tri des colonnes
-    const handleSort = (column: keyof AllNodeData) => {
-        setSortOrder(prevOrder => (sortColumn === column && prevOrder === "asc" ? "desc" : "asc"));
-        setSortColumn(column);
-    };
+    useEffect(() => {
+        console.log(data)
+    }, [data]);
 
-    // 📌 Liste des types uniques pour le filtre
+    const getRowHeight = useCallback((params:GridRowHeightParams) => {
+        const lineHeight = 1.5;
+        const minHeight = 50;
+        const headerHeight = 48; // Hauteur de l'en-tête
+        const contentHeight = params.model.enonce ? Math.ceil(params.model.enonce.split('\n').length * lineHeight * 16) : minHeight;
+        return Math.max(minHeight, contentHeight) + headerHeight;
+    }, []);
+
     const uniqueTypes = useMemo(() => {
         return data ? Array.from(new Set(data.map(node => node.type))) : [];
     }, [data]);
 
-    // 📌 Filtrage, tri et recherche des données
     const filteredAndSortedData = useMemo(() => {
         if (!data) return [];
 
         let result = [...data];
 
-        // Filtrage par type
         if (filterType) {
             result = result.filter(node => node.type === filterType);
         }
 
-        // Recherche textuelle
         if (searchTerm) {
             const lowerSearch = searchTerm.toLowerCase();
             result = result.filter(node =>
@@ -114,37 +115,51 @@ export default function AdminPanel() {
                 node.enonce.toLowerCase().includes(lowerSearch)
             );
         }
-        // Tri des colonnes
-
-        if (sortColumn) {
-            console.log(sortColumn);
-            result.sort((a, b) => {
-                const valueA = a[sortColumn];
-                const valueB = b[sortColumn];
-
-                // Vérification du type de la colonne pour choisir la bonne méthode de tri
-                if (typeof valueA === "number" && typeof valueB === "number") {
-                    return sortOrder === "asc" ? valueA - valueB : valueB - valueA;
-                } else {
-                    const strA = String(valueA || ""); // Convertit en string si nécessaire
-                    const strB = String(valueB || "");
-                    return sortOrder === "asc"
-                        ? strA.localeCompare(strB)
-                        : strB.localeCompare(strA);
-                }
-            });
-        }
-
 
         return result;
-    }, [data, sortColumn, sortOrder, filterType, searchTerm]);
+    }, [data, filterType, searchTerm]);
+
+    const columns: GridColDef[] = useMemo(() => [
+        { field: 'id', headerName: 'ID', width: 50 },
+        { field: 'nom', headerName: 'Nom', width: 200, editable: true },
+        { field: 'type', headerName: 'Type', width: 100, editable: true },
+        { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, autoHeight: true, cellClassName: 'enonce-cell', // Ajout de la classe CSS
+        },
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            width: 120,
+            renderCell: (params: { row: AllNodeData }) => (
+                <button onClick={() => saveChanges(params.row.id)}>Sauvegarder</button>
+            ),
+        },
+    ], [saveChanges]);
+
+    const rows = useMemo(() => filteredAndSortedData.map(row => ({
+        ...row,
+        id: row.id,
+    })), [filteredAndSortedData]);
+
+    const handleProcessRowUpdate = useCallback(
+        (newRow: GridRowModel<AllNodeData>) => {
+            const id = newRow.id as number;
+            const updatedRow = { ...newRow } as AllNodeData;
+
+            setData((prevData) =>
+                prevData
+                    ? prevData.map((row) => (row.id === id ? updatedRow : row))
+                    : []
+            );
+            return newRow;
+        },
+        [setData]
+    );
 
     return (
         <div className="admin-container">
             <MathJaxContext>
                 <h1 className="admin-title">🔧 Panel d'administration</h1>
 
-                {/* Barre de recherche */}
                 <input
                     type="text"
                     placeholder="Rechercher un théorème..."
@@ -153,7 +168,6 @@ export default function AdminPanel() {
                     className="search-bar"
                 />
 
-                {/* Filtre par type */}
                 <select
                     value={filterType || ""}
                     onChange={(e) => setFilterType(e.target.value || null)}
@@ -170,15 +184,15 @@ export default function AdminPanel() {
                 {error && <div className="error-message">⚠ {error}</div>}
                 {loading && <div className="loading-message">⏳ Chargement des données...</div>}
                 {data && (
-                    <Table
-                        data={filteredAndSortedData}
-                        editData={editData}
-                        handleEdit={handleEdit}
-                        saveChanges={saveChanges}
-                        handleSort={handleSort}
-                        sortColumn={sortColumn}
-                        sortOrder={sortOrder}
-                    />
+                    <div className={"table-container"}>
+                        <DataGrid
+                            rows={rows}
+                            columns={columns}
+                            processRowUpdate={handleProcessRowUpdate}
+                            onProcessRowUpdateError={(error) => console.error(error)}
+                            getRowHeight={getRowHeight}
+                        />
+                    </div>
                 )}
             </MathJaxContext>
         </div>

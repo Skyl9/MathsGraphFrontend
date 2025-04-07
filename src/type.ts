@@ -1,7 +1,9 @@
 export interface NodeData {
     id: number;
-    position: [number, number, number];
     nom: string;
+    position: {
+        [grille:string] : { x: number; y: number; z: number };
+    };
     typeMath: string;
 }
 
