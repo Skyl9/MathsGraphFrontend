@@ -19,17 +19,49 @@ export interface GraphData {
     edges: EdgeData[];
 }
 
+// AllNodeData.ts
+export interface Alias {
+    alias: string;
+}
+
+export interface Source {
+    id: number;
+    titre: string;
+    auteur?: string;
+    annee?: number;
+    url?: string;
+    type?: string;
+}
+
+export interface NomEtranger {
+    Nom_étranger: string;
+    langue: string;
+}
+export interface Relations {
+    id: number;
+    concept_source: {"id": number, nom: string };
+    concept_cible:{"id": number, nom: string };
+    type_relation: string;
+    description:string;
+}
 export interface AllNodeData {
     id: number;
-    position: [number, number, number];
     nom: string;
     type: string;
-    enonce : string;
-    demonstration: string|null;
-    mathematicien:string|null;
-    categorie:string|null;
-    x:number;
-    y:number;
-    z:number;
-    verification:boolean;
+    enonce: string;
+    categorie: {
+        id: number;
+        category: string;
+    };
+    aliases?: string[];
+    mathematicien: {
+        id: number;
+        mathematicien: string;
+    };
+    date_ajout: string;
+    demonstration: string;
+    relations: Relations[];
+    sources?: Source[];
+    verification: boolean;
+    noms_etrangers?: NomEtranger[];
 }

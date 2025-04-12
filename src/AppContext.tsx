@@ -119,7 +119,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
 
     useEffect(() => {
-        fetchGraphData().then(r => console.log("Fetching GraphData...",r));
+        fetchGraphData().then(r => console.log("Fetching GraphData..."));
     }, [fetchGraphData]);
 
     // 📌 Fonctions de navigation

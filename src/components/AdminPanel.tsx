@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { MathJaxContext } from "better-react-mathjax";
-import {DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel} from "@mui/x-data-grid";
-import { AllNodeData } from "../type";
+import { DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel } from "@mui/x-data-grid";
+import { AllNodeData, Alias, Source, NomEtranger } from "../type"; // Importe tes types
 import "./AdminPanel.css";
 
 export default function AdminPanel() {
@@ -58,6 +58,7 @@ export default function AdminPanel() {
             [numericId]: { ...prev[numericId], [field]: value }
         }));
     };
+
     const saveChanges = async (id: number) => {
         console.log("id ", id, "  editData: ", editData);
 
@@ -75,25 +76,23 @@ export default function AdminPanel() {
             if (!response.ok) {
                 setError(`Erreur serveur: ${response.status}`);
             }
-
-            // setData(prev => prev ? prev.map(node => node.id === id ? { ...node, ...editData[id] } : node) : prev);
-            // setEditData(prev => ({ ...prev, [id]: {} }));
         } catch (err) {
             console.error("Erreur lors de l'enregistrement :", err);
         }
     };
 
     useEffect(() => {
-        console.log(data)
+        console.log(data);
     }, [data]);
 
-    const getRowHeight = useCallback((params:GridRowHeightParams) => {
+    const getRowHeight = useCallback((params: GridRowHeightParams) => {
         const lineHeight = 1.5;
         const minHeight = 50;
         const headerHeight = 48; // Hauteur de l'en-tête
-        const contentHeight = params.model.enonce ? Math.ceil(params.model.enonce.split('\n').length * lineHeight * 16) : minHeight;
+        const contentHeight = params.model.enonce ? Math.ceil(params.model.enonce.length / 100 * lineHeight * 16) : minHeight;
         return Math.max(minHeight, contentHeight) + headerHeight;
     }, []);
+
 
     const uniqueTypes = useMemo(() => {
         return data ? Array.from(new Set(data.map(node => node.type))) : [];
@@ -119,12 +118,106 @@ export default function AdminPanel() {
         return result;
     }, [data, filterType, searchTerm]);
 
+    const renderCenteredCell = (params: any) => (
+        <div className="cell-wrapper">
+            {params.value}
+        </div>
+    );
+
     const columns: GridColDef[] = useMemo(() => [
-        { field: 'id', headerName: 'ID', width: 50 },
-        { field: 'nom', headerName: 'Nom', width: 200, editable: true },
-        { field: 'type', headerName: 'Type', width: 100, editable: true },
-        { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, autoHeight: true, cellClassName: 'enonce-cell', // Ajout de la classe CSS
+        {
+            field: 'id',
+            headerName: 'ID',
+            width: 100,
+            renderCell: (params: { row: AllNodeData }) => {
+                return (
+                    <a href={`/node/${params.row.id}`} target="_blank" rel="noopener noreferrer" className="cell-wrapper">
+                        {params.row.id}
+                    </a>
+                );
+            }
         },
+        { field: 'nom', headerName: 'Nom', width: 200, editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
+        { field: 'type', headerName: 'Type', width: 100, editable: true, renderCell: renderCenteredCell },
+        { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, autoHeight: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
+        { field: 'categorie', headerName: 'Catégorie', editable: true, renderCell: renderCenteredCell },
+
+        {
+            field: 'aliases',
+            headerName: 'Alias',
+            editable: true,
+            cellClassName: 'enonce-cell',
+            renderCell: (params: { row: AllNodeData }) => {
+                const aliases = params.row.aliases || [];
+                return (
+                    <div className="cell-wrapper">
+                        {aliases.length > 0 ? (
+                            aliases.map((alias: string, index: number) => <div key={index}>{alias}</div>)
+                        ) : (
+                            <span>Aucun alias</span>
+                        )}
+                    </div>
+                );
+            }
+        },
+
+        { field: 'date_ajout', headerName: 'Date d\'ajout', editable: true, renderCell: renderCenteredCell },
+        { field: 'demonstration', headerName: 'Démonstration', editable: true, cellClassName: 'enonce-cell', width: 400, renderCell: renderCenteredCell },
+        { field: 'relations', headerName: 'Relations', editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
+        { field: "verification", headerName: "Vérification", editable: true , renderCell:(params:{row:AllNodeData}) => {
+                const verif:boolean = params.row.verification
+            return (
+                <div key={params.row.id}>
+                    {(verif ? '✅' : '❌')}
+                </div>
+            )
+
+            }
+        },
+
+        {
+            field: 'sources',
+            headerName: 'Sources',
+            editable: true,
+            cellClassName: 'enonce-cell',
+            width: 300,
+            renderCell: (params: { row: AllNodeData }) => {
+                const sources = params.row.sources || [];
+                return (
+                    <div className="cell-wrapper">
+                        {sources.length > 0 ? (
+                            sources.map((source: Source, index: number) => <div key={index}>{source.titre}</div>)
+                        ) : (
+                            <span>Aucune source</span>
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
+            field: "noms_etrangers",
+            headerName: "Noms étrangers",
+            editable: true,
+            cellClassName: 'enonce-cell',
+            width : 300,
+            renderCell: (params: { row: AllNodeData }) => {
+                const noms = params.row.noms_etrangers || [];
+                return (
+                    <div className={"cell-lang"}  >
+                        {noms.length > 0 ? (
+                            noms.map((nom: NomEtranger, index: number) => (
+                                <div key={index} className={"cell-wrapper"}>
+                                    {nom.Nom_étranger} ({nom.langue})
+                                </div>
+                            ))
+                        ) : (
+                            <span>Aucun nom étranger</span>
+                        )}
+                    </div>
+                );
+            }
+        },
+
         {
             field: 'actions',
             headerName: 'Actions',
@@ -133,7 +226,8 @@ export default function AdminPanel() {
                 <button onClick={() => saveChanges(params.row.id)}>Sauvegarder</button>
             ),
         },
-    ], [saveChanges]);
+    ], []);
+
 
     const rows = useMemo(() => filteredAndSortedData.map(row => ({
         ...row,
