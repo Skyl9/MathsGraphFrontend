@@ -13,7 +13,7 @@ import {
 import {useAppContext} from "../AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchBar from "./SearchBar";
-import {NodeData} from "../type";
+import {NodeData} from "../types/types";
 import "./Menu.css";
 
 interface MenuProps {

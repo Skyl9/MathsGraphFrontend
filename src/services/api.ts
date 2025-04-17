@@ -1,0 +1,46 @@
+const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
+
+export const nodeApi = {
+    getNode: async (id: string) => {
+        const response = await fetch(`${BASE_URL}/getNode/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+
+    updateNode: async (id: string, field: string, value: any) => {
+        const response = await fetch(`${BASE_URL}/updateOneCategory/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ field, value })
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+        return response.json();
+    },
+
+    getEditableFieldsOptions: async (id: string) => {
+        const response = await fetch(`${BASE_URL}/getEditableFieldsOptions/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+
+    updateRelations: async (id: string, relations: any[]) => {
+        return nodeApi.updateNode(id, 'relations', relations);
+    },
+
+    updateAliases: async (id: string, aliases: string[]) => {
+        return nodeApi.updateNode(id, 'aliases', aliases);
+    },
+
+    handleError: (error: unknown) => {
+        if (error instanceof Error) {
+            return `Erreur : ${error.message}`;
+        }
+        return "Erreur inconnue";
+    }
+};

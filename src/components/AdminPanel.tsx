@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { MathJaxContext } from "better-react-mathjax";
 import { DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel } from "@mui/x-data-grid";
-import { AllNodeData, Alias, Source, NomEtranger } from "../type"; // Importe tes types
+import { AllNodeData, Alias, Source, NomEtranger } from "../types/types"; // Importe tes types
 import "./AdminPanel.css";
 
 export default function AdminPanel() {

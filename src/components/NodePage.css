@@ -142,3 +142,25 @@
     padding: 2px 0;
     font-size: 0.95rem;
 }
+
+.source-edit-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.source-edit-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.source-input {
+    min-width: 120px;
+    flex: 1;
+}
+
+.source-select {
+    min-width: 120px;
+}

@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Vector3 } from "three";
-import { GraphData } from "./type";
+import { GraphData } from "./types/types";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
-import {useTexture} from "@react-three/drei";
 
 // 📌 Définition du type pour votre contexte
 interface AppContextProps {
