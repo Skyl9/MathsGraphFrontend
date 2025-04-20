@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
-import Scene from "./components/Scene";
+import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
-import { AppProvider, useAppContext } from "./AppContext";
+import { AppProvider, useAppContext } from "./contexts/AppContext";
 import NodePage from "./components/NodePage";
-import AdminPanel from "./components/AdminPanel";
+import AdminPanel from "./pages/AdminPanel";
 import { createTheme, ThemeProvider } from "@mui/material";
 
 // Fonction pour créer le thème en fonction du mode sombre

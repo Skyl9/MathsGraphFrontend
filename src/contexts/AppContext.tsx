@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Vector3 } from "three";
-import { GraphData } from "./types/types";
+import { GraphData } from "../types/types";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
 
 // 📌 Définition du type pour votre contexte

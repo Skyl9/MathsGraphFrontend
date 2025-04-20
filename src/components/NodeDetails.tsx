@@ -3,7 +3,7 @@ import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Card, CardContent, Typography, IconButton, Link, Box, CardActions } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import './NodeDetails.css';
+import '../styles/NodeDetails.css';
 
 interface NodeDetailsProps {
     position: [number, number, number];

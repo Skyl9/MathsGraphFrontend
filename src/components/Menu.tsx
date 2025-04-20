@@ -10,11 +10,11 @@ import {
     Checkbox,
     Divider, Switch,
 } from '@mui/material';
-import {useAppContext} from "../AppContext";
+import {useAppContext} from "../contexts/AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchBar from "./SearchBar";
 import {NodeData} from "../types/types";
-import "./Menu.css";
+import "../styles/Menu.css";
 
 interface MenuProps {
 

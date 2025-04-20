@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
-import "./NodePage.css";
-import "./EditNodeModal.css";
+import "../styles/NodePage.css";
+import "../styles/EditNodeModal.css";
 import {useNodeEdit} from "../hooks/useNodeEdit";
 import {EditModal} from "./EditModal";
 import {NomsEtrangersCollapse} from "./NodeFields/NomsEtrangers";
 import HtmlField from "./NodeFields/HtmlField";
 import VerifField from "./NodeFields/VerifField";
 import DateField from "./NodeFields/DateField";
-import ObjectField from "./NodeFields/ObjectField";
 import AliasesField from "./NodeFields/AliasesField";
 import SourcesField from "./NodeFields/SourcesField";
 import RelationsField from "./NodeFields/RelationsField";

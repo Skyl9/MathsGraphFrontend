@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useCallback, useRef, useState } from "react"
 import { useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { Vector3 } from "three";
-import Node from "./Node";
-import Edge from "./Edge";
-import NodeDetails from "./NodeDetails";
-import { useAppContext } from "../AppContext";
+import Node from "../components/Node";
+import Edge from "../components/Edge";
+import NodeDetails from "../components/NodeDetails";
+import { useAppContext } from "../contexts/AppContext";
 import gsap from "gsap";
 import { NodeData } from "../types/types"; // Importez les types précis
 
