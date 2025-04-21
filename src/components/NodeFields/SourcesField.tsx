@@ -20,11 +20,6 @@ const SourcesField: React.FC<SourcesFieldProps> = ({ sources, onEdit, editable =
             ))
           : "Aucune source"}
       </div>
-      {editable && onEdit && (
-        <button className="edit-button" onClick={onEdit}>
-          ✏️
-        </button>
-      )}
     </div>
   );
 };

@@ -29,7 +29,6 @@ export const useNodeData = (id: string) => {
 
         try {
             const fetchedData = await nodeApi.getNode(id);
-            console.log("fetchedData",fetchedData as AllNodeData);
             setData(fetchedData);
 
         } catch (err) {
@@ -74,6 +73,7 @@ export const useNodeData = (id: string) => {
 
     return {
         data,
+        setData,
         loading,
         error,
         editableFieldsOptions,

@@ -1,30 +1,34 @@
 // components/EditModal.tsx
-import React from 'react';
-import {AllNodeData, EditableField, ModalProps, NomEtranger, Relations, Source} from "../types/types";
+import React, {useEffect} from 'react';
+import {ModalProps, NomEtranger, Relations, Source} from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
-import { RelationEdit } from './Relations/RelationEdit';
+import {RelationEdit} from './NodeFields/RelationEdit';
 import SourceEdit from './NodeFields/SourceEdit';
 import AliasEdit from './NodeFields/AliasEdit';
 import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
+import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch} from "@mui/material";
+import {stringify} from "node:querystring";
 
 
 export const EditModal: React.FC<ModalProps> = ({
-    isOpen,
-    onClose,
-    onSave,
-    field,
-    value,
-    onChange,
-    fieldConfig,
-    data
-}) => {
+                                                    isOpen,
+                                                    onClose,
+                                                    onSave,
+                                                    field,
+                                                    value,
+                                                    onChange,
+                                                    fieldConfig,
+                                                    data,
+                                                    setData
+                                                }) => {
+
     // Pour les relations
     const handleRelationChange = (index: number, updatedRelation: Relations) => {
         if (data) {
             const updated = [...data.relations];
             updated[index] = updatedRelation;
-            onChange({ ...data, relations: updated });
+            setData({...data, relations: updated});
         }
     };
 
@@ -33,7 +37,7 @@ export const EditModal: React.FC<ModalProps> = ({
         if (data) {
             const updated = [...data.sources];
             updated[index] = updatedSource;
-            onChange({ ...data, sources: updated });
+            setData({...data, sources: updated});
         }
     };
 
@@ -41,8 +45,8 @@ export const EditModal: React.FC<ModalProps> = ({
     const handleAliasChange = (index: number, value: string) => {
         if (data) {
             const updated = [...data.aliases];
-            updated[index] = value;
-            onChange({ ...data, aliases: updated });
+            updated[index] = value
+            setData({...data, aliases: updated});
         }
     };
 
@@ -51,72 +55,78 @@ export const EditModal: React.FC<ModalProps> = ({
         if (data && data.noms_etrangers) {
             const updated = [...data.noms_etrangers];
             updated[index] = updatedNom;
-            onChange({ ...data, noms_etrangers: updated });
+            setData({...data, noms_etrangers: updated});
         }
     };
     return (
         <div className="modal">
             <div className="modal-content">
                 <h2>Modifier {fieldConfig.label}</h2>
-                {fieldConfig.type === "select" ? (
-                    <select
-                        value={value || ""}
-                        onChange={(e) => onChange(e.target.value)}
-                    >
-                        {fieldConfig.options?.map((option, index) => (
-                            <option key={index} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
+                {fieldConfig.type === "select" && fieldConfig.options ? (
+                    <FormControl fullWidth>
+                        <InputLabel id="labelField">{fieldConfig.label}</InputLabel>
+                        <Select
+                            labelId="LabelSelection"
+                            id="simple-select"
+                            value={fieldConfig.options.includes(value) ? value : ''}
+                            onChange={(e) => onChange(e.target.value)}
+                        >
+                            {fieldConfig.options?.map((option, index) => (
+                                <MenuItem key={index} value={option}>
+                                    {option}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
                 ) : fieldConfig.type === "checkbox" ? (
                     // Si c'est un champ de type "checkbox", afficher une case à cocher
-                    <input
-                        type="checkbox"
-                        checked={value === "true"}
-                        onChange={(e) => onChange(e.target.checked ? "true" : "false")}
-                    />
+                    <FormControl>
+                        <FormControlLabel control={<Switch checked={Boolean(value).valueOf()}
+                                                           onChange={(e) => onChange(e.target.checked)}
+                                                           name="Vérification"/>} label="Vérification du concept"/>
+                    </FormControl>
                 ) : fieldConfig.type === "none" ? (
                     <></>
                 ) : fieldConfig.type === "alias" && Array.isArray(data?.aliases) && data ? (
                     <div className="alias-edit-wrapper">
                         {data.aliases.map((alias, index) => (
-                            <AliasEdit 
-                                key={index} 
-                                alias={alias} 
-                                index={index} 
-                                onChange={handleAliasChange} 
+                            <AliasEdit
+                                key={index}
+                                alias={alias}
+                                index={index}
+                                onChange={handleAliasChange}
                             />
                         ))}
                     </div>
                 ) : fieldConfig.type === "relation" && Array.isArray(data?.relations) && data ? (
                     <div className="relation-edit-wrapper">
                         {data.relations.map((rel, index) => (
-                            <RelationEdit 
-                                key={rel.id} 
-                                relation={rel} 
-                                onChange={(updatedRelation) => handleRelationChange(index, updatedRelation)} 
+                            <RelationEdit
+                                key={rel.id}
+                                relation={rel}
+                                onChange={(updatedRelation) => handleRelationChange(index, updatedRelation)}
                             />
                         ))}
                     </div>
                 ) : fieldConfig.type === "sources" && data ? (
                     <div className="source-edit-wrapper">
                         {data.sources.map((src, index) => (
-                            <SourceEdit 
-                                key={src.id} 
-                                source={src} 
-                                onChange={(updatedSource) => handleSourceChange(index, updatedSource)} 
+                            <SourceEdit
+                                key={src.id}
+                                source={src}
+                                onChange={(updatedSource) => handleSourceChange(index, updatedSource)}
                             />
                         ))}
                     </div>
                 ) : fieldConfig.type === "nom_etranger" && Array.isArray(data?.noms_etrangers) && data ? (
                     <div className="nom-etranger-edit-wrapper">
                         {data.noms_etrangers.map((nom, index) => (
-                            <NomEtrangerEdit 
-                                key={index} 
-                                nomEtranger={nom} 
-                                index={index} 
-                                onChange={handleNomEtrangerChange} 
+                            <NomEtrangerEdit
+                                key={index}
+                                nomEtranger={nom}
+                                index={index}
+                                onChange={handleNomEtrangerChange}
                             />
                         ))}
                     </div>
@@ -127,9 +137,9 @@ export const EditModal: React.FC<ModalProps> = ({
                         onChange={onChange}
                         modules={{
                             toolbar: [
-                                [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
-                                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                                [{ 'align': [] }],
+                                [{'header': '1'}, {'header': '2'}, {'font': []}],
+                                [{'list': 'ordered'}, {'list': 'bullet'}],
+                                [{'align': []}],
                                 ['bold', 'italic', 'underline'],
                                 ['link'],
                             ],

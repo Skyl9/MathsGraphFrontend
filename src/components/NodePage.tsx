@@ -12,7 +12,10 @@ import DateField from "./NodeFields/DateField";
 import AliasesField from "./NodeFields/AliasesField";
 import SourcesField from "./NodeFields/SourcesField";
 import RelationsField from "./NodeFields/RelationsField";
+import EditIcon from '@mui/icons-material/Edit';
+
 import DOMPurify from 'dompurify';
+import { Fab } from "@mui/material";
 
 
 const NodePage: React.FC = () => {
@@ -28,15 +31,14 @@ const NodePage: React.FC = () => {
         setNewContent,
         handleEdit,
         saveChanges,
-        cancelChanges
+        cancelChanges,
+        setData
     } = useNodeEdit(id || "");
 
     // Local state for editing data
-    const [localData, setData] = useState<AllNodeData | null>(null);
 
     // Update local data when data from hook changes
     useEffect(() => {
-        console.log("dataLocal",data)
         if (data) {
             setData(data);
         }
@@ -44,7 +46,7 @@ const NodePage: React.FC = () => {
 
 
     const renderCellContent = (field: keyof AllNodeData) => {
-        const value = localData?.[field];
+        const value = data?.[field];
 
         switch (field) {
             case "demonstration":
@@ -129,29 +131,26 @@ const NodePage: React.FC = () => {
 
     if (loading) return <p>Chargement...</p>;
     if (error) return <p>{error}</p>;
-    if (localData === null) return (<p>Chargement</p>)
+    if (data === null) return (<p>Chargement</p>)
 
     return (
         <div className="node-container">
-            <h1 className="node-title">{localData?.nom}</h1>
+            <h1 className="node-title">{data?.nom}</h1>
 
             <div className="node-info">
                 {Object.entries(editableFields).map(([field, config]) => (
-                    <p key={field}>
-                        <div>
+                    <div key={field} className="lineWrapper">
+                        <div className={"field-wrapper"}>
                             {renderCellContent(field as keyof AllNodeData)}
                         </div>
                         {(config.type === 'text' || config.type === 'select' || config.type === "checkbox" || config.type === "relation" || config.type === "alias" || config.type === "sources" || config.type === "nom_etranger") && (
-                            <button
-                                className="edit-button"
-                                onClick={() => {
+                            <Fab color="primary" aria-label="edit" size="small">
+                                <EditIcon className = "edit_button"                                 onClick={() => {
                                     handleEdit(field as keyof AllNodeData);
-                                }}
-                            >
-                                ✏️
-                            </button>
+                                }}/>
+                            </Fab>
                         )}
-                    </p>
+                    </div>
                 ))}
             </div>
 
@@ -163,7 +162,8 @@ const NodePage: React.FC = () => {
                            value={newContent}
                            onChange={setNewContent}
                            fieldConfig={editableFields[currentEditField]}
-                           data={localData}
+                           data={data}
+                           setData={setData}
                 ></EditModal>
             }
 

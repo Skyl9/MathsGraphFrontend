@@ -95,3 +95,9 @@
     max-width: 600px; /* Largeur maximale de 600px */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Ajout d'une ombre pour l'effet de profondeur */
 }
+.relation-edit-line{
+padding-bottom : 2em
+}
+.alias-edit-line{
+    padding-bottom : 2em
+}

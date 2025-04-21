@@ -32,6 +32,7 @@ export interface ModalProps {
     onChange: (value: any) => void;
     fieldConfig: EditableField;
     data?: AllNodeData | null;
+    setData: (data: AllNodeData) => void;
 }
 
 
