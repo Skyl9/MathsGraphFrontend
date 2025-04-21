@@ -25,3 +25,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /Test/
+/src/assets/Graph Data (2).json
+/.junie/guidelines.md
+/src/__tests__/NodeDetails.test.tsx
