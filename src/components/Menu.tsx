@@ -80,8 +80,15 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
     const [searchResults, setSearchResults] = useState<NodeData[]>([]); // Typage précis
 
     const handleSearch = useCallback((query: string) => {
+        if (!query || typeof query !== 'string') {
+            setSearchResults([]);
+            return;
+        }
+
         if (graphData) {
-            const results = graphData.nodes.filter((node) => node.nom.toLowerCase().includes(query.toLowerCase()));
+            const results = graphData.nodes.filter((node) =>
+                node.nom.toLowerCase().includes(query.toLowerCase())
+            );
             setSearchResults(results);
         } else {
             setSearchResults([]);
@@ -90,11 +97,10 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
 
     function handleResultsSearch (node:NodeData) {
         if (node){
-            const {x,y,z} = node.position.currentView
+            const {x,y,z} = node.position[currentView]
+            console.log(x,y,z)
             setTargetPosition(new Vector3(x,y,z));
             setSelectedNodeId(node.id);
-            console.log("test ",node);
-
         }
 
     }

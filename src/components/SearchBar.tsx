@@ -43,6 +43,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, setIsSearch }) => {
                 value={query}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
+                autoComplete="off"
             />
             <Button variant="contained" onClick={handleSearch}>
                 Rechercher
