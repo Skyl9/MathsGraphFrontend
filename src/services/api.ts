@@ -28,6 +28,40 @@ export const nodeApi = {
         }
         return response.json();
     },
+    createCategory: async (nom: string) => {
+        const response = await fetch(`${BASE_URL}/createCategory`,{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "value":nom })
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création de la catégorie");
+        }
+        return response.json();
+    },
+    createType: async (nom: string) => {
+        const response = await fetch(`${BASE_URL}/createType`,{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "value":nom })
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création du type");
+        }
+        return response.json();
+    },
+    createMathematicien: async (nom: string) => {
+        const response = await fetch(`${BASE_URL}/createMathematicien`,{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "value":nom })
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création du mathématicien");
+        }
+        return response.json();
+    },
+
 
     updateRelations: async (id: string, relations: any[]) => {
         return nodeApi.updateNode(id, 'relations', relations);
@@ -36,6 +70,7 @@ export const nodeApi = {
     updateAliases: async (id: string, aliases: string[]) => {
         return nodeApi.updateNode(id, 'aliases', aliases);
     },
+
 
     handleError: (error: unknown) => {
         if (error instanceof Error) {

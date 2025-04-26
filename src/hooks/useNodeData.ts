@@ -70,6 +70,52 @@ export const useNodeData = (id: string) => {
             return false;
         }
     };
+    const createField = async (field: keyof AllNodeData, value: any) => {
+        try {
+            console.log(field.toLowerCase());
+            switch (field.toLowerCase()) {
+                case "id":
+                    break;
+                case "nom":
+                    break;
+                case "enonce":
+                    break;
+                case "categorie":
+                    await nodeApi.createCategory(value);
+                    break;
+                case "aliases":
+                    break;
+                case "mathematicien":
+                    await nodeApi.createMathematicien(value);
+                    break;
+                case "date_ajout":
+                    break;
+                case "demonstration":
+                    break;
+                case "relations":
+                    break;
+                case "sources":
+                    break;
+                case "verification":
+                    break;
+                case "noms_etrangers":
+                    break;
+                case "type":
+                    await nodeApi.createType(value);
+                    break;
+
+
+                default:
+                    console.log("Champs non trouvé")
+            }
+            await fetchData();
+            await fetchOptions();
+
+        }catch (err) {
+            setError(nodeApi.handleError(err));
+            return false;
+        }
+    }
 
     return {
         data,
@@ -78,6 +124,7 @@ export const useNodeData = (id: string) => {
         error,
         editableFieldsOptions,
         updateField,
-        refetchData: fetchData
+        refetchData: fetchData,
+        createField
     };
 };

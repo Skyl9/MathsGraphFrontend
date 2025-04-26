@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import {useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
 import "../styles/NodePage.css";
@@ -32,7 +32,9 @@ const NodePage: React.FC = () => {
         handleEdit,
         saveChanges,
         cancelChanges,
-        setData
+        setData,
+        createField,
+
     } = useNodeEdit(id || "");
 
     // Local state for editing data
@@ -164,6 +166,7 @@ const NodePage: React.FC = () => {
                            fieldConfig={editableFields[currentEditField]}
                            data={data}
                            setData={setData}
+                           createField = {createField}
                 ></EditModal>
             }
 

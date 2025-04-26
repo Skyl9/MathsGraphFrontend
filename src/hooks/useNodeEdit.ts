@@ -1,10 +1,10 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import { AllNodeData } from '../types/types';
 import { useNodeData } from './useNodeData';
 import { createEditableFields } from '../constants/editableFields';
 
 export const useNodeEdit = (id: string) => {
-  const { data,setData, loading, error, editableFieldsOptions, updateField, refetchData } = useNodeData(id);
+  const { data,setData, loading, error, editableFieldsOptions, updateField, refetchData,createField } = useNodeData(id);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEditField, setCurrentEditField] = useState<keyof AllNodeData | null>(null);
   const [newContent, setNewContent] = useState<string | undefined>(undefined);
@@ -66,6 +66,8 @@ export const useNodeEdit = (id: string) => {
     saveChanges,
     cancelChanges,
     refetchData,
-    setData
+    setData,
+    createField,
+
   };
 };

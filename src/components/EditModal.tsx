@@ -1,5 +1,5 @@
 // components/EditModal.tsx
-import React, {useEffect} from 'react';
+import React from 'react';
 import {ModalProps, NomEtranger, Relations, Source} from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
@@ -7,9 +7,10 @@ import {RelationEdit} from './NodeFields/RelationEdit';
 import SourceEdit from './NodeFields/SourceEdit';
 import AliasEdit from './NodeFields/AliasEdit';
 import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
+import FieldAdd from "./NodeFields/FieldAdd"
 import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch} from "@mui/material";
-import {stringify} from "node:querystring";
 
+// TODO Mettre en place le bouton d'ajout de catégorie
 
 export const EditModal: React.FC<ModalProps> = ({
                                                     isOpen,
@@ -20,7 +21,8 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     onChange,
                                                     fieldConfig,
                                                     data,
-                                                    setData
+                                                    setData,
+                                                    createField
                                                 }) => {
 
     // Pour les relations
@@ -77,7 +79,29 @@ export const EditModal: React.FC<ModalProps> = ({
                                 </MenuItem>
                             ))}
                         </Select>
+                        {field === "type" && fieldConfig.type === "select" && (
+                            <FieldAdd
+                                label="Type"
+                                onChange={onChange}
+                                createField = {createField}
+                            />
+                        )}
+                        {field === "categorie" && fieldConfig.type === "select" && (
+                            <FieldAdd
+                                label="categorie"
+                                onChange={onChange}
+                                createField = {createField}
+                            />
+                        )}
+                        {field === "mathematicien" && fieldConfig.type === "select" && (
+                            <FieldAdd
+                                label="mathematicien"
+                                onChange={onChange}
+                                createField = {createField}
+                            />
+                        )}
                     </FormControl>
+
 
                 ) : fieldConfig.type === "checkbox" ? (
                     // Si c'est un champ de type "checkbox", afficher une case à cocher
