@@ -61,6 +61,17 @@ export const nodeApi = {
         }
         return response.json();
     },
+    createAlias: async (id:number,nom: string) => {
+        const response = await fetch(`${BASE_URL}/createAlias`,{
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ "id":id, "value":nom })
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création de l'alias");
+        }
+        return response.json();
+    },
 
 
     updateRelations: async (id: string, relations: any[]) => {

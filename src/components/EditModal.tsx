@@ -9,8 +9,11 @@ import AliasEdit from './NodeFields/AliasEdit';
 import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
 import FieldAdd from "./NodeFields/FieldAdd"
 import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch} from "@mui/material";
+import FieldAddAlias from "./NodeFields/FieldAddAlias";
 
-// TODO Mettre en place le bouton d'ajout de catégorie
+// TODO Mettre en place le bouton d'ajout de Source, Relation, NomEtranger
+
+//TODO Mettre en place les boutons de suppressions d'éléments
 
 export const EditModal: React.FC<ModalProps> = ({
                                                     isOpen,
@@ -122,6 +125,9 @@ export const EditModal: React.FC<ModalProps> = ({
                                 onChange={handleAliasChange}
                             />
                         ))}
+                        <FormControl>
+                            <FieldAddAlias createField={createField} onChange={onChange} id = {data.id}></FieldAddAlias>
+                        </FormControl>
                     </div>
                 ) : fieldConfig.type === "relation" && Array.isArray(data?.relations) && data ? (
                     <div className="relation-edit-wrapper">

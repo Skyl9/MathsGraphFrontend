@@ -84,6 +84,7 @@ export const useNodeData = (id: string) => {
                     await nodeApi.createCategory(value);
                     break;
                 case "aliases":
+                    await nodeApi.createAlias(value["id"],value["value"]);
                     break;
                 case "mathematicien":
                     await nodeApi.createMathematicien(value);

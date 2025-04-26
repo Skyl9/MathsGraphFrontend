@@ -7,7 +7,17 @@ import { AppProvider, useAppContext } from "./contexts/AppContext";
 import NodePage from "./components/NodePage";
 import AdminPanel from "./pages/AdminPanel";
 import { createTheme, ThemeProvider } from "@mui/material";
+import {AboutPage} from "./AboutPage";
+import {SupportPage} from "./SupportPage";
+import {HomePage} from "./HomePage";
+import { LostPage } from "./LostPage";
 
+
+// TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
+
+// TODO Mettre en place page de l'ensemble 1. Liste des noeuds 2. Liste des théorèmes/axiomes/lemmes (possiblement avec un filtre de 1.) 3. Liste des relations 4. Liste des sources 5. Liste des mathématiciens 6. Liste des catégories 7. Liste des types
+
+// TODO Finaliser l'arborescence des pages et mettre en place un /graph + id du noeud pour afficher le graphique de ce noeud directement
 // Fonction pour créer le thème en fonction du mode sombre
 const getTheme = (darkMode: boolean) =>
     createTheme({
@@ -38,9 +48,13 @@ const App: React.FC = () => {
                     {" "}
                     {/* Active la gestion des routes */}
                     <Routes>
-                        <Route path="/" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode} />} /> {/* Passe le state et le setter au composant */}
+                        <Route path="/" element={<HomePage/>} /> {/* Passe le state et le setter au composant */}
+                        <Route path="/graph" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode} />} />
                         <Route path="/node/:id" element={<NodePage />} />
                         <Route path="/admin" element={<AdminPanel />} />
+                        <Route path="/about" element={<AboutPage />} />
+                        <Route path="/support" element={<SupportPage />} />
+                        <Route path="*" element={<LostPage/>} />
                     </Routes>
                 </Router>
             </ThemeProvider>
