@@ -37,7 +37,23 @@ const NodePage: React.FC = () => {
 
     } = useNodeEdit(id || "");
 
-    // Local state for editing data
+    // Local state for editing dataconst
+    const propertyOrder: (keyof AllNodeData)[] = [
+        "id",
+        "nom",
+        "type",
+        "enonce",
+        "categorie",
+        "mathematicien",
+        "date_ajout",
+        "demonstration",
+        "aliases",
+        "sources",
+        "relations",
+        "verification",
+        "noms_etrangers"
+    ];
+
 
     // Update local data when data from hook changes
     useEffect(() => {
@@ -51,6 +67,10 @@ const NodePage: React.FC = () => {
         const value = data?.[field];
 
         switch (field) {
+            case "nom":
+                return (
+                    <HtmlField title={"Nom"} content={value as string}></HtmlField>
+                )
             case "demonstration":
                 return (
                     <HtmlField title={"Démonstration"} content={value as string}></HtmlField>
@@ -140,20 +160,32 @@ const NodePage: React.FC = () => {
             <h1 className="node-title">{data?.nom}</h1>
 
             <div className="node-info">
-                {Object.entries(editableFields).map(([field, config]) => (
-                    <div key={field} className="lineWrapper">
-                        <div className={"field-wrapper"}>
-                            {renderCellContent(field as keyof AllNodeData)}
+                {propertyOrder
+                    .filter(field => Object.hasOwn(editableFields, field)) // S'assurer que le champ existe dans editableFields
+                    .map(field => (
+                        <div key={field} className="lineWrapper">
+                            <div className={"field-wrapper"}>
+                                {renderCellContent(field)}
+                            </div>
+                            {(editableFields[field].type === 'text' ||
+                                editableFields[field].type === 'select' ||
+                                editableFields[field].type === "checkbox" ||
+                                editableFields[field].type === "relation" ||
+                                editableFields[field].type === "alias" ||
+                                editableFields[field].type === "sources" ||
+                                editableFields[field].type === "nom_etranger") && (
+                                <Fab color="primary" aria-label="edit" size="small">
+                                    <EditIcon
+                                        className="edit_button"
+                                        onClick={() => {
+                                            handleEdit(field);
+                                        }}
+                                    />
+                                </Fab>
+                            )}
                         </div>
-                        {(config.type === 'text' || config.type === 'select' || config.type === "checkbox" || config.type === "relation" || config.type === "alias" || config.type === "sources" || config.type === "nom_etranger") && (
-                            <Fab color="primary" aria-label="edit" size="small">
-                                <EditIcon className = "edit_button"                                 onClick={() => {
-                                    handleEdit(field as keyof AllNodeData);
-                                }}/>
-                            </Fab>
-                        )}
-                    </div>
-                ))}
+                    ))}
+
             </div>
 
             {isModalOpen && currentEditField &&
