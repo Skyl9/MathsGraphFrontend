@@ -2,7 +2,7 @@ export interface NodeData {
     id: number;
     nom: string;
     position: {
-        [grille:string] : { x: number; y: number; z: number };
+        [grille: string]: { x: number; y: number; z: number };
     };
     typeMath: string;
 }
@@ -23,6 +23,7 @@ export interface GraphData {
 export interface Alias {
     alias: string;
 }
+
 export interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -50,19 +51,21 @@ export interface NomEtranger {
     Nom_étranger: string;
     langue: string;
 }
-export type RelationType = 'utilise' | 'implication' | 'equivalence';
+
+export type RelationType = 'utilise' | 'implication' | 'equivalence' | 'reciproque';
 
 
 export interface Relations {
     id: number;
-    concept_source: {"id": number, nom: string };
-    concept_cible:{"id": number, nom: string };
+    concept_source: { "id": number, nom: string };
+    concept_cible: { "id": number, nom: string };
     type_relation: RelationType;
-    description:string;
+    description: string;
 }
+
 export type EditableField = {
     label: string;
-    type: 'text' | 'select' | "checkbox" |"none" | "relation" | "alias" | "sources" | "nom_etranger";
+    type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex";
     options?: string[];
 };
 

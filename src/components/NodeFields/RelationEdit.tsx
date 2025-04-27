@@ -26,6 +26,7 @@ export const RelationEdit: React.FC<RelationEditProps> = ({ relation, onChange }
                     <MenuItem value="utilise">utilise</MenuItem>
                     <MenuItem value="implication">implication</MenuItem>
                     <MenuItem value="equivalence">équivalence</MenuItem>
+                    <MenuItem value="reciproque">Réciproque</MenuItem>
                 </Select>
             </FormControl>
 

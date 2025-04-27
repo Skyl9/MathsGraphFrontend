@@ -15,7 +15,7 @@ import RelationsField from "./NodeFields/RelationsField";
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
-import { Fab } from "@mui/material";
+import {Fab} from "@mui/material";
 
 
 const NodePage: React.FC = () => {
@@ -168,21 +168,24 @@ const NodePage: React.FC = () => {
                                 {renderCellContent(field)}
                             </div>
                             {(editableFields[field].type === 'text' ||
-                                editableFields[field].type === 'select' ||
-                                editableFields[field].type === "checkbox" ||
-                                editableFields[field].type === "relation" ||
-                                editableFields[field].type === "alias" ||
-                                editableFields[field].type === "sources" ||
-                                editableFields[field].type === "nom_etranger") && (
-                                <Fab color="primary" aria-label="edit" size="small">
-                                    <EditIcon
-                                        className="edit_button"
-                                        onClick={() => {
-                                            handleEdit(field);
-                                        }}
-                                    />
-                                </Fab>
-                            )}
+                                    editableFields[field].type === 'select' ||
+                                    editableFields[field].type === "checkbox" ||
+                                    editableFields[field].type === "relation" ||
+                                    editableFields[field].type === "alias" ||
+                                    editableFields[field].type === "sources" ||
+                                    editableFields[field].type === "latex" ||
+                                    editableFields[field].type === "nom_etranger") &&
+                                !isModalOpen
+                                && (
+                                    <Fab color="primary" aria-label="edit" size="small">
+                                        <EditIcon
+                                            className="edit_button"
+                                            onClick={() => {
+                                                handleEdit(field);
+                                            }}
+                                        />
+                                    </Fab>
+                                )}
                         </div>
                     ))}
 
@@ -198,7 +201,7 @@ const NodePage: React.FC = () => {
                            fieldConfig={editableFields[currentEditField]}
                            data={data}
                            setData={setData}
-                           createField = {createField}
+                           createField={createField}
                 ></EditModal>
             }
 

@@ -1,4 +1,3 @@
-// components/EditModal.tsx
 import React from 'react';
 import {ModalProps, NomEtranger, Relations, Source} from "../types/types";
 import ReactQuill from "react-quill-new";
@@ -10,13 +9,14 @@ import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
 import FieldAdd from "./NodeFields/FieldAdd"
 import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch} from "@mui/material";
 import FieldAddAlias from "./NodeFields/FieldAddAlias";
+import FieldAddRelation from "./NodeFields/FieldAddRelation";
+import FieldAddSource from "./NodeFields/FieldAddSource";
+import LatexEditor from "./NodeFields/LatexEditor";
 
-// TODO Mettre en place le bouton d'ajout de Source, Relation, NomEtranger
-
+// TODO Mettre en place le lien sur les sources et plus généralement les liens de la page d'informations
 //TODO Mettre en place les boutons de suppressions d'éléments
 
 export const EditModal: React.FC<ModalProps> = ({
-                                                    isOpen,
                                                     onClose,
                                                     onSave,
                                                     field,
@@ -86,21 +86,21 @@ export const EditModal: React.FC<ModalProps> = ({
                             <FieldAdd
                                 label="Type"
                                 onChange={onChange}
-                                createField = {createField}
+                                createField={createField}
                             />
                         )}
                         {field === "categorie" && fieldConfig.type === "select" && (
                             <FieldAdd
                                 label="categorie"
                                 onChange={onChange}
-                                createField = {createField}
+                                createField={createField}
                             />
                         )}
                         {field === "mathematicien" && fieldConfig.type === "select" && (
                             <FieldAdd
                                 label="mathematicien"
                                 onChange={onChange}
-                                createField = {createField}
+                                createField={createField}
                             />
                         )}
                     </FormControl>
@@ -126,7 +126,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         ))}
                         <FormControl>
-                            <FieldAddAlias createField={createField} onChange={onChange} id = {data.id}></FieldAddAlias>
+                            <FieldAddAlias createField={createField} onChange={onChange} id={data.id}></FieldAddAlias>
                         </FormControl>
                     </div>
                 ) : fieldConfig.type === "relation" && Array.isArray(data?.relations) && data ? (
@@ -138,6 +138,12 @@ export const EditModal: React.FC<ModalProps> = ({
                                 onChange={(updatedRelation) => handleRelationChange(index, updatedRelation)}
                             />
                         ))}
+                        <FormControl>
+                            <FieldAddRelation
+                                nodeName={data.nom}
+                                createField={createField}
+                            />
+                        </FormControl>
                     </div>
                 ) : fieldConfig.type === "sources" && data ? (
                     <div className="source-edit-wrapper">
@@ -148,6 +154,12 @@ export const EditModal: React.FC<ModalProps> = ({
                                 onChange={(updatedSource) => handleSourceChange(index, updatedSource)}
                             />
                         ))}
+                        <FormControl>
+                            <FieldAddSource
+                                createField={createField}
+                                id={data.id}
+                            />
+                        </FormControl>
                     </div>
                 ) : fieldConfig.type === "nom_etranger" && Array.isArray(data?.noms_etrangers) && data ? (
                     <div className="nom-etranger-edit-wrapper">
@@ -160,6 +172,9 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         ))}
                     </div>
+
+                ) : fieldConfig.type === "latex" ? (
+                    <LatexEditor onChange={onChange} text={value || ""}/>
                 ) : (
                     // Sinon, afficher un éditeur de texte comme ReactQuill
                     <ReactQuill
@@ -175,6 +190,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             ],
                         }}
                     />
+
                 )}
 
 

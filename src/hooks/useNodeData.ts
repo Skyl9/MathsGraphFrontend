@@ -70,6 +70,7 @@ export const useNodeData = (id: string) => {
             return false;
         }
     };
+
     const createField = async (field: keyof AllNodeData, value: any) => {
         try {
             console.log(field.toLowerCase());
@@ -94,8 +95,10 @@ export const useNodeData = (id: string) => {
                 case "demonstration":
                     break;
                 case "relations":
+                    await nodeApi.createRelation(value);
                     break;
                 case "sources":
+                    await nodeApi.createSources(value);
                     break;
                 case "verification":
                     break;

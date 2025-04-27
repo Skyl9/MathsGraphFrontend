@@ -8,12 +8,19 @@ export const nodeApi = {
         }
         return response.json();
     },
+    getAllNodesNames: async () => {
+        const response = await fetch(`${BASE_URL}/getAllNodesNames`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
 
     updateNode: async (id: string, field: string, value: any) => {
         const response = await fetch(`${BASE_URL}/updateOneCategory/${id}`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ field, value })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({field, value})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
@@ -28,11 +35,25 @@ export const nodeApi = {
         }
         return response.json();
     },
-    createCategory: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createCategory`,{
+
+    createRelation: async (dico: {}) => {
+        const response = await fetch(`${BASE_URL}/createRelation`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "value":nom })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"value": dico})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création de la catégorie");
+        }
+        return response.json();
+    },
+
+
+    createCategory: async (nom: string) => {
+        const response = await fetch(`${BASE_URL}/createCategory`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"value": nom})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la création de la catégorie");
@@ -40,10 +61,10 @@ export const nodeApi = {
         return response.json();
     },
     createType: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createType`,{
+        const response = await fetch(`${BASE_URL}/createType`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "value":nom })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"value": nom})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la création du type");
@@ -51,21 +72,32 @@ export const nodeApi = {
         return response.json();
     },
     createMathematicien: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createMathematicien`,{
+        const response = await fetch(`${BASE_URL}/createMathematicien`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "value":nom })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"value": nom})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la création du mathématicien");
         }
         return response.json();
     },
-    createAlias: async (id:number,nom: string) => {
-        const response = await fetch(`${BASE_URL}/createAlias`,{
+    createAlias: async (id: number, nom: string) => {
+        const response = await fetch(`${BASE_URL}/createAlias`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ "id":id, "value":nom })
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"id": id, "value": nom})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création de l'alias");
+        }
+        return response.json();
+    },
+    createSources: async (sources: any) => {
+        const response = await fetch(`${BASE_URL}/createSource`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"value": sources})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la création de l'alias");

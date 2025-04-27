@@ -1,0 +1,15 @@
+.ql-toolbar .ql-latex::before {
+    content: "∑";
+    font-size: 16px; /* Taille de l'icône */
+    font-weight: bold;
+    display: inline-block;
+    width: 20px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.ql-toolbar .ql-latex {
+    border: none;
+    background: transparent;
+    padding: 5px;
+}

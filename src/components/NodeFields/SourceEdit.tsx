@@ -1,39 +1,53 @@
 import React from 'react';
-import { Source } from '../../types/types';
-import {FormControl, MenuItem, OutlinedInput, Select, TextField} from "@mui/material";
+import {Source} from '../../types/types';
+import {FormControl, MenuItem, Select, TextField} from "@mui/material";
 
 interface SourceEditProps {
-  source: Source;
-  onChange: (updatedSource: Source) => void;
+    source: Source;
+    onChange: (updatedSource: Source) => void;
 }
 
-const SourceEdit: React.FC<SourceEditProps> = ({ source, onChange }) => {
-  return (
+const SourceEdit: React.FC<SourceEditProps> = ({source, onChange}) => {
+    return (
         <form noValidate autoComplete="off">
-            <FormControl sx={{ width: '25ch' }}>
+            <FormControl sx={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 3,
+
+
+            }}>
                 <TextField className="source-input"
+                           label="Titre"
                            type="text"
                            placeholder="Titre"
                            value={source.titre || ""}
-                           onChange={(e) => onChange({ ...source, titre: e.target.value })}></TextField>
+                           onChange={(e) => onChange({...source, titre: e.target.value})}
+                           variant="outlined"
+                           fullWidth
+                ></TextField>
 
                 <TextField className="source-input"
+                           label="Auteur"
                            type="text"
                            placeholder="Auteur"
                            value={source.auteur || ""}
-                           onChange={(e) => onChange({ ...source, auteur: e.target.value })}
+                           onChange={(e) => onChange({...source, auteur: e.target.value})}
                 />
 
                 <TextField className="source-input"
+                           label="Année"
                            type="number"
                            placeholder="Année"
                            value={source.annee || ""}
-                           onChange={(e) => onChange({ ...source, annee: parseInt(e.target.value) })}
+                           onChange={(e) => onChange({...source, annee: parseInt(e.target.value)})}
                 />
                 <Select
+                    label='Type de source'
                     className="source-select"
                     value={source.type}
-                    onChange={(e) => onChange({ ...source, type: e.target.value })}
+                    onChange={(e) => onChange({...source, type: e.target.value})}
                 >
                     <MenuItem value="livre">livre</MenuItem>
                     <MenuItem value="article">article</MenuItem>
@@ -45,7 +59,7 @@ const SourceEdit: React.FC<SourceEditProps> = ({ source, onChange }) => {
             </FormControl>
         </form>
 
-  );
+    );
 };
 
 export default SourceEdit;
