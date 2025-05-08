@@ -4,18 +4,20 @@ import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import {useNodeEdit} from "../hooks/useNodeEdit";
-import {EditModal} from "./EditModal";
-import {NomsEtrangersCollapse} from "./NodeFields/NomsEtrangers";
-import HtmlField from "./NodeFields/HtmlField";
-import VerifField from "./NodeFields/VerifField";
-import DateField from "./NodeFields/DateField";
-import AliasesField from "./NodeFields/AliasesField";
-import SourcesField from "./NodeFields/SourcesField";
-import RelationsField from "./NodeFields/RelationsField";
+import {EditModal} from "../components/EditModal";
+import {NomsEtrangersCollapse} from "../components/NodeFields/NomsEtrangers";
+import HtmlField from "../components/NodeFields/HtmlField";
+import VerifField from "../components/NodeFields/VerifField";
+import DateField from "../components/NodeFields/DateField";
+import AliasesField from "../components/NodeFields/AliasesField";
+import SourcesField from "../components/NodeFields/SourcesField";
+import RelationsField from "../components/NodeFields/RelationsField";
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
 import {Fab} from "@mui/material";
+import {TopBar} from "../components/TopBar";
+import Token from "../services/token";
 
 
 const NodePage: React.FC = () => {
@@ -36,6 +38,18 @@ const NodePage: React.FC = () => {
         createField,
 
     } = useNodeEdit(id || "");
+
+    const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
+
+    useEffect(
+        () => {
+            if (Token.getToken()){
+                setisUserConnected(true);
+            }
+        },
+        []
+    )
+
 
     // Local state for editing dataconst
     const propertyOrder: (keyof AllNodeData)[] = [
@@ -156,61 +170,62 @@ const NodePage: React.FC = () => {
     if (data === null) return (<p>Chargement</p>)
 
     return (
-        <div className="node-container">
-            <h1 className="node-title">{data?.nom}</h1>
+        <>
+            <TopBar/>
+            <div className="node-container">
+                <h1 className="node-title">{data?.nom}</h1>
 
-            <div className="node-info">
-                {propertyOrder
-                    .filter(field => Object.hasOwn(editableFields, field)) // S'assurer que le champ existe dans editableFields
-                    .map(field => (
-                        <div key={field} className="lineWrapper">
-                            <div className={"field-wrapper"}>
-                                {renderCellContent(field)}
+                <div className="node-info">
+                    {propertyOrder
+                        .filter(field => Object.hasOwn(editableFields, field)) // S'assurer que le champ existe dans editableFields
+                        .map(field => (
+                            <div key={field} className="lineWrapper">
+                                <div className={"field-wrapper"}>
+                                    {renderCellContent(field)}
+                                </div>
+                                {(editableFields[field].type === 'text' ||
+                                        editableFields[field].type === 'select' ||
+                                        editableFields[field].type === "checkbox" ||
+                                        editableFields[field].type === "relation" ||
+                                        editableFields[field].type === "alias" ||
+                                        editableFields[field].type === "sources" ||
+                                        editableFields[field].type === "latex" ||
+                                        editableFields[field].type === "nom_etranger") &&
+                                    !isModalOpen
+                                    && isUserConnected && (
+                                        <Fab color="primary" aria-label="edit" size="small">
+                                            <EditIcon
+                                                className="edit_button"
+                                                onClick={() => {
+                                                    handleEdit(field);
+                                                }}/>
+                                        </Fab>
+                                    )}
                             </div>
-                            {(editableFields[field].type === 'text' ||
-                                    editableFields[field].type === 'select' ||
-                                    editableFields[field].type === "checkbox" ||
-                                    editableFields[field].type === "relation" ||
-                                    editableFields[field].type === "alias" ||
-                                    editableFields[field].type === "sources" ||
-                                    editableFields[field].type === "latex" ||
-                                    editableFields[field].type === "nom_etranger") &&
-                                !isModalOpen
-                                && (
-                                    <Fab color="primary" aria-label="edit" size="small">
-                                        <EditIcon
-                                            className="edit_button"
-                                            onClick={() => {
-                                                handleEdit(field);
-                                            }}
-                                        />
-                                    </Fab>
-                                )}
-                        </div>
-                    ))}
+                        ))}
 
+                </div>
+
+                {isModalOpen && currentEditField &&
+                    <EditModal isOpen={isModalOpen}
+                               onClose={cancelChanges}
+                               onSave={saveChanges}
+                               field={currentEditField}
+                               value={newContent}
+                               onChange={setNewContent}
+                               fieldConfig={editableFields[currentEditField]}
+                               data={data}
+                               setData={setData}
+                               createField={createField}
+                    ></EditModal>}
+
+                <div className="node-buttons">
+                    <button className="back-button" onClick={() => window.history.back()}>
+                        Retour
+                    </button>
+                </div>
             </div>
-
-            {isModalOpen && currentEditField &&
-                <EditModal isOpen={isModalOpen}
-                           onClose={cancelChanges}
-                           onSave={saveChanges}
-                           field={currentEditField}
-                           value={newContent}
-                           onChange={setNewContent}
-                           fieldConfig={editableFields[currentEditField]}
-                           data={data}
-                           setData={setData}
-                           createField={createField}
-                ></EditModal>
-            }
-
-            <div className="node-buttons">
-                <button className="back-button" onClick={() => window.history.back()}>
-                    Retour
-                </button>
-            </div>
-        </div>
+        </>
     );
 };
 

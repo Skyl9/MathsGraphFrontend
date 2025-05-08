@@ -3,7 +3,7 @@ import ReactQuill, { Quill } from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css"; // Styles pour l'éditeur
 import { MathJax, MathJaxContext } from "better-react-mathjax";
 import { Box, Typography } from "@mui/material";
-import "../LatexEditor.css";
+import "../../styles/LatexEditor.css";
 
 // Fonction pour insérer du LaTeX
 const insertLatex = (quill: Quill) => {

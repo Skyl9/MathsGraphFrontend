@@ -70,6 +70,7 @@ const AppContext = createContext<AppContextProps | undefined>(undefined);
 // 📌 Fournisseur de contexte (englobe tout le composant principal)
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     // États globaux partagés via le contexte
+
     const [color, setColor] = useState("#F5F5F5");
     const [colorSides, setColorSides] = useState("black");
     const [colorAxiome, setColorAxiome] = useState("#52C575");

@@ -29,7 +29,7 @@ export const nodeApi = {
     },
 
     getEditableFieldsOptions: async (id: string) => {
-        const response = await fetch(`${BASE_URL}/getEditableFieldsOptions/${id}`);
+        const response = await fetch(`${BASE_URL}/getEditableFieldsOptions`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }

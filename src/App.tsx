@@ -4,13 +4,16 @@ import { Canvas } from "@react-three/fiber";
 import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
 import { AppProvider, useAppContext } from "./contexts/AppContext";
-import NodePage from "./components/NodePage";
+import NodePage from "./pages/NodePage";
 import AdminPanel from "./pages/AdminPanel";
 import { createTheme, ThemeProvider } from "@mui/material";
 import {AboutPage} from "./AboutPage";
 import {SupportPage} from "./SupportPage";
 import {HomePage} from "./HomePage";
 import { LostPage } from "./LostPage";
+import {AuthProvider} from "./contexts/Authprovider";
+import {Login } from "./Login";
+import {Register} from "./Register";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -41,6 +44,7 @@ const App: React.FC = () => {
 
     return (
         <AppProvider>
+            <AuthProvider>
             <ThemeProvider theme={theme}>
                 {" "}
                 {/* Fournit le thème à l'application */}
@@ -48,6 +52,8 @@ const App: React.FC = () => {
                     {" "}
                     {/* Active la gestion des routes */}
                     <Routes>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
                         <Route path="/" element={<HomePage/>} /> {/* Passe le state et le setter au composant */}
                         <Route path="/graph" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode} />} />
                         <Route path="/node/:id" element={<NodePage />} />
@@ -58,6 +64,7 @@ const App: React.FC = () => {
                     </Routes>
                 </Router>
             </ThemeProvider>
+            </AuthProvider>
         </AppProvider>
     );
 };
