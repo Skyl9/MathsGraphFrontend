@@ -135,7 +135,6 @@ export const nodeApi = {
         return response.json();
     },
     updateOneMathematicien: async (id: string, field: string, value: any) => {
-        console.log(id, field, value);
         const response = await fetch(`${BASE_URL}/mathematicien/updateOneCategory/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
@@ -148,7 +147,6 @@ export const nodeApi = {
         return response.json();
     },
     updateOneCategory: async (id: string, field: string, value: any) => {
-        console.log(id, field, value);
         const response = await fetch(`${BASE_URL}/category/update/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
@@ -161,7 +159,6 @@ export const nodeApi = {
         return response.json();
     },
     updateOneType: async (id: string, field: string, value: any) => {
-        console.log(id, field, value);
         const response = await fetch(`${BASE_URL}/type/update/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
@@ -171,6 +168,14 @@ export const nodeApi = {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
         console.log(response.json());
+        return response.json();
+    },
+
+    getAllCategories: async () => {
+        const response = await fetch(`${BASE_URL}/category`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
         return response.json();
     },
 
