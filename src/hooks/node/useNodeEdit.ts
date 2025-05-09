@@ -1,7 +1,7 @@
 import {useState} from 'react';
-import { AllNodeData } from '../types/types';
+import { AllNodeData } from '../../types/types';
 import { useNodeData } from './useNodeData';
-import { createEditableFields } from '../constants/editableFields';
+import { createEditableFields } from '../../constants/editableFields';
 
 export const useNodeEdit = (id: string) => {
   const { data,setData, loading, error, editableFieldsOptions, updateField, refetchData,createField } = useNodeData(id);

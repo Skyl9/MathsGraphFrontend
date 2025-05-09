@@ -14,6 +14,9 @@ import { LostPage } from "./LostPage";
 import {AuthProvider} from "./contexts/Authprovider";
 import {Login } from "./Login";
 import {Register} from "./Register";
+import MathematicienPage from "./pages/MathematicienPage";
+import CategoryPage from "./pages/CategoryPage";
+import TypePage from "./pages/TypePage";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -60,7 +63,10 @@ const App: React.FC = () => {
                         <Route path="/admin" element={<AdminPanel />} />
                         <Route path="/about" element={<AboutPage />} />
                         <Route path="/support" element={<SupportPage />} />
+                        <Route path="/mathematicien/:id" element={<MathematicienPage />}/>
                         <Route path="*" element={<LostPage/>} />
+                        <Route path={"/category/:id"} element={<CategoryPage />} />
+                        <Route path={"/type/:id"} element={<TypePage />} />
                     </Routes>
                 </Router>
             </ThemeProvider>

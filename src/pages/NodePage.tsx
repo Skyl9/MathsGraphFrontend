@@ -3,7 +3,7 @@ import {useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
-import {useNodeEdit} from "../hooks/useNodeEdit";
+import {useNodeEdit} from "../hooks/node/useNodeEdit";
 import {EditModal} from "../components/EditModal";
 import {NomsEtrangersCollapse} from "../components/NodeFields/NomsEtrangers";
 import HtmlField from "../components/NodeFields/HtmlField";

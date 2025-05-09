@@ -1,5 +1,5 @@
 import React from 'react';
-import {ModalProps, NomEtranger, Relations, Source} from "../types/types";
+import {AllNodeData, Mathematicien, ModalProps, NomEtranger, Relations, Source} from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
 import {RelationEdit} from './NodeFields/RelationEdit';
@@ -27,10 +27,19 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     setData,
                                                     createField
                                                 }) => {
+    const isAllNodeData = (data: unknown): data is AllNodeData => {
+        return !!data && typeof data === 'object' && 'relations' in data;
+    };
+
+    const isMathematiciens = (data: unknown): data is Mathematicien => {
+        return !!data && typeof data === 'object' && 'nationalite' in data;
+    };
+
+
 
     // Pour les relations
     const handleRelationChange = (index: number, updatedRelation: Relations) => {
-        if (data) {
+        if (data && isAllNodeData(data)) {
             const updated = [...data.relations];
             updated[index] = updatedRelation;
             setData({...data, relations: updated});
@@ -39,7 +48,7 @@ export const EditModal: React.FC<ModalProps> = ({
 
     // Pour les sources
     const handleSourceChange = (index: number, updatedSource: Source) => {
-        if (data) {
+        if (data && isAllNodeData(data) ) {
             const updated = [...data.sources];
             updated[index] = updatedSource;
             setData({...data, sources: updated});
@@ -48,7 +57,7 @@ export const EditModal: React.FC<ModalProps> = ({
 
     // Pour les alias
     const handleAliasChange = (index: number, value: string) => {
-        if (data) {
+        if (data && isAllNodeData(data)) {
             const updated = [...data.aliases];
             updated[index] = value
             setData({...data, aliases: updated});
@@ -57,10 +66,12 @@ export const EditModal: React.FC<ModalProps> = ({
 
     // Pour les noms étrangers
     const handleNomEtrangerChange = (index: number, updatedNom: NomEtranger) => {
-        if (data && data.noms_etrangers) {
-            const updated = [...data.noms_etrangers];
-            updated[index] = updatedNom;
-            setData({...data, noms_etrangers: updated});
+        if (data && isAllNodeData(data)) {
+            if (data.noms_etrangers ) {
+                const updated = [...data.noms_etrangers];
+                updated[index] = updatedNom;
+                setData({...data, noms_etrangers: updated});
+            }
         }
     };
     return (
@@ -115,7 +126,7 @@ export const EditModal: React.FC<ModalProps> = ({
                     </FormControl>
                 ) : fieldConfig.type === "none" ? (
                     <></>
-                ) : fieldConfig.type === "alias" && Array.isArray(data?.aliases) && data ? (
+                ) : fieldConfig.type === "alias" && isAllNodeData(data) && Array.isArray(data?.aliases) && data ? (
                     <div className="alias-edit-wrapper">
                         {data.aliases.map((alias, index) => (
                             <AliasEdit
@@ -129,7 +140,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             <FieldAddAlias createField={createField} onChange={onChange} id={data.id}></FieldAddAlias>
                         </FormControl>
                     </div>
-                ) : fieldConfig.type === "relation" && Array.isArray(data?.relations) && data ? (
+                ) : fieldConfig.type === "relation" && isAllNodeData(data)  && Array.isArray(data?.relations) && data ? (
                     <div className="relation-edit-wrapper">
                         {data.relations.map((rel, index) => (
                             <RelationEdit
@@ -145,7 +156,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         </FormControl>
                     </div>
-                ) : fieldConfig.type === "sources" && data ? (
+                ) : fieldConfig.type === "sources" && data && isAllNodeData(data) ? (
                     <div className="source-edit-wrapper">
                         {data.sources.map((src, index) => (
                             <SourceEdit
@@ -161,7 +172,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         </FormControl>
                     </div>
-                ) : fieldConfig.type === "nom_etranger" && Array.isArray(data?.noms_etrangers) && data ? (
+                ) : fieldConfig.type === "nom_etranger" && isAllNodeData(data)  && Array.isArray(data?.noms_etrangers) && data ? (
                     <div className="nom-etranger-edit-wrapper">
                         {data.noms_etrangers.map((nom, index) => (
                             <NomEtrangerEdit

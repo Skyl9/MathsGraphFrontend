@@ -1,4 +1,4 @@
-import { Container, Typography, Button, Stack } from '@mui/material';
+import { Container, Typography, Stack } from '@mui/material';
 
 export function AboutPage() {
     return (

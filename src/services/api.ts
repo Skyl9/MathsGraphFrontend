@@ -113,7 +113,66 @@ export const nodeApi = {
     updateAliases: async (id: string, aliases: string[]) => {
         return nodeApi.updateNode(id, 'aliases', aliases);
     },
-
+    getOneMathematicien: async (id: string) => {
+        const response = await fetch(`${BASE_URL}/mathematicien/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getOneType: async (id: string) => {
+        const response = await fetch(`${BASE_URL}/type/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getOneCategory: async (id: string) => {
+        const response = await fetch(`${BASE_URL}/category/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    updateOneMathematicien: async (id: string, field: string, value: any) => {
+        console.log(id, field, value);
+        const response = await fetch(`${BASE_URL}/mathematicien/updateOneCategory/${id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"field":field, "value":value})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+        console.log(response.json());
+        return response.json();
+    },
+    updateOneCategory: async (id: string, field: string, value: any) => {
+        console.log(id, field, value);
+        const response = await fetch(`${BASE_URL}/category/update/${id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"field":field, "value":value})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+        console.log(response.json());
+        return response.json();
+    },
+    updateOneType: async (id: string, field: string, value: any) => {
+        console.log(id, field, value);
+        const response = await fetch(`${BASE_URL}/type/update/${id}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"field":field, "value":value})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+        console.log(response.json());
+        return response.json();
+    },
 
     handleError: (error: unknown) => {
         if (error instanceof Error) {

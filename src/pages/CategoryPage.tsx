@@ -1,18 +1,18 @@
 import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
 import {useParams} from "react-router-dom";
-import {useMathematicienEdit} from "../hooks/mathematicien/useMathematicienEdit";
 import Token from "../services/token";
-import { Mathematicien} from "../types/types";
+import {Category} from "../types/types";
 import HtmlField from "../components/NodeFields/HtmlField";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
+import {useCategoryEdit} from "../hooks/category/useCategoryEdit";
 
 
-const MathematicienPage : React.FC = () => {
+const CategoryPage : React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const {
         data,
@@ -28,7 +28,7 @@ const MathematicienPage : React.FC = () => {
         editableFields,
         createField,
         saveChanges
-    } = useMathematicienEdit(id || "");
+    } = useCategoryEdit(id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
     useEffect(
@@ -39,15 +39,10 @@ const MathematicienPage : React.FC = () => {
         },
         []
     )
-    const propertyOrder: (keyof Mathematicien)[] = [
+    const propertyOrder: (keyof Category)[] = [
         "id",
         "nom",
-        "date_naissance",
-        "date_deces",
-        "biographie",
-        "nationalite",
-        "domaine",
-
+        "description"
 
     ];
 
@@ -58,32 +53,16 @@ const MathematicienPage : React.FC = () => {
     }, [data]);
 
 
-    const renderCellCotnent =(field: keyof Mathematicien) => {
+    const renderCellCotnent =(field: keyof Category) => {
         const value = data?.[field]
         switch (field){
             case "nom":
                 return (
                     <HtmlField title={"Nom"} content={value as string}></HtmlField>
                 )
-            case "date_naissance":
+            case "description":
                 return(
-                    <HtmlField title={"Date de naissance"} content={value as string}></HtmlField>
-                )
-            case "date_deces":
-                return(
-                    <HtmlField content={value as string} title={"Date de Décès"}/>
-                )
-            case "biographie":
-                return(
-                    <HtmlField title={"Biographie"} content={value as string}></HtmlField>
-                )
-            case "nationalite":
-                return (
-                    <HtmlField content={value as string} title={"Nationalité"}/>
-                )
-            case "domaine":
-                return(
-                    <HtmlField title={"Domaine"} content={value as string}></HtmlField>
+                    <HtmlField title={"Description"} content={value as string}></HtmlField>
                 )
             case "id":
                 return <HtmlField title={"Id"} content={value as string}></HtmlField>
@@ -103,7 +82,7 @@ const MathematicienPage : React.FC = () => {
                             <div className={"field-wrapper"}>
                                 {renderCellCotnent(field)}
                             </div>
-                                {(editableFields[field].type != "none" && !isModalOpen && isUserConnected) && (
+                                {(editableFields[field].type !== "none" && !isModalOpen && isUserConnected) && (
                                     <Fab color="primary" aria-label="edit" size="small">
                                         <EditIcon
                                             className="edit_button"
@@ -143,4 +122,4 @@ const MathematicienPage : React.FC = () => {
     )
 }
 
-export default MathematicienPage;
+export default CategoryPage;

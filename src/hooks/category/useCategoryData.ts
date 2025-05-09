@@ -1,68 +1,44 @@
-// hooks/useNodeData.ts
-import { useState, useCallback, useEffect } from 'react';
-import { AllNodeData } from '../types/types';
-import { nodeApi } from '../services/api';
+import {useCallback, useEffect, useState} from "react";
+import {Category,} from "../../types/types";
+import {nodeApi} from "../../services/api";
 
-export const useNodeData = (id: string) => {
+export const useCategoryData = (id:string) => {
     const [data, setData] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [editableFieldsOptions, setEditableFieldsOptions] = useState<Record<keyof AllNodeData, string[]>>({
-        type: [],
-        enonce: [],
-        demonstration: [],
-        mathematicien: [],
-        categorie: [],
-        id: [],
-        nom: [],
-        aliases: [],
-        date_ajout: [],
-        relations: [],
-        sources: [],
-        verification: [],
-        noms_etrangers: [],
+
+    const [editableFieldsOptions, setEditableFieldsOptions] = useState<Record<keyof Category, string[]>>({
+        id:[],
+        nom:[],
+        description:[],
     });
+
 
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
 
         try {
-            const fetchedData = await nodeApi.getNode(id);
-            setData(fetchedData);
+            const CategoryFetch = await nodeApi.getOneCategory(id);
+            setData(CategoryFetch);
 
         } catch (err) {
             setError(nodeApi.handleError(err));
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    const fetchOptions = useCallback(async () => {
-
-        try {
-            const options = await nodeApi.getEditableFieldsOptions(id);
-            setEditableFieldsOptions(options);
-        } catch (err) {
-            setError(nodeApi.handleError(err));
-        }
     }, [id]);
 
+
+
+
     useEffect(() => {
-        fetchData();
+        fetchData().then(r => console.log("Fetching CategoryData..."));
+    },[fetchData]);
 
-    }, [fetchData]);
-    useEffect(
-        () => {
-            fetchOptions();
-        },
-        [fetchOptions]
-    )
-
-
-    const updateField = async (field: keyof AllNodeData, value: any) => {
+    const updateField = async (field: keyof Category, value: any) => {
         try {
-            await nodeApi.updateNode(id, field, value);
+            await nodeApi.updateOneCategory(id, field, value);
             await fetchData();
             return true;
         } catch (err) {
@@ -71,7 +47,7 @@ export const useNodeData = (id: string) => {
         }
     };
 
-    const createField = async (field: keyof AllNodeData, value: any) => {
+    const createField = async (field: keyof Category, value: any) => {
         try {
             console.log(field.toLowerCase());
             switch (field.toLowerCase()) {
@@ -113,7 +89,6 @@ export const useNodeData = (id: string) => {
                     console.log("Champs non trouvé")
             }
             await fetchData();
-            await fetchOptions();
 
         }catch (err) {
             setError(nodeApi.handleError(err));
@@ -121,14 +96,15 @@ export const useNodeData = (id: string) => {
         }
     }
 
-    return {
+    return{
         data,
         setData,
         loading,
         error,
         editableFieldsOptions,
-        updateField,
         refetchData: fetchData,
+        updateField,
         createField
-    };
-};
+    }
+
+}

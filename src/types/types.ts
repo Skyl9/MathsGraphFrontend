@@ -7,6 +7,18 @@ export interface NodeData {
     typeMath: string;
 }
 
+export interface Mathematicien{
+    id:number;
+    nom:string;
+    date_naissance:string;
+    date_deces:string;
+    biographie:string;
+    nationalite:string;
+    domaine:string;
+    url:string;
+    recompenses:string;
+    epoque:string;
+}
 
 export interface EdgeData {
     start: number;
@@ -28,12 +40,12 @@ export interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSave: () => void;
-    field: keyof AllNodeData;
+    field: keyof AllNodeData | keyof Mathematicien | keyof Category | keyof Type;
     value: any;
     onChange: (value: any) => void;
     fieldConfig: EditableField;
-    data?: AllNodeData | null;
-    setData: (data: AllNodeData) => void;
+    data?: AllNodeData |Mathematicien | Type | Category | null;
+    setData: (data: AllNodeData |Mathematicien) => void;
     createField: any;
 }
 
@@ -90,4 +102,14 @@ export interface AllNodeData {
     sources: Source[];
     verification: boolean;
     noms_etrangers?: NomEtranger[];
+}
+
+export interface Type {
+    id:number;
+    type:string;
+}
+export interface Category {
+    id:number;
+    nom:string;
+    description:string;
 }
