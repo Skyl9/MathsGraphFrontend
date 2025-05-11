@@ -6,7 +6,10 @@ export interface NodeData {
     };
     typeMath: string;
 }
-
+export interface MathematicienName{
+    id:number;
+    nom:string;
+}
 export interface Mathematicien{
     id:number;
     nom:string;
@@ -105,6 +108,15 @@ export interface AllNodeData {
 }
 
 export interface Type {
+    id:number;
+    type:string;
+}
+export interface ConceptName{
+    id:number;
+    nom:string;
+}
+
+export interface TypeName {
     id:number;
     type:string;
 }

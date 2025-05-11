@@ -18,6 +18,9 @@ import MathematicienPage from "./pages/MathematicienPage";
 import CategoryPage from "./pages/CategoryPage";
 import TypePage from "./pages/TypePage";
 import CategoryList from "./pages/CategoryList";
+import MathematicienList from "./pages/MathematicienList";
+import TypeList from "./pages/TypeList";
+import ConceptList from "./pages/ConceptList";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -69,6 +72,9 @@ const App: React.FC = () => {
                         <Route path={"/category/:id"} element={<CategoryPage />} />
                         <Route path={"/type/:id"} element={<TypePage />} />
                         <Route path={"/category"} element={<CategoryList />} />
+                        <Route path={"/type"} element={<TypeList />} />
+                        <Route path={"/mathematicien"} element={<MathematicienList />} />
+                        <Route path={"/concept"} element={<ConceptList />} />
                     </Routes>
                 </Router>
             </ThemeProvider>

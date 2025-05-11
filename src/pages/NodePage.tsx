@@ -124,7 +124,7 @@ const NodePage: React.FC = () => {
                         <div className="field-content">
                             {typeof value === "object" && value !== null && "category" in value
                                 ? value.category
-                                : "Aucun mathématicien"}
+                                : "Aucune Catégorie"}
                         </div>
                     </div>
                 );

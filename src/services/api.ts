@@ -121,7 +121,7 @@ export const nodeApi = {
         return response.json();
     },
     getOneType: async (id: string) => {
-        const response = await fetch(`${BASE_URL}/type/${id}`);
+        const response = await fetch(`${BASE_URL}/typeC/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -173,6 +173,27 @@ export const nodeApi = {
 
     getAllCategories: async () => {
         const response = await fetch(`${BASE_URL}/category`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getAllMathematicienName: async () => {
+        const response = await fetch(`${BASE_URL}/mathematicien`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getAllTypeNames: async () => {
+        const response = await fetch(`${BASE_URL}/type`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getAllConceptNames: async () => {
+        const response = await fetch(`${BASE_URL}/getAllConceptName`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
