@@ -17,8 +17,9 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({nodeName, createFiel
 
     useEffect(() => {
         const fetchTheorems = async () => {
-            const names = await nodeApi.getAllNodesNames();
-            const list = names.map((name: any) => ({ label: name[0] }));
+            const names = await nodeApi.getAllConceptNames();
+            console.log(names)
+            const list = names.map((name: any) => ({ label: name["nom"] }));
             setTheorems(list);
         };
 

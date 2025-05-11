@@ -79,7 +79,6 @@ const NodePage: React.FC = () => {
 
     const renderCellContent = (field: keyof AllNodeData) => {
         const value = data?.[field];
-
         switch (field) {
             case "nom":
                 return (
@@ -117,13 +116,12 @@ const NodePage: React.FC = () => {
                     <HtmlField title={"Id"} content={value as string}></HtmlField>
                 );
             case "categorie":
+                console.log(data)
                 return (
-
                     <div className={"node-wrapper"}>
                         <div className="field-title">Catégorie :</div>
                         <div className="field-content">
-                            {typeof value === "object" && value !== null && "category" in value
-                                ? value.category
+                            {typeof value === "object" && value !== null && "category" in value ? value.category
                                 : "Aucune Catégorie"}
                         </div>
                     </div>

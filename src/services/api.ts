@@ -2,22 +2,14 @@ const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
 
 export const nodeApi = {
     getNode: async (id: string) => {
-        const response = await fetch(`${BASE_URL}/getNode/${id}`);
+        const response = await fetch(`${BASE_URL}/concept/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
         return response.json();
     },
-    getAllNodesNames: async () => {
-        const response = await fetch(`${BASE_URL}/getAllNodesNames`);
-        if (!response.ok) {
-            throw new Error(`Erreur serveur: ${response.status}`);
-        }
-        return response.json();
-    },
-
     updateNode: async (id: string, field: string, value: any) => {
-        const response = await fetch(`${BASE_URL}/updateOneCategory/${id}`, {
+        const response = await fetch(`${BASE_URL}/update/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({field, value})
@@ -37,7 +29,7 @@ export const nodeApi = {
     },
 
     createRelation: async (dico: {}) => {
-        const response = await fetch(`${BASE_URL}/createRelation`, {
+        const response = await fetch(`${BASE_URL}/relation/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"value": dico})
@@ -50,7 +42,7 @@ export const nodeApi = {
 
 
     createCategory: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createCategory`, {
+        const response = await fetch(`${BASE_URL}/category/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"value": nom})
@@ -61,7 +53,7 @@ export const nodeApi = {
         return response.json();
     },
     createType: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createType`, {
+        const response = await fetch(`${BASE_URL}/type/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"value": nom})
@@ -72,7 +64,7 @@ export const nodeApi = {
         return response.json();
     },
     createMathematicien: async (nom: string) => {
-        const response = await fetch(`${BASE_URL}/createMathematicien`, {
+        const response = await fetch(`${BASE_URL}/mathematicien/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"value": nom})
@@ -83,7 +75,7 @@ export const nodeApi = {
         return response.json();
     },
     createAlias: async (id: number, nom: string) => {
-        const response = await fetch(`${BASE_URL}/createAlias`, {
+        const response = await fetch(`${BASE_URL}/alias/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"id": id, "value": nom})
@@ -94,7 +86,7 @@ export const nodeApi = {
         return response.json();
     },
     createSources: async (sources: any) => {
-        const response = await fetch(`${BASE_URL}/createSource`, {
+        const response = await fetch(`${BASE_URL}/source/create`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"value": sources})
@@ -105,14 +97,6 @@ export const nodeApi = {
         return response.json();
     },
 
-
-    updateRelations: async (id: string, relations: any[]) => {
-        return nodeApi.updateNode(id, 'relations', relations);
-    },
-
-    updateAliases: async (id: string, aliases: string[]) => {
-        return nodeApi.updateNode(id, 'aliases', aliases);
-    },
     getOneMathematicien: async (id: string) => {
         const response = await fetch(`${BASE_URL}/mathematicien/${id}`);
         if (!response.ok) {
@@ -121,7 +105,7 @@ export const nodeApi = {
         return response.json();
     },
     getOneType: async (id: string) => {
-        const response = await fetch(`${BASE_URL}/typeC/${id}`);
+        const response = await fetch(`${BASE_URL}/type/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -135,7 +119,7 @@ export const nodeApi = {
         return response.json();
     },
     updateOneMathematicien: async (id: string, field: string, value: any) => {
-        const response = await fetch(`${BASE_URL}/mathematicien/updateOneCategory/${id}`, {
+        const response = await fetch(`${BASE_URL}/mathematicien/update/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"field":field, "value":value})

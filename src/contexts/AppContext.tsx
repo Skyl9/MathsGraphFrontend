@@ -106,7 +106,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch(backend_link + "/concepts");
+            const response = await fetch(backend_link + "/graph");
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
             setGraphData(data);
