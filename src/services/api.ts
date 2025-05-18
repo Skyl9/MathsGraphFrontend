@@ -183,11 +183,54 @@ export const nodeApi = {
         }
         return response.json();
     },
+    getUserInfo: async (id:string) => {
+        const response = await fetch(`${BASE_URL}/user/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return(response.json())
+    },
+    requestPasswordReset: async (email: string) => {
+        const response = await fetch(`${BASE_URL}/password-reset/request`,
+        {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"email":email})
+        })
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    resetPassword: async (token: string, password: string) => {
+        console.log(token, password);
+        const response = await fetch(`${BASE_URL}/password-reset/confirm`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"token":token, "new_password":password})
+        })
+        return response.json();
+    },
+    getUserIdByUsername:async (username:string) => {
+        const response = await fetch(`${BASE_URL}/user/id/${username}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
 
     handleError: (error: unknown) => {
         if (error instanceof Error) {
             return `Erreur : ${error.message}`;
         }
         return "Erreur inconnue";
+    },
+    patchUser:async (data: {field: string,value:string}, id:string)=> {
+        const response = await fetch(`${BASE_URL}/user/update/`+id, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        })
+        return response.json();
     }
 };

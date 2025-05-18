@@ -21,6 +21,10 @@ import CategoryList from "./pages/CategoryList";
 import MathematicienList from "./pages/MathematicienList";
 import TypeList from "./pages/TypeList";
 import ConceptList from "./pages/ConceptList";
+import UserProfilePage from "./pages/UserProfilePage";
+import PasswordReset from "./pages/PasswordReset";
+import PasswordResetVerification from "./pages/PasswordResetVerification";
+import UserRedirect from "./Redirection/UserRedirect";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -75,6 +79,10 @@ const App: React.FC = () => {
                         <Route path={"/type"} element={<TypeList />} />
                         <Route path={"/mathematicien"} element={<MathematicienList />} />
                         <Route path={"/concept"} element={<ConceptList />} />
+                        <Route path={"/user/:id"} element={<UserProfilePage />} />
+                        <Route path={"/reset-password"} element={<PasswordReset/>}/>
+                        <Route path={"/reset-password-verification/:token"} element={<PasswordResetVerification/>}/>
+                        <Route path={"/username/:username"} element={<UserRedirect />}/>
                     </Routes>
                 </Router>
             </ThemeProvider>

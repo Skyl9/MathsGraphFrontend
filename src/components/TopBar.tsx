@@ -28,7 +28,7 @@ export const TopBar: React.FC = () => {
                 <div style={{justifyContent: "flex-end", display: "flex", gap: 2, alignItems: "center", width: "100%" }} >
                 {username ? (
                     <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                        <Typography variant="body1">Bonjour, {username}</Typography>
+                        <Typography variant="body1">Bonjour, <Link href={"/username/"+username}>{username}</Link></Typography>
                         <LogoutButton onLogout={() => setUsername(null)} />
                     </Box>
                 ) : (

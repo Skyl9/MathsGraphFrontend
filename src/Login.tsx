@@ -106,6 +106,11 @@ export const Login: React.FC = () => {
                     S'inscrire
                 </Link>
             </Typography>
+            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+                <Link href="/reset-password" underline="hover">
+                    Mot de passe oublié ?
+                </Link>
+            </Typography>
         </Box>
     );
 };
