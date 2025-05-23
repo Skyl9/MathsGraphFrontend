@@ -218,6 +218,13 @@ export const nodeApi = {
         }
         return response.json();
     },
+    getTagsNameFromConceptId:async (id:string) => {
+        const response = await fetch(`${BASE_URL}/tags/name/concept_id/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
 
     handleError: (error: unknown) => {
         if (error instanceof Error) {

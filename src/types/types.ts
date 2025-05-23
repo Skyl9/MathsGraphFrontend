@@ -105,8 +105,12 @@ export interface AllNodeData {
     sources: Source[];
     verification: boolean;
     noms_etrangers?: NomEtranger[];
+    tags?:Tag[];
 }
-
+export interface Tag{
+    id:number;
+    tag:string;
+}
 export interface Type {
     id:number;
     type:string;

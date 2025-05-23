@@ -21,6 +21,7 @@ export const useNodeData = (id: string) => {
         sources: [],
         verification: [],
         noms_etrangers: [],
+        tags: [],
     });
 
     const fetchData = useCallback(async () => {

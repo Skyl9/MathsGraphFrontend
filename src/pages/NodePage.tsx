@@ -18,6 +18,7 @@ import DOMPurify from 'dompurify';
 import {Fab} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
+import TagsField from "../components/NodeFields/TagsField";
 
 
 const NodePage: React.FC = () => {
@@ -65,7 +66,8 @@ const NodePage: React.FC = () => {
         "sources",
         "relations",
         "verification",
-        "noms_etrangers"
+        "noms_etrangers",
+        "tags"
     ];
 
 
@@ -155,6 +157,10 @@ const NodePage: React.FC = () => {
                         }}/>
                     </div>
                 );
+                case "tags":
+                    return (
+                        <TagsField tags={value }></TagsField>
+                    )
             default:
                 return (
                     <HtmlField title={"Défaut"} content={value as string}></HtmlField>
