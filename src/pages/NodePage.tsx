@@ -34,25 +34,59 @@ const NodePage: React.FC = () => {
         currentEditField,
         newContent,
         setNewContent,
-        handleEdit,
-        saveChanges,
-        cancelChanges,
+        handleEdit: rawHandleEdit,
+        saveChanges: rawSaveChanges,
+        cancelChanges: rawCancelChanges,
         setData,
-        createField,
-        refetchData,
+        createField: rawCreateField,
+        refetchData: rawRefetchData,
+
 
     } = useNodeEdit(id || "");
 
-    const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
+    const handleEdit = (field: keyof AllNodeData) => {
+        logger.info("Édition démarrée", { field });
+        rawHandleEdit(field);
+    };
+    const saveChanges = () => {
+        logger.info("Sauvegarde des changements", {
+            field: currentEditField,
+            newContent,
+        });
+        rawSaveChanges();
+    };
 
-    useEffect(
-        () => {
-            if (Token.getToken()){
-                setisUserConnected(true);
-            }
-        },
-        []
-    )
+    const cancelChanges = () => {
+        logger.info("Annulation des changements", { field: currentEditField });
+        rawCancelChanges();
+    };
+
+    const createField = (...args: Parameters<typeof rawCreateField>) => {
+        logger.debug("createField appelé", { args });
+        return rawCreateField(...args);
+    };
+
+    const refetchData = async () => {
+        logger.debug("RefetchData start", { id });
+        try {
+            await rawRefetchData();
+            logger.debug("RefetchData success", { id });
+        } catch (e) {
+            logger.error("RefetchData error", e);
+        }
+    };
+
+    const [isUserConnected, setIsUserConnected] = React.useState<boolean>(false);
+
+    useEffect(() => {
+        if (Token.getToken()) {
+            setIsUserConnected(true);
+            logger.debug("Utilisateur connecté détecté");
+        } else {
+            logger.debug("Aucun token : utilisateur non connecté");
+        }
+    }, []);
+
 
 
     // Local state for editing dataconst
@@ -73,13 +107,13 @@ const NodePage: React.FC = () => {
         "tags"
     ];
 
-
-    // Update local data when data from hook changes
     useEffect(() => {
         if (data) {
+            logger.debug("Mise à jour state local avec data", data);
             setData(data);
         }
     }, [data]);
+
 
 
     const renderCellContent = (field: keyof AllNodeData) => {
@@ -169,6 +203,24 @@ const NodePage: React.FC = () => {
                 );
         }
     };
+    useEffect(() => {
+        if (loading) {
+            logger.debug("NodePage: chargement en cours...");
+        }
+    }, [loading]);
+    useEffect(() => {
+        if (error) {
+            logger.warn("NodePage: erreur détectée", error);
+        }
+    }, [error]);
+    useEffect(() => {
+        if (isModalOpen) {
+            logger.info("Modal d'édition ouvert", { field: currentEditField });
+        } else {
+            logger.info("Modal d'édition fermé");
+        }
+    }, [isModalOpen, currentEditField]);
+
 
 
     if (loading) return <p>Chargement...</p>;
