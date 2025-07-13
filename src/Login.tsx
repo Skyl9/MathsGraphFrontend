@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import {TopBar} from "./components/TopBar";
 
 export const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -47,6 +48,8 @@ export const Login: React.FC = () => {
     };
 
     return (
+        <>
+        <TopBar/>
         <Box
             component="form"
             onSubmit={handleLogin}
@@ -112,5 +115,6 @@ export const Login: React.FC = () => {
                 </Link>
             </Typography>
         </Box>
+        </>
     );
 };

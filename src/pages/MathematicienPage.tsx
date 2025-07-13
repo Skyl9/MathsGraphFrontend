@@ -27,8 +27,9 @@ const MathematicienPage : React.FC = () => {
         setData,
         editableFields,
         createField,
-        saveChanges
-    } = useMathematicienEdit(id || "");
+        saveChanges,
+        refetchData
+} = useMathematicienEdit(id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
     useEffect(
@@ -130,6 +131,7 @@ const MathematicienPage : React.FC = () => {
                            data={data}
                            setData={setData}
                            createField={createField}
+                           refetchData = {refetchData}
                 ></EditModal>}
 
             <div className="node-buttons">

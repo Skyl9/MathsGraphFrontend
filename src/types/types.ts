@@ -50,6 +50,7 @@ export interface ModalProps {
     data?: AllNodeData |Mathematicien | Type | Category | null;
     setData: (data: AllNodeData |Mathematicien) => void;
     createField: any;
+    refetchData:any;
 }
 
 
@@ -80,7 +81,7 @@ export interface Relations {
 
 export type EditableField = {
     label: string;
-    type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex";
+    type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex"|"tag";
     options?: string[];
 };
 

@@ -127,7 +127,6 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        console.log(response.json());
         return response.json();
     },
     updateOneCategory: async (id: string, field: string, value: any) => {
@@ -139,7 +138,6 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        console.log(response.json());
         return response.json();
     },
     updateOneType: async (id: string, field: string, value: any) => {
@@ -151,7 +149,6 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        console.log(response.json());
         return response.json();
     },
 
@@ -203,7 +200,6 @@ export const nodeApi = {
         return response.json();
     },
     resetPassword: async (token: string, password: string) => {
-        console.log(token, password);
         const response = await fetch(`${BASE_URL}/password-reset/confirm`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -220,6 +216,34 @@ export const nodeApi = {
     },
     getTagsNameFromConceptId:async (id:string) => {
         const response = await fetch(`${BASE_URL}/tags/name/concept_id/${id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    removeTagsFromConceptId:async (concept_id:number, tags_id:number) => {
+        const response = await fetch(`${BASE_URL}/tags/remove/concept`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"concept_id":concept_id, "tag_id":tags_id})
+        })
+    },
+    createTags:async (tags:string) => {
+        const response = await fetch(`${BASE_URL}/tags/add`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"tag_name":tags})
+        })
+    },
+    createLinkTagConcept:async (concept_id:number, tags_id:number) => {
+        const response = await fetch(`${BASE_URL}/tags/add/concept`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"concept_id":concept_id, "tag_id":tags_id})
+        })
+    },
+    getAllTagName:async()=>{
+        const response = await fetch(`${BASE_URL}/tags/all`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }

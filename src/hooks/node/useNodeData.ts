@@ -1,7 +1,7 @@
 // hooks/useNodeData.ts
-import { useState, useCallback, useEffect } from 'react';
-import { AllNodeData } from '../../types/types';
-import { nodeApi } from '../../services/api';
+import {useState, useCallback, useEffect} from 'react';
+import {AllNodeData} from '../../types/types';
+import {nodeApi} from '../../services/api';
 
 export const useNodeData = (id: string) => {
     const [data, setData] = useState<any | null>(null);
@@ -86,7 +86,7 @@ export const useNodeData = (id: string) => {
                     await nodeApi.createCategory(value);
                     break;
                 case "aliases":
-                    await nodeApi.createAlias(value["id"],value["value"]);
+                    await nodeApi.createAlias(value["id"], value["value"]);
                     break;
                 case "mathematicien":
                     await nodeApi.createMathematicien(value);
@@ -109,6 +109,10 @@ export const useNodeData = (id: string) => {
                     await nodeApi.createType(value);
                     break;
 
+                case "tags":
+                    await nodeApi.createTags(value);
+                    break;
+
 
                 default:
                     console.log("Champs non trouvé")
@@ -116,7 +120,7 @@ export const useNodeData = (id: string) => {
             await fetchData();
             await fetchOptions();
 
-        }catch (err) {
+        } catch (err) {
             setError(nodeApi.handleError(err));
             return false;
         }

@@ -21,7 +21,7 @@ export const createEditableFields = (options: Record<keyof AllNodeData, string[]
     sources: {label: "Sources", type: "sources"},
     verification: {label: "Vérification", type: "checkbox"},
     noms_etrangers: {label: "Noms étrangers", type: "nom_etranger"},
-    tags:{label:"Tags",type:"none"},
+    tags:{label:"Tags",type:"tag"},
 });
 export const createMathematicienEditableFields=(options:Record<keyof Mathematicien, string[]>):Record<keyof Mathematicien, EditableField> => ({
     id: {label: "ID", type: "none"},

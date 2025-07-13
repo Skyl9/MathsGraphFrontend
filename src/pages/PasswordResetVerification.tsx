@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { nodeApi } from '../services/api';
+import {TopBar} from "../components/TopBar";
 
 interface ResetPasswordVerificationData {
   password: string;
@@ -62,6 +63,8 @@ const PasswordResetVerification: React.FC = () => {
   };
 
   return (
+      <>
+        <TopBar/>
       <Container maxWidth="sm">
         <Box
             sx={{
@@ -128,6 +131,7 @@ const PasswordResetVerification: React.FC = () => {
           )}
         </Box>
       </Container>
+      </>
   );
 };
 

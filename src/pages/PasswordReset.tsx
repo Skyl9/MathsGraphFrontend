@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 
 import { nodeApi } from '../services/api';
+import {TopBar} from "../components/TopBar";
 
 interface PasswordResetFormData {
   email: string;
@@ -47,6 +48,8 @@ const PasswordReset: React.FC = () => {
   };
 
   return (
+      <>
+        <TopBar/>
     <Container maxWidth="sm">
       <Box
         sx={{
@@ -101,6 +104,7 @@ const PasswordReset: React.FC = () => {
         )}
       </Box>
     </Container>
+      </>
   );
 };
 

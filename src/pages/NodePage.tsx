@@ -19,10 +19,12 @@ import {Fab} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
+import {logger} from "../utils/logger";
 
 
 const NodePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
+    logger.info("NodePage rendu", { id });
     const {
         data,
         loading,
@@ -37,6 +39,7 @@ const NodePage: React.FC = () => {
         cancelChanges,
         setData,
         createField,
+        refetchData,
 
     } = useNodeEdit(id || "");
 
@@ -118,7 +121,6 @@ const NodePage: React.FC = () => {
                     <HtmlField title={"Id"} content={value as string}></HtmlField>
                 );
             case "categorie":
-                console.log(data)
                 return (
                     <div className={"node-wrapper"}>
                         <div className="field-title">Catégorie :</div>
@@ -159,7 +161,7 @@ const NodePage: React.FC = () => {
                 );
                 case "tags":
                     return (
-                        <TagsField tags={value }></TagsField>
+                        <TagsField tags={value}></TagsField>
                     )
             default:
                 return (
@@ -194,7 +196,8 @@ const NodePage: React.FC = () => {
                                         editableFields[field].type === "alias" ||
                                         editableFields[field].type === "sources" ||
                                         editableFields[field].type === "latex" ||
-                                        editableFields[field].type === "nom_etranger") &&
+                                        editableFields[field].type === "nom_etranger" ||
+                                    editableFields[field].type === "tag") &&
                                     !isModalOpen
                                     && isUserConnected && (
                                         <Fab color="primary" aria-label="edit" size="small">
@@ -221,6 +224,7 @@ const NodePage: React.FC = () => {
                                data={data}
                                setData={setData}
                                createField={createField}
+                               refetchData = {refetchData}
                     ></EditModal>}
 
                 <div className="node-buttons">

@@ -1,5 +1,5 @@
 import React from 'react';
-import {AllNodeData, Mathematicien, ModalProps, NomEtranger, Relations, Source} from "../types/types";
+import {AllNodeData, Mathematicien, ModalProps, NomEtranger, Relations, Source, Tag} from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
 import {RelationEdit} from './NodeFields/RelationEdit';
@@ -12,6 +12,7 @@ import FieldAddAlias from "./NodeFields/FieldAddAlias";
 import FieldAddRelation from "./NodeFields/FieldAddRelation";
 import FieldAddSource from "./NodeFields/FieldAddSource";
 import LatexEditor from "./NodeFields/LatexEditor";
+import TagEdit from "./NodeFields/TagEdit";
 
 // TODO Mettre en place le lien sur les sources et plus généralement les liens de la page d'informations
 //TODO Mettre en place les boutons de suppressions d'éléments
@@ -25,7 +26,8 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     fieldConfig,
                                                     data,
                                                     setData,
-                                                    createField
+                                                    createField,
+                                                    refetchData
                                                 }) => {
     const isAllNodeData = (data: unknown): data is AllNodeData => {
         return !!data && typeof data === 'object' && 'relations' in data;
@@ -34,7 +36,6 @@ export const EditModal: React.FC<ModalProps> = ({
     const isMathematiciens = (data: unknown): data is Mathematicien => {
         return !!data && typeof data === 'object' && 'nationalite' in data;
     };
-
 
 
     // Pour les relations
@@ -48,7 +49,7 @@ export const EditModal: React.FC<ModalProps> = ({
 
     // Pour les sources
     const handleSourceChange = (index: number, updatedSource: Source) => {
-        if (data && isAllNodeData(data) ) {
+        if (data && isAllNodeData(data)) {
             const updated = [...data.sources];
             updated[index] = updatedSource;
             setData({...data, sources: updated});
@@ -67,7 +68,7 @@ export const EditModal: React.FC<ModalProps> = ({
     // Pour les noms étrangers
     const handleNomEtrangerChange = (index: number, updatedNom: NomEtranger) => {
         if (data && isAllNodeData(data)) {
-            if (data.noms_etrangers ) {
+            if (data.noms_etrangers) {
                 const updated = [...data.noms_etrangers];
                 updated[index] = updatedNom;
                 setData({...data, noms_etrangers: updated});
@@ -140,7 +141,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             <FieldAddAlias createField={createField} onChange={onChange} id={data.id}></FieldAddAlias>
                         </FormControl>
                     </div>
-                ) : fieldConfig.type === "relation" && isAllNodeData(data)  && Array.isArray(data?.relations) && data ? (
+                ) : fieldConfig.type === "relation" && isAllNodeData(data) && Array.isArray(data?.relations) && data ? (
                     <div className="relation-edit-wrapper">
                         {data.relations.map((rel, index) => (
                             <RelationEdit
@@ -172,7 +173,7 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         </FormControl>
                     </div>
-                ) : fieldConfig.type === "nom_etranger" && isAllNodeData(data)  && Array.isArray(data?.noms_etrangers) && data ? (
+                ) : fieldConfig.type === "nom_etranger" && isAllNodeData(data) && Array.isArray(data?.noms_etrangers) && data ? (
                     <div className="nom-etranger-edit-wrapper">
                         {data.noms_etrangers.map((nom, index) => (
                             <NomEtrangerEdit
@@ -186,7 +187,15 @@ export const EditModal: React.FC<ModalProps> = ({
 
                 ) : fieldConfig.type === "latex" ? (
                     <LatexEditor onChange={onChange} text={value || ""}/>
-                ) : (
+
+
+                ) : fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
+                    <TagEdit tags={data.tags} conceptId={data.id.toString()} refetchData = {refetchData}
+                    ></TagEdit>
+
+
+
+                ):(
                     // Sinon, afficher un éditeur de texte comme ReactQuill
                     <ReactQuill
                         value={value || ""}

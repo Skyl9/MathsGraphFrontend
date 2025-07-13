@@ -27,7 +27,8 @@ const TypePage : React.FC = () => {
         setData,
         editableFields,
         createField,
-        saveChanges
+        saveChanges,
+        refetchData
     } = useTypeEdit(id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
@@ -103,6 +104,7 @@ const TypePage : React.FC = () => {
                            data={data}
                            setData={setData}
                            createField={createField}
+                           refetchData={refetchData}
                 ></EditModal>}
 
             <div className="node-buttons">

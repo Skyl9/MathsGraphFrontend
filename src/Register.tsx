@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { TopBar } from "./components/TopBar";
 
 export const Register: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -41,6 +42,8 @@ export const Register: React.FC = () => {
     };
 
     return (
+        <>
+            <TopBar/>
         <Box
             component="form"
             onSubmit={handleRegister}
@@ -116,5 +119,6 @@ export const Register: React.FC = () => {
                 </Link>
             </Typography>
         </Box>
+        </>
     );
 };

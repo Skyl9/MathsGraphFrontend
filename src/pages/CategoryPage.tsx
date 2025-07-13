@@ -27,7 +27,8 @@ const CategoryPage : React.FC = () => {
         setData,
         editableFields,
         createField,
-        saveChanges
+        saveChanges,
+        refetchData
     } = useCategoryEdit(id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
@@ -109,6 +110,7 @@ const CategoryPage : React.FC = () => {
                            data={data}
                            setData={setData}
                            createField={createField}
+                           refetchData = {refetchData}
                 ></EditModal>}
 
             <div className="node-buttons">

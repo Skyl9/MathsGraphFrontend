@@ -1,8 +1,11 @@
 import { Container, Typography, Button, Stack } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import {TopBar} from "./components/TopBar";
 
 export function LostPage() {
     return (
+        <>
+        <TopBar/>
         <Container maxWidth="sm" sx={{ py: 10, textAlign: 'center' }}>
             <Stack spacing={4}>
                 <ErrorOutlineIcon sx={{ fontSize: 80, color: 'error.main', alignSelf: 'center' }} />
@@ -17,5 +20,6 @@ export function LostPage() {
                 </Button>
             </Stack>
         </Container>
+        </>
     );
 }
