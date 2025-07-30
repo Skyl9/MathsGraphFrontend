@@ -7,7 +7,7 @@ import SourceEdit from './NodeFields/SourceEdit';
 import AliasEdit from './NodeFields/AliasEdit';
 import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
 import FieldAdd from "./NodeFields/FieldAdd"
-import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch} from "@mui/material";
+import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField} from "@mui/material";
 import FieldAddAlias from "./NodeFields/FieldAddAlias";
 import FieldAddRelation from "./NodeFields/FieldAddRelation";
 import FieldAddSource from "./NodeFields/FieldAddSource";
@@ -194,8 +194,18 @@ export const EditModal: React.FC<ModalProps> = ({
                     ></TagEdit>
 
 
-
-                ):(
+                ): fieldConfig.type === "text" ? (
+                    // Permet de ne pas avoir de balise visible sur le titre de la page
+                    <TextField
+                        multiline
+                        fullWidth
+                        minRows={4}
+                        value={value || ""}
+                        onChange={(e) => onChange(e.target.value)}
+                        label={fieldConfig.label}
+                        variant="outlined"
+                    />
+                    ) : (
                     // Sinon, afficher un éditeur de texte comme ReactQuill
                     <ReactQuill
                         value={value || ""}
@@ -213,11 +223,18 @@ export const EditModal: React.FC<ModalProps> = ({
 
                 )}
 
+                {fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
+                    <div className="modal-buttons">
+                        <button onClick={onClose}>Sortir</button>
+                    </div>
 
-                <div className="modal-buttons">
+                ):(
+                    <div className="modal-buttons">
                     <button onClick={onSave}>Sauvegarder</button>
-                    <button onClick={onClose}>Annuler</button>
-                </div>
+            <button onClick={onClose}>Annuler</button>
+                    </div>
+    )}
+
             </div>
         </div>
     );

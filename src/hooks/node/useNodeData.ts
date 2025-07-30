@@ -2,6 +2,8 @@
 import {useState, useCallback, useEffect} from 'react';
 import {AllNodeData} from '../../types/types';
 import {nodeApi} from '../../services/api';
+import Token from '../../services/token';
+
 
 export const useNodeData = (id: string) => {
     const [data, setData] = useState<any | null>(null);
@@ -63,13 +65,19 @@ export const useNodeData = (id: string) => {
 
     const updateField = async (field: keyof AllNodeData, value: any) => {
         try {
-            await nodeApi.updateNode(id, field, value);
+            const username = Token.getUsernameFromToken();
+            if (!username) {
+                throw new Error("Utilisateur non authentifié");
+            }
+
+            await nodeApi.updateNode(id, field, value, username);
             await fetchData();
             return true;
         } catch (err) {
             setError(nodeApi.handleError(err));
             return false;
         }
+
     };
 
     const createField = async (field: keyof AllNodeData, value: any) => {

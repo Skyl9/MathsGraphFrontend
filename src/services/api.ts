@@ -1,3 +1,6 @@
+import {logger} from "../utils/logger";
+import {RollbackConcept} from "../types/types";
+
 const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
 
 export const nodeApi = {
@@ -8,17 +11,39 @@ export const nodeApi = {
         }
         return response.json();
     },
-    updateNode: async (id: string, field: string, value: any) => {
+    updateNode: async (id: string, field: string, value: any,username:string) => {
         const response = await fetch(`${BASE_URL}/update/${id}`, {
             method: 'PATCH',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({field, value})
+            body: JSON.stringify({field, value,username})
         });
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
         return response.json();
     },
+
+    rollbackConcept: async (id: string,data:RollbackConcept) => {
+        const response = await fetch(`${BASE_URL}/concept/rollback/${id}`,{
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({version_number:data.version_number, field_modified:data.field_modified,username:data.username})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+    },
+
+    getConceptHistory: async (conceptId: string) => {
+        const response = await fetch(`${BASE_URL}/concept/history/${conceptId}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        const data = await response.json()
+        logger.debug("getConceptHistory", {data});
+        return data; // renvoie History[]
+    },
+
 
     getEditableFieldsOptions: async (id: string) => {
         const response = await fetch(`${BASE_URL}/getEditableFieldsOptions`);

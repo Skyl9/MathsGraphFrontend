@@ -1,4 +1,7 @@
 import React, {useEffect} from "react";
+import { useState } from "react";
+import { HistoryModal } from "../components/HistoryModal";
+
 import {useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
 import "../styles/NodePage.css";
@@ -15,7 +18,7 @@ import RelationsField from "../components/NodeFields/RelationsField";
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
-import {Fab} from "@mui/material";
+import {Button, Fab} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
@@ -24,6 +27,8 @@ import {logger} from "../utils/logger";
 
 const NodePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
     logger.info("NodePage rendu", { id });
     const {
         data,
@@ -230,6 +235,15 @@ const NodePage: React.FC = () => {
     return (
         <>
             <TopBar/>
+                  <Button variant="outlined" onClick={()=>setIsHistoryOpen(true)}>
+                    Voir l’historique
+                  </Button>
+            <HistoryModal
+                    conceptId={id || ""}
+                    open={isHistoryOpen}
+                    onClose={()=>setIsHistoryOpen(false)}
+                  />
+
             <div className="node-container">
                 <h1 className="node-title">{data?.nom}</h1>
 

@@ -130,3 +130,11 @@ export interface Category {
     nom:string;
     description:string;
 }
+
+export interface RollbackConcept{
+    version_number:number;
+    field_modified:string;
+    username:string;
+
+
+}
