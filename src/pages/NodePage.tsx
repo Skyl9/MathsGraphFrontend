@@ -18,11 +18,12 @@ import RelationsField from "../components/NodeFields/RelationsField";
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
-import {Button, Fab} from "@mui/material";
+import {Button, Fab, Link} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
 import {logger} from "../utils/logger";
+import {ReportIssueButton} from "../components/Issue";
 
 
 const NodePage: React.FC = () => {
@@ -164,7 +165,7 @@ const NodePage: React.FC = () => {
                     <div className={"node-wrapper"}>
                         <div className="field-title">Catégorie :</div>
                         <div className="field-content">
-                            {typeof value === "object" && value !== null && "category" in value ? value.category
+                            {typeof value === "object" && value !== null && "category" in value ? <Link href={"/category/redirect/"+ value.category as string}> {value.category}</Link>
                                 : "Aucune Catégorie"}
                         </div>
                     </div>
@@ -179,7 +180,7 @@ const NodePage: React.FC = () => {
                         <div className="field-title">Mathématicien :</div>
                         <div className="field-content">
                             {typeof value === "object" && value !== null && "mathematicien" in value
-                                ? value.mathematicien
+                                ? <Link href={"/mathematicien/redirect/"+ value.mathematicien as string}> {value.mathematicien}</Link>
                                 : "Aucun mathématicien"}
                         </div>
                     </div>
@@ -193,9 +194,11 @@ const NodePage: React.FC = () => {
                 return (
                     <div className={"node-wrapper"}>
                         <div className="field-title">Type :</div>
+                        <Link href={"/type/redirect/" + value as string }>
                         <div className="field-content" dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(String(value)),
-                        }}/>
+                        }} />
+                        </Link>
                     </div>
                 );
                 case "tags":
@@ -297,7 +300,10 @@ const NodePage: React.FC = () => {
                     <button className="back-button" onClick={() => window.history.back()}>
                         Retour
                     </button>
+
                 </div>
+                <ReportIssueButton/>
+
             </div>
         </>
     );

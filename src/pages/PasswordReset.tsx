@@ -10,6 +10,7 @@ import {
 
 import { nodeApi } from '../services/api';
 import {TopBar} from "../components/TopBar";
+import {ReportIssueButton} from "../components/Issue";
 
 interface PasswordResetFormData {
   email: string;
@@ -103,6 +104,8 @@ const PasswordReset: React.FC = () => {
           </Box>
         )}
       </Box>
+      <ReportIssueButton/>
+
     </Container>
       </>
   );

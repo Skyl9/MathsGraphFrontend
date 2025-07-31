@@ -3,6 +3,7 @@ import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListI
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {MathematicienName} from "../types/types";
+import {ReportIssueButton} from "../components/Issue";
 
 
 
@@ -78,6 +79,7 @@ const MathematicienList: React.FC = () => {
                         </>
                     )}
                 </Stack>
+                <ReportIssueButton/>
             </Container>
         </>
     );

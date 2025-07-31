@@ -23,6 +23,27 @@ export const nodeApi = {
         return response.json();
     },
 
+    getCategoryId:async (name:string)=>{
+        const response = await fetch(`${BASE_URL}/category/name/${name}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getMathematicienId:async (name:string)=>{
+        const response = await fetch(`${BASE_URL}/mathematicien/name/${name}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getTypeId:async (name:string)=>{
+        const response = await fetch(`${BASE_URL}/type/name/${name}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
     rollbackConcept: async (id: string,data:RollbackConcept) => {
         const response = await fetch(`${BASE_URL}/concept/rollback/${id}`,{
             method: 'PATCH',

@@ -14,6 +14,7 @@ import { nodeApi } from '../services/api';
 import {useParams} from "react-router-dom";
 import {TopBar} from "../components/TopBar";
 import { EditModalAvatar } from '../components/EditModalAvatar';
+import {ReportIssueButton} from "../components/Issue";
 
 interface User {
   id: number;
@@ -227,6 +228,8 @@ const UserProfilePage: React.FC = () => {
               </Grid>
             </Grid>
           </Paper>
+          <ReportIssueButton/>
+
         </Box>
       </>
   );

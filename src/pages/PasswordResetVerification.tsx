@@ -10,6 +10,7 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { nodeApi } from '../services/api';
 import {TopBar} from "../components/TopBar";
+import {ReportIssueButton} from "../components/Issue";
 
 interface ResetPasswordVerificationData {
   password: string;
@@ -129,7 +130,10 @@ const PasswordResetVerification: React.FC = () => {
                 </Button>
               </Box>
           )}
+
         </Box>
+        <ReportIssueButton/>
+
       </Container>
       </>
   );

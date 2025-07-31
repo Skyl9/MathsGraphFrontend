@@ -25,6 +25,9 @@ import UserProfilePage from "./pages/UserProfilePage";
 import PasswordReset from "./pages/PasswordReset";
 import PasswordResetVerification from "./pages/PasswordResetVerification";
 import UserRedirect from "./Redirection/UserRedirect";
+import {CategoryRedirect} from "./Redirection/CategoryRedirect";
+import {TypeRedirect} from "./Redirection/TypeRedirect";
+import {MathematicienRedirect} from "./Redirection/MathematicienRedirect";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -83,6 +86,10 @@ const App: React.FC = () => {
                         <Route path={"/reset-password"} element={<PasswordReset/>}/>
                         <Route path={"/reset-password-verification/:token"} element={<PasswordResetVerification/>}/>
                         <Route path={"/username/:username"} element={<UserRedirect />}/>
+                        <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect />}/>
+                        <Route path={"/type/redirect/:typeName"} element={<TypeRedirect />}/>
+                        <Route path={"/mathematicien/redirect/:mathematicienName"} element={<MathematicienRedirect />}/>
+
                     </Routes>
                 </Router>
             </ThemeProvider>

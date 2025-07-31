@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {useCategoryEdit} from "../hooks/category/useCategoryEdit";
+import {ReportIssueButton} from "../components/Issue";
 
 
 const CategoryPage : React.FC = () => {
@@ -118,6 +119,7 @@ const CategoryPage : React.FC = () => {
                     Retour
                 </button>
             </div>
+            <ReportIssueButton/>
         </div>
 
     </>

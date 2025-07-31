@@ -10,6 +10,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {useTypeEdit} from "../hooks/type/useTypeEdit";
+import {ReportIssueButton} from "../components/Issue";
 
 
 const TypePage : React.FC = () => {
@@ -112,6 +113,8 @@ const TypePage : React.FC = () => {
                     Retour
                 </button>
             </div>
+            <ReportIssueButton/>
+
         </div>
 
     </>
