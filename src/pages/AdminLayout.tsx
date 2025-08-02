@@ -37,7 +37,7 @@ const AdminLayout: React.FC = () => {
     useEffect(()=>{
         nodeApi.getUserInfo(Token.getUserIdFromToken() as string).then((data:any)=>setcurrentUser(data))
             .catch(console.error)
-    })
+    }, []);
 
 
     return (
