@@ -11,6 +11,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteButton from "../components/FavoriteButton";
 
 
 const MathematicienPage : React.FC = () => {
@@ -96,6 +97,7 @@ const MathematicienPage : React.FC = () => {
     return(
     <>
     <TopBar></TopBar>
+        <FavoriteButton itemId={id as string} itemType={"mathematicien"}/>
         <div className="node-container">
             <h1 className="node-title">{data?.nom}</h1>
             <div className="node-info">

@@ -4,6 +4,7 @@ import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {TypeName} from "../types/types";
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteButton from "../components/FavoriteButton";
 
 
 

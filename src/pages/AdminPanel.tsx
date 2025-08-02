@@ -131,7 +131,7 @@ export default function AdminPanel() {
             width: 100,
             renderCell: (params: { row: AllNodeData }) => {
                 return (
-                    <a href={`/node/${params.row.id}`} target="_blank" rel="noopener noreferrer" className="cell-wrapper">
+                    <a href={`/concept/${params.row.id}`} target="_blank" rel="noopener noreferrer" className="cell-wrapper">
                         {params.row.id}
                     </a>
                 );

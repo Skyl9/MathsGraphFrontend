@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
-import { useState } from "react";
-import { HistoryModal } from "../components/HistoryModal";
+import {useState} from "react";
+import {HistoryModal} from "../components/HistoryModal";
 
 import {useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
@@ -15,6 +15,9 @@ import DateField from "../components/NodeFields/DateField";
 import AliasesField from "../components/NodeFields/AliasesField";
 import SourcesField from "../components/NodeFields/SourcesField";
 import RelationsField from "../components/NodeFields/RelationsField";
+import CommentIcon from '@mui/icons-material/Comment';
+import {CommentsModal, FieldOption} from "../components/CommentsModal";
+
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
@@ -24,13 +27,16 @@ import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
 import {logger} from "../utils/logger";
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteButton from "../components/FavoriteButton";
 
 
 const NodePage: React.FC = () => {
     const {id} = useParams<{ id: string }>();
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+    const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
-    logger.info("NodePage rendu", { id });
+
+    logger.info("NodePage rendu", {id});
     const {
         data,
         loading,
@@ -51,7 +57,7 @@ const NodePage: React.FC = () => {
     } = useNodeEdit(id || "");
 
     const handleEdit = (field: keyof AllNodeData) => {
-        logger.info("Édition démarrée", { field });
+        logger.info("Édition démarrée", {field});
         rawHandleEdit(field);
     };
     const saveChanges = () => {
@@ -63,20 +69,20 @@ const NodePage: React.FC = () => {
     };
 
     const cancelChanges = () => {
-        logger.info("Annulation des changements", { field: currentEditField });
+        logger.info("Annulation des changements", {field: currentEditField});
         rawCancelChanges();
     };
 
     const createField = (...args: Parameters<typeof rawCreateField>) => {
-        logger.debug("createField appelé", { args });
+        logger.debug("createField appelé", {args});
         return rawCreateField(...args);
     };
 
     const refetchData = async () => {
-        logger.debug("RefetchData start", { id });
+        logger.debug("RefetchData start", {id});
         try {
             await rawRefetchData();
-            logger.debug("RefetchData success", { id });
+            logger.debug("RefetchData success", {id});
         } catch (e) {
             logger.error("RefetchData error", e);
         }
@@ -92,7 +98,6 @@ const NodePage: React.FC = () => {
             logger.debug("Aucun token : utilisateur non connecté");
         }
     }, []);
-
 
 
     // Local state for editing dataconst
@@ -119,7 +124,6 @@ const NodePage: React.FC = () => {
             setData(data);
         }
     }, [data]);
-
 
 
     const renderCellContent = (field: keyof AllNodeData) => {
@@ -165,7 +169,8 @@ const NodePage: React.FC = () => {
                     <div className={"node-wrapper"}>
                         <div className="field-title">Catégorie :</div>
                         <div className="field-content">
-                            {typeof value === "object" && value !== null && "category" in value ? <Link href={"/category/redirect/"+ value.category as string}> {value.category}</Link>
+                            {typeof value === "object" && value !== null && "category" in value ?
+                                <Link href={"/category/redirect/" + value.category as string}> {value.category}</Link>
                                 : "Aucune Catégorie"}
                         </div>
                     </div>
@@ -180,7 +185,8 @@ const NodePage: React.FC = () => {
                         <div className="field-title">Mathématicien :</div>
                         <div className="field-content">
                             {typeof value === "object" && value !== null && "mathematicien" in value
-                                ? <Link href={"/mathematicien/redirect/"+ value.mathematicien as string}> {value.mathematicien}</Link>
+                                ? <Link
+                                    href={"/mathematicien/redirect/" + value.mathematicien as string}> {value.mathematicien}</Link>
                                 : "Aucun mathématicien"}
                         </div>
                     </div>
@@ -194,17 +200,17 @@ const NodePage: React.FC = () => {
                 return (
                     <div className={"node-wrapper"}>
                         <div className="field-title">Type :</div>
-                        <Link href={"/type/redirect/" + value as string }>
-                        <div className="field-content" dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(String(value)),
-                        }} />
+                        <Link href={"/type/redirect/" + value as string}>
+                            <div className="field-content" dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(String(value)),
+                            }}/>
                         </Link>
                     </div>
                 );
-                case "tags":
-                    return (
-                        <TagsField tags={value}></TagsField>
-                    )
+            case "tags":
+                return (
+                    <TagsField tags={value}></TagsField>
+                )
             default:
                 return (
                     <HtmlField title={"Défaut"} content={value as string}></HtmlField>
@@ -223,29 +229,63 @@ const NodePage: React.FC = () => {
     }, [error]);
     useEffect(() => {
         if (isModalOpen) {
-            logger.info("Modal d'édition ouvert", { field: currentEditField });
+            logger.info("Modal d'édition ouvert", {field: currentEditField});
         } else {
             logger.info("Modal d'édition fermé");
         }
     }, [isModalOpen, currentEditField]);
 
 
-
     if (loading) return <p>Chargement...</p>;
     if (error) return <p>{error}</p>;
     if (data === null) return (<p>Chargement</p>)
 
+    // liste prédéfinie des champs + alias
+    const commentFields: FieldOption[] = [
+        {value: "nom", label: "Nom"},
+        {value: "type", label: "Type"},
+        {value: "enonce", label: "Enoncé"},
+        {value: 'category', label: "Catégorie"},
+        {value: "mathematicien", label: "Mathématicien"},
+        {value: "demonstration", label: "Démonstration"},
+        {value: "alias", label: "Alias"},
+        {value: "source", label: "Source"},
+        {value: "relation", label: "Relation"},
+        {value: "tag", label: "Tag"},
+        {value: "Historique", label: "Historique"},
+        // ajouter d’autres paires value/label si besoin
+    ];
+
     return (
         <>
             <TopBar/>
-                  <Button variant="outlined" onClick={()=>setIsHistoryOpen(true)}>
+            <div className="node-actions">
+
+                <Button
+                    startIcon={<CommentIcon/>}
+                    onClick={() => setIsCommentsOpen(true)}
+                >
+                    Commentaires
+                </Button>
+
+                <Button variant="outlined" onClick={() => setIsHistoryOpen(true)}>
                     Voir l’historique
-                  </Button>
+                </Button>
+            </div>
+
             <HistoryModal
-                    conceptId={id || ""}
-                    open={isHistoryOpen}
-                    onClose={()=>setIsHistoryOpen(false)}
-                  />
+                conceptId={id || ""}
+                open={isHistoryOpen}
+                onClose={() => setIsHistoryOpen(false)}
+            />
+            <CommentsModal
+                open={isCommentsOpen}
+                onClose={() => setIsCommentsOpen(false)}
+                conceptId={id || ""}
+                fields={commentFields}
+
+            />
+            <FavoriteButton itemId={id as string} itemType={"concept"}/>
 
             <div className="node-container">
                 <h1 className="node-title">{data?.nom}</h1>
@@ -266,7 +306,7 @@ const NodePage: React.FC = () => {
                                         editableFields[field].type === "sources" ||
                                         editableFields[field].type === "latex" ||
                                         editableFields[field].type === "nom_etranger" ||
-                                    editableFields[field].type === "tag") &&
+                                        editableFields[field].type === "tag") &&
                                     !isModalOpen
                                     && isUserConnected && (
                                         <Fab color="primary" aria-label="edit" size="small">
@@ -293,7 +333,7 @@ const NodePage: React.FC = () => {
                                data={data}
                                setData={setData}
                                createField={createField}
-                               refetchData = {refetchData}
+                               refetchData={refetchData}
                     ></EditModal>}
 
                 <div className="node-buttons">

@@ -15,6 +15,7 @@ import {useParams} from "react-router-dom";
 import {TopBar} from "../components/TopBar";
 import { EditModalAvatar } from '../components/EditModalAvatar';
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteList from "../components/FavoriteList";
 
 interface User {
   id: number;
@@ -229,7 +230,9 @@ const UserProfilePage: React.FC = () => {
             </Grid>
           </Paper>
           <ReportIssueButton/>
-
+          <Box>
+          <FavoriteList userId={id}></FavoriteList>
+          </Box>
         </Box>
       </>
   );

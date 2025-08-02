@@ -1,0 +1,277 @@
+import React, { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Chip,
+  Stack,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  CircularProgress,
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReplyIcon from "@mui/icons-material/Reply";
+import { nodeApi } from "../services/api";
+import Token from "../services/token";
+
+export interface FieldOption {
+  value: string;
+  label: string;
+}
+
+interface Comment {
+  id: string;
+  concept_id: string;
+  user_id?: string;
+  parent_id?: string;
+  content: string;
+  author?: string;
+  createdAt?: string;
+  is_deleted?: boolean;
+  field: string; // Champ permettant de trier les commentaires
+    username:string;
+
+}
+
+interface CommentsModalProps {
+  open: boolean;
+  onClose: () => void;
+  conceptId: string;
+  fields: FieldOption[];
+}
+
+export const CommentsModal: React.FC<CommentsModalProps> = ({
+  open,
+  onClose,
+  conceptId,
+  fields,
+}) => {
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState("");
+  const [replyTo, setReplyTo] = useState<Comment | null>(null);
+  const [selectedField, setSelectedField] = useState(fields[0].value);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  // Récupération des infos utilisateur depuis le token
+  const currentUserId = Token.getUserIdFromToken();
+  const currentUserRole = Token.getUserRoleFromToken();
+  const PRIVILEGED = ["admin", "moderator"];
+  // Just après la déclaration de PRIVILEGED
+  const isPrivileged = PRIVILEGED.includes(currentUserRole || "");
+
+  // Charge tous les commentaires puis on filtrera selon selectedField
+  useEffect(() => {
+    if (!open) return;
+    (async () => {
+      setError(null);
+      setLoading(true);
+      try {
+        const data = await nodeApi.getComments(conceptId);
+        setComments(data);
+      } catch (err) {
+        setError(nodeApi.handleError(err));
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [open, conceptId]);
+
+  const handlePost = async () => {
+    if (!newComment.trim()) return;
+    setSubmitting(true);
+    try {
+      await nodeApi.postComment(
+        conceptId,
+        replyTo ? parseInt(replyTo.id, 10) : 0,
+        selectedField,
+        newComment
+      );
+      setNewComment("");
+      setReplyTo(null);
+      const data = await nodeApi.getComments(conceptId);
+      setComments(data);
+    } catch (err) {
+      setError(nodeApi.handleError(err));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await nodeApi.deleteComment(id);
+      setComments((c) => c.filter((x) => x.id !== id));
+    } catch (err) {
+      setError(nodeApi.handleError(err));
+    }
+  };
+
+  // Ne conserver que les commentaires du champ sélectionné
+  const visibleComments = comments.filter((c) => 
+      c.field === selectedField);
+
+  // Construire l'arborescence et aplatir avec profondeur
+  const threadedComments = React.useMemo(() => {
+
+      type Node = Comment & { children: Node[] };
+    // Map de tous les commentaires avec enfants
+    const map = new Map<string, Node>();
+    visibleComments.forEach((c) =>
+        
+      map.set(c.id, { ...c, children: [] })
+    );
+    const roots: Node[] = [];
+    map.forEach((node) => {
+      if (node.parent_id && map.has(node.parent_id)) {
+        map.get(node.parent_id)!.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    });
+    // Aplatir en liste ordonnée avec profondeur
+    const flatten = (nodes: Node[], depth = 0): { node: Node; depth: number }[] =>
+      nodes.reduce((acc, n) => {
+        acc.push({ node: n, depth });
+        if (n.children.length) {
+          acc.push(...flatten(n.children, depth + 1));
+        }
+        return acc;
+      }, [] as { node: Node; depth: number }[]);
+    return flatten(roots);
+  }, [visibleComments]);
+
+  return (
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Commentaires</DialogTitle>
+      <DialogContent dividers>
+        {loading ? (
+          <CircularProgress />
+        ) : error ? (
+          <Alert severity="error">{error}</Alert>
+        ) : (
+          <List>
+            {threadedComments.length ? (
+              threadedComments.map(({ node: c, depth }) => (
+                <ListItem
+                  key={c.id}
+                  sx={{ pl: depth * 4 }}
+                  secondaryAction={
+                    <>
+                      {/* Seuls les utilisateurs connectés peuvent répondre */}
+                      {currentUserId && (
+                        <IconButton
+                          edge="end"
+                          onClick={() => setReplyTo(c)}
+                          size="small"
+                        >
+                          <ReplyIcon fontSize="small" />
+                        </IconButton>
+                      )}
+                      {/* Seuls les admins/modérateurs ou l'auteur peuvent supprimer */}
+                      {!c.is_deleted && (isPrivileged || c.user_id === currentUserId) && (
+                        <IconButton
+                          edge="end"
+                          onClick={() => handleDelete(c.id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
+                    </>
+                  }
+                >
+                  <ListItemText
+                    primary={
+                      c.is_deleted
+                        ? "Ce commentaire a été supprimé"
+                        : `${c.username} : ${c.content}`
+                    }
+                    secondary={
+                      [
+                        `Utilisateur : ${c.username}`,
+                        c.parent_id && `Réponse à : ${c.parent_id}`,
+                        c.createdAt && new Date(c.createdAt).toLocaleString(),
+                      ]
+                        .filter(Boolean)
+                        .join(" • ")
+                    }
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <ListItem>
+                <ListItemText primary="Aucun commentaire pour ce champ" />
+              </ListItem>
+            )}
+          </List>
+        )}
+
+        <FormControl fullWidth sx={{ mt: 2 }}>
+          <InputLabel id="field-select-label">Champ</InputLabel>
+          <Select
+            labelId="field-select-label"
+            label="Champ"
+            value={selectedField}
+            onChange={(e) => setSelectedField(e.target.value as string)}
+          >
+            {fields.map((f) => (
+              <MenuItem key={f.value} value={f.value}>
+                {f.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        {/* Si pas connecté, on invite à se connecter */}
+        {!currentUserId ? (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            Connectez-vous pour commenter.
+          </Alert>
+        ) : (
+          <>
+            {replyTo && (
+              <Stack direction="row" alignItems="center" sx={{ mt: 2, mb: 1 }}>
+                <Chip
+                  label={`Réponse à ${replyTo.username}`}
+                  onDelete={() => setReplyTo(null)}
+                  color="primary"
+                />
+              </Stack>
+            )}
+            <TextField
+              label="Nouveau commentaire"
+              fullWidth
+              multiline
+              minRows={2}
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              disabled={submitting}
+              sx={{ mt: 2 }}
+            />
+          </>
+        )}
+
+        <DialogActions>
+          <Button onClick={onClose}>Fermer</Button>
+          <Button
+            variant="contained"
+            onClick={handlePost}
+            disabled={submitting || !newComment.trim() || !currentUserId}
+          >
+            {submitting ? "Envoi…" : "Envoyer"}
+          </Button>
+        </DialogActions>
+      </DialogContent>
+    </Dialog>
+  );
+};

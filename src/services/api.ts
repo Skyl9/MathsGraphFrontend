@@ -1,5 +1,6 @@
 import {logger} from "../utils/logger";
 import {RollbackConcept} from "../types/types";
+import Token from "./token";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
 
@@ -21,6 +22,90 @@ export const nodeApi = {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
         return response.json();
+    },
+
+    getComments:async (concept_id:string)=>{
+      const response = await fetch(`${BASE_URL}/comments/${concept_id}`);
+      if (!response.ok) {
+          throw new Error(`Erreur serveur: ${response.status}`);
+      }
+      return response.json();
+    },
+    postComment:async (concept_id:string,parent_id:number,field:string, comment:string)=>{
+        const response = await fetch(`${BASE_URL}/comments/add/${concept_id}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"field":field, "parent_id":parent_id, "content":comment, "username":Token.getUsernameFromToken()|| ""})
+        });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la sauvegarde des modifications");
+        }
+        return response.json();
+    },
+    deleteComment:async (comment_id:string)=>{
+        const response = await fetch(`${BASE_URL}/comments/delete/${comment_id}`, {
+            method: 'DELETE',
+        })
+    },
+    updateComment:async (concept_id:string,content:string)=>{
+      const response = await fetch(`${BASE_URL}/comments/update/${concept_id}`,
+          {
+              method: 'PATCH',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({"content":content})
+          });
+    },
+    getAllUsers:async ()=>{
+        const response = await fetch(`${BASE_URL}/admin/users`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getAllContents:async ()=>{
+        const response = await fetch(`${BASE_URL}/admin/contents`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+    getAdminStats:async ()=>{
+        const response = await fetch(`${BASE_URL}/admin/stats`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+
+
+    getFavorites:async (user_id?:string)=>{
+        if(!user_id){
+            user_id = Token.getUserIdFromToken() || "";
+        }
+        const response = await fetch(`${BASE_URL}/user/favorite/${user_id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        return response.json();
+    },
+
+    addFavorite:async (general_id:string,type:string)=>{
+        console.log(JSON.stringify({"type":type,"user_id":String(Token.getUserIdFromToken())|| ""}))
+
+        const response = await fetch(`${BASE_URL}/user/favorite/add/${general_id}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"type":type,"user_id":String(Token.getUserIdFromToken())|| ""})
+        })
+    },
+
+    deleteFavorite:async (general_id:string,type:string)=>{
+        console.log(JSON.stringify({"type":type,"user_id":Token.getUserIdFromToken()|| ""}))
+        const response = await fetch(`${BASE_URL}/user/favorite/delete/${general_id}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({"type":type,"user_id":String(Token.getUserIdFromToken())|| ""})
+        })
     },
 
     getCategoryId:async (name:string)=>{

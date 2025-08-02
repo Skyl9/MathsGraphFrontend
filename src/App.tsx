@@ -1,18 +1,18 @@
-import React, { useState, useMemo } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Canvas } from "@react-three/fiber";
+import React, {useState, useMemo} from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
+import {Canvas} from "@react-three/fiber";
 import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
-import { AppProvider, useAppContext } from "./contexts/AppContext";
-import NodePage from "./pages/NodePage";
+import {AppProvider, useAppContext} from "./contexts/AppContext";
+import ConceptPage from "./pages/NodePage";
 import AdminPanel from "./pages/AdminPanel";
-import { createTheme, ThemeProvider } from "@mui/material";
+import {createTheme, ThemeProvider} from "@mui/material";
 import {AboutPage} from "./AboutPage";
 import {SupportPage} from "./SupportPage";
 import {HomePage} from "./HomePage";
-import { LostPage } from "./LostPage";
+import {LostPage} from "./LostPage";
 import {AuthProvider} from "./contexts/Authprovider";
-import {Login } from "./Login";
+import {Login} from "./Login";
 import {Register} from "./Register";
 import MathematicienPage from "./pages/MathematicienPage";
 import CategoryPage from "./pages/CategoryPage";
@@ -28,6 +28,11 @@ import UserRedirect from "./Redirection/UserRedirect";
 import {CategoryRedirect} from "./Redirection/CategoryRedirect";
 import {TypeRedirect} from "./Redirection/TypeRedirect";
 import {MathematicienRedirect} from "./Redirection/MathematicienRedirect";
+import AdminLayout from "./pages/AdminLayout";
+import DashboardPage from "./pages/DashboardPage";
+import UsersPage from "./pages/UsersPage";
+import ContentsPage from "./pages/ContentsPage";
+import SettingsPage from "./pages/SettingsManagement";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -59,65 +64,76 @@ const App: React.FC = () => {
     return (
         <AppProvider>
             <AuthProvider>
-            <ThemeProvider theme={theme}>
-                {" "}
-                {/* Fournit le thème à l'application */}
-                <Router>
+                <ThemeProvider theme={theme}>
                     {" "}
-                    {/* Active la gestion des routes */}
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/" element={<HomePage/>} /> {/* Passe le state et le setter au composant */}
-                        <Route path="/graph" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode} />} />
-                        <Route path="/node/:id" element={<NodePage />} />
-                        <Route path="/admin" element={<AdminPanel />} />
-                        <Route path="/about" element={<AboutPage />} />
-                        <Route path="/support" element={<SupportPage />} />
-                        <Route path="/mathematicien/:id" element={<MathematicienPage />}/>
-                        <Route path="*" element={<LostPage/>} />
-                        <Route path={"/category/:id"} element={<CategoryPage />} />
-                        <Route path={"/type/:id"} element={<TypePage />} />
-                        <Route path={"/category"} element={<CategoryList />} />
-                        <Route path={"/type"} element={<TypeList />} />
-                        <Route path={"/mathematicien"} element={<MathematicienList />} />
-                        <Route path={"/concept"} element={<ConceptList />} />
-                        <Route path={"/user/:id"} element={<UserProfilePage />} />
-                        <Route path={"/reset-password"} element={<PasswordReset/>}/>
-                        <Route path={"/reset-password-verification/:token"} element={<PasswordResetVerification/>}/>
-                        <Route path={"/username/:username"} element={<UserRedirect />}/>
-                        <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect />}/>
-                        <Route path={"/type/redirect/:typeName"} element={<TypeRedirect />}/>
-                        <Route path={"/mathematicien/redirect/:mathematicienName"} element={<MathematicienRedirect />}/>
+                    {/* Fournit le thème à l'application */}
+                    <Router>
+                        {" "}
+                        {/* Active la gestion des routes */}
+                        <Routes>
+                            <Route path="/login" element={<Login/>}/>
+                            <Route path="/register" element={<Register/>}/>
+                            <Route path="/" element={<HomePage/>}/> {/* Passe le state et le setter au composant */}
+                            <Route path="/graph" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode}/>}/>
+                            <Route path="/concept/:id" element={<ConceptPage/>}/>
+                            <Route path="/admin" element={<AdminLayout/>}>
+                                <Route index element={<DashboardPage/>}/>
+                                <Route path="users" element={<UsersPage/>}/>
+                                <Route path="contents" element={<ContentsPage/>}/>
+                                <Route path="settings" element={<SettingsPage/>}/>
+                            </Route>
 
-                    </Routes>
-                </Router>
-            </ThemeProvider>
+
+                                <Route path="/about" element={<AboutPage/>}/>
+                                <Route path="/support" element={<SupportPage/>}/>
+                                <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
+                                <Route path="*" element={<LostPage/>}/>
+                                <Route path={"/category/:id"} element={<CategoryPage/>}/>
+                                <Route path={"/type/:id"} element={<TypePage/>}/>
+                                <Route path={"/category"} element={<CategoryList/>}/>
+                                <Route path={"/type"} element={<TypeList/>}/>
+                                <Route path={"/mathematicien"} element={<MathematicienList/>}/>
+                                <Route path={"/concept"} element={<ConceptList/>}/>
+                                <Route path={"/user/:id"} element={<UserProfilePage/>}/>
+                                <Route path={"/reset-password"} element={<PasswordReset/>}/>
+                                <Route path={"/reset-password-verification/:token"}
+                                       element={<PasswordResetVerification/>}/>
+                                <Route path={"/username/:username"} element={<UserRedirect/>}/>
+                                <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
+                                <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
+                                <Route path={"/mathematicien/redirect/:mathematicienName"}
+                                       element={<MathematicienRedirect/>}/>
+
+                        </Routes>
+                    </Router>
+                </ThemeProvider>
             </AuthProvider>
         </AppProvider>
-    );
+);
 };
 
 // ✅ Récupération des données du graphe avant affichage
-const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) => void }> = ({ darkMode, setDarkMode }) => {
-    const { loading, error, graphData } = useAppContext();
+const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) => void }> = ({
+    darkMode, setDarkMode
+}) => {
+    const {loading, error, graphData} = useAppContext();
 
     if (loading) return <div>Chargement des données du graphe en cours...</div>;
-    if (error) return <div style={{ color: "red" }}>Erreur : {error}</div>;
+    if (error) return <div style={{color: "red"}}>Erreur : {error}</div>;
     if (!graphData) return <div>Graphique non disponible ou introuvable.</div>;
 
     return (
-        <div style={{ width: "100vw", height: "100vh" }} className={darkMode ? "dark-mode" : ""}>
+        <div style={{width: "100vw", height: "100vh"}} className={darkMode ? "dark-mode" : ""}>
             {" "}
             {/* Applique la classe CSS pour le mode sombre */}
-            <Canvas style={{ background: darkMode ? "#222" : "lightgrey" }}>
+            <Canvas style={{background: darkMode ? "#222" : "lightgrey"}}>
                 {" "}
                 {/* Ajuster la couleur de fond du Canvas */}
-                <ambientLight intensity={0.5} />
-                <pointLight position={[10, 10, 10]} />
-                <Scene />
+                <ambientLight intensity={0.5}/>
+                <pointLight position={[10, 10, 10]}/>
+                <Scene/>
             </Canvas>
-            <Menu darkMode={darkMode} setDarkMode={setDarkMode} />{" "}
+            <Menu darkMode={darkMode} setDarkMode={setDarkMode}/>{" "}
             {/* Passe le state et le setter au composant Menu */}
         </div>
     );

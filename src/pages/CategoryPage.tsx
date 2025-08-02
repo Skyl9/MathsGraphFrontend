@@ -11,6 +11,7 @@ import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {useCategoryEdit} from "../hooks/category/useCategoryEdit";
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteButton from "../components/FavoriteButton";
 
 
 const CategoryPage : React.FC = () => {
@@ -75,6 +76,7 @@ const CategoryPage : React.FC = () => {
     return(
     <>
     <TopBar></TopBar>
+        <FavoriteButton itemId={id as string} itemType={"category"}/>
         <div className="node-container">
             <h1 className="node-title">{data?.nom}</h1>
             <div className="node-info">

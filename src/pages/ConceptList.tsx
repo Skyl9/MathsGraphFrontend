@@ -68,7 +68,7 @@ const ConceptList: React.FC = () => {
                                     {concept.map((concept) => (
                                         <ListItem key={concept.id}>
                                             <ListItemText>
-                                                <Link href={`/node/${concept.id}`} underline="hover" color="primary">
+                                                <Link href={`/concept/${concept.id}`} underline="hover" color="primary">
                                                     {concept.nom}
                                                 </Link>
                                             </ListItemText>

@@ -11,6 +11,7 @@ import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {useTypeEdit} from "../hooks/type/useTypeEdit";
 import {ReportIssueButton} from "../components/Issue";
+import FavoriteButton from "../components/FavoriteButton";
 
 
 const TypePage : React.FC = () => {
@@ -69,6 +70,8 @@ const TypePage : React.FC = () => {
     return(
     <>
     <TopBar></TopBar>
+        <FavoriteButton itemId={id as string} itemType={"type"}/>
+
         <div className="node-container">
             <h1 className="node-title">{data?.nom}</h1>
             <div className="node-info">

@@ -36,7 +36,7 @@ export default function NodeDetails({ position, nom, typeMath, id, onClose }: No
 
                     </CardContent>
                     <CardActions>
-                        <Link href={`/node/${id}`} aria-label={`Details for node ${nom}`} >Plus</Link>
+                        <Link href={`/concept/${id}`} aria-label={`Details for node ${nom}`} >Plus</Link>
                         <IconButton
                             aria-label="close"
                             onClick={onClose}
