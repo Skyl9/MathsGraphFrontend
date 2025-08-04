@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
-import {useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import Token from "../services/token";
 import { Type} from "../types/types";
 import HtmlField from "../components/NodeFields/HtmlField";
@@ -66,7 +66,9 @@ const TypePage : React.FC = () => {
             default:
         }
     }
-
+    if (!loading && (error || !data || !data.id)) {
+        return <Navigate to="/404" replace/>;
+    }
     return(
     <>
     <TopBar></TopBar>

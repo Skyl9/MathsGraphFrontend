@@ -1,5 +1,5 @@
 import {Container, Typography, Button, Stack, Grid, Card, CardContent, IconButton, Link, CardActions} from "@mui/material";
-import {TopBar} from "./components/TopBar";
+import {TopBar} from "../components/TopBar";
 
 
 export function HomePage() {
@@ -99,6 +99,11 @@ export function HomePage() {
                             </CardActions>
                         </Card>
                     </Grid>
+                    <Card>
+                        <Typography variant="h5" component="h2" gutterBottom>
+                            <Link href={"/contribution"}>Commencer à contribuer</Link>
+                        </Typography>
+                    </Card>
                 </Grid>
             </Container>
         </>

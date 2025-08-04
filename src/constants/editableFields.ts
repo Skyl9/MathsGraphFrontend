@@ -45,4 +45,5 @@ export const createCategoryEditableFields=(options:Record<keyof Category,string[
     id:{label: "ID", type: "none"},
     nom:{label: "Nom", type: "text"},
     description:{label: "Description", type: "text"},
+    parent_id:{label: "Parent", type: "category", options: options.parent_id}
 })

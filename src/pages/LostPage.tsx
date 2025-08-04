@@ -1,6 +1,6 @@
 import { Container, Typography, Button, Stack } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import {TopBar} from "./components/TopBar";
+import {TopBar} from "../components/TopBar";
 
 export function LostPage() {
     return (

@@ -18,8 +18,8 @@ import CategoryIcon from "@mui/icons-material/Category";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
-import {nodeApi} from "../services/api";
-import Token from "../services/token";
+import {nodeApi} from "../../services/api";
+import Token from "../../services/token";
 
 
 const navItems = [

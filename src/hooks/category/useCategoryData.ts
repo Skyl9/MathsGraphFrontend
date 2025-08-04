@@ -11,6 +11,7 @@ export const useCategoryData = (id:string) => {
         id:[],
         nom:[],
         description:[],
+        parent_id:[],
     });
 
 

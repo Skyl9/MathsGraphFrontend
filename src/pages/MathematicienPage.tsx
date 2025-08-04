@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
-import {useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import {useMathematicienEdit} from "../hooks/mathematicien/useMathematicienEdit";
 import Token from "../services/token";
 import { Mathematicien} from "../types/types";
@@ -93,7 +93,9 @@ const MathematicienPage : React.FC = () => {
             default:
         }
     }
-
+    if (!loading && (error || !data || !data.id)) {
+        return <Navigate to="/404" replace/>;
+    }
     return(
     <>
     <TopBar></TopBar>

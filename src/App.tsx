@@ -5,15 +5,15 @@ import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
 import {AppProvider, useAppContext} from "./contexts/AppContext";
 import ConceptPage from "./pages/NodePage";
-import AdminPanel from "./pages/AdminPanel";
+import AdminPanel from "./pages/admin/AdminPanel";
 import {createTheme, ThemeProvider} from "@mui/material";
-import {AboutPage} from "./AboutPage";
-import {SupportPage} from "./SupportPage";
-import {HomePage} from "./HomePage";
-import {LostPage} from "./LostPage";
+import {AboutPage} from "./pages/AboutPage";
+import {SupportPage} from "./pages/SupportPage";
+import {HomePage} from "./pages/HomePage";
+import {LostPage} from "./pages/LostPage";
 import {AuthProvider} from "./contexts/Authprovider";
-import {Login} from "./Login";
-import {Register} from "./Register";
+import {Login} from "./pages/Login";
+import {Register} from "./pages/Register";
 import MathematicienPage from "./pages/MathematicienPage";
 import CategoryPage from "./pages/CategoryPage";
 import TypePage from "./pages/TypePage";
@@ -28,11 +28,12 @@ import UserRedirect from "./Redirection/UserRedirect";
 import {CategoryRedirect} from "./Redirection/CategoryRedirect";
 import {TypeRedirect} from "./Redirection/TypeRedirect";
 import {MathematicienRedirect} from "./Redirection/MathematicienRedirect";
-import AdminLayout from "./pages/AdminLayout";
-import DashboardPage from "./pages/DashboardPage";
-import UsersPage from "./pages/UsersPage";
-import ContentsPage from "./pages/ContentsPage";
+import AdminLayout from "./pages/admin/AdminLayout";
+import DashboardPage from "./pages/admin/DashboardPage";
+import UsersPage from "./pages/admin/UsersPage";
+import ContentsPage from "./pages/admin/ContentsPage";
 import SettingsPage from "./pages/SettingsManagement";
+import ContributionPage from "./pages/ContributionPage";
 
 
 // TODO  Mettre en place page de description: 1. Type 2. Mathématicien 3. Sources
@@ -103,6 +104,7 @@ const App: React.FC = () => {
                                 <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
                                 <Route path={"/mathematicien/redirect/:mathematicienName"}
                                        element={<MathematicienRedirect/>}/>
+                            <Route path={"/contribution"} element={<ContributionPage/>}/>
 
                         </Routes>
                     </Router>

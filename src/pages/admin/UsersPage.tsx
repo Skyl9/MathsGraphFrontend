@@ -4,7 +4,7 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Box, CircularProgress, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { nodeApi } from '../services/api';
+import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface UserRow {

@@ -48,7 +48,7 @@ export interface ModalProps {
     onChange: (value: any) => void;
     fieldConfig: EditableField;
     data?: AllNodeData |Mathematicien | Type | Category | null;
-    setData: (data: AllNodeData |Mathematicien) => void;
+    setData: (data: AllNodeData |Mathematicien|Type|Category) => void;
     createField: any;
     refetchData:any;
 }
@@ -81,7 +81,7 @@ export interface Relations {
 
 export type EditableField = {
     label: string;
-    type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex"|"tag";
+    type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex"|"tag"|"category";
     options?: string[];
 };
 
@@ -128,7 +128,9 @@ export interface TypeName {
 export interface Category {
     id:number;
     nom:string;
-    description:string;
+    description?: string | null;
+    parent_id?: number | null;
+
 }
 
 export interface RollbackConcept{

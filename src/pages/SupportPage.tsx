@@ -1,5 +1,5 @@
 import { Container, Typography, Button, Stack } from '@mui/material';
-import {TopBar} from "./components/TopBar";
+import {TopBar} from "../components/TopBar";
 export function SupportPage() {
     return (
         <>

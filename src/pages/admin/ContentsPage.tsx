@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Box, CircularProgress, Button, Stack } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { nodeApi } from '../services/api';
+import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface ContentRow {

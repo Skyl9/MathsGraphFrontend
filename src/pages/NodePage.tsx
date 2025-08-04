@@ -2,7 +2,7 @@ import React, {useEffect} from "react";
 import {useState} from "react";
 import {HistoryModal} from "../components/HistoryModal";
 
-import {useParams} from "react-router-dom";
+import {Navigate, useParams} from "react-router-dom";
 import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
@@ -237,9 +237,9 @@ const NodePage: React.FC = () => {
 
 
     if (loading) return <p>Chargement...</p>;
-    if (error) return <p>{error}</p>;
-    if (data === null) return (<p>Chargement</p>)
-
+    if (!loading && (error || !data || !data.id)) {
+        return <Navigate to="/404" replace/>;
+    }
     // liste prédéfinie des champs + alias
     const commentFields: FieldOption[] = [
         {value: "nom", label: "Nom"},

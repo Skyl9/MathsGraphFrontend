@@ -1,7 +1,7 @@
 // DashboardPage.tsx
 import React, { useEffect, useState } from 'react';
 import { Grid, Card, CardContent, Typography, CircularProgress } from '@mui/material';
-import { nodeApi } from '../services/api';
+import { nodeApi } from '../../services/api';
 
 interface Stats {
     users: number;

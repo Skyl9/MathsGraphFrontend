@@ -1,5 +1,15 @@
-import React from 'react';
-import {AllNodeData, Mathematicien, ModalProps, NomEtranger, Relations, Source, Tag} from "../types/types";
+import React, { useState, useEffect } from 'react';
+import {
+    AllNodeData,
+    Mathematicien,
+    ModalProps,
+    NomEtranger,
+    Relations,
+    Source,
+    Tag,
+    Category,
+    Type
+} from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
 import {RelationEdit} from './NodeFields/RelationEdit';
@@ -13,6 +23,7 @@ import FieldAddRelation from "./NodeFields/FieldAddRelation";
 import FieldAddSource from "./NodeFields/FieldAddSource";
 import LatexEditor from "./NodeFields/LatexEditor";
 import TagEdit from "./NodeFields/TagEdit";
+import {nodeApi} from "../services/api";
 
 // TODO Mettre en place le lien sur les sources et plus généralement les liens de la page d'informations
 //TODO Mettre en place les boutons de suppressions d'éléments
@@ -33,10 +44,12 @@ export const EditModal: React.FC<ModalProps> = ({
         return !!data && typeof data === 'object' && 'relations' in data;
     };
 
-    const isMathematiciens = (data: unknown): data is Mathematicien => {
+    const isMathematicien = (data: unknown): data is Mathematicien => {
         return !!data && typeof data === 'object' && 'nationalite' in data;
     };
 
+    const isCategory = (d: unknown): d is Category =>
+        !!d && typeof d === 'object' && 'parent_id' in (d as any);
 
     // Pour les relations
     const handleRelationChange = (index: number, updatedRelation: Relations) => {
@@ -75,11 +88,46 @@ export const EditModal: React.FC<ModalProps> = ({
             }
         }
     };
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    // Charger les catégories existantes pour le sélecteur parent_id
+    useEffect(() => {
+        if (field === "parent_id" && isCategory(data)) {
+            nodeApi.getAllCategories()
+                .then(setCategories)
+                .catch(() => setCategories([]));
+        }
+    }, [field, data]);
+
+
     return (
         <div className="modal">
             <div className="modal-content">
                 <h2>Modifier {fieldConfig.label}</h2>
-                {fieldConfig.type === "select" && fieldConfig.options ? (
+                {fieldConfig.type === "category"
+                  && isCategory(data) 
+                  && field === "parent_id" ? (
+                    <FormControl fullWidth>
+                        <InputLabel id="parent-select-label">Catégorie parente</InputLabel>
+                        <Select
+                            labelId="parent-select-label"
+                            value={value ?? ""}
+                            label="Catégorie parente"
+                            onChange={e => onChange(
+                                e.target.value === "" 
+                                  ? null 
+                                  : Number(e.target.value)
+                            )}
+                        >
+                            <MenuItem value="">Aucune</MenuItem>
+                            {categories.map(cat => (
+                                <MenuItem key={cat.id} value={cat.id}>
+                                    {cat.nom}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                ) : fieldConfig.type === "select" && fieldConfig.options ? (
                     <FormControl fullWidth>
                         <InputLabel id="labelField">{fieldConfig.label}</InputLabel>
                         <Select
@@ -88,27 +136,27 @@ export const EditModal: React.FC<ModalProps> = ({
                             value={fieldConfig.options.includes(value) ? value : ''}
                             onChange={(e) => onChange(e.target.value)}
                         >
-                            {fieldConfig.options?.map((option, index) => (
+                            {fieldConfig.options.map((option, index) => (
                                 <MenuItem key={index} value={option}>
                                     {option}
                                 </MenuItem>
                             ))}
                         </Select>
-                        {field === "type" && fieldConfig.type === "select" && (
+                        {field === "type" && (
                             <FieldAdd
                                 label="Type"
                                 onChange={onChange}
                                 createField={createField}
                             />
                         )}
-                        {field === "categorie" && fieldConfig.type === "select" && (
+                        {field === "categorie" && (
                             <FieldAdd
                                 label="categorie"
                                 onChange={onChange}
                                 createField={createField}
                             />
                         )}
-                        {field === "mathematicien" && fieldConfig.type === "select" && (
+                        {field === "mathematicien" && (
                             <FieldAdd
                                 label="mathematicien"
                                 onChange={onChange}
@@ -116,8 +164,6 @@ export const EditModal: React.FC<ModalProps> = ({
                             />
                         )}
                     </FormControl>
-
-
                 ) : fieldConfig.type === "checkbox" ? (
                     // Si c'est un champ de type "checkbox", afficher une case à cocher
                     <FormControl>
@@ -190,11 +236,11 @@ export const EditModal: React.FC<ModalProps> = ({
 
 
                 ) : fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
-                    <TagEdit tags={data.tags} conceptId={data.id.toString()} refetchData = {refetchData}
+                    <TagEdit tags={data.tags} conceptId={data.id.toString()} refetchData={refetchData}
                     ></TagEdit>
 
 
-                ): fieldConfig.type === "text" ? (
+                ) : fieldConfig.type === "text" ? (
                     // Permet de ne pas avoir de balise visible sur le titre de la page
                     <TextField
                         multiline
@@ -205,7 +251,7 @@ export const EditModal: React.FC<ModalProps> = ({
                         label={fieldConfig.label}
                         variant="outlined"
                     />
-                    ) : (
+                ) : (
                     // Sinon, afficher un éditeur de texte comme ReactQuill
                     <ReactQuill
                         value={value || ""}
@@ -228,12 +274,12 @@ export const EditModal: React.FC<ModalProps> = ({
                         <button onClick={onClose}>Sortir</button>
                     </div>
 
-                ):(
+                ) : (
                     <div className="modal-buttons">
-                    <button onClick={onSave}>Sauvegarder</button>
-            <button onClick={onClose}>Annuler</button>
+                        <button onClick={onSave}>Sauvegarder</button>
+                        <button onClick={onClose}>Annuler</button>
                     </div>
-    )}
+                )}
 
             </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { TopBar } from "./components/TopBar";
+import { TopBar } from "../components/TopBar";
 
 export const Register: React.FC = () => {
     const [username, setUsername] = useState("");
