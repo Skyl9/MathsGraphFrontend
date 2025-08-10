@@ -109,7 +109,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const response = await fetch(backend_link + "/graph");
             if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
             const data = await response.json();
-            setGraphData(data);
+            setGraphData(data.data);
         } catch (err: unknown) {
             setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
         } finally {

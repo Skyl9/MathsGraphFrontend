@@ -4,8 +4,15 @@ import Token from "./token";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
 
+interface ResponseModel {
+    data: any;
+    error:string|null;
+    success:boolean;
+    meta:string|null;
+}
+
 export const nodeApi = {
-    getNode: async (id: string) => {
+    getConcept: async (id: string) => {
         const response = await fetch(`${BASE_URL}/concept/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
@@ -60,21 +67,34 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData:ResponseModel= await response.json();
+        if (!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllContents:async ()=>{
         const response = await fetch(`${BASE_URL}/admin/contents`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData:ResponseModel= await response.json();
+        if (!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAdminStats:async ()=>{
         const response = await fetch(`${BASE_URL}/admin/stats`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+
+        const responseData:ResponseModel= await response.json();
+        if (!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
 
@@ -120,7 +140,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getTypeId:async (name:string)=>{
         const response = await fetch(`${BASE_URL}/type/name/${name}`);
@@ -203,7 +227,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la création du mathématicien");
         }
-        return response.json();
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createAlias: async (id: number, nom: string) => {
         const response = await fetch(`${BASE_URL}/alias/create`, {
@@ -233,7 +261,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getOneType: async (id: string) => {
         const response = await fetch(`${BASE_URL}/type/${id}`);
@@ -258,7 +290,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        return response.json();
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     updateOneCategory: async (id: string, field: string, value: any) => {
         const response = await fetch(`${BASE_URL}/category/update/${id}`, {
@@ -295,7 +331,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllTypeNames: async () => {
         const response = await fetch(`${BASE_URL}/type`);

@@ -31,7 +31,7 @@ export const useNodeData = (id: string) => {
         setError(null);
 
         try {
-            const fetchedData = await nodeApi.getNode(id);
+            const fetchedData = await nodeApi.getConcept(id);
             setData(fetchedData);
 
         } catch (err) {

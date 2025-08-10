@@ -105,7 +105,7 @@ export const Login: React.FC = () => {
 
             <Typography variant="body2" align="center" sx={{ mt: 2 }}>
                 Pas encore de compte ?{" "}
-                <Link href="/pages/Register" underline="hover">
+                <Link href="/register" underline="hover">
                     S'inscrire
                 </Link>
             </Typography>
