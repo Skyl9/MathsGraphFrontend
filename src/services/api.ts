@@ -17,7 +17,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     updateNode: async (id: string, field: string, value: any,username:string) => {
         const response = await fetch(`${BASE_URL}/update/${id}`, {
@@ -28,15 +32,23 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     getComments:async (concept_id:string)=>{
-      const response = await fetch(`${BASE_URL}/comments/${concept_id}`);
-      if (!response.ok) {
-          throw new Error(`Erreur serveur: ${response.status}`);
-      }
-      return response.json();
+        const response = await fetch(`${BASE_URL}/comments/${concept_id}`);
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     postComment:async (concept_id:string,parent_id:number,field:string, comment:string)=>{
         const response = await fetch(`${BASE_URL}/comments/add/${concept_id}`, {
@@ -47,20 +59,40 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     deleteComment:async (comment_id:string)=>{
         const response = await fetch(`${BASE_URL}/comments/delete/${comment_id}`, {
             method: 'DELETE',
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression du commentaire");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     updateComment:async (concept_id:string,content:string)=>{
-      const response = await fetch(`${BASE_URL}/comments/update/${concept_id}`,
-          {
-              method: 'PATCH',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({"content":content})
-          });
+        const response = await fetch(`${BASE_URL}/comments/update/${concept_id}`,
+            {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"content":content})
+            });
+        if (!response.ok) {
+            throw new Error("Erreur lors de la mise à jour du commentaire");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllUsers:async ()=>{
         const response = await fetch(`${BASE_URL}/admin/users`);
@@ -106,7 +138,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     addFavorite:async (general_id:string,type:string)=>{
@@ -117,6 +153,14 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"type":type,"user_id":String(Token.getUserIdFromToken())|| ""})
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de l'ajout aux favoris");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     deleteFavorite:async (general_id:string,type:string)=>{
@@ -126,6 +170,14 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"type":type,"user_id":String(Token.getUserIdFromToken())|| ""})
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression des favoris");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     getCategoryId:async (name:string)=>{
@@ -133,7 +185,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getMathematicienId:async (name:string)=>{
         const response = await fetch(`${BASE_URL}/mathematicien/name/${name}`);
@@ -151,7 +207,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     rollbackConcept: async (id: string,data:RollbackConcept) => {
         const response = await fetch(`${BASE_URL}/concept/rollback/${id}`,{
@@ -162,6 +222,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     getConceptHistory: async (conceptId: string) => {
@@ -169,9 +234,12 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        const data = await response.json()
-        logger.debug("getConceptHistory", {data});
-        return data; // renvoie History[]
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        logger.debug("getConceptHistory", {data: responseData.data});
+        return responseData.data; // renvoie History[]
     },
 
 
@@ -180,7 +248,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     createRelation: async (dico: {}) => {
@@ -190,9 +262,13 @@ export const nodeApi = {
             body: JSON.stringify({"value": dico})
         });
         if (!response.ok) {
-            throw new Error("Erreur lors de la création de la catégorie");
+            throw new Error("Erreur lors de la création de la relation");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
 
@@ -205,7 +281,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la création de la catégorie");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createType: async (nom: string) => {
         const response = await fetch(`${BASE_URL}/type/create`, {
@@ -216,7 +296,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la création du type");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createMathematicien: async (nom: string) => {
         const response = await fetch(`${BASE_URL}/mathematicien/create`, {
@@ -242,7 +326,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la création de l'alias");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createSources: async (sources: any) => {
         const response = await fetch(`${BASE_URL}/source/create`, {
@@ -251,9 +339,13 @@ export const nodeApi = {
             body: JSON.stringify({"value": sources})
         });
         if (!response.ok) {
-            throw new Error("Erreur lors de la création de l'alias");
+            throw new Error("Erreur lors de la création de la source");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     getOneMathematicien: async (id: string) => {
@@ -272,14 +364,22 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getOneCategory: async (id: string) => {
         const response = await fetch(`${BASE_URL}/category/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     updateOneMathematicien: async (id: string, field: string, value: any) => {
         const response = await fetch(`${BASE_URL}/mathematicien/update/${id}`, {
@@ -305,7 +405,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     updateOneType: async (id: string, field: string, value: any) => {
         const response = await fetch(`${BASE_URL}/type/update/${id}`, {
@@ -316,7 +420,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error("Erreur lors de la sauvegarde des modifications");
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     getAllCategories: async () => {
@@ -324,7 +432,11 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllMathematicienName: async () => {
         const response = await fetch(`${BASE_URL}/mathematicien`);
@@ -342,33 +454,49 @@ export const nodeApi = {
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllConceptNames: async () => {
         const response = await fetch(`${BASE_URL}/getAllConceptName`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getUserInfo: async (id:string) => {
         const response = await fetch(`${BASE_URL}/user/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return(response.json())
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     requestPasswordReset: async (email: string) => {
         const response = await fetch(`${BASE_URL}/password-reset/request`,
-        {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({"email":email})
-        })
+            {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"email":email})
+            })
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     resetPassword: async (token: string, password: string) => {
         const response = await fetch(`${BASE_URL}/password-reset/confirm`, {
@@ -376,21 +504,36 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"token":token, "new_password":password})
         })
-        return response.json();
+        if (!response.ok) {
+            throw new Error(`Erreur serveur: ${response.status}`);
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getUserIdByUsername:async (username:string) => {
         const response = await fetch(`${BASE_URL}/user/id/${username}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getTagsNameFromConceptId:async (id:string) => {
         const response = await fetch(`${BASE_URL}/tags/name/concept_id/${id}`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     removeTagsFromConceptId:async (concept_id:number, tags_id:number) => {
         const response = await fetch(`${BASE_URL}/tags/remove/concept`, {
@@ -398,6 +541,14 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"concept_id":concept_id, "tag_id":tags_id})
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de la suppression du tag");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createTags:async (tags:string) => {
         const response = await fetch(`${BASE_URL}/tags/add`, {
@@ -405,6 +556,14 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"tag_name":tags})
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de la création du tag");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     createLinkTagConcept:async (concept_id:number, tags_id:number) => {
         const response = await fetch(`${BASE_URL}/tags/add/concept`, {
@@ -412,13 +571,25 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({"concept_id":concept_id, "tag_id":tags_id})
         })
+        if (!response.ok) {
+            throw new Error("Erreur lors de l'association du tag au concept");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
     getAllTagName:async()=>{
         const response = await fetch(`${BASE_URL}/tags/all`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
-        return response.json();
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     },
 
     handleError: (error: unknown) => {
@@ -433,6 +604,13 @@ export const nodeApi = {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
         })
-        return response.json();
+        if (!response.ok) {
+            throw new Error("Erreur lors de la mise à jour de l'utilisateur");
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
     }
 };
