@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { TopBar } from "../components/TopBar";
+import {nodeApi} from "../services/api";
 
 export const Register: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -14,19 +15,9 @@ export const Register: React.FC = () => {
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        const backendLink = process.env.REACT_APP_BACKEND_LINK || "";
 
         try {
-            const response = await fetch(backendLink + "/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, email, password }),
-            });
-
-            if (!response.ok) {
-                setError("Impossible de créer l'utilisateur");
-                return;
-            }
+            const data = nodeApi.register(username, email, password);
 
             setError(null);
             setSuccess(true);

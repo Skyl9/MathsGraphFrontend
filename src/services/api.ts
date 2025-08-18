@@ -10,8 +10,28 @@ interface ResponseModel {
     success:boolean;
     meta:string|null;
 }
+interface RequestOptions {
+    method: string;
+    headers: {
+        Authorization: string;
+    };
+}
+
 
 export const nodeApi = {
+    getHeaderToken:(method:string):RequestOptions => {
+        const token = Token.getToken()
+        if (!token) {
+            throw new Error("Authentification requise: Token non trouvé.");
+        }
+        return {
+            method: method, // Spécifiez la méthode HTTP
+            headers: {
+                // Ajouter l'en-tête Authorization au format attendu par FastAPI
+                'Authorization': `Bearer ${token}`
+            },
+        };
+    },
     getConcept: async (id: string) => {
         const response = await fetch(`${BASE_URL}/concept/${id}`);
         if (!response.ok) {
@@ -95,7 +115,12 @@ export const nodeApi = {
         return responseData.data;
     },
     getAllUsers:async ()=>{
-        const response = await fetch(`${BASE_URL}/admin/users`);
+        const header:RequestOptions = nodeApi.getHeaderToken("GET")
+        const response = await fetch(`${BASE_URL}/admin/users`,header);
+        if (response.status === 401 || response.status === 403) {
+            // Gérer les erreurs d'autorisation, par exemple en déconnectant l'utilisateur
+            throw new Error("Accès non autorisé ou droits insuffisants.");
+        }
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -106,7 +131,8 @@ export const nodeApi = {
         return responseData.data;
     },
     getAllContents:async ()=>{
-        const response = await fetch(`${BASE_URL}/admin/contents`);
+        const header:RequestOptions = nodeApi.getHeaderToken("GET")
+        const response = await fetch(`${BASE_URL}/admin/contents`,header);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -117,7 +143,8 @@ export const nodeApi = {
         return responseData.data;
     },
     getAdminStats:async ()=>{
-        const response = await fetch(`${BASE_URL}/admin/stats`);
+        const header:RequestOptions = nodeApi.getHeaderToken("GET")
+        const response = await fetch(`${BASE_URL}/admin/stats`,header);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -612,5 +639,43 @@ export const nodeApi = {
             throw new Error(responseData.error as string);
         }
         return responseData.data;
-    }
+    },
+    getToken:async (formData:URLSearchParams)=>{
+        const response = await fetch( `${BASE_URL}/token`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData.toString(),
+        });
+
+        if (!response.ok) {
+            throw new Error("Identifiants invalides. Veuillez réessayer.");
+        }
+
+        const responseData:ResponseModel = await response.json();
+        if(!responseData.success){
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
+    },
+
+    register:async(username:string, email:string, password:string)=>{
+        const response = await fetch(`${BASE_URL}/register`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username, email, password}),
+        });
+
+        if (!response.ok) {
+            throw new Error("Impossible de créer l'utilisateur")
+        }
+        const responseData: ResponseModel = await response.json();
+        if (!responseData.success) {
+            throw new Error(responseData.error as string);
+        }
+        return responseData.data;
+    },
+
+
 };

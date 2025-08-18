@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Alert, Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {TopBar} from "../components/TopBar";
+import { nodeApi } from "../services/api";
 
 export const Login: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -14,33 +15,17 @@ export const Login: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true); // Activation du chargement
-        const backendLink = process.env.REACT_APP_BACKEND_LINK || "";
-
         try {
             // Utiliser FormData pour envoyer les données sous forme de `application/x-www-form-urlencoded`
             const formData = new URLSearchParams();
             formData.append("username", username);
             formData.append("password", password);
-
-            const response = await fetch(backendLink + "/token", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body: formData.toString(),
-            });
-
-            if (!response.ok) {
-                setError("Identifiants invalides. Veuillez réessayer.");
-                return;
-            }
-
-            const data = await response.json();
+            const data = await nodeApi.getToken(formData)
             localStorage.setItem("token", data.access_token);
             setError(null); // Aucun message d'erreur
             navigate("/"); // Redirection après connexion
-        } catch (e) {
-            setError("Une erreur est survenue. Veuillez réessayer.");
+        } catch (e:any) {
+            setError(e.message || "Une erreur est survenue. Veuillez réessayer.");
             console.error(e);
         } finally {
             setLoading(false); // Désactivation du chargement
