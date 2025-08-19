@@ -80,7 +80,8 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
         const data = await nodeApi.getComments(conceptId);
         setComments(data);
       } catch (err) {
-        setError(nodeApi.handleError(err));
+        const errorMessage = (err as any).message || 'An unknown error occurred.';
+        setError(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -102,7 +103,8 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       const data = await nodeApi.getComments(conceptId);
       setComments(data);
     } catch (err) {
-      setError(nodeApi.handleError(err));
+      const errorMessage = (err as any).message || 'An unknown error occurred.';
+      setError(errorMessage);
     } finally {
       setSubmitting(false);
     }
@@ -113,7 +115,8 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
       await nodeApi.deleteComment(id);
       setComments((c) => c.filter((x) => x.id !== id));
     } catch (err) {
-      setError(nodeApi.handleError(err));
+      const errorMessage = (err as any).message || 'An unknown error occurred.';
+      setError(errorMessage);
     }
   };
 

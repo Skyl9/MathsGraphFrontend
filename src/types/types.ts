@@ -140,3 +140,16 @@ export interface RollbackConcept{
 
 
 }
+export interface TypeInfo{
+    id: string
+    type: string
+}
+export interface CategoryInfo {
+    id: string
+    nom: string
+}
+
+export interface MathematicienInfo {
+    id: string
+    nom: string
+}

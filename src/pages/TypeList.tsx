@@ -20,7 +20,8 @@ const TypeList: React.FC = () => {
                 const data = await nodeApi.getAllTypeNames();
                 setType(data);
             } catch (err) {
-                setError(nodeApi.handleError(err));
+                const errorMessage = (err as any).message || 'An unknown error occurred.';
+                setError(errorMessage);
             } finally {
                 setLoading(false);
             }

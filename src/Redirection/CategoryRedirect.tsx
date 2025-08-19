@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
+import {CategoryInfo} from "../types/types";
 
-interface CategoryInfo {
-    id: string
-    nom: string
-}
 
 export const CategoryRedirect: React.FC = () => {
     const { categoryName } = useParams<{ categoryName: string }>()

@@ -19,7 +19,8 @@ const ConceptList: React.FC = () => {
                 const data = await nodeApi.getAllConceptNames();
                 setConcept(data);
             } catch (err) {
-                setError(nodeApi.handleError(err));
+                const errorMessage = (err as any).message || 'An unknown error occurred.';
+                setError(errorMessage);
             } finally {
                 setLoading(false);
             }

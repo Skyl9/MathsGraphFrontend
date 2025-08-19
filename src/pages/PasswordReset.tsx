@@ -34,7 +34,8 @@ const PasswordReset: React.FC = () => {
       setIsSubmitted(true);
       setError('');
     } catch (err) {
-      setError(nodeApi.handleError(err));
+      const errorMessage = (err as any).message || 'An unknown error occurred.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

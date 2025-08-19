@@ -50,7 +50,8 @@ const PasswordResetVerification: React.FC = () => {
         navigate('/login');
       }, 3000);
     } catch (err) {
-      setError(nodeApi.handleError(err));
+      const errorMessage = (err as any).message || 'An unknown error occurred.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

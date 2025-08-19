@@ -7,9 +7,13 @@ type FieldAddRelationProps = {
     nodeName: string;
     createField: (type: string, data: any) => void;
 };
+interface LabelValue {
+    label: string;
+    value: any; // Or a more specific type if known
+}
 
 const FieldAddRelation: React.FC<FieldAddRelationProps> = ({nodeName, createField }) => {
-    const [theorems, setTheorems] = useState<[]>([]);
+    const [theorems, setTheorems] = useState<LabelValue[]>([]);
     const [theo2, setTheo2] = useState<{ label: string } | null>(null);
     const [relation, setRelation] = useState("");
     const [description, setDescription] = useState("");
@@ -19,7 +23,7 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({nodeName, createFiel
         const fetchTheorems = async () => {
             const names = await nodeApi.getAllConceptNames();
             console.log(names)
-            const list = names.map((name: any) => ({ label: name["nom"] }));
+            const list = names.map((name: any) => ({ label: name["nom"],value: name["id"] }));
             setTheorems(list);
         };
 

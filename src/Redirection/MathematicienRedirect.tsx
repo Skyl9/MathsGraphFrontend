@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
+import {MathematicienInfo} from "../types/types";
 
-interface MathematicienInfo {
-    id: string
-    nom: string
-}
 
 export const MathematicienRedirect: React.FC = () => {
     const { mathematicienName } = useParams<{ mathematicienName: string }>()

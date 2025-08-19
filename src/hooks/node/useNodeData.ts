@@ -26,6 +26,7 @@ export const useNodeData = (id: string) => {
         tags: [],
     });
 
+
     const fetchData = useCallback(async () => {
         setLoading(true);
         setError(null);
@@ -35,7 +36,8 @@ export const useNodeData = (id: string) => {
             setData(fetchedData);
 
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -44,10 +46,11 @@ export const useNodeData = (id: string) => {
     const fetchOptions = useCallback(async () => {
 
         try {
-            const options = await nodeApi.getEditableFieldsOptions(id);
+            const options = await nodeApi.getEditableFieldsOptions();
             setEditableFieldsOptions(options);
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
         }
     }, [id]);
 
@@ -74,7 +77,8 @@ export const useNodeData = (id: string) => {
             await fetchData();
             return true;
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
             return false;
         }
 
@@ -129,7 +133,8 @@ export const useNodeData = (id: string) => {
             await fetchOptions();
 
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
             return false;
         }
     }

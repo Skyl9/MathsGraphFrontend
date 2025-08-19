@@ -2,11 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
+import {TypeInfo} from "../types/types";
 
-interface TypeInfo {
-    id: string
-    nom: string
-}
 
 export const TypeRedirect: React.FC = () => {
     const { typeName } = useParams<{ typeName: string }>()

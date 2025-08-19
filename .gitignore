@@ -28,3 +28,4 @@ yarn-error.log*
 /src/assets/Graph Data (2).json
 /.junie/guidelines.md
 /src/__tests__/NodeDetails.test.tsx
+!/.junie/tasks.md

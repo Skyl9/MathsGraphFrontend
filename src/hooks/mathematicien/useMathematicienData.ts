@@ -30,7 +30,8 @@ export const useMathematicienData = (id:string) => {
             setData(mathematicienFetch);
 
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -49,7 +50,8 @@ export const useMathematicienData = (id:string) => {
             await fetchData();
             return true;
         } catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
             return false;
         }
     };
@@ -98,7 +100,8 @@ export const useMathematicienData = (id:string) => {
             await fetchData();
 
         }catch (err) {
-            setError(nodeApi.handleError(err));
+            const errorMessage = (err as any).message || 'An unknown error occurred.';
+            setError(errorMessage);
             return false;
         }
     }
