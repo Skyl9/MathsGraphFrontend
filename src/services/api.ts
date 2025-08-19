@@ -455,7 +455,7 @@ export const nodeApi = {
     },
 
     getAllCategories: async () => {
-        const response = await fetch(`${BASE_URL}/category`);
+        const response = await fetch(`${BASE_URL}/category/`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -466,7 +466,7 @@ export const nodeApi = {
         return responseData.data;
     },
     getAllMathematicienName: async () => {
-        const response = await fetch(`${BASE_URL}/mathematicien`);
+        const response = await fetch(`${BASE_URL}/mathematicien/`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
@@ -477,7 +477,7 @@ export const nodeApi = {
         return responseData.data;
     },
     getAllTypeNames: async () => {
-        const response = await fetch(`${BASE_URL}/type`);
+        const response = await fetch(`${BASE_URL}/type/`);
         if (!response.ok) {
             throw new Error(`Erreur serveur: ${response.status}`);
         }
