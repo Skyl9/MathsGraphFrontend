@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { Vector3 } from "three";
-import { GraphData } from "../types/types";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
+import {Graph} from "../types/ApiTypes/graph";
 
 // 📌 Définition du type pour votre contexte
 interface AppContextProps {
@@ -40,7 +40,7 @@ interface AppContextProps {
     goForward: () => void;
 
     // Données liées au graphe
-    graphData: GraphData | null;
+    graphData: Graph | null;
     setGraphData: React.Dispatch<any>;
     filters: {
         "axiome": boolean;
@@ -96,7 +96,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         réciproque: true,
     });
 
-    const [graphData, setGraphData] = useState<GraphData | null>(null);
+    const [graphData, setGraphData] = useState<Graph | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

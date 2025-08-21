@@ -1,7 +1,7 @@
 import {useMathematicienData} from "./useMathematicienData";
 import {useState} from "react";
-import {Mathematicien} from "../../types/types";
 import {createMathematicienEditableFields} from "../../constants/editableFields";
+import {Mathematicien} from "../../types/ApiTypes/mathematicien";
 
 export const useMathematicienEdit = (id:string) => {
     const { data,setData, loading, error, editableFieldsOptions,refetchData,updateField,createField } = useMathematicienData(id);

@@ -3,7 +3,6 @@ import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
 import {useMathematicienEdit} from "../hooks/mathematicien/useMathematicienEdit";
 import Token from "../services/token";
-import { Mathematicien} from "../types/types";
 import HtmlField from "../components/NodeFields/HtmlField";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
@@ -12,6 +11,7 @@ import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
+import { Mathematicien } from "../types/ApiTypes/mathematicien";
 
 
 const MathematicienPage : React.FC = () => {

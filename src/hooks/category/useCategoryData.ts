@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
-import {Category,} from "../../types/types";
 import {nodeApi} from "../../services/api";
+import {Category} from "../../types/ApiTypes/category";
 
 export const useCategoryData = (id:string) => {
     const [data, setData] = useState<any | null>(null);

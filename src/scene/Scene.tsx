@@ -7,7 +7,7 @@ import Edge from "../components/Edge";
 import NodeDetails from "../components/NodeDetails";
 import { useAppContext } from "../contexts/AppContext";
 import gsap from "gsap";
-import { NodeData } from "../types/types"; // Importez les types précis
+import {NodeData} from "../types/ApiTypes/graph";
 
 const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];

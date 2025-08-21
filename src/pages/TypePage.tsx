@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
 import Token from "../services/token";
-import { Type} from "../types/types";
 import HtmlField from "../components/NodeFields/HtmlField";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
@@ -12,6 +11,7 @@ import {EditModal} from "../components/EditModal";
 import {useTypeEdit} from "../hooks/type/useTypeEdit";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
+import {Type} from "../types/ApiTypes/type";
 
 
 const TypePage : React.FC = () => {

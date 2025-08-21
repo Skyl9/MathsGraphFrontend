@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
-import {MathematicienInfo} from "../types/types";
+import {Mathematicien} from "../types/ApiTypes/mathematicien";
 
 
 export const MathematicienRedirect: React.FC = () => {
@@ -18,7 +18,7 @@ export const MathematicienRedirect: React.FC = () => {
 
         const fetchAndRedirect = async () => {
             try {
-                const data: MathematicienInfo = await nodeApi.getMathematicienId(mathematicienName)
+                const data: Mathematicien = await nodeApi.getMathematicienId(mathematicienName)
                 // optionnel : vous pourriez utiliser data.nom pour du tracking ou logging
                 navigate(`/mathematicien/${data.id}`, { replace: true })
             } catch (err) {

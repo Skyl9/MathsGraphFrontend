@@ -1,43 +1,12 @@
-export interface NodeData {
-    id: number;
-    nom: string;
-    position: {
-        [grille: string]: { x: number; y: number; z: number };
-    };
-    typeMath: string;
-}
-export interface MathematicienName{
-    id:number;
-    nom:string;
-}
-export interface Mathematicien{
-    id:number;
-    nom:string;
-    date_naissance:string;
-    date_deces:string;
-    biographie:string;
-    nationalite:string;
-    domaine:string;
-    url:string;
-    recompenses:string;
-    epoque:string;
-}
+import {Mathematicien} from "./ApiTypes/mathematicien";
+import {Category} from "./ApiTypes/category";
+import {Type} from "./ApiTypes/type";
+import {Relations} from "./ApiTypes/Relations";
+import {Source} from "./ApiTypes/source";
 
-export interface EdgeData {
-    start: number;
-    end: number;
-    type?: string;
-}
 
-export interface GraphData {
-    nodes: NodeData[];
-    edges: EdgeData[];
-}
 
 // AllNodeData.ts
-export interface Alias {
-    alias: string;
-}
 
 export interface ModalProps {
     isOpen: boolean;
@@ -54,36 +23,21 @@ export interface ModalProps {
 }
 
 
-export interface Source {
-    id: number;
-    titre: string;
-    auteur: string;
-    annee: number;
-    url: string;
-    type: string;
-}
+
 
 export interface NomEtranger {
     Nom_étranger: string;
     langue: string;
 }
 
-export type RelationType = 'utilise' | 'implication' | 'equivalence' | 'reciproque';
 
-
-export interface Relations {
-    id: number;
-    concept_source: { "id": number, nom: string };
-    concept_cible: { "id": number, nom: string };
-    type_relation: RelationType;
-    description: string;
-}
 
 export type EditableField = {
     label: string;
     type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex"|"tag"|"category";
     options?: string[];
 };
+
 
 
 export interface AllNodeData {
@@ -112,26 +66,6 @@ export interface Tag{
     id:number;
     tag:string;
 }
-export interface Type {
-    id:number;
-    type:string;
-}
-export interface ConceptName{
-    id:number;
-    nom:string;
-}
-
-export interface TypeName {
-    id:number;
-    type:string;
-}
-export interface Category {
-    id:number;
-    nom:string;
-    description?: string | null;
-    parent_id?: number | null;
-
-}
 
 export interface RollbackConcept{
     version_number:number;
@@ -139,17 +73,4 @@ export interface RollbackConcept{
     username:string;
 
 
-}
-export interface TypeInfo{
-    id: string
-    type: string
-}
-export interface CategoryInfo {
-    id: string
-    nom: string
-}
-
-export interface MathematicienInfo {
-    id: string
-    nom: string
 }

@@ -1,7 +1,7 @@
 import {useCategoryData} from "./useCategoryData";
 import {useState} from "react";
-import {Category, Mathematicien} from "../../types/types";
 import {createCategoryEditableFields,} from "../../constants/editableFields";
+import {Category} from "../../types/ApiTypes/category";
 
 export const useCategoryEdit = (id:string) => {
     const { data,setData, loading, error, editableFieldsOptions,refetchData,updateField,createField } = useCategoryData(id);

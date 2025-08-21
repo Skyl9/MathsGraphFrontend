@@ -1,4 +1,7 @@
-import {AllNodeData, Category, EditableField, Mathematicien, Type} from '../types/types';
+import {AllNodeData, EditableField} from '../types/types';
+import {Mathematicien} from "../types/ApiTypes/mathematicien";
+import {Type} from "../types/ApiTypes/type";
+import {Category} from "../types/ApiTypes/category";
 
 export const RELATION_SYMBOLS = {
     equivalence: "⇔",
@@ -33,7 +36,9 @@ export const createMathematicienEditableFields=(options:Record<keyof Mathematici
     domaine: {label: "Domaine", type: "text"},
     url: {label: "URL", type: "text"},
     recompenses: {label: "Récompenses", type: "text"},
-    epoque: {label: "Époque", type: "text"}
+    epoque: {label: "Époque", type: "text"},
+    created_at:{label:"Créer le",type:"none"},
+    updated_at:{label:"Mis à jour le",type:"none"},
 });
 
 export const createTypeEditableFields=(options:Record<keyof Type,string[]>):Record<keyof Type, EditableField> => ({

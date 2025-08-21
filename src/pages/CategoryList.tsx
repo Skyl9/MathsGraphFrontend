@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
-import { Category } from "../types/types";
 import { ReportIssueButton } from "../components/Issue";
+import { Category } from "../types/ApiTypes/category";
 
 // structure enrichie pour le tree
 interface CategoryTree extends Category {
@@ -30,8 +30,8 @@ function buildCategoryTree(categories: Category[]): CategoryTree[] {
   const roots: CategoryTree[] = [];
   // 2) rattachement ou racine
   nodes.forEach(node => {
-    if (node.parent_id != null && nodes.has(node.parent_id)) {
-      nodes.get(node.parent_id)!.children.push(node);
+    if (node.parent_id != null && nodes.has(Number(node.parent_id))) {
+      nodes.get(Number(node.parent_id))!.children.push(node);
     } else {
       roots.push(node);
     }

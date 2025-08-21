@@ -1,7 +1,7 @@
 import {useTypeData} from "./useTypeData";
 import {useState} from "react";
-import {Type} from "../../types/types";
 import {createTypeEditableFields} from "../../constants/editableFields";
+import {Type} from "../../types/ApiTypes/type";
 
 export const useTypeEdit = (id:string) => {
     const { data,setData, loading, error, editableFieldsOptions,refetchData,updateField,createField } = useTypeData(id);

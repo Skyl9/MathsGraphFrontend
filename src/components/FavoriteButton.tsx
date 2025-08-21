@@ -4,6 +4,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
+import {Favorite} from "../types/ApiTypes/user";
 
 export interface FavoriteButtonProps {
   itemId: string;
@@ -23,7 +24,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ itemId, itemType }) => 
     }
     nodeApi
       .getFavorites()
-      .then((favs: Array<{ id: string; nom: string; category: string }>) => {
+      .then((favs: Favorite[]) => {
         const found = favs.some(
           (f) => f.id.toString() === itemId && f.category === itemType
         );

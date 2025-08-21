@@ -2,7 +2,6 @@ import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
 import {useParams, useNavigate, Navigate} from "react-router-dom";
 import Token from "../services/token";
-import {Category} from "../types/types";
 import HtmlField from "../components/NodeFields/HtmlField";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
@@ -13,6 +12,7 @@ import {useCategoryEdit} from "../hooks/category/useCategoryEdit";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import {nodeApi} from "../services/api";
+import {Category} from "../types/ApiTypes/category";
 
 
 const CategoryPage: React.FC = () => {

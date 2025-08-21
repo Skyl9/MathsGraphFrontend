@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
-import {TypeInfo} from "../types/types";
+import {Type} from "../types/ApiTypes/type";
 
 
 export const TypeRedirect: React.FC = () => {
@@ -18,7 +18,7 @@ export const TypeRedirect: React.FC = () => {
 
         const fetchAndRedirect = async () => {
             try {
-                const data: TypeInfo = await nodeApi.getTypeId(typeName)
+                const data: Type = await nodeApi.getTypeId(typeName)
                 // optionnel : vous pourriez utiliser data.nom pour du tracking ou logging
                 navigate(`/type/${data.id}`, { replace: true })
             } catch (err) {

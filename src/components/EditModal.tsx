@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
     AllNodeData,
-    Mathematicien,
     ModalProps,
     NomEtranger,
-    Relations,
-    Source,
-    Tag,
-    Category,
-    Type
 } from "../types/types";
 import ReactQuill from "react-quill-new";
 import 'react-quill-new/dist/quill.snow.css';
@@ -24,9 +18,11 @@ import FieldAddSource from "./NodeFields/FieldAddSource";
 import LatexEditor from "./NodeFields/LatexEditor";
 import TagEdit from "./NodeFields/TagEdit";
 import {nodeApi} from "../services/api";
+import { Mathematicien } from '../types/ApiTypes/mathematicien';
+import {Category} from "../types/ApiTypes/category";
+import {Relations} from "../types/ApiTypes/Relations";
+import {Source} from "../types/ApiTypes/source";
 
-// TODO Mettre en place le lien sur les sources et plus généralement les liens de la page d'informations
-//TODO Mettre en place les boutons de suppressions d'éléments
 
 export const EditModal: React.FC<ModalProps> = ({
                                                     onClose,

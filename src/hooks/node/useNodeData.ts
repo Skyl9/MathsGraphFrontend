@@ -73,7 +73,7 @@ export const useNodeData = (id: string) => {
                 throw new Error("Utilisateur non authentifié");
             }
 
-            await nodeApi.updateNode(id, field, value, username);
+            await nodeApi.updateConcept(id, field, value, username);
             await fetchData();
             return true;
         } catch (err) {

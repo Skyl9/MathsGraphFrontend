@@ -2,16 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Card, CardContent, Typography, CircularProgress } from '@mui/material';
 import { nodeApi } from '../../services/api';
+import {AdminStats} from "../../types/ApiTypes/admin";
 
-interface Stats {
-    users: number;
-    favorites: number;
-    concepts: number;
-    categories: number;
-}
+
 
 const DashboardPage: React.FC = () => {
-    const [stats, setStats] = useState<Stats | null>(null);
+    const [stats, setStats] = useState<AdminStats | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

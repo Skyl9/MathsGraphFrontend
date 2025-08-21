@@ -1,6 +1,18 @@
 // src/services/api.ts
-import {AllNodeData, CategoryInfo, MathematicienInfo, RollbackConcept, TypeInfo} from "../types/types";
+import {
+    AllNodeData,
+    RollbackConcept
+} from "../types/types";
 import Token from "./token";
+import {ConceptName, GetConcept, History} from "../types/ApiTypes/concept";
+import {accessTokens, Register} from '../types/ApiTypes/auth'
+import {Mathematicien, MathematicienName} from "../types/ApiTypes/mathematicien";
+import {Category, CategoryName} from "../types/ApiTypes/category";
+import {Type} from "../types/ApiTypes/type";
+import {Favorite, User} from "../types/ApiTypes/user";
+import {Tag} from "../types/ApiTypes/tag";
+import {Comment} from "../types/ApiTypes/comments";
+import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_LINK || '';
 
@@ -77,61 +89,62 @@ const request = async <T>(
         throw error;
     }
 };
+// TODO Rajouter l'appel api /graph (rapatrier le code depuis la page du graph)
 
 export const nodeApi = {
     // GET requests
-    getConcept: (id: string) => request<any>(`/concept/${id}`, undefined, false),
-    getComments: (concept_id: string) => request<any[]>(`/comments/${concept_id}`, undefined, false),
-    getAllUsers: () => request<any[]>(`/admin/users`),
-    getAllContents: () => request<any[]>(`/admin/contents`),
-    getAdminStats: () => request<any>(`/admin/stats`),
-    getFavorites: (user_id?: string) => request<any[]>(`/user/favorite/${user_id || Token.getUserIdFromToken() || ""}`, undefined, false),
-    getCategoryId: (name: string) => request<CategoryInfo>(`/category/name/${name}`, undefined, false),
-    getMathematicienId: (name: string) => request<MathematicienInfo>(`/mathematicien/name/${name}`, undefined, false),
-    getTypeId: (name: string) => request<TypeInfo>(`/type/name/${name}`, undefined, false),
-    getConceptHistory: (conceptId: string) => request<any[]>(`/concept/history/${conceptId}`, undefined, false),
+    getConcept: (id: string) => request<GetConcept>(`/concept/${id}`, undefined, false),
+    getComments: (concept_id: string) => request<Comment[]>(`/comments/${concept_id}`, undefined, false),
+    getAllUsers: () => request<User[]>(`/admin/users`),
+    getAllContents: () => request<ContentAdmin[]>(`/admin/contents`),
+    getAdminStats: () => request<AdminStats>(`/admin/stats`),
+    getFavorites: (user_id?: string) => request<Favorite[]>(`/user/favorite/${user_id || Token.getUserIdFromToken() || ""}`, undefined, false),
+    getCategoryId: (name: string) => request<CategoryName>(`/category/name/${name}`, undefined, false),
+    getMathematicienId: (name: string) => request<Mathematicien>(`/mathematicien/name/${name}`, undefined, false),
+    getTypeId: (name: string) => request<Type>(`/type/name/${name}`, undefined, false),
+    getConceptHistory: (conceptId: string) => request<History[]>(`/concept/history/${conceptId}`, undefined, false),
     getEditableFieldsOptions: () => request<EditableFieldsOptions>(`/getEditableFieldsOptions`, undefined, false),
-    getOneMathematicien: (id: string) => request<any>(`/mathematicien/${id}`, undefined, false),
-    getOneType: (id: string) => request<any>(`/type/${id}`, undefined, false),
-    getOneCategory: (id: string) => request<any>(`/category/${id}`, undefined, false),
-    getAllCategories: () => request<any[]>(`/category/`, undefined, false),
-    getAllMathematicienName: () => request<any[]>(`/mathematicien/`, undefined, false),
-    getAllTypeNames: () => request<any[]>(`/type/`, undefined, false),
-    getAllConceptNames: () => request<any[]>(`/getAllConceptName`, undefined, false),
-    getUserInfo: (id: string) => request<any>(`/user/${id}`, undefined, false),
+    getOneMathematicien: (id: string) => request<Mathematicien>(`/mathematicien/${id}`, undefined, false),
+    getOneType: (id: string) => request<Type>(`/type/${id}`, undefined, false),
+    getOneCategory: (id: string) => request<Category>(`/category/${id}`, undefined, false),
+    getAllCategories: () => request<Category[]>(`/category/`, undefined, false),
+    getAllMathematicienName: () => request<MathematicienName[]>(`/mathematicien/`, undefined, false),
+    getAllTypeNames: () => request<Type[]>(`/type/`, undefined, false),
+    getAllConceptNames: () => request<ConceptName[]>(`/getAllConceptName`, undefined, false),
+    getUserInfo: (id: string) => request<User>(`/user/${id}`, undefined, false),
     getUserIdByUsername: (username: string) => request<{ id: number }>(`/user/id/${username}`, undefined, false),
-    getTagsNameFromConceptId: (id: string) => request<any[]>(`/tags/name/concept_id/${id}`, undefined, false),
-    getAllTagName: () => request<any[]>(`/tags/all`, undefined, false),
+    getTagsNameFromConceptId: (id: string) => request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
+    getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
 
     // POST/PATCH/DELETE requests
-    updateNode: (id: string, field: string, value: any, username: string) =>
-        request<any>(`/update/${id}`, {
+    updateConcept: (id: string, field: string, value: any, username: string) =>
+        request<null>(`/update/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({field, value, username}),
         }),
     postComment: (concept_id: string, parent_id: number, field: string, comment: string) =>
-        request<any>(`/comments/add/${concept_id}`, {
+        request<null>(`/comments/add/${concept_id}`, {
             method: 'POST',
             body: JSON.stringify({field, parent_id, content: comment, username: Token.getUsernameFromToken() || ""}),
         }),
-    deleteComment: (comment_id: string) => request<any>(`/comments/delete/${comment_id}`, {method: 'DELETE'}),
+    deleteComment: (comment_id: string) => request<null>(`/comments/delete/${comment_id}`, {method: 'DELETE'}),
     updateComment: (concept_id: string, content: string) =>
-        request<any>(`/comments/update/${concept_id}`, {
+        request<null>(`/comments/update/${concept_id}`, {
             method: 'PATCH',
             body: JSON.stringify({content}),
         }),
     addFavorite: (general_id: string, type: string) =>
-        request<any>(`/user/favorite/add/${general_id}`, {
+        request<null>(`/user/favorite/add/${general_id}`, {
             method: 'POST',
             body: JSON.stringify({type, user_id: String(Token.getUserIdFromToken()) || ""}),
         }),
     deleteFavorite: (general_id: string, type: string) =>
-        request<any>(`/user/favorite/delete/${general_id}`, {
+        request<null>(`/user/favorite/delete/${general_id}`, {
             method: 'DELETE',
             body: JSON.stringify({type, user_id: String(Token.getUserIdFromToken()) || ""}),
         }),
     rollbackConcept: (id: string, data: RollbackConcept) =>
-        request<any>(`/concept/rollback/${id}`, {
+        request<null>(`/concept/rollback/${id}`, {
             method: 'PATCH',
             body: JSON.stringify({
                 version_number: data.version_number,
@@ -140,55 +153,55 @@ export const nodeApi = {
             }),
         }),
     createRelation: (dico: {}) =>
-        request<any>(`/relation/create`, {
+        request<null>(`/relation/create`, {
             method: 'POST',
             body: JSON.stringify({value: dico}),
         }),
-    createCategory: (nom: string) => request<any>(`/category/create`, {
+    createCategory: (nom: string) => request<null>(`/category/create`, {
         method: 'POST',
         body: JSON.stringify({value: nom})
     }),
-    createType: (nom: string) => request<any>(`/type/create`, {method: 'POST', body: JSON.stringify({value: nom})}),
-    createMathematicien: (nom: string) => request<any>(`/mathematicien/create`, {
+    createType: (nom: string) => request<null>(`/type/create`, {method: 'POST', body: JSON.stringify({value: nom})}),
+    createMathematicien: (nom: string) => request<null>(`/mathematicien/create`, {
         method: 'POST',
         body: JSON.stringify({value: nom})
     }),
-    createAlias: (id: number, nom: string) => request<any>(`/alias/create`, {
+    createAlias: (id: number, nom: string) => request<null>(`/alias/create`, {
         method: 'POST',
         body: JSON.stringify({id, value: nom})
     }),
-    createSources: (sources: any) => request<any>(`/source/create`, {
+    createSources: (sources: any) => request<null>(`/source/create`, {
         method: 'POST',
         body: JSON.stringify({value: sources})
     }),
     updateOneMathematicien: (id: string, field: string, value: any) =>
-        request<any>(`/mathematicien/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/mathematicien/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
     updateOneCategory: (id: string, field: string, value: any) =>
-        request<any>(`/category/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/category/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
     updateOneType: (id: string, field: string, value: any) =>
-        request<any>(`/type/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/type/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
     requestPasswordReset: (email: string) =>
-        request<any>(`/password-reset/request`, {method: 'POST', body: JSON.stringify({email})}, false),
+        request<null>(`/password-reset/request`, {method: 'POST', body: JSON.stringify({email})}, false),
     resetPassword: (token: string, password: string) =>
-        request<any>(`/password-reset/confirm`, {
+        request<null>(`/password-reset/confirm`, {
             method: 'POST',
             body: JSON.stringify({token, new_password: password})
         }, false),
     removeTagsFromConceptId: (concept_id: number, tags_id: number) =>
-        request<any>(`/tags/remove/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
-    createTags: (tags: string) => request<any>(`/tags/add`, {method: 'POST', body: JSON.stringify({tag_name: tags})}),
+        request<null>(`/tags/remove/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
+    createTags: (tags: string) => request<null>(`/tags/add`, {method: 'POST', body: JSON.stringify({tag_name: tags})}),
     createLinkTagConcept: (concept_id: number, tags_id: number) =>
-        request<any>(`/tags/add/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
+        request<null>(`/tags/add/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
     patchUser: (data: { field: string, value: string }, id: string) =>
-        request<any>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
+        request<null>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
     getToken: (formData: URLSearchParams) =>
-        request<any>(`/token`, {
+        request<accessTokens>(`/token`, {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: formData.toString(),
         }, false),
     register: (username: string, email: string, password: string) =>
-        request<any>(`/register`, {method: "POST", body: JSON.stringify({username, email, password})}, false),
+        request<Register>(`/register`, {method: "POST", body: JSON.stringify({username, email, password})}, false),
 };
 
 // No longer needed after centralization

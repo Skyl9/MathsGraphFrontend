@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
-import {MathematicienName} from "../types/types";
 import {ReportIssueButton} from "../components/Issue";
+import {MathematicienName} from "../types/ApiTypes/mathematicien";
 
 
 

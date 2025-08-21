@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
-import {TypeName} from "../types/types";
 import {ReportIssueButton} from "../components/Issue";
-import FavoriteButton from "../components/FavoriteButton";
+import {Type} from "../types/ApiTypes/type";
 
 
 
 const TypeList: React.FC = () => {
-    const [type, setType] = useState<TypeName[]>([]);
+    const [type, setType] = useState<Type[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 

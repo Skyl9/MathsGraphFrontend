@@ -1,6 +1,6 @@
 import React from 'react';
-import { Relations } from '../../types/types';
 import { RELATION_SYMBOLS } from '../../constants/editableFields';
+import {Relations} from "../../types/ApiTypes/Relations";
 
 interface RelationsFieldProps {
   relations: Relations[];

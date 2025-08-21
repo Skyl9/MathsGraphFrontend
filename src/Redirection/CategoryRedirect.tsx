@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
-import {CategoryInfo} from "../types/types";
+import {CategoryName} from "../types/ApiTypes/category";
 
 
 export const CategoryRedirect: React.FC = () => {
@@ -18,7 +18,7 @@ export const CategoryRedirect: React.FC = () => {
 
         const fetchAndRedirect = async () => {
             try {
-                const data: CategoryInfo = await nodeApi.getCategoryId(categoryName)
+                const data: CategoryName = await nodeApi.getCategoryId(categoryName)
                 // optionnel : vous pourriez utiliser data.nom pour du tracking ou logging
                 navigate(`/category/${data.id}`, { replace: true })
             } catch (err) {

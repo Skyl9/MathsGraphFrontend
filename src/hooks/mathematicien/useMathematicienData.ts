@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
-import {AllNodeData, Mathematicien} from "../../types/types";
 import {nodeApi} from "../../services/api";
+import {Mathematicien} from "../../types/ApiTypes/mathematicien";
 
 export const useMathematicienData = (id:string) => {
     const [data, setData] = useState<any | null>(null);
@@ -18,6 +18,8 @@ export const useMathematicienData = (id:string) => {
         url:[],
         recompenses:[],
         epoque:[],
+        created_at:[],
+        updated_at:[],
     });
 
 

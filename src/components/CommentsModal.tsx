@@ -23,24 +23,11 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
+import {Comment} from "../types/ApiTypes/comments";
 
 export interface FieldOption {
   value: string;
   label: string;
-}
-
-interface Comment {
-  id: string;
-  concept_id: string;
-  user_id?: string;
-  parent_id?: string;
-  content: string;
-  author?: string;
-  createdAt?: string;
-  is_deleted?: boolean;
-  field: string; // Champ permettant de trier les commentaires
-    username:string;
-
 }
 
 interface CommentsModalProps {
@@ -94,7 +81,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
     try {
       await nodeApi.postComment(
         conceptId,
-        replyTo ? parseInt(replyTo.id, 10) : 0,
+        replyTo ? parseInt(String(replyTo.id), 10) : 0,
         selectedField,
         newComment
       );
@@ -113,7 +100,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
   const handleDelete = async (id: string) => {
     try {
       await nodeApi.deleteComment(id);
-      setComments((c) => c.filter((x) => x.id !== id));
+      setComments((c) => c.filter((x) => String(x.id) !== id));
     } catch (err) {
       const errorMessage = (err as any).message || 'An unknown error occurred.';
       setError(errorMessage);
@@ -132,12 +119,12 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
     const map = new Map<string, Node>();
     visibleComments.forEach((c) =>
         
-      map.set(c.id, { ...c, children: [] })
+      map.set(String(c.id), { ...c, children: [] })
     );
     const roots: Node[] = [];
     map.forEach((node) => {
-      if (node.parent_id && map.has(node.parent_id)) {
-        map.get(node.parent_id)!.children.push(node);
+      if (node.parent_id && map.has(String(node.parent_id))) {
+        map.get(String(node.parent_id))!.children.push(node);
       } else {
         roots.push(node);
       }
@@ -182,10 +169,10 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                         </IconButton>
                       )}
                       {/* Seuls les admins/modérateurs ou l'auteur peuvent supprimer */}
-                      {!c.is_deleted && (isPrivileged || c.user_id === currentUserId) && (
+                      {!c.is_deleted && (isPrivileged || String(c.user_id) === currentUserId) && (
                         <IconButton
                           edge="end"
-                          onClick={() => handleDelete(c.id)}
+                          onClick={() => handleDelete(String(c.id))}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -203,7 +190,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                       [
                         `Utilisateur : ${c.username}`,
                         c.parent_id && `Réponse à : ${c.parent_id}`,
-                        c.createdAt && new Date(c.createdAt).toLocaleString(),
+                        c.created_at && new Date(c.created_at).toLocaleString(),
                       ]
                         .filter(Boolean)
                         .join(" • ")

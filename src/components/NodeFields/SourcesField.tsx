@@ -1,6 +1,5 @@
 import React from 'react';
-import { Source } from '../../types/types';
-
+import {Source} from '../../types/ApiTypes/source';
 interface SourcesFieldProps {
   sources: Source[];
   onEdit?: () => void;

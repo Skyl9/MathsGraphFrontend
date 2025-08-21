@@ -1,6 +1,6 @@
 import React from 'react';
-import {Source} from '../../types/types';
 import {FormControl, MenuItem, Select, TextField} from "@mui/material";
+import {Source} from "../../types/ApiTypes/source";
 
 interface SourceEditProps {
     source: Source;

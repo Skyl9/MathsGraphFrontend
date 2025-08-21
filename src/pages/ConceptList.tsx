@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
-import {ConceptName} from "../types/types";
 import {ReportIssueButton} from "../components/Issue";
+import {ConceptName} from "../types/ApiTypes/concept";
 
 
 

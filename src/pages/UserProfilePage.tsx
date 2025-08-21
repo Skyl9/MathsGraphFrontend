@@ -16,19 +16,9 @@ import {TopBar} from "../components/TopBar";
 import { EditModalAvatar } from '../components/EditModalAvatar';
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
+import {User} from "../types/ApiTypes/user";
 
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  is_active: boolean;
-  created_at: string;
-  role: 'admin' | 'user' | 'moderator';
-  last_login: string;
-  preferred_language: string;
-  avatar_url: string;
-  bio: string;
-}
+
 
 const UserProfilePage: React.FC = () => {
   const {id} = useParams<{ id: string }>();
@@ -44,10 +34,12 @@ const UserProfilePage: React.FC = () => {
     const fetchUser = async () => {
       try {
         const data = await nodeApi.getUserInfo(id||"");
-        setUser(data);
-        setEmail(data.email);
-        setLang(data.preferred_language);
-        setBio(data.bio);
+        if (data){
+          setUser(data);
+          setEmail(data.email);
+          setLang(data.preferred_language);
+          setBio(data.bio);
+        }
       } catch (error) {
         console.error("Erreur lors de la récupération des données utilisateur:", error);
       }
@@ -222,7 +214,7 @@ const UserProfilePage: React.FC = () => {
                   <Grid size={12}>
                     <Typography variant="subtitle2" color="textSecondary">Dernière connexion</Typography>
                     <Typography>
-                      {user.last_login ? new Date(user.last_login).toLocaleDateString('fr-FR') : 'Jamais'}
+                      {user.updated_at ? new Date(user.updated_at).toLocaleDateString('fr-FR') : 'Jamais'}
                     </Typography>
                   </Grid>
                 </Grid>

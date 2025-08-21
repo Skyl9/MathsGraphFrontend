@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useState} from "react";
-import {Type} from "../../types/types";
 import {nodeApi} from "../../services/api";
+import {Type} from "../../types/ApiTypes/type";
 
 export const useTypeData = (id:string) => {
     const [data, setData] = useState<any | null>(null);

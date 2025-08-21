@@ -3,7 +3,7 @@ import {useState} from "react";
 import {HistoryModal} from "../components/HistoryModal";
 
 import {Navigate, useParams} from "react-router-dom";
-import {AllNodeData, Source, NomEtranger, Relations} from "../types/types";
+import {AllNodeData, NomEtranger } from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import {useNodeEdit} from "../hooks/node/useNodeEdit";
@@ -28,6 +28,8 @@ import TagsField from "../components/NodeFields/TagsField";
 import {logger} from "../utils/logger";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
+import {Source} from "../types/ApiTypes/source";
+import {Relations} from "../types/ApiTypes/Relations";
 
 
 const NodePage: React.FC = () => {

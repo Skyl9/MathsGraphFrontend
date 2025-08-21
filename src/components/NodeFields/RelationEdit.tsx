@@ -1,8 +1,8 @@
 // components/Relations/RelationEdit.tsx
 import FormControl from '@mui/material/FormControl';
 import React from 'react';
-import { Relations } from '../../types/types';
 import {MenuItem, Select, TextField} from "@mui/material";
+import {Relations} from "../../types/ApiTypes/Relations";
 
 interface RelationEditProps {
     relation: Relations;
