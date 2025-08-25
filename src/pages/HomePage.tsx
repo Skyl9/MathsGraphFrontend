@@ -1,8 +1,9 @@
-import {Container, Typography, Button, Stack, Grid, Card, CardContent, IconButton, Link, CardActions} from "@mui/material";
+import {Container, Typography, Button, Stack, Grid, Card, CardContent, Link, CardActions} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 
 
 export function HomePage() {
+    console.log(process.env.REACT_APP_BACKEND_LINK)
     return (
         <>
             {/* Barre supérieure */}

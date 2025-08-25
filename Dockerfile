@@ -2,6 +2,15 @@
 # Nous utilisons une image Node.js pour construire notre application 
 FROM node:20-alpine AS build 
 
+ARG REACT_APP_BACKEND_LINK
+ARG GENERATE_SOURCEMAP
+ARG NODE_ENV
+
+# On crée un fichier .env à l'intérieur du conteneur
+RUN echo "REACT_APP_BACKEND_LINK=$REACT_APP_BACKEND_LINK" >> .env && \
+    echo "GENERATE_SOURCEMAP=$GENERATE_SOURCEMAP" >> .env && \
+    echo "NODE_ENV=$NODE_ENV" >> .env
+
 # Définir le répertoire de travail dans le conteneur 
 WORKDIR /app 
 
