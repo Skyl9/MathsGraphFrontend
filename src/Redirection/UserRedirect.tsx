@@ -16,7 +16,7 @@ const UserRedirect: React.FC = () => {
           return;
         }
         const userId = await nodeApi.getUserIdByUsername(username);
-        navigate(`/user/${userId}`, { replace: true });
+        navigate(`/user/${userId.id}`, { replace: true });
       } catch (err) {
         setError("L'utilisateur n'a pas été trouvé");
       }

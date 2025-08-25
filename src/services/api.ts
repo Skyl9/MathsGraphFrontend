@@ -41,9 +41,10 @@ const request = async <T>(
 ): Promise<T> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
-    const headers = new Headers(options?.headers);
-    headers.set('Content-Type', 'application/json');
-
+    const headers = new Headers({
+        'Content-Type': 'application/json',
+        ...(options?.headers || {}), // Fusionne les en-têtes
+    });
     if (authRequired) {
         const token = Token.getToken();
         if (!token) {
@@ -201,8 +202,5 @@ export const nodeApi = {
             body: formData.toString(),
         }, false),
     register: (username: string, email: string, password: string) =>
-        request<Register>(`/register`, {method: "POST", body: JSON.stringify({username, email, password})}, false),
+        request<Register>(`/register`, {method: "POST", body: JSON.stringify({username:username, email:email, password:password})}, false),
 };
-
-// No longer needed after centralization
-// export const handleError = ...
