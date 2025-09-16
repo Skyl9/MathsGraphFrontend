@@ -116,7 +116,7 @@ export const nodeApi = {
     getUserIdByUsername: (username: string) => request<{ id: number }>(`/user/id/${username}`, undefined, false),
     getTagsNameFromConceptId: (id: string) => request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
     getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
-
+    getGraph: () => request<any>(`/graph`, undefined, false),
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
         request<null>(`/update/${id}`, {

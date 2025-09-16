@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useCallback, useRef, useState } from "react";
-import { useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
-import { Vector3 } from "three";
+import React, {useEffect, useMemo, useCallback, useRef, useState} from "react";
+import {useThree} from "@react-three/fiber";
+import {OrbitControls} from "@react-three/drei";
+import {Vector3} from "three";
 import Node from "../components/Node";
 import Edge from "../components/Edge";
 import NodeDetails from "../components/NodeDetails";
-import { useAppContext } from "../contexts/AppContext";
+import {useAppContext} from "../contexts/AppContext";
 import gsap from "gsap";
-import {NodeData} from "../types/ApiTypes/graph";
+import {NodeData, Graph} from "../types/ApiTypes/graph";
 
 const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];
@@ -16,10 +16,34 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
     return "purple";
 };
 
-export default function Scene() {
-    const { currentView, setCurrentView, colorLemme, colorAxiome, colortheoreme, graphData, filters, targetPosition, setHistory, currentIndex, setCurrentIndex, history, setDebugMode, debugMode, setTargetPosition, colorSides, selectedNodeId, setSelectedNodeId } = useAppContext();
+// Définir les props attendues pour le composant Scene
+interface SceneProps {
+    graphData: Graph;
+}
 
-    const { camera, gl } = useThree();
+export default function Scene({ graphData }: SceneProps) {
+    console.log("Graph Data reçu par Scene:", graphData); // <<< AJOUTÉ
+
+    const {
+        currentView,
+        colorLemme,
+        colorAxiome,
+        colortheoreme,
+        filters,
+        targetPosition,
+        setHistory,
+        currentIndex,
+        setCurrentIndex,
+        history,
+        setDebugMode,
+        debugMode,
+        setTargetPosition,
+        colorSides,
+        selectedNodeId,
+        setSelectedNodeId
+    } = useAppContext();
+
+    const {camera, gl} = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
     const controlsRef = useRef<any>(null);
@@ -28,11 +52,16 @@ export default function Scene() {
 
     const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
 
-    const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]); // Typage précis
+    const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
 
     const visibleNodes = useMemo(() => {
-        return nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
+        const filtered = nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
+        console.log("Nœuds filtrés (visibleNodes) dans Scene:", filtered); // <<< AJOUTÉ
+        return filtered;
     }, [nodes, filters]);
+
+    console.log("Arêtes dans Scene:", edges); // <<< AJOUTÉ
+
 
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
@@ -47,11 +76,11 @@ export default function Scene() {
                 },
             });
         }
-    }, [selectedNode, targetPosition, camera, controlsRef]);
+    }, [selectedNode, targetPosition, camera, controlsRef, currentView]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (visibleNodes.length === 0){
+            if (visibleNodes.length === 0) {
                 return;
             }
             if (selectedNodeId === null) {
@@ -67,21 +96,22 @@ export default function Scene() {
                 console.log("erreur de position dans la liste, élément non trouvé");
             } else {
                 if (event.key === "d" || event.key === "ArrowRight") {
-                    setSelectedNodeId(visibleNodes[(positionListe + 1) % visibleNodes.length].id); // Utilisation de modulo pour boucler
-                    const { x, y, z } = visibleNodes[(positionListe + 1) % visibleNodes.length].position[currentView];
+                    setSelectedNodeId(visibleNodes[(positionListe + 1) % visibleNodes.length].id);
+                    const {x, y, z} = visibleNodes[(positionListe + 1) % visibleNodes.length].position[currentView];
                     setTargetPosition(new Vector3(x, y, z));
                     setShouldBeShowNode(true);
                 }
                 if (event.key === "q" || event.key === "ArrowLeft") {
-                    setSelectedNodeId(visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].id); // Utilisation de modulo pour boucler
-                    const { x, y, z } = visibleNodes[(positionListe - 1) % visibleNodes.length].position[currentView];
-                    setTargetPosition(new Vector3(x, y, z));                    setShouldBeShowNode(true);
+                    setSelectedNodeId(visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].id);
+                    const {x, y, z} = visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].position[currentView];
+                    setTargetPosition(new Vector3(x, y, z));
+                    setShouldBeShowNode(true);
                 }
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [selectedNodeId, visibleNodes, camera, setTargetPosition, setSelectedNodeId]);
+    }, [selectedNodeId, visibleNodes, camera, setTargetPosition, setSelectedNodeId, currentView]);
 
     useEffect(() => {
         const toggleDebug = (event: KeyboardEvent) => {
@@ -115,12 +145,12 @@ export default function Scene() {
 
     useEffect(() => {
         if (selectedNode) {
-            const { x, y, z } = selectedNode.position[currentView];
+            const {x, y, z} = selectedNode.position[currentView];
             setTargetPosition(new Vector3(x, y, z));
         }
-    }, [selectedNode, setTargetPosition]);
+    }, [selectedNode, setTargetPosition, currentView]);
 
-    const handleCloseNodeDetails = useCallback(() => { // utilisation de useCallback
+    const handleCloseNodeDetails = useCallback(() => {
         setSelectedNodeId(null);
         setShouldBeShowNode(false);
     }, [setSelectedNodeId, setShouldBeShowNode]);
@@ -142,7 +172,7 @@ export default function Scene() {
                     <Node
                         key={node.id}
                         id={node.id}
-                        position={ [node.position[currentView].x,node.position[currentView].y,node.position[currentView].z] }
+                        position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}
                         color={getNodeColor(node.typeMath, colors)}
                         nom={node.nom}
                         isSelected={shouldBeShowNode && selectedNodeId === node.id}
@@ -165,8 +195,8 @@ export default function Scene() {
                         return (
                             <Edge
                                 key={index}
-                                start={[startNode.position[currentView].x, startNode.position[currentView].y,startNode.position[currentView].z]}
-                                end={[endNode.position[currentView].x,endNode.position[currentView].y,endNode.position[currentView].z]}
+                                start={[startNode.position[currentView].x, startNode.position[currentView].y, startNode.position[currentView].z]}
+                                end={[endNode.position[currentView].x, endNode.position[currentView].y, endNode.position[currentView].z]}
                                 type={edge.type}
                                 color={colorSides}
                                 debug={debugMode}
@@ -175,7 +205,7 @@ export default function Scene() {
                     })}
                 {selectedNode && shouldBeShowNode && (
                     <NodeDetails
-                        position={[selectedNode.position[currentView].x,selectedNode.position[currentView].y,selectedNode.position[currentView].z]}
+                        position={[selectedNode.position[currentView].x, selectedNode.position[currentView].y, selectedNode.position[currentView].z]}
                         nom={selectedNode.nom}
                         typeMath={selectedNode.typeMath}
                         id={selectedNode.id}
@@ -183,7 +213,7 @@ export default function Scene() {
                     />
                 )}
             </group>
-            <OrbitControls ref={controlsRef} enableZoom={true} maxDistance={2000} minDistance={5} />
+            <OrbitControls ref={controlsRef} enableZoom={true} maxDistance={2000} minDistance={5}/>
         </>
     );
 }

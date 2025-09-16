@@ -1,9 +1,6 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
+import React, { createContext, useContext, useMemo, useRef, useState, useCallback } from "react";
 import { Vector3 } from "three";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib/controls/OrbitControls";
-import {Graph} from "../types/ApiTypes/graph";
-
-// 📌 Définition du type pour votre contexte
 interface AppContextProps {
     // Couleurs
     color: string;
@@ -39,9 +36,9 @@ interface AppContextProps {
     goBack: () => void;
     goForward: () => void;
 
-    // Données liées au graphe
-    graphData: Graph | null;
-    setGraphData: React.Dispatch<any>;
+    // Données liées au graphe (supprimées de ce contexte)
+    // graphData: Graph | null;
+    // setGraphData: React.Dispatch<any>;
     filters: {
         "axiome": boolean;
         "théorème": boolean;
@@ -54,8 +51,9 @@ interface AppContextProps {
 
     // Références diverses
     ref: React.MutableRefObject<OrbitControlsImpl | null>;
-    loading: boolean;
-    error: string | null;
+    // loading et error supprimés de ce contexte
+    // loading: boolean;
+    // error: string | null;
 
     debugMode: boolean;
     setDebugMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -96,33 +94,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         réciproque: true,
     });
 
-    const [graphData, setGraphData] = useState<Graph | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    // 📌 Fonction pour charger les données du graphe
-    const fetchGraphData = useCallback(async () => {
-        const backend_link = process.env.REACT_APP_BACKEND_LINK || "";
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(backend_link + "/graph");
-            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
-            const data = await response.json();
-            setGraphData(data.data);
-        } catch (err: unknown) {
-            setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
 
 
-    useEffect(() => {
-        fetchGraphData().then(r => console.log("Fetching GraphData...",graphData));
-    }, [fetchGraphData]);
+
 
     // 📌 Fonctions de navigation
+    // NOTE: Ces fonctions devront être ajustées si elles dépendent fortement de graphData.
+    // Pour l'instant, elles sont conservées car elles manipulent principalement l'historique des positions et l'ID du nœud sélectionné.
     const moveToPosition = useCallback((position: Vector3) => {
         if (!position) return;
         setTargetPosition(position);
@@ -135,17 +113,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const newTargetPosition = history[currentIndex - 1];
         setTargetPosition(newTargetPosition);
 
-        const newNode = graphData?.nodes.find(node =>
-            node.position[currentView].x === newTargetPosition.x &&
-            node.position[currentView].y === newTargetPosition.y &&
-            node.position[currentView].z === newTargetPosition.z
-        );
+        setSelectedNodeId(null); // À ajuster selon comment vous voulez récupérer l'ID du noeud pour la position.
 
-        if (newNode) {
-            setSelectedNodeId(newNode.id);
-        }
-
-    }, [currentIndex, currentView, graphData?.nodes, history]);
+    }, [currentIndex, history]); // currentView et graphData?.nodes sont supprimés des dépendances
 
     const goForward = useCallback(() => {
         if (currentIndex >= history.length - 1) return;
@@ -153,17 +123,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const newTargetPosition = history[currentIndex + 1];
         setTargetPosition(newTargetPosition);
 
-        // Trouver le nœud correspondant à la nouvelle position cible
-        const newNode = graphData?.nodes.find(node =>
-            node.position[currentView].x === newTargetPosition.x &&
-            node.position[currentView].y === newTargetPosition.y &&
-            node.position[currentView].z === newTargetPosition.z
-        );
-
-        if (newNode) {
-            setSelectedNodeId(newNode.id);
-        }
-    }, [currentIndex, currentView, graphData?.nodes, history]);
+        setSelectedNodeId(null); // À ajuster selon comment vous voulez récupérer l'ID du noeud pour la position.
+    }, [currentIndex, history]); // currentView et graphData?.nodes sont supprimés des dépendances
 
     // 📌 Mémoïsation du contexte
     const contextValue = useMemo(() => ({
@@ -183,14 +144,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         needToSetHistory, moveToPosition,
         goBack, goForward,
 
-        graphData,setGraphData,
         filters, setFilters,
 
-        ref: controls, loading, error,
-        debugMode, setDebugMode,
+        ref: controls, debugMode, setDebugMode,
         currentView, setCurrentView,
 
-    }), [color, colorAxiome, colorLemme, colortheoreme, colorSides, targetPosition, initialPosition, isPosInitial, selectedNodeId, history, currentIndex, needToSetHistory, moveToPosition, goBack, goForward, graphData, filters, loading, error, debugMode, currentView]);
+    }), [
+        color, colorAxiome, colorLemme, colortheoreme, colorSides,
+        targetPosition, initialPosition, isPosInitial, selectedNodeId,
+        history, currentIndex, needToSetHistory, moveToPosition,
+        goBack, goForward,
+        filters,
+        debugMode, currentView
+    ]);
 
     return (
         <AppContext.Provider value={contextValue}>

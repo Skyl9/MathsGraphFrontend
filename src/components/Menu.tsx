@@ -14,54 +14,64 @@ import {useAppContext} from "../contexts/AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchBar from "./SearchBar";
 import "../styles/Menu.css";
-import {NodeData} from "../types/ApiTypes/graph";
+import {Graph, NodeData} from "../types/ApiTypes/graph"; // Importer Graph
 
 interface MenuProps {
-
     darkMode: boolean;
     setDarkMode: (value: boolean) => void;
+    graphData: Graph; // Ajouter graphData aux props
 }
 
-export default function Menu( { darkMode, setDarkMode }: MenuProps){
-        const {
-            // Positions et état de la caméra
-            setInitialPosition,
-            setIsPosInitial,
-            graphData,
-            setSelectedNodeId,
-            setTargetPosition,
+export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ // Accepter graphData comme prop
+    const {
+        // Positions et état de la caméra
+        setInitialPosition,
+        setIsPosInitial,
+        // graphData, // Supprimer de useAppContext
+        setSelectedNodeId,
+        setTargetPosition,
 
-            // Historique
-            history,
-            currentIndex,
+        // Historique
+        history,
+        currentIndex,
 
-            // Navigation
-            goBack,
-            goForward,
+        // Navigation
+        goBack,
+        goForward,
 
-            // Graphe
-            setFilters,
-            filters,
+        // Graphe
+        setFilters,
+        filters,
         currentView} = useAppContext();
 
-        function resetCamera() {
-            const positions = history.map((pos) => new Vector3(pos.x, pos.y, pos.z)); // Positions du graphe passées à votre `Menu`
-            if (positions.length > 0) {
-                const bbox = new Box3().setFromPoints(positions); // Boîte englobante pour inclure tous les points visibles
-                const center = new Vector3();
-                bbox.getCenter(center); // Centre de tous les nœuds
-                const size = bbox.getSize(new Vector3()).length(); // Taille de la scène
-                const distance = size * 1.5; // Calcul d'une distance adéquate pour inclure tous les points mécaniquement
-
-                // Mettez à jour la position initiale pour recentrer la caméra
-                setInitialPosition(
-                    new Vector3(center.x, center.y, center.z + distance)
-                );
-                setIsPosInitial(true); // Change l'état pour permettre le recentrage
-            }
-
+    function resetCamera() {
+        // Vérifier que graphData et ses noeuds existent
+        if (!graphData || !graphData.nodes || graphData.nodes.length === 0) {
+            console.warn("Pas de données de graphe pour réinitialiser la caméra.");
+            return;
         }
-        const exportGraph = () => {
+
+        const positions = graphData.nodes.map((node) => new Vector3(
+            node.position[currentView].x,
+            node.position[currentView].y,
+            node.position[currentView].z
+        ));
+
+        const bbox = new Box3().setFromPoints(positions); // Boîte englobante pour inclure tous les points visibles
+        const center = new Vector3();
+        bbox.getCenter(center); // Centre de tous les nœuds
+        const size = bbox.getSize(new Vector3()).length(); // Taille de la scène
+        const distance = size * 1.5; // Calcul d'une distance adéquate pour inclure tous les points mécaniquement
+
+        // Mettez à jour la position initiale pour recentrer la caméra
+        setInitialPosition(
+            new Vector3(center.x, center.y, center.z + distance)
+        );
+        setIsPosInitial(true); // Change l'état pour permettre le recentrage
+
+
+    }
+    const exportGraph = () => {
         const dataStr = JSON.stringify(graphData, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
         const url = URL.createObjectURL(blob);
@@ -72,11 +82,11 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
         a.click();
         document.body.removeChild(a);
     };
-        const [open, setOpen] = useState(false);
-        const [isSearch, setIsSearch] = useState(false);
-        const toggleDrawer = (newOpen:boolean) => () => {
-            setOpen(newOpen);
-        }
+    const [open, setOpen] = useState(false);
+    const [isSearch, setIsSearch] = useState(false);
+    const toggleDrawer = (newOpen:boolean) => () => {
+        setOpen(newOpen);
+    }
     const [searchResults, setSearchResults] = useState<NodeData[]>([]); // Typage précis
 
     const handleSearch = useCallback((query: string) => {
@@ -107,107 +117,107 @@ export default function Menu( { darkMode, setDarkMode }: MenuProps){
 
 
     return (
-    <div className={darkMode ? 'dark-mode' : ''}>
-        <div className="menu-container">
-            <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-                <MenuIcon />
-            </IconButton>
-            <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-                <Box sx={{ width: 250, p: 2 }} role="presentation">
-                    <Typography variant="h5" sx={{ mb: 2 }}>
-                        Menu d'Options
-                    </Typography>
+        <div className={darkMode ? 'dark-mode' : ''}>
+            <div className="menu-container">
+                <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
+                    <MenuIcon />
+                </IconButton>
+                <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
+                    <Box sx={{ width: 250, p: 2 }} role="presentation">
+                        <Typography variant="h5" sx={{ mb: 2 }}>
+                            Menu d'Options
+                        </Typography>
 
-                    <Button variant="outlined" onClick={resetCamera} sx={{ mb: 1 }}>
-                        Réinitialiser la caméra
-                    </Button>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <Typography variant="h6" sx={{ mb: 1 }}>
-                        Navigation
-                    </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                        <Button variant="outlined" onClick={goBack} disabled={currentIndex <= 0}>
-                            ⬅ Précédent
+                        <Button variant="outlined" onClick={resetCamera} sx={{ mb: 1 }}>
+                            Réinitialiser la caméra
                         </Button>
-                        <Button variant="outlined" onClick={goForward} disabled={currentIndex >= history.length - 1}>
-                            ➡ Suivant
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="h6" sx={{ mb: 1 }}>
+                            Navigation
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                            <Button variant="outlined" onClick={goBack} disabled={currentIndex <= 0}>
+                                ⬅ Précédent
+                            </Button>
+                            <Button variant="outlined" onClick={goForward} disabled={currentIndex >= history.length - 1}>
+                                ➡ Suivant
+                            </Button>
+                        </Box>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        <Typography variant="h6" sx={{ mb: 1 }}>
+                            Téléchargement du fichier JSON :
+                        </Typography>
+                        <Button variant="outlined" onClick={exportGraph} sx={{ mb: 1 }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                 stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
+                            </svg>
+                            Télécharger le graphe
                         </Button>
-                    </Box>
 
-                    <Divider sx={{ my: 2 }} />
+                        <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6" sx={{ mb: 1 }}>
-                        Téléchargement du fichier JSON :
-                    </Typography>
-                    <Button variant="outlined" onClick={exportGraph} sx={{ mb: 1 }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                             stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
-                        </svg>
-                        Télécharger le graphe
-                    </Button>
-
-                    <Divider sx={{ my: 2 }} />
-
-                    <Typography variant="h6" sx={{ mb: 1 }}>
-                        Filtre :
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="h6" sx={{ mb: 1 }}>
+                            Filtre :
+                        </Typography>
+                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={filters.axiome}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))}
+                                    />
+                                }
+                                label="Axiomes"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={filters.théorème}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))}
+                                    />
+                                }
+                                label="Théorèmes"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={filters.lemme}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))}
+                                    />
+                                }
+                                label="Lemmes"
+                            />
+                        </Box>
+                        <Divider sx={{ my: 2 }} />
                         <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={filters.axiome}
-                                    onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))}
-                                />
-                            }
-                            label="Axiomes"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={filters.théorème}
-                                    onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))}
-                                />
-                            }
-                            label="Théorèmes"
-                        />
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    checked={filters.lemme}
-                                    onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))}
-                                />
-                            }
-                            label="Lemmes"
+                            control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                            label="Mode sombre"
                         />
                     </Box>
-                    <Divider sx={{ my: 2 }} />
-                    <FormControlLabel
-                        control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
-                        label="Mode sombre"
-                    />
-                </Box>
-            </Drawer>
+                </Drawer>
+            </div>
+            <div className="search-bar-container">
+                <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch} />
+                {searchResults.length > 0 && isSearch && (
+                    <div className="search-results">
+                        {searchResults.map((result) => (
+                            <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
+                                {result.nom} ({result.typeMath})
+                            </div>
+                        ))}
+                    </div>
+                )}
+                {searchResults.length === 0 && isSearch && (
+                    <div className="search-results">
+                        Pas de démonstration trouvé
+                    </div>
+                )}
+            </div>
         </div>
-        <div className="search-bar-container">
-            <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch} />
-            {searchResults.length > 0 && isSearch && (
-                <div className="search-results">
-                    {searchResults.map((result) => (
-                        <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
-                            {result.nom} ({result.typeMath})
-                        </div>
-                    ))}
-                </div>
-            )}
-            {searchResults.length === 0 && isSearch && (
-                <div className="search-results">
-                    Pas de démonstration trouvé
-                </div>
-            )}
-        </div>
-    </div>
     );
 }
