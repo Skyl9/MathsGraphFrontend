@@ -3,7 +3,6 @@ import {TopBar} from "../components/TopBar";
 
 
 export function HomePage() {
-    console.log(process.env.REACT_APP_BACKEND_LINK)
     return (
         <>
             {/* Barre supérieure */}

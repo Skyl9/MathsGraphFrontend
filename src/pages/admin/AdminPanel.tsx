@@ -18,7 +18,7 @@ export default function AdminPanel() {
         setLoading(true);
         setError(null);
 
-        const backendLink = process.env.REACT_APP_BACKEND_LINK || "";
+        const backendLink = import.meta.env.VITE_BACKEND_LINK|| "";
         if (!backendLink) {
             setError("Lien du backend non défini");
             setLoading(false);
@@ -69,7 +69,7 @@ export default function AdminPanel() {
         try {
             console.log("id Intérieur", id, "  data: ", rowToUpdate);
 
-            const response = await fetch(process.env.REACT_APP_BACKEND_LINK + `/updateNodes/${id}`, {
+            const response = await fetch(import.meta.env.VITE_BACKEND_LINK + `/updateNodes/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(rowToUpdate)
