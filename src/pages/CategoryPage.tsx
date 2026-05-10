@@ -8,7 +8,7 @@ import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
-import {useCategoryEdit} from "../hooks/category/useCategoryEdit";
+import {useEntityEdit} from "../hooks/useEntityEdit";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import {nodeApi} from "../services/api";
@@ -32,7 +32,7 @@ const CategoryPage: React.FC = () => {
         createField,
         saveChanges,
         refetchData
-    } = useCategoryEdit(id || "");
+    } = useEntityEdit<Category>("category",id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
     const [parentCategory, setParentCategory] = React.useState<Category | null>(null);

@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
-import {useMathematicienEdit} from "../hooks/mathematicien/useMathematicienEdit";
+import {useEntityEdit} from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
 import HtmlField from "../components/NodeFields/HtmlField";
 import "../styles/NodePage.css";
@@ -31,7 +31,7 @@ const MathematicienPage : React.FC = () => {
         createField,
         saveChanges,
         refetchData
-} = useMathematicienEdit(id || "");
+} = useEntityEdit<Mathematicien>("mathematicien",id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
     useEffect(

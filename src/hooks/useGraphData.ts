@@ -11,10 +11,10 @@ export const useGraphData = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await nodeApi.getGraph(); // 'response' contient directement l'objet { nodes: [...], edges: [...] }
-            console.log("Réponse de l'API /graph (après traitement par la fonction request):", response); // Log modifié pour plus de clarté
-            setGraphData(response); // CHANGEMENT ICI : Passer 'response' directement
-            console.log("Données du graphe définies dans useGraphData:", response); // Log modifié pour plus de clarté
+            const response = await nodeApi.getGraph();
+            console.log("Réponse de l'API /graph (après traitement par la fonction request):", response);
+            setGraphData(response);
+            console.log("Données du graphe définies dans useGraphData:", response);
         } catch (err: unknown) {
             setError(`Erreur : ${err instanceof Error ? err.message : "Erreur inconnue"}`);
             console.error("Erreur lors de la récupération du graphe:", err);

@@ -8,7 +8,7 @@ import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import {Fab} from "@mui/material";
 import {EditModal} from "../components/EditModal";
-import {useTypeEdit} from "../hooks/type/useTypeEdit";
+import {useEntityEdit} from "../hooks/useEntityEdit.ts";
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import {Type} from "../types/ApiTypes/type";
@@ -31,7 +31,7 @@ const TypePage : React.FC = () => {
         createField,
         saveChanges,
         refetchData
-    } = useTypeEdit(id || "");
+    } = useEntityEdit<Type>("type",id || "");
 
     const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
     useEffect(

@@ -37,7 +37,7 @@ import {getTheme} from "./theme";
 import CssBaseline from '@mui/material/CssBaseline';
 import { useGraphData } from "./hooks/useGraphData";
 
-import { CircularProgress, Box, Alert, Snackbar } from '@mui/material';
+import { CircularProgress, Box, Alert } from '@mui/material';
 import ErrorBoundary from "./ErrorBoundary";
 
 
@@ -111,7 +111,7 @@ const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) =>
                                                                                             }) => {
     const {loading, error, graphData} = useGraphData();
 
-    const { /* supprimez graphData, loading, error d'ici */ ...appContextValues } = useAppContext();
+    useAppContext();
 
 
     if (loading) {
