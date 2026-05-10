@@ -1,9 +1,11 @@
-import React, { useState, useRef } from "react";
-import ReactQuill, { Quill } from "react-quill-new";
+import React, {useState, useRef} from "react";
+import ReactQuill, {Quill} from "react-quill-new";
+import DOMPurify from 'dompurify';
 import "react-quill-new/dist/quill.snow.css"; // Styles pour l'éditeur
-import { MathJax, MathJaxContext } from "better-react-mathjax";
-import { Box, Typography } from "@mui/material";
+import {MathJax, MathJaxContext} from "better-react-mathjax";
+import {Box, Typography} from "@mui/material";
 import "../../styles/LatexEditor.css";
+
 
 // Fonction pour insérer du LaTeX
 const insertLatex = (quill: Quill) => {
@@ -22,14 +24,14 @@ interface LatexEditorProps {
     onChange: (latex: string) => void; // Callback pour envoyer les modifications
 }
 
-const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
+const LatexEditor: React.FC<LatexEditorProps> = ({text, onChange}) => {
     const [latex, setLatex] = useState<string>(text);
     const quillRef = useRef<ReactQuill | null>(null); // Référence pour accéder à Quill
 
     // Configuration MathJax
     const mathJaxConfig = {
-        loader: { load: ["input/asciimath", "output/chtml"] },
-        tex: { inlineMath: [["\\(", "\\)"], ["$", "$"]] }, // Délimiteurs inline
+        loader: {load: ["input/asciimath", "output/chtml"]},
+        tex: {inlineMath: [["\\(", "\\)"], ["$", "$"]]}, // Délimiteurs inline
     };
 
     return (
@@ -37,7 +39,7 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
             <Box
                 sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", md: "row" },
+                    flexDirection: {xs: "column", md: "row"},
                     gap: 2,
                     width: "100%",
                     height: "80vh",
@@ -71,8 +73,8 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
                                 container: [
                                     // Barre d'outils
                                     ["bold", "italic", "underline"], // Boutons standard
-                                    [{ header: [1, 2, false] }], // Titres h1, h2
-                                    [{ list: "ordered" }, { list: "bullet" }], // Listes
+                                    [{header: [1, 2, false]}], // Titres h1, h2
+                                    [{list: "ordered"}, {list: "bullet"}], // Listes
                                     ["link", "image"], // Liens, images
                                     ["code-block"], // Bloc de code
                                     ["latex"], // Bouton personnalisé LaTeX
@@ -108,7 +110,7 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
                         Rendu MathJax
                     </Typography>
                     <MathJax>
-                        <div dangerouslySetInnerHTML={{ __html: latex }} />
+                        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(latex) }} />
                     </MathJax>
                 </Box>
             </Box>
