@@ -13,6 +13,8 @@ import {Favorite, User} from "../types/ApiTypes/user";
 import {Tag} from "../types/ApiTypes/tag";
 import {Comment} from "../types/ApiTypes/comments";
 import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
+import {RecentChange} from "../components/RecentChanges.tsx";
+import {RecentComment} from "../components/recentComment.tsx";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_LINK || '';
 
@@ -117,6 +119,8 @@ export const nodeApi = {
     getTagsNameFromConceptId: (id: string) => request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
     getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
     getGraph: () => request<any>(`/graph`, undefined, false),
+    getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`,undefined,false),
+    getRecentComments:(limit : number = 20) => request<RecentComment[]>(`/recent-comments?limit=${limit}`,undefined,false),
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
         request<null>(`/update/${id}`, {
@@ -203,4 +207,5 @@ export const nodeApi = {
         }, false),
     register: (username: string, email: string, password: string) =>
         request<Register>(`/register`, {method: "POST", body: JSON.stringify({username:username, email:email, password:password})}, false),
+
 };

@@ -1,5 +1,7 @@
 import {Container, Typography, Button, Stack, Grid, Card, CardContent, Link, CardActions} from "@mui/material";
 import {TopBar} from "../components/TopBar";
+import {RecentChanges} from "../components/RecentChanges.tsx";
+import {RecentComments} from "../components/recentComment.tsx";
 
 
 export function HomePage() {
@@ -105,7 +107,11 @@ export function HomePage() {
                         </Typography>
                     </Card>
                 </Grid>
-            </Container>
+
+        </Container>
+            <RecentChanges></RecentChanges>
+            <RecentComments></RecentComments>
+
         </>
     );
 }
