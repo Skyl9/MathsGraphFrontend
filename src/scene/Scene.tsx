@@ -8,7 +8,7 @@ import NodeDetails from "../components/NodeDetails";
 import {useAppContext} from "../contexts/AppContext";
 import gsap from "gsap";
 import {NodeData, Graph} from "../types/ApiTypes/graph";
-
+import { EffectComposer, Bloom } from '@react-three/postprocessing';
 const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];
     if (typeMath === "théorème") return colors[2];
@@ -40,7 +40,8 @@ export default function Scene({ graphData }: SceneProps) {
         setTargetPosition,
         colorSides,
         selectedNodeId,
-        setSelectedNodeId
+        setSelectedNodeId,
+        graphTheme
     } = useAppContext();
 
     const {camera, gl} = useThree();
@@ -62,6 +63,16 @@ export default function Scene({ graphData }: SceneProps) {
 
     console.log("Arêtes dans Scene:", edges); // <<< AJOUTÉ
 
+    const neighborIds = useMemo(() => {
+        if (selectedNodeId === null) return new Set<number>();
+
+        const neighbors = new Set<number>();
+        edges.forEach(edge => {
+            if (edge.start === selectedNodeId) neighbors.add(edge.end);
+            if (edge.end === selectedNodeId) neighbors.add(edge.start);
+        });
+        return neighbors;
+    }, [selectedNodeId, edges]);
 
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
@@ -167,6 +178,12 @@ export default function Scene({ graphData }: SceneProps) {
 
     return (
         <>
+            {/* 🌟 NOUVEAU : Changement de la couleur de fond dynamique */}
+            {graphTheme === "neon" && <color attach="background" args={["#0a0a10"]} />}
+            {/* 🌟 NOUVEAU : En mode néon, on baisse la lumière ambiante pour faire ressortir les sphères */}
+            <ambientLight intensity={graphTheme === "neon" ? 0.1 : 0.5} />
+            <pointLight position={[10, 10, 10]} intensity={graphTheme === "neon" ? 0.2 : 1} />
+
             <group onPointerMissed={handleCanvasClick}>
                 {visibleNodes.map((node) => (
                     <Node
@@ -176,6 +193,7 @@ export default function Scene({ graphData }: SceneProps) {
                         color={getNodeColor(node.typeMath, colors)}
                         nom={node.nom}
                         isSelected={shouldBeShowNode && selectedNodeId === node.id}
+                        isNeighbor={neighborIds.has(node.id)} // 🌟 NOUVEAU
                         onClick={() => {
                             setSelectedNodeId(node.id);
                             setShouldBeShowNode(true);
@@ -183,6 +201,7 @@ export default function Scene({ graphData }: SceneProps) {
                         debug={debugMode}
                     />
                 ))}
+
                 {edges
                     .filter(edge => {
                         const startNode = visibleNodes.find(node => node.id === edge.start);
@@ -192,17 +211,28 @@ export default function Scene({ graphData }: SceneProps) {
                     .map((edge, index) => {
                         const startNode = visibleNodes.find(node => node.id === edge.start)!;
                         const endNode = visibleNodes.find(node => node.id === edge.end)!;
+
+                        // 🌟 NOUVEAU : Opacité de la ligne en mode focus
+                        const isFocus = graphTheme === "focus";
+                        const isLineConnectedToSelected = edge.start === selectedNodeId || edge.end === selectedNodeId;
+                        const lineOpacity = (isFocus && selectedNodeId !== null && !isLineConnectedToSelected) ? 0.1 : 1;
+
                         return (
-                            <Edge
-                                key={index}
-                                start={[startNode.position[currentView].x, startNode.position[currentView].y, startNode.position[currentView].z]}
-                                end={[endNode.position[currentView].x, endNode.position[currentView].y, endNode.position[currentView].z]}
-                                type={edge.type}
-                                color={colorSides}
-                                debug={debugMode}
-                            />
+                            <group key={index}>
+                                {/* Astuce: On enveloppe l'Edge pour contrôler son opacité si possible,
+                                ou tu passeras lineOpacity à Edge plus tard. Pour l'instant le focus est sur les Noeuds */}
+                                <Edge
+                                    start={[startNode.position[currentView].x, startNode.position[currentView].y, startNode.position[currentView].z]}
+                                    end={[endNode.position[currentView].x, endNode.position[currentView].y, endNode.position[currentView].z]}
+                                    type={edge.type}
+                                    color={colorSides}
+                                    debug={debugMode}
+                                    opacity={lineOpacity}
+                                />
+                            </group>
                         );
                     })}
+
                 {selectedNode && shouldBeShowNode && (
                     <NodeDetails
                         position={[selectedNode.position[currentView].x, selectedNode.position[currentView].y, selectedNode.position[currentView].z]}
@@ -213,6 +243,19 @@ export default function Scene({ graphData }: SceneProps) {
                     />
                 )}
             </group>
+
+            {/* 🌟 NOUVEAU : Le post-processing pour le mode Néon */}
+            {graphTheme === "neon" && (
+                <EffectComposer disableNormalPass>
+                    <Bloom
+                        luminanceThreshold={0.2}
+                        mipmapBlur
+                        intensity={1.5}
+                        radius={0.8}
+                    />
+                </EffectComposer>
+            )}
+
             <OrbitControls ref={controlsRef} enableZoom={true} maxDistance={2000} minDistance={5}/>
         </>
     );

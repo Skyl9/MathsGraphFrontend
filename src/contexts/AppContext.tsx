@@ -59,6 +59,8 @@ interface AppContextProps {
     setDebugMode: React.Dispatch<React.SetStateAction<boolean>>;
     currentView:string;
     setCurrentView: React.Dispatch<React.SetStateAction<string>>;
+    graphTheme: "classique" | "neon" | "focus";
+    setGraphTheme: React.Dispatch<React.SetStateAction<"classique" | "neon" | "focus">>;
 }
 
 // 📌 Création du contexte
@@ -86,6 +88,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const [needToSetHistory, setNeedToSetHistory] = useState<boolean>(false);
     const [debugMode, setDebugMode] = useState<boolean>(false);
     const [currentView, setCurrentView] = useState<string>("grille");
+    const [graphTheme, setGraphTheme] = useState<"classique" | "neon" | "focus">("classique");
 
     const [filters, setFilters] = useState({
         axiome: true,
@@ -148,6 +151,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         ref: controls, debugMode, setDebugMode,
         currentView, setCurrentView,
+        graphTheme, setGraphTheme,
 
     }), [
         color, colorAxiome, colorLemme, colortheoreme, colorSides,
@@ -155,7 +159,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         history, currentIndex, needToSetHistory, moveToPosition,
         goBack, goForward,
         filters,
-        debugMode, currentView
+        debugMode, currentView, graphTheme,
     ]);
 
     return (

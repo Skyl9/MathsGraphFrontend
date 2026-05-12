@@ -92,7 +92,6 @@ const request = async <T>(
         throw error;
     }
 };
-// TODO Rajouter l'appel api /graph (rapatrier le code depuis la page du graph)
 
 export const nodeApi = {
     // GET requests
@@ -120,7 +119,8 @@ export const nodeApi = {
     getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
     getGraph: () => request<any>(`/graph`, undefined, false),
     getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`,undefined,false),
-    getRecentComments:(limit : number = 20) => request<RecentComment[]>(`/recent-comments?limit=${limit}`,undefined,false),
+    getRecentComments:(limit : number = 20) => request<RecentComment[]>(`/comments/recent?limit=${limit}`,undefined,false), // CORRIGÉ
+
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
         request<null>(`/update/${id}`, {
@@ -199,13 +199,25 @@ export const nodeApi = {
         request<null>(`/tags/add/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
     patchUser: (data: { field: string, value: string }, id: string) =>
         request<null>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
-    getToken: (formData: URLSearchParams) =>
-        request<accessTokens>(`/token`, {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: formData.toString(),
-        }, false),
     register: (username: string, email: string, password: string) =>
         request<Register>(`/register`, {method: "POST", body: JSON.stringify({username:username, email:email, password:password})}, false),
 
+    getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
+        const response = await fetch(`${BASE_URL}/token`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: formData.toString(),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw {
+                status: response.status,
+                message: errorData.detail || "Erreur d'authentification : Identifiants invalides",
+            } as ApiError;
+        }
+
+        // Renvoie directement { access_token: "...", token_type: "bearer" }
+        return await response.json();
+    },
 };

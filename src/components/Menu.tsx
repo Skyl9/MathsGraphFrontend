@@ -9,6 +9,10 @@ import {
     FormControlLabel,
     Checkbox,
     Divider, Switch,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 import {useAppContext} from "../contexts/AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
@@ -42,7 +46,10 @@ export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ 
         // Graphe
         setFilters,
         filters,
-        currentView} = useAppContext();
+        currentView,
+        graphTheme,
+        setGraphTheme
+    } = useAppContext();
 
     function resetCamera() {
         // Vérifier que graphData et ses noeuds existent
@@ -199,6 +206,29 @@ export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ 
                             label="Mode sombre"
                         />
                     </Box>
+                    <Divider sx={{ my: 2 }} />
+                    <Typography variant="h6" sx={{ mb: 1 }}>
+                        Style Visuel :
+                    </Typography>
+                    <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                        <InputLabel id="theme-select-label">Thème 3D</InputLabel>
+                        <Select
+                            labelId="theme-select-label"
+                            value={graphTheme}
+                            label="Thème 3D"
+                            onChange={(e) => setGraphTheme(e.target.value as "classique" | "neon" | "focus")}
+                        >
+                            <MenuItem value="classique">Classique (Fluide)</MenuItem>
+                            <MenuItem value="neon">Néon (Lumineux)</MenuItem>
+                            <MenuItem value="focus">Focus (Isolation)</MenuItem>
+                        </Select>
+                    </FormControl>
+
+                    <Divider sx={{ my: 2 }} />
+                    <FormControlLabel
+                        control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                        label="Mode sombre UI"
+                    />
                 </Drawer>
             </div>
             <div className="search-bar-container">

@@ -14,10 +14,11 @@
     "@mui/x-date-pickers": "^8.1.0",
     "@react-three/drei": "^10.0.6",
     "@react-three/fiber": "^9.1.2",
+    "@react-three/postprocessing": "^3.0.4",
     "better-react-mathjax": "^2.1.0",
     "dayjs": "^1.11.13",
     "diff": "^8.0.2",
-    "dompurify": "^3.2.5",
+    "dompurify": "^3.4.2",
     "dotenv": "^16.4.7",
     "framer-motion": "^12.4.7",
     "gsap": "^3.12.7",
@@ -53,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@types/dompurify": "^3.0.5",
     "@types/mathjax": "^0.0.40",
     "@types/node": "^20.19.40",
     "@types/react": "^19.1.0",
