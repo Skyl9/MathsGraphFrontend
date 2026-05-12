@@ -201,7 +201,7 @@ export const nodeApi = {
         request<null>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
     register: (username: string, email: string, password: string) =>
         request<Register>(`/register`, {method: "POST", body: JSON.stringify({username:username, email:email, password:password})}, false),
-
+    recalculateGraph: () => request<string>(`/admin/recalculate-graph`, { method: 'POST' }),
     getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
         const response = await fetch(`${BASE_URL}/token`, {
             method: "POST",
