@@ -76,18 +76,28 @@ export default function Scene({ graphData }: SceneProps) {
 
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
+            // 1. On anime la CIBLE de la caméra avec GSAP (au lieu d'un lerp brutal)
+            gsap.to(controlsRef.current.target, {
+                x: targetPosition.x,
+                y: targetPosition.y,
+                z: targetPosition.z,
+                duration: 1.2,
+                ease: "power3.inOut",
+                onUpdate: () => controlsRef.current.update(), // Demande à Three.js de recalculer l'angle
+            });
+
+            // 2. On anime la POSITION de la caméra pour l'éloigner un peu du nœud
+            // On la décale un peu sur X et Y pour un effet plus dramatique/cinématique
             gsap.to(camera.position, {
-                x: selectedNode.position[currentView].x,
-                y: selectedNode.position[currentView].y,
-                z: selectedNode.position[currentView].z + 3,
-                duration: 1.5,
-                onUpdate: () => {
-                    controlsRef.current.target.lerp(targetPosition, 1);
-                    controlsRef.current.update();
-                },
+                x: targetPosition.x + 2,
+                y: targetPosition.y + 1.5,
+                z: targetPosition.z + 5, // On garde un bon recul
+                duration: 1.2,
+                ease: "power3.inOut"
             });
         }
-    }, [selectedNode, targetPosition, camera, controlsRef, currentView]);
+        // Note : j'ai retiré controlsRef des dépendances pour éviter des déclenchements parasites
+    }, [selectedNode, targetPosition, camera, currentView]);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {

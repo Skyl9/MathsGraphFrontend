@@ -1,5 +1,5 @@
 import React, {useState, useRef, useMemo} from "react";
-import { Text } from "@react-three/drei";
+import {Billboard, Text} from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
 import { PointerEvent } from "react";
 import {useTheme} from "@mui/material";
@@ -58,9 +58,11 @@ export default function Node({ id, position, color, isSelected, nom, onClick, de
 
             {/* On cache le texte des nœuds lointains en mode focus pour désencombrer l'écran */}
             {(!shouldDim || hovered) && (
-                <Text position={[0, sphereSize + 0.2, 0]} fontSize={0.3} color={nodeColor} anchorX="center" anchorY="middle">
-                    {nom}
-                </Text>
+                <Billboard position={[0, sphereSize + 0.4, 0]}>
+                    <Text fontSize={0.3} color={nodeColor} anchorX="center" anchorY="middle">
+                        {nom}
+                    </Text>
+                </Billboard>
             )}
 
             {debug && (

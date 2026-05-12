@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import {useCallback, useState} from 'react';
 import {Box3, Vector3} from "three";
 import {
     Drawer,
@@ -18,7 +18,8 @@ import {useAppContext} from "../contexts/AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchBar from "./SearchBar";
 import "../styles/Menu.css";
-import {Graph, NodeData} from "../types/ApiTypes/graph"; // Importer Graph
+import {Graph, NodeData} from "../types/ApiTypes/graph";
+import {AutoGraph, GridOn} from "@mui/icons-material"; // Importer Graph
 
 interface MenuProps {
     darkMode: boolean;
@@ -47,6 +48,7 @@ export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ 
         setFilters,
         filters,
         currentView,
+        setCurrentView,
         graphTheme,
         setGraphTheme
     } = useAppContext();
@@ -138,7 +140,19 @@ export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ 
                         <Button variant="outlined" onClick={resetCamera} sx={{ mb: 1 }}>
                             Réinitialiser la caméra
                         </Button>
-
+                        <Typography variant="h6" sx={{ mb: 1 }}>Mode d'affichage :</Typography>
+                        <FormControl fullWidth size="small" sx={{ mb: 3 }}>
+                            <InputLabel>Vue actuelle</InputLabel>
+                            <Select
+                                value={currentView}
+                                label="Vue actuelle"
+                                onChange={(e) => setCurrentView(e.target.value)}
+                            >
+                                <MenuItem value="grille"><GridOn sx={{ mr: 1, fontSize: 20 }}/> Grille 3D</MenuItem>
+                                <MenuItem value="physique"><AutoGraph sx={{ mr: 1, fontSize: 20 }}/> Physique Organique</MenuItem>
+                                {/* MenuItem value="arbre">Arbre Hiérarchique</MenuItem */}
+                            </Select>
+                        </FormControl>
                         <Divider sx={{ my: 2 }} />
 
                         <Typography variant="h6" sx={{ mb: 1 }}>
