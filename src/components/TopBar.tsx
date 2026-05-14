@@ -6,11 +6,17 @@ import logo from '../assets/logo.svg'
 import Brightness4Icon from '@mui/icons-material/Brightness4'; // Icône Lune
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Icône Soleil
 import {ColorModeContext} from "../App.tsx";
+import {useTranslation} from "react-i18next";
 
 export const TopBar: React.FC = () => {
     const [username, setUsername] = useState<string | null>(null);
     const theme = useTheme();
     const colorMode = useContext(ColorModeContext);
+    const { t, i18n } = useTranslation();
+    const toggleLanguage = () => {
+        const newLang = i18n.language === 'fr' ? 'en' : 'fr';
+        i18n.changeLanguage(newLang);
+    };
     // Vérifie si l'utilisateur est connecté et récupère son nom
     useEffect(() => {
         const usernameFromToken = Token.getUsernameFromToken();
@@ -37,7 +43,9 @@ export const TopBar: React.FC = () => {
                         <Typography>MATHGRAPH</Typography>
                     </Link>
                     </div>
-
+                    <Button onClick={toggleLanguage} color="inherit" sx={{ ml: 2 }}>
+                        {i18n.language === 'fr' ? '🇬🇧 EN' : '🇫🇷 FR'}
+                    </Button>
                     <IconButton sx={{ml: 1}} onClick={colorMode.toggleColorMode} color="inherit">
                         {theme.palette.mode === 'dark' ? <Brightness7Icon/> : <Brightness4Icon/>}
                     </IconButton>
