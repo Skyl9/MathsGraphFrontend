@@ -1,127 +1,107 @@
-import React, { useState } from "react";
-import {TextField, Button, Typography, Box, Alert, Link, Snackbar} from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { TopBar } from "../components/TopBar";
-import {nodeApi} from "../services/api";
+import React, {useState} from 'react';
+import {TextField, Button, Alert, Box, Typography, Paper} from '@mui/material';
+import {nodeApi} from '../services/api';
+import {useNavigate} from 'react-router-dom';
+
+import {z} from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {TopBar} from "../components/TopBar.tsx";
+
+const registerSchema = z.object({
+    username: z.string()
+        .min(3, "Le pseudo doit contenir au moins 3 caractères")
+        .max(20, "Le pseudo ne peut pas dépasser 20 caractères")
+        .regex(/^[a-zA-Z0-9_]+$/, "Seuls les lettres, chiffres et underscores sont autorisés"),
+    email: z.string()
+        .email("Adresse email invalide"),
+    password: z.string()
+        .min(8, "Le mot de passe doit contenir au moins 8 caractères")
+        .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
+        .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre")
+});
+
+type RegisterFormInputs = z.infer<typeof registerSchema>;
 
 export const Register: React.FC = () => {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-
-    const [success, setSuccess] = useState(false);
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarMessage, setSnackbarMessage] = useState("");
-
     const navigate = useNavigate();
+    const [apiError, setApiError] = useState<string | null>(null);
+    const [apiSuccess, setApiSuccess] = useState<string | null>(null);
 
-    const handleRegister = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        formState: {errors, isSubmitting},
+    } = useForm<RegisterFormInputs>({
+        resolver: zodResolver(registerSchema),
+        mode: "onBlur"
+    });
 
+    const onSubmit = async (data: RegisterFormInputs) => {
+        setApiError(null);
+        setApiSuccess(null);
         try {
-            await nodeApi.register(username, email, password);
-
-            setSuccess(true);
-            setSnackbarMessage("Inscription réussie ! Redirection vers la connexion...");
-            setOpenSnackbar(true);
-
-            // Redirection vers la page login après 3 secondes (optionnel)
-            setTimeout(() => {
-                navigate("/login");
-            }, 3000);
-        } catch (e:any) {
-            const backendError = e.response?.data?.error|| e.message || "Une erreur inattendue est survenue.";
-            setSuccess(false);
-            setSnackbarMessage(backendError);
-            setOpenSnackbar(true);
+            await nodeApi.register(data.username, data.email, data.password);
+            setApiSuccess("Compte créé avec succès ! Redirection...");
+            setTimeout(() => navigate('/login'), 2000);
+        } catch (err: any) {
+            setApiError(err.message || "Erreur lors de l'inscription.");
         }
     };
 
     return (
         <>
-            <TopBar/>
-        <Box
-            component="form"
-            onSubmit={handleRegister}
-            sx={{
-                maxWidth: 400,
-                margin: "auto",
-                mt: 8,
-                px: 3,
-                py: 4,
-                boxShadow: 3,
-                borderRadius: 2,
-                backgroundColor: "#fff",
-            }}
-        >
-            <Typography variant="h4" mb={2} align="center">
-                Inscription
-            </Typography>
+            <TopBar></TopBar>
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+                <Paper elevation={3} sx={{p: 4, width: '100%', maxWidth: 400}}>
+                    <Typography variant="h5" component="h1" gutterBottom align="center">
+                        Créer un compte
+                    </Typography>
 
-            <TextField
-                label="Nom d'utilisateur"
-                type="text"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-            />
+                    {apiError && <Alert severity="error" sx={{mb: 2}}>{apiError}</Alert>}
+                    {apiSuccess && <Alert severity="success" sx={{mb: 2}}>{apiSuccess}</Alert>}
 
-            <TextField
-                label="Email"
-                type="email"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-            />
+                    <form onSubmit={handleSubmit(onSubmit)}
+                          style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
 
-            <TextField
-                label="Mot de passe"
-                type="password"
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
+                        {/* CHAMP USERNAME */}
+                        <TextField
+                            label="Nom d'utilisateur"
+                            {...register("username")}
+                            error={!!errors.username}
+                            helperText={errors.username?.message}
+                        />
 
-            <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{ mt: 2, py: 1.5 }}
-            >
-                S'inscrire
-            </Button>
+                        {/* CHAMP EMAIL */}
+                        <TextField
+                            label="Email"
+                            type="email"
+                            {...register("email")}
+                            error={!!errors.email}
+                            helperText={errors.email?.message}
+                        />
 
-            <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-                Déjà un compte ?{" "}
-                <Link href="/login" underline="hover">
-                    Se connecter
-                </Link>
-            </Typography>
-            <Snackbar
-                open={openSnackbar}
-                autoHideDuration={6000}
-                onClose={() => setOpenSnackbar(false)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            >
-                <Alert
-                    onClose={() => setOpenSnackbar(false)}
-                    severity={success ? "success" : "error"}
-                    sx={{ width: '100%' }}
-                >
-                    {snackbarMessage}
-                </Alert>
-            </Snackbar>
-        </Box>
+                        {/* CHAMP PASSWORD */}
+                        <TextField
+                            label="Mot de passe"
+                            type="password"
+                            {...register("password")}
+                            error={!!errors.password}
+                            helperText={errors.password?.message}
+                        />
+
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                            disabled={isSubmitting}
+                            sx={{mt: 2}}
+                        >
+                            {isSubmitting ? "Création en cours..." : "S'inscrire"}
+                        </Button>
+                    </form>
+                </Paper>
+            </Box>
         </>
     );
 };

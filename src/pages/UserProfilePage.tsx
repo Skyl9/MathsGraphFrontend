@@ -17,6 +17,7 @@ import { EditModalAvatar } from '../components/EditModalAvatar';
 import {ReportIssueButton} from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
 import {User} from "../types/ApiTypes/user";
+import UserContributions from "../components/UserContributions.tsx";
 
 
 
@@ -222,9 +223,27 @@ const UserProfilePage: React.FC = () => {
             </Grid>
           </Paper>
           <ReportIssueButton/>
-          <Box>
-          <FavoriteList userId={id}></FavoriteList>
+          <Box sx={{ mt: 4, mb: 4 }}>
+            <Grid container spacing={4}>
+              {/* Colonne de gauche : Favoris */}
+              <Grid size={6}>
+                <Typography variant="h6" gutterBottom>Favoris</Typography>
+                <Paper elevation={2} sx={{ p: 2, minHeight: '200px' }}>
+                  <FavoriteList userId={id}></FavoriteList>
+                </Paper>
+              </Grid>
+
+              {/* Colonne de droite : Historique des contributions */}
+              <Grid size={6}>
+                {id && <UserContributions userId={id} />}
+              </Grid>
+            </Grid>
           </Box>
+
+          <Box textAlign="center" mt={4}>
+            <ReportIssueButton/>
+          </Box>
+
         </Box>
       </>
   );

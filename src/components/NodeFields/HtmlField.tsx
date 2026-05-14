@@ -1,26 +1,18 @@
-import React from 'react';
-import DOMPurify from 'dompurify';
+import MathMarkdown from "../MathMarkdown.tsx";
 
 interface HtmlFieldProps {
-  title: string;
-  content: string;
-  onEdit?: () => void;
-  editable?: boolean;
+    title: string;
+    content: string;
 }
 
-const HtmlField: React.FC<HtmlFieldProps> = ({ title, content}) => {
-  return (
-    <div className="node-wrapper">
-      <div className="field-title">{title} :</div>
-      <div 
-        className="field-content" 
-        dangerouslySetInnerHTML={{
-          __html: DOMPurify.sanitize(content || "")
-        }} 
-      />
-
-    </div>
-  );
-};
-
-export default HtmlField;
+export default function HtmlField({ title, content }: HtmlFieldProps) {
+    return (
+        <div className="html-field-container">
+            <h3 className="html-field-title">{title}</h3>
+            {/* 🌟 On n'utilise plus de HTML brut, on passe par notre moteur Markdown ! */}
+            <div className="html-field-content">
+                <MathMarkdown content={content} />
+            </div>
+        </div>
+    );
+}

@@ -4,12 +4,13 @@ import os
 # Ajoute ici les noms de dossiers à ignorer pour ne pas alourdir le fichier
 EXCLUDE_DIRS = {
     'node_modules', 'dist', 'build', '.git', '.idea', '.vscode',
-    '__pycache__', 'venv', '.venv', 'env', 'public'
+    '__pycache__', 'venv', '.venv', 'env', 'public','.junie','node_modules','public',
+    '__tests__','assets',
 }
 
 # Ajoute ici les extensions de fichiers que tu veux inclure
 INCLUDE_EXTENSIONS = {
-    '.ts', '.tsx', '.py', '.json', '.css', '.html', '.dockerfile', '.conf', '.env'
+    '.ts', '.tsx', '.py', '.json', '.css', '.html', '.dockerfile', '.conf', '.env',".txt"
 }
 
 # Fichiers spécifiques à ignorer (souvent trop gros ou inutiles)

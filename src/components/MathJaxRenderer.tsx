@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { useMathJax } from "../hooks/useMathJax";
 
 type MathJaxRendererProps = {
     content: string;

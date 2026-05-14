@@ -120,7 +120,8 @@ export const nodeApi = {
     getGraph: () => request<any>(`/graph`, undefined, false),
     getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`,undefined,false),
     getRecentComments:(limit : number = 20) => request<RecentComment[]>(`/comments/recent?limit=${limit}`,undefined,false), // CORRIGÉ
-
+    getUserContributions: (userId: string, limit: number = 20) =>
+        request<RecentChange[]>(`/user/history/${userId}?limit=${limit}`, undefined, false),
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
         request<null>(`/update/${id}`, {

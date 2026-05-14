@@ -1,27 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import {
-    AllNodeData,
-    ModalProps,
-    NomEtranger,
-} from "../types/types";
-import ReactQuill from "react-quill-new";
-import 'react-quill-new/dist/quill.snow.css';
+import React, {useEffect, useState} from 'react';
+import {AllNodeData, ModalProps, NomEtranger,} from "../types/types";
 import {RelationEdit} from './NodeFields/RelationEdit';
 import SourceEdit from './NodeFields/SourceEdit';
 import AliasEdit from './NodeFields/AliasEdit';
 import NomEtrangerEdit from './NodeFields/NomEtrangerEdit';
 import FieldAdd from "./NodeFields/FieldAdd"
-import {FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField} from "@mui/material";
+import {Alert, FormControl, FormControlLabel, InputLabel, MenuItem, Select, Switch, TextField} from "@mui/material";
 import FieldAddAlias from "./NodeFields/FieldAddAlias";
 import FieldAddRelation from "./NodeFields/FieldAddRelation";
 import FieldAddSource from "./NodeFields/FieldAddSource";
 import LatexEditor from "./NodeFields/LatexEditor";
 import TagEdit from "./NodeFields/TagEdit";
 import {nodeApi} from "../services/api";
-import { Mathematicien } from '../types/ApiTypes/mathematicien';
+import {Mathematicien} from '../types/ApiTypes/mathematicien';
 import {Category} from "../types/ApiTypes/category";
 import {Relations} from "../types/ApiTypes/Relations";
 import {Source} from "../types/ApiTypes/source";
+import {validateField} from "../validations/schemas.ts";
 
 
 export const EditModal: React.FC<ModalProps> = ({
@@ -36,6 +31,7 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     createField,
                                                     refetchData
                                                 }) => {
+    const [valError, setValError] = useState<string | null>(null);
     const isAllNodeData = (data: unknown): data is AllNodeData => {
         return !!data && typeof data === 'object' && 'relations' in data;
     };
@@ -64,7 +60,28 @@ export const EditModal: React.FC<ModalProps> = ({
             setData({...data, sources: updated});
         }
     };
+    const handleSaveClick = () => {
+        // 1. Identifier sur quelle entité on se trouve
+        let entityType: "concept" | "mathematicien" | "category" | "type" | null = null;
+        if (isAllNodeData(data)) entityType = "concept";
+        else if (isMathematicien(data)) entityType = "mathematicien";
+        else if (isCategory(data)) entityType = "category";
+        else if (data && typeof data === 'object' && 'type' in data) entityType = "type";
 
+        // 2. Si on a trouvé une entité et qu'on modifie du texte, on valide avec Zod
+        if (entityType && typeof value === "string") {
+            const valRes = validateField(entityType, field as string, value);
+            if (!valRes.success) {
+                // 🔴 Bloque l'envoi et affiche l'erreur
+                setValError(valRes.error);
+                return;
+            }
+        }
+
+        // 🟢 Tout est valide ! On efface l'erreur visuelle et on lance la sauvegarde du Hook
+        setValError(null);
+        onSave();
+    };
     // Pour les alias
     const handleAliasChange = (index: number, value: string) => {
         if (data && isAllNodeData(data)) {
@@ -100,9 +117,10 @@ export const EditModal: React.FC<ModalProps> = ({
         <div className="modal">
             <div className="modal-content">
                 <h2>Modifier {fieldConfig.label}</h2>
+                {valError && <Alert severity="error" sx={{ mb: 2 }}>{valError}</Alert>}
                 {fieldConfig.type === "category"
-                  && isCategory(data) 
-                  && field === "parent_id" ? (
+                && isCategory(data)
+                && field === "parent_id" ? (
                     <FormControl fullWidth>
                         <InputLabel id="parent-select-label">Catégorie parente</InputLabel>
                         <Select
@@ -110,9 +128,9 @@ export const EditModal: React.FC<ModalProps> = ({
                             value={value ?? ""}
                             label="Catégorie parente"
                             onChange={e => onChange(
-                                e.target.value === "" 
-                                  ? null 
-                                  : Number(e.target.value)
+                                e.target.value === ""
+                                    ? null
+                                    : Number(e.target.value)
                             )}
                         >
                             <MenuItem value="">Aucune</MenuItem>
@@ -249,18 +267,16 @@ export const EditModal: React.FC<ModalProps> = ({
                     />
                 ) : (
                     // Sinon, afficher un éditeur de texte comme ReactQuill
-                    <ReactQuill
+                    <TextField
+                        label={`Modifier ${fieldConfig.label} (Markdown & LaTeX)`}
+                        multiline
+                        fullWidth
+                        minRows={8}
+                        maxRows={15}
                         value={value || ""}
-                        onChange={onChange}
-                        modules={{
-                            toolbar: [
-                                [{'header': '1'}, {'header': '2'}, {'font': []}],
-                                [{'list': 'ordered'}, {'list': 'bullet'}],
-                                [{'align': []}],
-                                ['bold', 'italic', 'underline'],
-                                ['link'],
-                            ],
-                        }}
+                        onChange={(e) => onChange(e.target.value)}
+                        variant="outlined"
+                        placeholder="Rédigez ici... Utilisez **gras**, *italique*, et $x^2$ pour les maths."
                     />
 
                 )}
@@ -272,7 +288,7 @@ export const EditModal: React.FC<ModalProps> = ({
 
                 ) : (
                     <div className="modal-buttons">
-                        <button onClick={onSave}>Sauvegarder</button>
+                        <button onClick={handleSaveClick}>Sauvegarder</button>
                         <button onClick={onClose}>Annuler</button>
                     </div>
                 )}

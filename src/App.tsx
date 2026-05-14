@@ -1,4 +1,4 @@
-import React, {useState, useMemo, useEffect} from "react";
+import React, {useState, useMemo, useEffect, createContext} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {Canvas} from "@react-three/fiber";
 import Scene from "./scene/Scene";
@@ -35,11 +35,15 @@ import SettingsPage from "./pages/SettingsManagement";
 import ContributionPage from "./pages/ContributionPage";
 import {getTheme} from "./theme";
 import CssBaseline from '@mui/material/CssBaseline';
-import { useGraphData } from "./hooks/useGraphData";
+import {useGraphData} from "./hooks/useGraphData";
 
-import { CircularProgress, Box, Alert } from '@mui/material';
+import {CircularProgress, Box, Alert} from '@mui/material';
 import ErrorBoundary from "./ErrorBoundary";
 
+export const ColorModeContext = createContext({
+    toggleColorMode: () => {
+    }, isDarkMode: false
+});
 
 const App: React.FC = () => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -53,54 +57,67 @@ const App: React.FC = () => {
     }, [darkMode]);
     const theme = useMemo(() => getTheme(darkMode), [darkMode]);
 
+    const colorMode = useMemo(
+        () => ({
+            toggleColorMode: () => {
+                setDarkMode((prevMode: boolean) => !prevMode);
+            },
+            isDarkMode: darkMode,
+        }),
+        [darkMode]
+    );
+
     return (
         <AppProvider>
             <AuthProvider>
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <ErrorBoundary>
-                    {" "}
-                    <Router>
-                        {" "}
-                        <Routes>
-                            <Route path="/login" element={<Login/>}/>
-                            <Route path="/register" element={<Register/>}/>
-                            <Route path="/" element={<HomePage/>}/>
-                            <Route path="/graph" element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode}/>}/>
-                            <Route path="/concept/:id" element={<ConceptPage/>}/>
-                            <Route path="/admin" element={<AdminLayout/>}>
-                                <Route index element={<DashboardPage/>}/>
-                                <Route path="users" element={<UsersPage/>}/>
-                                <Route path="contents" element={<ContentsPage/>}/>
-                                <Route path="settings" element={<SettingsPage/>}/>
-                            </Route>
+                <ColorModeContext.Provider value={colorMode}>
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline/>
+                        <ErrorBoundary>
+                            {" "}
+                            <Router>
+                                {" "}
+                                <Routes>
+                                    <Route path="/login" element={<Login/>}/>
+                                    <Route path="/register" element={<Register/>}/>
+                                    <Route path="/" element={<HomePage/>}/>
+                                    <Route path="/graph"
+                                           element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode}/>}/>
+                                    <Route path="/concept/:id" element={<ConceptPage/>}/>
+                                    <Route path="/admin" element={<AdminLayout/>}>
+                                        <Route index element={<DashboardPage/>}/>
+                                        <Route path="users" element={<UsersPage/>}/>
+                                        <Route path="contents" element={<ContentsPage/>}/>
+                                        <Route path="settings" element={<SettingsPage/>}/>
+                                    </Route>
 
 
-                            <Route path="/about" element={<AboutPage/>}/>
-                            <Route path="/support" element={<SupportPage/>}/>
-                            <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
-                            <Route path="*" element={<LostPage/>}/>
-                            <Route path={"/category/:id"} element={<CategoryPage/>}/>
-                            <Route path={"/type/:id"} element={<TypePage/>}/>
-                            <Route path={"/category"} element={<CategoryList/>}/>
-                            <Route path={"/type"} element={<TypeList/>}/>
-                            <Route path={"/mathematicien"} element={<MathematicienList/>}/>
-                            <Route path={"/concept"} element={<ConceptList/>}/>
-                            <Route path={"/user/:id"} element={<UserProfilePage/>}/>
-                            <Route path={"/reset-password"} element={<PasswordReset/>}/>
-                            <Route path={"/reset-password-verification/:token"}
-                                   element={<PasswordResetVerification/>}/>
-                            <Route path={"/username/:username"} element={<UserRedirect/>}/>
-                            <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
-                            <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
-                            <Route path={"/mathematicien/redirect/:mathematicienName"}
-                                   element={<MathematicienRedirect/>}/>
-                            <Route path={"/contribution"} element={<ContributionPage/>}/>
+                                    <Route path="/about" element={<AboutPage/>}/>
+                                    <Route path="/support" element={<SupportPage/>}/>
+                                    <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
+                                    <Route path="*" element={<LostPage/>}/>
+                                    <Route path={"/category/:id"} element={<CategoryPage/>}/>
+                                    <Route path={"/type/:id"} element={<TypePage/>}/>
+                                    <Route path={"/category"} element={<CategoryList/>}/>
+                                    <Route path={"/type"} element={<TypeList/>}/>
+                                    <Route path={"/mathematicien"} element={<MathematicienList/>}/>
+                                    <Route path={"/concept"} element={<ConceptList/>}/>
+                                    <Route path={"/user/:id"} element={<UserProfilePage/>}/>
+                                    <Route path={"/reset-password"} element={<PasswordReset/>}/>
+                                    <Route path={"/reset-password-verification/:token"}
+                                           element={<PasswordResetVerification/>}/>
+                                    <Route path={"/username/:username"} element={<UserRedirect/>}/>
+                                    <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
+                                    <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
+                                    <Route path={"/mathematicien/redirect/:mathematicienName"}
+                                           element={<MathematicienRedirect/>}/>
+                                    <Route path={"/contribution"} element={<ContributionPage/>}/>
 
-                        </Routes>
-                    </Router>
-                    </ErrorBoundary>
-                </ThemeProvider >
+                                </Routes>
+                            </Router>
+                        </ErrorBoundary>
+                    </ThemeProvider>
+                </ColorModeContext.Provider>
             </AuthProvider>
         </AppProvider>
     );
@@ -117,7 +134,7 @@ const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) =>
     if (loading) {
         return (
             <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <CircularProgress />
+                <CircularProgress/>
                 <Box ml={2}>Chargement des données du graphe en cours...</Box>
             </Box>
         );
@@ -148,9 +165,9 @@ const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) =>
                 {" "}
                 <ambientLight intensity={0.5}/>
                 <pointLight position={[10, 10, 10]}/>
-                <Scene graphData={graphData} />
+                <Scene graphData={graphData}/>
             </Canvas>
-            <Menu darkMode={darkMode} setDarkMode={setDarkMode} graphData={graphData} />{" "}
+            <Menu darkMode={darkMode} setDarkMode={setDarkMode} graphData={graphData}/>{" "}
         </div>
     );
 };
