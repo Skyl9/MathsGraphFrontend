@@ -29,7 +29,7 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     data,
                                                     setData,
                                                     createField,
-                                                    refetchData
+                                                    refetchData, isSaving
                                                 }) => {
     const [valError, setValError] = useState<string | null>(null);
     const isAllNodeData = (data: unknown): data is AllNodeData => {
@@ -288,8 +288,10 @@ export const EditModal: React.FC<ModalProps> = ({
 
                 ) : (
                     <div className="modal-buttons">
-                        <button onClick={handleSaveClick}>Sauvegarder</button>
-                        <button onClick={onClose}>Annuler</button>
+                        <button onClick={handleSaveClick}
+                                disabled={isSaving}
+                        >{isSaving ? "Sauvegarde..." : "Sauvegarder"}</button>
+                        <button onClick={onClose} disabled={isSaving} >Annuler</button>
                     </div>
                 )}
 

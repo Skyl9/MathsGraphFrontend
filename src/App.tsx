@@ -39,6 +39,7 @@ import {useGraphData} from "./hooks/useGraphData";
 
 import {CircularProgress, Box, Alert} from '@mui/material';
 import ErrorBoundary from "./ErrorBoundary";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
 export const ColorModeContext = createContext({
     toggleColorMode: () => {
@@ -66,8 +67,17 @@ const App: React.FC = () => {
         }),
         [darkMode]
     );
+    const queryClient = new QueryClient({
+        defaultOptions: {
+            queries: {
+                staleTime: 1000 * 60 * 5, // 🌟 Les données restent en cache pendant 5 minutes !
+                refetchOnWindowFocus: false, // Évite de recharger si l'utilisateur change d'onglet
+            },
+        },
+    });
 
     return (
+        <QueryClientProvider client={queryClient}>
         <AppProvider>
             <AuthProvider>
                 <ColorModeContext.Provider value={colorMode}>
@@ -120,6 +130,7 @@ const App: React.FC = () => {
                 </ColorModeContext.Provider>
             </AuthProvider>
         </AppProvider>
+        </QueryClientProvider>
     );
 };
 

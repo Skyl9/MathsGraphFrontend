@@ -20,6 +20,7 @@ export interface ModalProps {
     setData: (data: AllNodeData |Mathematicien|Type|Category) => void;
     createField: any;
     refetchData:any;
+    isSaving:boolean;
 }
 
 

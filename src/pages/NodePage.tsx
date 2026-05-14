@@ -17,11 +17,11 @@ import SourcesField from "../components/NodeFields/SourcesField";
 import RelationsField from "../components/NodeFields/RelationsField";
 import CommentIcon from '@mui/icons-material/Comment';
 import {CommentsModal, FieldOption} from "../components/CommentsModal";
-
+import VerifiedIcon from '@mui/icons-material/Verified';
 import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
-import {Button, Fab, Link} from "@mui/material";
+import {Button, Fab, Link, Tooltip} from "@mui/material";
 import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
@@ -290,8 +290,16 @@ const NodePage: React.FC = () => {
             <FavoriteButton itemId={id as string} itemType={"concept"}/>
 
             <div className="node-container">
-                <h1 className="node-title">{data?.nom}</h1>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '10px' }}>
+                    <h1 className="node-title" style={{ marginBottom: 0 }}>{data?.nom}</h1>
 
+                    {/* 🌟 LE BADGE DE VÉRIFICATION */}
+                    {data?.verification && (
+                        <Tooltip title="Concept vérifié et approuvé par la modération" arrow>
+                            <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
+                        </Tooltip>
+                    )}
+                </div>
                 <div className="node-info">
                     {propertyOrder
                         .filter(field => Object.hasOwn(editableFields, field)) // S'assurer que le champ existe dans editableFields

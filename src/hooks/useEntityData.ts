@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from "react";
+// src/hooks/useEntityData.ts
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 
 export type EntityType = "category" | "type" | "mathematicien";
@@ -23,42 +25,49 @@ const ENTITY_CONFIG = {
 
 export const useEntityData = <T,>(entityType: EntityType, id: string) => {
     const config = ENTITY_CONFIG[entityType];
+    const queryClient = useQueryClient();
 
-    const [data, setData] = useState<T | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [editableFieldsOptions, _] = useState<any>(config.defaultFields);
-
-    const fetchData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
+    const {
+        data,
+        isLoading: loading,
+        error: queryError,
+        refetch: refetchData
+    } = useQuery({
+        queryKey: [entityType, id],
+        queryFn: async () => {
+            console.log(`Fetching ${entityType} Data via API...`);
             const result = await config.get(id);
-            setData(result as unknown as T);
-        } catch (err: any) {
-            setError(err.message || 'An unknown error occurred.');
-        } finally {
-            setLoading(false);
-        }
-    }, [id, config]);
+            return result as unknown as T;
+        },
+        enabled: !!id,
+    });
 
-    useEffect(() => {
-        fetchData().then(() => console.log(`Fetching ${entityType} Data...`));
-    }, [fetchData, entityType]);
+    const [editableFieldsOptions] = useState<any>(config.defaultFields);
+
+    const [mutationError, setMutationError] = useState<string | null>(null);
+
+    const finalError = queryError ? (queryError as Error).message : mutationError;
+
+    const setData = (newData: T) => {
+        queryClient.setQueryData([entityType, id], newData);
+    };
 
     const updateField = async (field: keyof T, value: any) => {
         try {
+            setMutationError(null);
             await config.update(id, field as string, value);
-            await fetchData();
+
+            await queryClient.invalidateQueries({ queryKey: [entityType, id] });
             return true;
         } catch (err: any) {
-            setError(err.message || 'An unknown error occurred.');
+            setMutationError(err.message || 'An unknown error occurred.');
             return false;
         }
     };
 
     const createField = async (field: string, value: any) => {
         try {
+            setMutationError(null);
             switch (field.toLowerCase()) {
                 case "categorie": await nodeApi.createCategory(value); break;
                 case "aliases": await nodeApi.createAlias(value.id, value.value); break;
@@ -68,20 +77,21 @@ export const useEntityData = <T,>(entityType: EntityType, id: string) => {
                 case "type": await nodeApi.createType(value); break;
                 default: console.log("Champ de création non géré:", field);
             }
-            await fetchData();
+
+            await queryClient.invalidateQueries({ queryKey: [entityType, id] });
         } catch (err: any) {
-            setError(err.message || 'An unknown error occurred.');
+            setMutationError(err.message || 'An unknown error occurred.');
             return false;
         }
     };
 
     return {
-        data,
+        data: data || null,
         setData,
         loading,
-        error,
+        error: finalError,
         editableFieldsOptions,
-        refetchData: fetchData,
+        refetchData,
         updateField,
         createField
     };
