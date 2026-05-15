@@ -1,58 +1,54 @@
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import { MathJaxContext } from "better-react-mathjax";
 import { DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel } from "@mui/x-data-grid";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import "../../styles/AdminPanel.css";
 import {AllNodeData, NomEtranger} from "../../types/types";
 import {Source} from "../../types/ApiTypes/source";
 
 export default function AdminPanel() {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-    const [data, setData] = useState<AllNodeData[] | null>(null);
-    const [editData, setEditData] = useState<{ [key: number]: Partial<AllNodeData> }>({});
+    const queryClient = useQueryClient();
 
+    const [editData, setEditData] = useState<{ [key: number]: Partial<AllNodeData> }>({});
     const [filterType, setFilterType] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
-    const fetchData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
-        const backendLink = import.meta.env.VITE_BACKEND_LINK|| "";
-        if (!backendLink) {
-            setError("Lien du backend non défini");
-            setLoading(false);
-            return;
-        }
-
-        try {
+    const { data, isLoading: loading, error: queryError } = useQuery<AllNodeData[]>({
+        queryKey: ['adminNodes'],
+        queryFn: async () => {
+            const backendLink = import.meta.env.VITE_BACKEND_LINK || "";
             const response = await fetch(backendLink + '/getAlldatabaseInfo');
-            if (!response.ok) {
-                setError(`Erreur serveur: ${response.status}`);
-                return;
-            }
-
-            const fetchedData: AllNodeData[] = await response.json();
-            setData(fetchedData);
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                console.error(err);
-                setError(`Erreur : ${err.message}`);
-            } else {
-                console.error("Erreur inconnue", err);
-                setError("Erreur inconnue");
-            }
-        } finally {
-            setLoading(false);
+            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            return response.json();
         }
-    }, []);
+    });
 
-    useEffect(() => {
-        fetchData().catch((err) => console.error("Erreur dans useEffect:", err));
-    }, [fetchData]);
+    const error = (queryError as Error)?.message;
+
+    const updateNodeMutation = useMutation({
+        mutationFn: async ({ id, rowToUpdate }: { id: number, rowToUpdate: any }) => {
+            const response = await fetch(import.meta.env.VITE_BACKEND_LINK + `/updateNodes/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(rowToUpdate)
+            });
+            if (!response.ok) throw new Error(`Erreur serveur: ${response.status}`);
+            return response.json();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['adminNodes'] });
+        }
+    });
+
+    const saveChanges = (id: number) => {
+        if (!data) return;
+        const rowToUpdate = data.find((row: any) => row.id === id);
+        if (!rowToUpdate) return;
+        updateNodeMutation.mutate({ id, rowToUpdate });
+    };
 
     const handleEdit = (id: GridRowId, field: keyof AllNodeData, value: string) => {
-        const numericId = typeof id === 'string' ? parseInt(id, 10) : id; // Conversion de id en nombre
+        const numericId = typeof id === 'string' ? parseInt(id, 10) : (id as number);
 
         setEditData(prev => ({
             ...prev,
@@ -60,40 +56,13 @@ export default function AdminPanel() {
         }));
     };
 
-    const saveChanges = async (id: number) => {
-        console.log("id ", id, "  editData: ", editData);
-
-        if (!data) return;
-        const rowToUpdate = data.find(row => row.id === id);
-        if (!rowToUpdate) return;
-        try {
-            console.log("id Intérieur", id, "  data: ", rowToUpdate);
-
-            const response = await fetch(import.meta.env.VITE_BACKEND_LINK + `/updateNodes/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(rowToUpdate)
-            });
-            if (!response.ok) {
-                setError(`Erreur serveur: ${response.status}`);
-            }
-        } catch (err) {
-            console.error("Erreur lors de l'enregistrement :", err);
-        }
-    };
-
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
-
     const getRowHeight = useCallback((params: GridRowHeightParams) => {
         const lineHeight = 1.5;
         const minHeight = 50;
-        const headerHeight = 48; // Hauteur de l'en-tête
+        const headerHeight = 48;
         const contentHeight = params.model.enonce ? Math.ceil(params.model.enonce.length / 100 * lineHeight * 16) : minHeight;
         return Math.max(minHeight, contentHeight) + headerHeight;
     }, []);
-
 
     const uniqueTypes = useMemo(() => {
         return data ? Array.from(new Set(data.map(node => node.type))) : [];
@@ -142,7 +111,6 @@ export default function AdminPanel() {
         { field: 'type', headerName: 'Type', width: 100, editable: true, renderCell: renderCenteredCell },
         { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, autoHeight: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
         { field: 'categorie', headerName: 'Catégorie', editable: true, renderCell: renderCenteredCell },
-
         {
             field: 'aliases',
             headerName: 'Alias',
@@ -161,7 +129,6 @@ export default function AdminPanel() {
                 );
             }
         },
-
         { field: 'date_ajout', headerName: 'Date d\'ajout', editable: true, renderCell: renderCenteredCell },
         { field: 'demonstration', headerName: 'Démonstration', editable: true, cellClassName: 'enonce-cell', width: 400, renderCell: renderCenteredCell },
         { field: 'relations', headerName: 'Relations', editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
@@ -172,10 +139,8 @@ export default function AdminPanel() {
                     {(verif ? '✅' : '❌')}
                 </div>
             )
-
             }
         },
-
         {
             field: 'sources',
             headerName: 'Sources',
@@ -218,7 +183,6 @@ export default function AdminPanel() {
                 );
             }
         },
-
         {
             field: 'actions',
             headerName: 'Actions',
@@ -227,8 +191,7 @@ export default function AdminPanel() {
                 <button onClick={() => saveChanges(params.row.id)}>Sauvegarder</button>
             ),
         },
-    ], []);
-
+    ], [data]);
 
     const rows = useMemo(() => filteredAndSortedData.map(row => ({
         ...row,
@@ -237,17 +200,13 @@ export default function AdminPanel() {
 
     const handleProcessRowUpdate = useCallback(
         (newRow: GridRowModel<AllNodeData>) => {
-            const id = newRow.id as number;
             const updatedRow = { ...newRow } as AllNodeData;
-
-            setData((prevData) =>
-                prevData
-                    ? prevData.map((row) => (row.id === id ? updatedRow : row))
-                    : []
+            queryClient.setQueryData(['adminNodes'], (oldData: AllNodeData[] | undefined) =>
+                oldData ? oldData.map((row) => (row.id === updatedRow.id ? updatedRow : row)) : []
             );
-            return newRow;
+            return updatedRow;
         },
-        [setData]
+        [queryClient]
     );
 
     return (
@@ -284,7 +243,7 @@ export default function AdminPanel() {
                             rows={rows}
                             columns={columns}
                             processRowUpdate={handleProcessRowUpdate}
-                            onProcessRowUpdateError={(error) => console.error(error)}
+                            onProcessRowUpdateError={(err) => console.error(err)}
                             getRowHeight={getRowHeight}
                         />
                     </div>
