@@ -7,6 +7,7 @@ import Brightness4Icon from '@mui/icons-material/Brightness4'; // Icône Lune
 import Brightness7Icon from '@mui/icons-material/Brightness7'; // Icône Soleil
 import {ColorModeContext} from "../App.tsx";
 import {useTranslation} from "react-i18next";
+import {GlobalSearchBar} from "./GlobalSearchBar.tsx";
 
 export const TopBar: React.FC = () => {
     const [username, setUsername] = useState<string | null>(null);
@@ -51,6 +52,8 @@ export const TopBar: React.FC = () => {
                     </IconButton>
                 </div>
                 <div style={{justifyContent: "flex-end", display: "flex", gap: 2, alignItems: "center", width: "100%"}}>
+                    <GlobalSearchBar />
+
                     {username ? (
                         <Box sx={{display: "flex", alignItems: "center", gap: 2}}>
                             <Typography variant="body1">Bonjour, <Link href={"/username/" + username}>{username}</Link></Typography>

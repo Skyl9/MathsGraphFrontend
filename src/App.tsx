@@ -40,6 +40,7 @@ import {useGraphData} from "./hooks/useGraphData";
 import {CircularProgress, Box, Alert} from '@mui/material';
 import ErrorBoundary from "./ErrorBoundary";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import {SearchPage} from "./pages/SearchPage.tsx";
 
 export const ColorModeContext = createContext({
     toggleColorMode: () => {
@@ -122,7 +123,7 @@ const App: React.FC = () => {
                                     <Route path={"/mathematicien/redirect/:mathematicienName"}
                                            element={<MathematicienRedirect/>}/>
                                     <Route path={"/contribution"} element={<ContributionPage/>}/>
-
+                                    <Route path={"/search"} element={<SearchPage/>}/>
                                 </Routes>
                             </Router>
                         </ErrorBoundary>

@@ -4,6 +4,7 @@ import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
 import {MathematicienName} from "../types/ApiTypes/mathematicien";
+import {MathematicianTimeline} from "../components/MathematicianTimeline.tsx";
 
 
 
@@ -38,6 +39,8 @@ const MathematicienList: React.FC = () => {
         <>
             {/* Barre supérieure */}
             <TopBar />
+
+            <MathematicianTimeline></MathematicianTimeline>
 
             {/* Conteneur principal */}
             <Container maxWidth="md" sx={{ mt: 4 }}>

@@ -118,10 +118,17 @@ export const nodeApi = {
     getTagsNameFromConceptId: (id: string) => request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
     getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
     getGraph: () => request<any>(`/graph`, undefined, false),
-    getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`,undefined,false),
-    getRecentComments:(limit : number = 20) => request<RecentComment[]>(`/comments/recent?limit=${limit}`,undefined,false), // CORRIGÉ
+    getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`, undefined, false),
+    getRecentComments: (limit: number = 20) => request<RecentComment[]>(`/comments/recent?limit=${limit}`, undefined, false), // CORRIGÉ
     getUserContributions: (userId: string, limit: number = 20) =>
         request<RecentChange[]>(`/user/history/${userId}?limit=${limit}`, undefined, false),
+    getMathematiciensTimeline: () => request<any[]>('/mathematicien/timeline/all'),
+    quickSearch: (inputValue: string) => request<any[]>(`/search/quick?q=${inputValue}`),
+    advanceSearch: (queryTerm: string, filter: any) => request<any[]>("/search/advanced", {
+        method: 'POST',
+        body: JSON.stringify({ q: queryTerm, filters: filter })
+    }, false),
+    getApiAnalytics: () => request<any>(`/admin/analytics`),
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
         request<null>(`/update/${id}`, {
@@ -201,12 +208,15 @@ export const nodeApi = {
     patchUser: (data: { field: string, value: string }, id: string) =>
         request<null>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
     register: (username: string, email: string, password: string) =>
-        request<Register>(`/register`, {method: "POST", body: JSON.stringify({username:username, email:email, password:password})}, false),
-    recalculateGraph: () => request<string>(`/admin/recalculate-graph`, { method: 'POST' }),
+        request<Register>(`/register`, {
+            method: "POST",
+            body: JSON.stringify({username: username, email: email, password: password})
+        }, false),
+    recalculateGraph: () => request<string>(`/admin/recalculate-graph`, {method: 'POST'}),
     getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
         const response = await fetch(`${BASE_URL}/token`, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: formData.toString(),
         });
 
