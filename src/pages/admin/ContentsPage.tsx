@@ -1,10 +1,11 @@
 // ContentsPage.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Box, CircularProgress, Button, Stack } from '@mui/material';
+import { Box, CircularProgress, Button, Stack, Alert } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 
 interface ContentRow {
   id: number;
@@ -13,16 +14,12 @@ interface ContentRow {
 }
 
 const ContentsPage: React.FC = () => {
-  const [rows, setRows] = useState<ContentRow[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    nodeApi.getAllContents()
-      .then((data: ContentRow[]) => setRows(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: rows = [], isLoading: loading, error } = useQuery({
+    queryKey: ['adminContents'],
+    queryFn: () => nodeApi.getAllContents()
+  });
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 80 },
@@ -31,6 +28,7 @@ const ContentsPage: React.FC = () => {
   ];
 
   if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{(error as any).message}</Alert>;
 
   return (
     <Stack spacing={2}>
@@ -49,3 +47,4 @@ const ContentsPage: React.FC = () => {
 };
 
 export default ContentsPage;
+

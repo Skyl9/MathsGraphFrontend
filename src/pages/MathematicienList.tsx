@@ -1,39 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
+import { useQuery } from '@tanstack/react-query';
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
-import {MathematicienName} from "../types/ApiTypes/mathematicien";
 import {MathematicianTimeline} from "../components/MathematicianTimeline.tsx";
 
-
-
 const MathematicienList: React.FC = () => {
-    const [mathematicien, setMathematicien] = useState<MathematicienName[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        // Appel API pour récupérer les catégories
-        const fetchCategories = async () => {
-            try {
-                const data = await nodeApi.getAllMathematicienName();
-                setMathematicien(data);
-            } catch (err) {
-                const errorMessage = (err as any).message || 'An unknown error occurred.';
-                setError(errorMessage);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-    useEffect(()=>
-        {
-            console.log(mathematicien)
-        }
-    )
+    const { data: mathematicien = [], isLoading: loading, error } = useQuery({
+        queryKey: ['mathematicien'],
+        queryFn: () => nodeApi.getAllMathematicienName()
+    });
 
     return (
         <>
@@ -58,7 +35,7 @@ const MathematicienList: React.FC = () => {
                     )}
 
                     {/* Affichage des erreurs */}
-                    {error && <Alert severity="error">{error}</Alert>}
+                    {error && <Alert severity="error">{(error as any).message}</Alert>}
 
                     {/* Liste des catégories */}
                     {!loading && !error && (
@@ -90,3 +67,4 @@ const MathematicienList: React.FC = () => {
 };
 
 export default MathematicienList;
+

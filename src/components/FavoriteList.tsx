@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   List,
   ListItem,
@@ -8,6 +8,7 @@ import {
   Alert
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useQuery } from '@tanstack/react-query';
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
 
@@ -22,35 +23,23 @@ interface FavoritesListProps {
 }
 
 const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
-  const [favs, setFavs] = useState<Favorite[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  let uid: string | null = null;
-  if (userId){
-    uid = userId
-    console.log(uid)
+  const uid = userId || Token.getUserIdFromToken();
+
+  const { data: favs = [], isLoading: loading, error } = useQuery({
+    queryKey: ['favorites', uid],
+    queryFn: () => nodeApi.getFavorites(uid!),
+    enabled: !!uid
+  });
+
+  if (!uid) {
+    return <Alert severity="error">Utilisateur non connecté</Alert>;
   }
-  else {
-    uid = Token.getUserIdFromToken();
-  }
-  useEffect(() => {
-    if (!uid) {
-      setError("Utilisateur non connecté");
-      setLoading(false);
-      return;
-    }
-    nodeApi
-      .getFavorites(uid)
-      .then((data: Favorite[]) => setFavs(data))
-      .catch((err) => setError((err as Error).message))
-      .finally(() => setLoading(false));
-  }, [uid]);
 
   if (loading) {
     return <CircularProgress />;
   }
   if (error) {
-    return <Alert severity="error">{error}</Alert>;
+    return <Alert severity="error">{(error as any).message}</Alert>;
   }
   if (favs.length === 0) {
     return <Alert severity="info">Aucun favori pour cet utilisateur.</Alert>;

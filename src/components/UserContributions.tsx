@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography, List, ListItem, ListItemText, Paper, Chip, CircularProgress, Alert } from '@mui/material';
 import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/fr';
+import { useQuery } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
 import { RecentChange } from './RecentChanges'; // On réutilise l'interface existante
 
@@ -15,21 +16,14 @@ interface UserContributionsProps {
 }
 
 const UserContributions: React.FC<UserContributionsProps> = ({ userId }) => {
-    const [contributions, setContributions] = useState<RecentChange[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        if (!userId) return;
-
-        nodeApi.getUserContributions(userId)
-            .then((data) => setContributions(data))
-            .catch((err) => setError((err as Error).message))
-            .finally(() => setLoading(false));
-    }, [userId]);
+    const { data: contributions = [], isLoading: loading, error } = useQuery({
+        queryKey: ['userContributions', userId],
+        queryFn: () => nodeApi.getUserContributions(userId),
+        enabled: !!userId
+    });
 
     if (loading) return <Box display="flex" justifyContent="center" p={2}><CircularProgress size={30} /></Box>;
-    if (error) return <Alert severity="error">{error}</Alert>;
+    if (error) return <Alert severity="error">{(error as any).message}</Alert>;
     if (contributions.length === 0) return <Alert severity="info">Cet utilisateur n'a pas encore contribué.</Alert>;
 
     return (
@@ -38,7 +32,7 @@ const UserContributions: React.FC<UserContributionsProps> = ({ userId }) => {
                 Dernières contributions
             </Typography>
             <List>
-                {contributions.map((change) => (
+                {contributions.map((change: RecentChange) => (
                     <ListItem key={change.id} divider sx={{ px: 1 }}>
                         <ListItemText
                             primary={

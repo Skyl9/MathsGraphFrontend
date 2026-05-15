@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, Paper, Chip, CircularProgress } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/fr';
 import { nodeApi } from '../services/api';
+import { useQuery } from '@tanstack/react-query';
 
 dayjs.extend(relativeTime);
 dayjs.locale('fr');
@@ -22,24 +23,13 @@ export interface RecentChange {
 }
 
 export const RecentChanges: React.FC = () => {
-    const [changes, setChanges] = useState<RecentChange[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchHistory = async () => {
-            try {
-                const res = await nodeApi.getRecentHistory(15);
-                setChanges(res);
-            } catch (err) {
-                console.error("Erreur lors de la récupération de l'historique", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchHistory();
-    }, []);
+    const { data: changes = [], isLoading: loading, error } = useQuery({
+        queryKey: ['recentHistory'],
+        queryFn: () => nodeApi.getRecentHistory(15)
+    });
 
     if (loading) return <Box display="flex" justifyContent="center" p={3}><CircularProgress /></Box>;
+    if (error) return <Typography color="error" align="center">Erreur lors de la récupération de l'historique : {(error as any).message}</Typography>;
     if (changes.length === 0) return <Typography variant="body2" color="textSecondary" align="center">Aucune activité récente.</Typography>;
 
     return (
@@ -48,7 +38,7 @@ export const RecentChanges: React.FC = () => {
                 <EditIcon color="primary" /> Activité récente
             </Typography>
             <List>
-                {changes.map((change) => (
+                {changes.map((change: RecentChange) => (
                     <ListItem key={change.id} divider alignItems="flex-start" sx={{ px: 0 }}>
                         <ListItemAvatar>
                             <Avatar sx={{ bgcolor: change.is_rollback ? 'warning.main' : 'primary.main' }}>

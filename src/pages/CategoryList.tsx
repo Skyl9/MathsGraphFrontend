@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Container,
   Typography,
@@ -11,6 +11,7 @@ import {
   ListItemText,
   Link
 } from "@mui/material";
+import { useQuery } from '@tanstack/react-query';
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import { ReportIssueButton } from "../components/Issue";
@@ -67,24 +68,10 @@ const renderTree = (cats: CategoryTree[], level = 0) =>
   ));
 
 const CategoryList: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-       try {
-         const data = await nodeApi.getAllCategories();
-         setCategories(data);
-       } catch (err) {
-           const errorMessage = (err as any).message || 'An unknown error occurred.';
-           setError(errorMessage);
-       } finally {
-         setLoading(false);
-       }
-     };
-     fetchCategories();
-   }, []);
+  const { data: categories = [], isLoading: loading, error } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => nodeApi.getAllCategories()
+  });
 
   const categoryTree = buildCategoryTree(categories);
 
@@ -101,7 +88,7 @@ const CategoryList: React.FC = () => {
               <CircularProgress />
             </Box>
           )}
-          {error && <Alert severity="error">{error}</Alert>}
+          {error && <Alert severity="error">{(error as any).message}</Alert>}
           {!loading && !error && (
             <>
               {categories.length === 0 ? (
@@ -125,3 +112,4 @@ const CategoryList: React.FC = () => {
 };
 
 export default CategoryList;
+

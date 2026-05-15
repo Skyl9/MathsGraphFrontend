@@ -1,11 +1,12 @@
 // UsersPage.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, CircularProgress, IconButton } from '@mui/material';
+import { Box, CircularProgress, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UserRow {
   id: number;
@@ -17,21 +18,19 @@ interface UserRow {
 }
 
 const UsersPage: React.FC = () => {
-  const [rows, setRows] = useState<UserRow[]>([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    nodeApi.getAllUsers()
-      .then((data: UserRow[]) => setRows(data))
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: rows = [], isLoading: loading, error } = useQuery({
+    queryKey: ['adminUsers'],
+    queryFn: () => nodeApi.getAllUsers()
+  });
 
   const handleDelete = async (id: number) => {
     if (!window.confirm('Confirmer la suppression ?')) return;
-    //await nodeApi.deleteUser(id.toString());
-    setRows((r) => r.filter((u) => u.id !== id));
+    // await nodeApi.deleteUser(id.toString());
+    // On invalide le cache pour rafraîchir la liste
+    queryClient.setQueryData(['adminUsers'], (old: UserRow[] | undefined) => old ? old.filter(u => u.id !== id) : []);
   };
 
   const columns: GridColDef[] = [
@@ -62,6 +61,7 @@ const UsersPage: React.FC = () => {
   ];
 
   if (loading) return <CircularProgress />;
+  if (error) return <Alert severity="error">{(error as any).message}</Alert>;
 
   return (
     <Box sx={{ height: 600, width: '100%' }}>

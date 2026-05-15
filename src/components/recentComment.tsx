@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, Paper, CircularProgress } from '@mui/material';
 import ForumIcon from '@mui/icons-material/Forum';
 import { Link } from 'react-router-dom';
@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/fr';
 import { nodeApi } from '../services/api';
+import { useQuery } from '@tanstack/react-query';
 
 dayjs.extend(relativeTime);
 dayjs.locale('fr');
@@ -21,24 +22,13 @@ export interface RecentComment {
 }
 
 export const RecentComments: React.FC = () => {
-    const [comments, setComments] = useState<RecentComment[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchComments = async () => {
-            try {
-                const res = await nodeApi.getRecentComments(15);
-                setComments(res);
-            } catch (err) {
-                console.error("Erreur récupération commentaires", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchComments();
-    }, []);
+    const { data: comments = [], isLoading: loading, error } = useQuery({
+        queryKey: ['recentComments'],
+        queryFn: () => nodeApi.getRecentComments(15)
+    });
 
     if (loading) return <Box display="flex" justifyContent="center" p={3}><CircularProgress /></Box>;
+    if (error) return <Typography color="error" align="center">Erreur récupération commentaires : {(error as any).message}</Typography>;
     if (comments.length === 0) return <Typography variant="body2" color="textSecondary" align="center">Aucun commentaire récent.</Typography>;
 
     return (
@@ -47,7 +37,7 @@ export const RecentComments: React.FC = () => {
                 <ForumIcon color="secondary" /> Dernières discussions
             </Typography>
             <List>
-                {comments.map((comment) => (
+                {comments.map((comment: RecentComment) => (
                     <ListItem key={comment.id} divider alignItems="flex-start" sx={{ px: 0 }}>
                         <ListItemAvatar>
                             <Avatar sx={{ bgcolor: 'secondary.main' }}>

@@ -1,15 +1,21 @@
 // hooks/useNodeData.ts
-import {useState, useCallback, useEffect} from 'react';
+import {useCallback} from 'react';
 import {AllNodeData} from '../../types/types';
 import {nodeApi} from '../../services/api';
 import Token from '../../services/token';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 export const useNodeData = (id: string) => {
-    const [data, setData] = useState<any | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [editableFieldsOptions, setEditableFieldsOptions] = useState<Record<keyof AllNodeData, string[]>>({
+    const queryClient = useQueryClient();
+
+    const { data, isLoading: loading, error: queryError, refetch: refetchData } = useQuery({
+        queryKey: ['concept', id],
+        queryFn: () => nodeApi.getConcept(id),
+        enabled: !!id
+    });
+
+    const { data: editableFieldsOptions = {
         type: [],
         enonce: [],
         demonstration: [],
@@ -24,47 +30,16 @@ export const useNodeData = (id: string) => {
         verification: [],
         noms_etrangers: [],
         tags: [],
+    } } = useQuery({
+        queryKey: ['editableFieldsOptions'],
+        queryFn: () => nodeApi.getEditableFieldsOptions()
     });
 
+    const error = queryError ? (queryError as any).message : null;
 
-    const fetchData = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            const fetchedData = await nodeApi.getConcept(id);
-            setData(fetchedData);
-
-        } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    const fetchOptions = useCallback(async () => {
-
-        try {
-            const options = await nodeApi.getEditableFieldsOptions();
-            setEditableFieldsOptions(options);
-        } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
-        }
-    }, [id]);
-
-    useEffect(() => {
-        fetchData();
-
-    }, [fetchData]);
-    useEffect(
-        () => {
-            fetchOptions();
-        },
-        [fetchOptions]
-    )
-
+    const setData = (newData: any) => {
+        queryClient.setQueryData(['concept', id], newData);
+    };
 
     const updateField = async (field: keyof AllNodeData, value: any) => {
         try {
@@ -74,11 +49,10 @@ export const useNodeData = (id: string) => {
             }
 
             await nodeApi.updateConcept(id, field, value, username);
-            await fetchData();
+            await queryClient.invalidateQueries({ queryKey: ['concept', id] });
             return true;
         } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
+            console.error("Erreur lors de la mise à jour du champ", err);
             return false;
         }
 
@@ -129,12 +103,11 @@ export const useNodeData = (id: string) => {
                 default:
                     console.log("Champs non trouvé")
             }
-            await fetchData();
-            await fetchOptions();
+            await queryClient.invalidateQueries({ queryKey: ['concept', id] });
+            await queryClient.invalidateQueries({ queryKey: ['editableFieldsOptions'] });
 
         } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
+            console.error("Erreur lors de la création du champ", err);
             return false;
         }
     }
@@ -146,7 +119,7 @@ export const useNodeData = (id: string) => {
         error,
         editableFieldsOptions,
         updateField,
-        refetchData: fetchData,
+        refetchData,
         createField
     };
 };

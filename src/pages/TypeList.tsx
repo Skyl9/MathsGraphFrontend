@@ -1,38 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
+import { useQuery } from '@tanstack/react-query';
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
-import {Type} from "../types/ApiTypes/type";
-
-
 
 const TypeList: React.FC = () => {
-    const [type, setType] = useState<Type[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        // Appel API pour récupérer les catégories
-        const fetchCategories = async () => {
-            try {
-                const data = await nodeApi.getAllTypeNames();
-                setType(data);
-            } catch (err) {
-                const errorMessage = (err as any).message || 'An unknown error occurred.';
-                setError(errorMessage);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCategories();
-    }, []);
-    useEffect(()=>
-        {
-            console.log(type)
-        }
-    )
+    const { data: type = [], isLoading: loading, error } = useQuery({
+        queryKey: ['type'],
+        queryFn: () => nodeApi.getAllTypeNames()
+    });
 
     return (
         <>
@@ -55,7 +32,7 @@ const TypeList: React.FC = () => {
                     )}
 
                     {/* Affichage des erreurs */}
-                    {error && <Alert severity="error">{error}</Alert>}
+                    {error && <Alert severity="error">{(error as any).message}</Alert>}
 
                     {/* Liste des catégories */}
                     {!loading && !error && (
@@ -88,3 +65,4 @@ const TypeList: React.FC = () => {
 };
 
 export default TypeList;
+

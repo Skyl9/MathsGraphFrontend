@@ -1,45 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
     Grid, Card, CardContent, Typography, CircularProgress,
-    Box, Paper, Table, TableBody, TableCell, TableHead, TableRow, Chip
+    Box, Paper, Table, TableBody, TableCell, TableHead, TableRow, Chip, Alert
 } from '@mui/material';
 import { nodeApi } from '../../services/api';
-import { AdminStats } from "../../types/ApiTypes/admin";
 import { useQuery } from "@tanstack/react-query";
 
 const DashboardPage: React.FC = () => {
-    const [stats, setStats] = useState<AdminStats | null>(null);
-    const [loading, setLoading] = useState(true);
-
     // 1. Récupération des analytics en temps réel (rafraîchi toutes les 10s)
-    const { data: analytics } = useQuery({
+    const { data: analytics, isLoading: loadingAnalytics } = useQuery({
         queryKey: ['apiAnalytics'],
         queryFn: () => nodeApi.getApiAnalytics(),
         refetchInterval: 10000
     });
 
     // 2. Récupération des stats générales
-    useEffect(() => {
-        async function fetchStats() {
-            try {
-                const data = await nodeApi.getAdminStats();
-                setStats(data);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchStats();
-    }, []);
+    const { data: stats, isLoading: loadingStats, error } = useQuery({
+        queryKey: ['adminStats'],
+        queryFn: () => nodeApi.getAdminStats()
+    });
 
-    if (loading || !stats) {
+    if (loadingStats || loadingAnalytics) {
         return (
             <Box display="flex" justifyContent="center" mt={5}>
                 <CircularProgress />
             </Box>
         );
     }
+
+    if (error) {
+        return <Alert severity="error">{(error as any).message}</Alert>;
+    }
+
+    if (!stats) return null;
 
     // 🌟 Mise à jour de la clé pour correspondre au backend (daily_hits)
     const cards = [

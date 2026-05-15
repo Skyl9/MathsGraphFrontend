@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Avatar,
@@ -9,7 +9,9 @@ import {
   Chip,
   TextField,
   MenuItem,
+  Alert,
 } from '@mui/material';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
 import {useParams} from "react-router-dom";
 import {TopBar} from "../components/TopBar";
@@ -19,34 +21,30 @@ import FavoriteList from "../components/FavoriteList";
 import {User} from "../types/ApiTypes/user";
 import UserContributions from "../components/UserContributions.tsx";
 
-
-
 const UserProfilePage: React.FC = () => {
   const {id} = useParams<{ id: string }>();
-  const [user, setUser] = useState<User | null>(null);
+  const queryClient = useQueryClient();
 
-  // Champs individuels
+  const { data: user, isLoading: loading, error } = useQuery({
+    queryKey: ['user', id],
+    queryFn: () => nodeApi.getUserInfo(id || ""),
+    enabled: !!id
+  });
+
+  // Champs individuels (état local pour l'édition)
   const [editField, setEditField] = useState<null | "email" | "preferred_language" | "bio" | "avatar">(null);
   const [email, setEmail] = useState("");
   const [lang, setLang] = useState("");
   const [bio, setBio] = useState("");
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const data = await nodeApi.getUserInfo(id||"");
-        if (data){
-          setUser(data);
-          setEmail(data.email);
-          setLang(data.preferred_language);
-          setBio(data.bio);
-        }
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données utilisateur:", error);
-      }
-    };
-    fetchUser();
-  }, [id]);
+  // Synchroniser l'état local avec les données reçues pour l'édition
+  React.useEffect(() => {
+    if (user) {
+      setEmail(user.email);
+      setLang(user.preferred_language);
+      setBio(user.bio);
+    }
+  }, [user]);
 
   const handleFieldSave = async (field: "email" | "preferred_language" | "bio") => {
     try {
@@ -56,8 +54,7 @@ const UserProfilePage: React.FC = () => {
       if (field === "preferred_language") value = lang;
       if (field === "bio") value = bio;
       await nodeApi.patchUser({ field, value }, id);
-      const data = await nodeApi.getUserInfo(id);
-      setUser(data);
+      await queryClient.invalidateQueries({ queryKey: ['user', id] });
       setEditField(null);
     } catch (error) {
       console.error("Erreur lors de la mise à jour :", error);
@@ -68,16 +65,24 @@ const UserProfilePage: React.FC = () => {
     try {
       if(id){
         await nodeApi.patchUser({ field:"avatar_url", value: avatarUrl }, id);
+        await queryClient.invalidateQueries({ queryKey: ['user', id] });
         setEditField(null);
-        const data = await nodeApi.getUserInfo(id||"");
-        setUser(data);
       }
     } catch (error) {
       console.error("Erreur lors de la modification de l'avatar:", error);
     }
   };
-  if (!user) {
+
+  if (loading) {
     return <Typography>Chargement...</Typography>;
+  }
+
+  if (error) {
+    return <Alert severity="error">{(error as any).message}</Alert>;
+  }
+
+  if (!user) {
+    return <Typography>Utilisateur non trouvé</Typography>;
   }
 
   return (
@@ -92,7 +97,7 @@ const UserProfilePage: React.FC = () => {
         <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Grid container spacing={4}>
-              <Grid size={6} sx={{ textAlign: 'center' }}>
+              <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
                 <Avatar
                     src={user.avatar_url || '/default-avatar.png'}
                     sx={{ width: 200, height: 200, margin: '0 auto', mb: 2 }}
@@ -124,15 +129,15 @@ const UserProfilePage: React.FC = () => {
                     sx={{ ml: 1 }}
                 />
               </Grid>
-              <Grid size={6}>
+              <Grid item xs={12} md={6}>
                 <Grid container spacing={2}>
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="h6" gutterBottom>
                       Informations personnelles
                     </Typography>
                   </Grid>
                   {/* Email */}
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">Email</Typography>
                     {editField === "email" ? (
                         <>
@@ -154,7 +159,7 @@ const UserProfilePage: React.FC = () => {
                     )}
                   </Grid>
                   {/* Langue préférée */}
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">Langue préférée</Typography>
                     {editField === "preferred_language" ? (
                         <>
@@ -166,7 +171,6 @@ const UserProfilePage: React.FC = () => {
                               size="small"
                               sx={{ mt: 1, mb: 1 }}
                           >
-                            {/* Exemples de valeurs, personnalisez cette liste */}
                             <MenuItem value="fr">Français</MenuItem>
                             <MenuItem value="en">Anglais</MenuItem>
                             <MenuItem value="es">Espagnol</MenuItem>
@@ -182,7 +186,7 @@ const UserProfilePage: React.FC = () => {
                     )}
                   </Grid>
                   {/* Bio */}
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">Biographie</Typography>
                     {editField === "bio" ? (
                         <>
@@ -205,14 +209,14 @@ const UserProfilePage: React.FC = () => {
                     )}
                   </Grid>
                   {/* Date d'inscription */}
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">Date d'inscription</Typography>
                     <Typography>
                       {new Date(user.created_at).toLocaleDateString('fr-FR')}
                     </Typography>
                   </Grid>
                   {/* Dernière connexion */}
-                  <Grid size={12}>
+                  <Grid item xs={12}>
                     <Typography variant="subtitle2" color="textSecondary">Dernière connexion</Typography>
                     <Typography>
                       {user.updated_at ? new Date(user.updated_at).toLocaleDateString('fr-FR') : 'Jamais'}
@@ -226,7 +230,7 @@ const UserProfilePage: React.FC = () => {
           <Box sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={4}>
               {/* Colonne de gauche : Favoris */}
-              <Grid size={6}>
+              <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom>Favoris</Typography>
                 <Paper elevation={2} sx={{ p: 2, minHeight: '200px' }}>
                   <FavoriteList userId={id}></FavoriteList>
@@ -234,7 +238,7 @@ const UserProfilePage: React.FC = () => {
               </Grid>
 
               {/* Colonne de droite : Historique des contributions */}
-              <Grid size={6}>
+              <Grid item xs={12} md={6}>
                 {id && <UserContributions userId={id} />}
               </Grid>
             </Grid>
@@ -250,3 +254,4 @@ const UserProfilePage: React.FC = () => {
 };
 
 export default UserProfilePage;
+
