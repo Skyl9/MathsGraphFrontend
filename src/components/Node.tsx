@@ -3,7 +3,8 @@ import {Billboard, Text} from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
 import { PointerEvent } from "react";
 import {useTheme} from "@mui/material";
-import {useAppContext} from "../contexts/AppContext.tsx";
+import {useUIStore} from "../stores/useUIStore";
+import {useGraphStore} from "../stores/useGraphStore";
 
 interface NodeProps {
     id: number;
@@ -22,7 +23,8 @@ export default function Node({ id, position, color, isSelected, nom, onClick, de
     const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
     const theme = useTheme();
 
-    const { graphTheme, selectedNodeId } = useAppContext();
+    const graphTheme = useUIStore(s => s.graphTheme);
+    const selectedNodeId = useGraphStore(s => s.selectedNodeId);
 
     // Détermine la couleur en fonction du thème
     const nodeColor = useMemo(() => {

@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
-import { useAppContext } from "../contexts/AppContext";
+import {useUIStore} from "../stores/useUIStore";
 
 interface EdgeProps {
     start: [number, number, number];
@@ -13,9 +13,8 @@ interface EdgeProps {
 }
 
 export default function Edge({ start, end, color = "#888888", type, debug, opacity = 1 }: EdgeProps) {
-    const { graphTheme } = useAppContext();
+    const graphTheme = useUIStore(s => s.graphTheme);
     const [hovered, setHovered] = useState(false);
-
     // Calculs géométriques pour éviter que la ligne ne rentre à l'intérieur de la sphère
     const { startOffset, endOffset, direction, midPoint, length } = useMemo(() => {
         const s = new THREE.Vector3(...start);

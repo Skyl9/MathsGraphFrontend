@@ -131,33 +131,34 @@ export const nodeApi = {
     getApiAnalytics: () => request<any>(`/admin/analytics`),
     // POST/PATCH/DELETE requests
     updateConcept: (id: string, field: string, value: any, username: string) =>
-        request<null>(`/update/${id}`, {
+        request<null>(`/concept/${id}`, { // 🌟 REST: /concept/{id}
             method: 'PATCH',
             body: JSON.stringify({field, value, username}),
         }),
     postComment: (concept_id: string, parent_id: number, field: string, comment: string) =>
-        request<null>(`/comments/add/${concept_id}`, {
+        request<null>(`/comments/${concept_id}`, { // 🌟 REST: /comments/{id}
             method: 'POST',
             body: JSON.stringify({field, parent_id, content: comment, username: Token.getUsernameFromToken() || ""}),
         }),
-    deleteComment: (comment_id: string) => request<null>(`/comments/delete/${comment_id}`, {method: 'DELETE'}),
+    deleteComment: (comment_id: string) =>
+        request<null>(`/comments/${comment_id}`, {method: 'DELETE'}), // 🌟 REST: /comments/{id}
     updateComment: (concept_id: string, content: string) =>
-        request<null>(`/comments/update/${concept_id}`, {
+        request<null>(`/comments/${concept_id}`, { // 🌟 REST: /comments/{id}
             method: 'PATCH',
             body: JSON.stringify({content}),
         }),
     addFavorite: (general_id: string, type: string) =>
-        request<null>(`/user/favorite/add/${general_id}`, {
+        request<null>(`/user/favorite/${general_id}`, { // 🌟 REST: /user/favorite/{id}
             method: 'POST',
             body: JSON.stringify({type, user_id: String(Token.getUserIdFromToken()) || ""}),
         }),
     deleteFavorite: (general_id: string, type: string) =>
-        request<null>(`/user/favorite/delete/${general_id}`, {
+        request<null>(`/user/favorite/${general_id}`, { // 🌟 REST: /user/favorite/{id}
             method: 'DELETE',
             body: JSON.stringify({type, user_id: String(Token.getUserIdFromToken()) || ""}),
         }),
     rollbackConcept: (id: string, data: RollbackConcept) =>
-        request<null>(`/concept/rollback/${id}`, {
+        request<null>(`/concept/rollback/${id}`, { // On tolère "rollback" car c'est une action spécifique (RPC)
             method: 'PATCH',
             body: JSON.stringify({
                 version_number: data.version_number,
@@ -166,33 +167,50 @@ export const nodeApi = {
             }),
         }),
     createRelation: (dico: {}) =>
-        request<null>(`/relation/create`, {
+        request<null>(`/relation`, { // 🌟 REST: /relation
             method: 'POST',
             body: JSON.stringify({value: dico}),
         }),
-    createCategory: (nom: string) => request<null>(`/category/create`, {
-        method: 'POST',
-        body: JSON.stringify({value: nom})
-    }),
-    createType: (nom: string) => request<null>(`/type/create`, {method: 'POST', body: JSON.stringify({value: nom})}),
-    createMathematicien: (nom: string) => request<null>(`/mathematicien/create`, {
-        method: 'POST',
-        body: JSON.stringify({value: nom})
-    }),
-    createAlias: (id: number, nom: string) => request<null>(`/alias/create`, {
-        method: 'POST',
-        body: JSON.stringify({id, value: nom})
-    }),
-    createSources: (sources: any) => request<null>(`/source/create`, {
-        method: 'POST',
-        body: JSON.stringify({value: sources})
-    }),
+    createCategory: (nom: string) =>
+        request<null>(`/category`, { // 🌟 REST: /category
+            method: 'POST',
+            body: JSON.stringify({value: nom})
+        }),
+    createType: (nom: string) =>
+        request<null>(`/type`, { // 🌟 REST: /type
+            method: 'POST',
+            body: JSON.stringify({value: nom})
+        }),
+    createMathematicien: (nom: string) =>
+        request<null>(`/mathematicien`, { // 🌟 REST: /mathematicien
+            method: 'POST',
+            body: JSON.stringify({value: nom})
+        }),
+    createAlias: (id: number, nom: string) =>
+        request<null>(`/alias`, { // 🌟 REST: /alias
+            method: 'POST',
+            body: JSON.stringify({id, value: nom})
+        }),
+    createSources: (sources: any) =>
+        request<null>(`/source`, { // 🌟 REST: /source
+            method: 'POST',
+            body: JSON.stringify({value: sources})
+        }),
     updateOneMathematicien: (id: string, field: string, value: any) =>
-        request<null>(`/mathematicien/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/mathematicien/${id}`, { // 🌟 REST: /mathematicien/{id}
+            method: 'PATCH',
+            body: JSON.stringify({field, value})
+        }),
     updateOneCategory: (id: string, field: string, value: any) =>
-        request<null>(`/category/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/category/${id}`, { // 🌟 REST: /category/{id}
+            method: 'PATCH',
+            body: JSON.stringify({field, value})
+        }),
     updateOneType: (id: string, field: string, value: any) =>
-        request<null>(`/type/update/${id}`, {method: 'PATCH', body: JSON.stringify({field, value})}),
+        request<null>(`/type/${id}`, { // 🌟 REST: /type/{id}
+            method: 'PATCH',
+            body: JSON.stringify({field, value})
+        }),
     requestPasswordReset: (email: string) =>
         request<null>(`/password-reset/request`, {method: 'POST', body: JSON.stringify({email})}, false),
     resetPassword: (token: string, password: string) =>
@@ -200,13 +218,26 @@ export const nodeApi = {
             method: 'POST',
             body: JSON.stringify({token, new_password: password})
         }, false),
+
+    // 🌟 LA ROUTE CORRIGÉE PRÉCÉDEMMENT
     removeTagsFromConceptId: (concept_id: number, tags_id: number) =>
-        request<null>(`/tags/remove/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
-    createTags: (tags: string) => request<null>(`/tags/add`, {method: 'POST', body: JSON.stringify({tag_name: tags})}),
+        request<null>(`/tags/concept/${concept_id}/tag/${tags_id}`, { method: 'DELETE' }),
+
+    createTags: (tags: string) =>
+        request<null>(`/tags`, { // 🌟 REST: /tags
+            method: 'POST',
+            body: JSON.stringify({tag_name: tags})
+        }),
     createLinkTagConcept: (concept_id: number, tags_id: number) =>
-        request<null>(`/tags/add/concept`, {method: 'POST', body: JSON.stringify({concept_id, tag_id: tags_id})}),
+        request<null>(`/tags/concept`, { // 🌟 REST: /tags/concept
+            method: 'POST',
+            body: JSON.stringify({concept_id, tag_id: tags_id})
+        }),
     patchUser: (data: { field: string, value: string }, id: string) =>
-        request<null>(`/user/update/${id}`, {method: 'PATCH', body: JSON.stringify(data)}),
+        request<null>(`/user/${id}`, { // 🌟 REST: /user/{id}
+            method: 'PATCH',
+            body: JSON.stringify(data)
+        }),
     register: (username: string, email: string, password: string) =>
         request<Register>(`/register`, {
             method: "POST",

@@ -1,9 +1,8 @@
-import React, {useState, useMemo, useEffect, createContext} from "react";
+import React, {useMemo} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {Canvas} from "@react-three/fiber";
 import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
-import {AppProvider, useAppContext} from "./contexts/AppContext";
 import ConceptPage from "./pages/NodePage";
 import {ThemeProvider} from "@mui/material";
 import {AboutPage} from "./pages/AboutPage";
@@ -41,33 +40,13 @@ import {CircularProgress, Box, Alert} from '@mui/material';
 import ErrorBoundary from "./ErrorBoundary";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {SearchPage} from "./pages/SearchPage.tsx";
-
-export const ColorModeContext = createContext({
-    toggleColorMode: () => {
-    }, isDarkMode: false
-});
+import {useUIStore} from "./stores/useUIStore";
 
 const App: React.FC = () => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const [darkMode, setDarkMode] = useState(() => {
-        const saved = localStorage.getItem('darkMode');
-        return saved ? JSON.parse(saved) : prefersDark;
-    });
+    const darkMode = useUIStore(state => state.darkMode);
 
-    useEffect(() => {
-        localStorage.setItem('darkMode', JSON.stringify(darkMode));
-    }, [darkMode]);
     const theme = useMemo(() => getTheme(darkMode), [darkMode]);
 
-    const colorMode = useMemo(
-        () => ({
-            toggleColorMode: () => {
-                setDarkMode((prevMode: boolean) => !prevMode);
-            },
-            isDarkMode: darkMode,
-        }),
-        [darkMode]
-    );
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
@@ -79,69 +58,61 @@ const App: React.FC = () => {
 
     return (
         <QueryClientProvider client={queryClient}>
-        <AppProvider>
             <AuthProvider>
-                <ColorModeContext.Provider value={colorMode}>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline/>
-                        <ErrorBoundary>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline/>
+                    <ErrorBoundary>
+                        {" "}
+                        <Router>
                             {" "}
-                            <Router>
-                                {" "}
-                                <Routes>
-                                    <Route path="/login" element={<Login/>}/>
-                                    <Route path="/register" element={<Register/>}/>
-                                    <Route path="/" element={<HomePage/>}/>
-                                    <Route path="/graph"
-                                           element={<AppContent darkMode={darkMode} setDarkMode={setDarkMode}/>}/>
-                                    <Route path="/concept/:id" element={<ConceptPage/>}/>
-                                    <Route path="/admin" element={<AdminLayout/>}>
-                                        <Route index element={<DashboardPage/>}/>
-                                        <Route path="users" element={<UsersPage/>}/>
-                                        <Route path="contents" element={<ContentsPage/>}/>
-                                        <Route path="settings" element={<SettingsPage/>}/>
-                                    </Route>
+                            <Routes>
+                                <Route path="/login" element={<Login/>}/>
+                                <Route path="/register" element={<Register/>}/>
+                                <Route path="/" element={<HomePage/>}/>
+                                <Route path="/graph"
+                                       element={<AppContent/>}/>
+                                <Route path="/concept/:id" element={<ConceptPage/>}/>
+                                <Route path="/admin" element={<AdminLayout/>}>
+                                    <Route index element={<DashboardPage/>}/>
+                                    <Route path="users" element={<UsersPage/>}/>
+                                    <Route path="contents" element={<ContentsPage/>}/>
+                                    <Route path="settings" element={<SettingsPage/>}/>
+                                </Route>
 
 
-                                    <Route path="/about" element={<AboutPage/>}/>
-                                    <Route path="/support" element={<SupportPage/>}/>
-                                    <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
-                                    <Route path="*" element={<LostPage/>}/>
-                                    <Route path={"/category/:id"} element={<CategoryPage/>}/>
-                                    <Route path={"/type/:id"} element={<TypePage/>}/>
-                                    <Route path={"/category"} element={<CategoryList/>}/>
-                                    <Route path={"/type"} element={<TypeList/>}/>
-                                    <Route path={"/mathematicien"} element={<MathematicienList/>}/>
-                                    <Route path={"/concept"} element={<ConceptList/>}/>
-                                    <Route path={"/user/:id"} element={<UserProfilePage/>}/>
-                                    <Route path={"/reset-password"} element={<PasswordReset/>}/>
-                                    <Route path={"/reset-password-verification/:token"}
-                                           element={<PasswordResetVerification/>}/>
-                                    <Route path={"/username/:username"} element={<UserRedirect/>}/>
-                                    <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
-                                    <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
-                                    <Route path={"/mathematicien/redirect/:mathematicienName"}
-                                           element={<MathematicienRedirect/>}/>
-                                    <Route path={"/contribution"} element={<ContributionPage/>}/>
-                                    <Route path={"/search"} element={<SearchPage/>}/>
-                                </Routes>
-                            </Router>
-                        </ErrorBoundary>
-                    </ThemeProvider>
-                </ColorModeContext.Provider>
+                                <Route path="/about" element={<AboutPage/>}/>
+                                <Route path="/support" element={<SupportPage/>}/>
+                                <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
+                                <Route path="*" element={<LostPage/>}/>
+                                <Route path={"/category/:id"} element={<CategoryPage/>}/>
+                                <Route path={"/type/:id"} element={<TypePage/>}/>
+                                <Route path={"/category"} element={<CategoryList/>}/>
+                                <Route path={"/type"} element={<TypeList/>}/>
+                                <Route path={"/mathematicien"} element={<MathematicienList/>}/>
+                                <Route path={"/concept"} element={<ConceptList/>}/>
+                                <Route path={"/user/:id"} element={<UserProfilePage/>}/>
+                                <Route path={"/reset-password"} element={<PasswordReset/>}/>
+                                <Route path={"/reset-password-verification/:token"}
+                                       element={<PasswordResetVerification/>}/>
+                                <Route path={"/username/:username"} element={<UserRedirect/>}/>
+                                <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
+                                <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
+                                <Route path={"/mathematicien/redirect/:mathematicienName"}
+                                       element={<MathematicienRedirect/>}/>
+                                <Route path={"/contribution"} element={<ContributionPage/>}/>
+                                <Route path={"/search"} element={<SearchPage/>}/>
+                            </Routes>
+                        </Router>
+                    </ErrorBoundary>
+                </ThemeProvider>
             </AuthProvider>
-        </AppProvider>
         </QueryClientProvider>
     );
 };
 
-const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) => void }> = ({
-                                                                                                darkMode, setDarkMode
-                                                                                            }) => {
+const AppContent: React.FC = () => {
     const {loading, error, graphData} = useGraphData();
-
-    useAppContext();
-
+    const darkMode = useUIStore(s => s.darkMode);
 
     if (loading) {
         return (
@@ -179,7 +150,7 @@ const AppContent: React.FC<{ darkMode: boolean; setDarkMode: (value: boolean) =>
                 <pointLight position={[10, 10, 10]}/>
                 <Scene graphData={graphData}/>
             </Canvas>
-            <Menu darkMode={darkMode} setDarkMode={setDarkMode} graphData={graphData}/>{" "}
+            <Menu graphData={graphData}/>{" "}
         </div>
     );
 };

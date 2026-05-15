@@ -14,44 +14,38 @@ import {
     FormControl,
     InputLabel
 } from '@mui/material';
-import {useAppContext} from "../contexts/AppContext";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchBar from "./SearchBar";
 import "../styles/Menu.css";
 import {Graph, NodeData} from "../types/ApiTypes/graph";
 import {AutoGraph, GridOn} from "@mui/icons-material"; // Importer Graph
+import {useUIStore} from "../stores/useUIStore";
+import {useFilterStore} from "../stores/useFilterStore";
+import {useGraphStore} from "../stores/useGraphStore";
 
 interface MenuProps {
-    darkMode: boolean;
-    setDarkMode: (value: boolean) => void;
     graphData: Graph; // Ajouter graphData aux props
 }
 
-export default function Menu( { darkMode, setDarkMode, graphData }: MenuProps){ // Accepter graphData comme prop
-    const {
-        // Positions et état de la caméra
-        setInitialPosition,
-        setIsPosInitial,
-        // graphData, // Supprimer de useAppContext
-        setSelectedNodeId,
-        setTargetPosition,
+export default function Menu( { graphData }: MenuProps){ // Accepter graphData comme prop
+    const darkMode = useUIStore(s => s.darkMode);
+    const setDarkMode = useUIStore(s => s.setDarkMode);
+    const currentView = useUIStore(s => s.currentView);
+    const setCurrentView = useUIStore(s => s.setCurrentView);
+    const graphTheme = useUIStore(s => s.graphTheme);
+    const setGraphTheme = useUIStore(s => s.setGraphTheme);
 
-        // Historique
-        history,
-        currentIndex,
+    const filters = useFilterStore(s => s.filters);
+    const setFilters = useFilterStore(s => s.setFilters);
 
-        // Navigation
-        goBack,
-        goForward,
-
-        // Graphe
-        setFilters,
-        filters,
-        currentView,
-        setCurrentView,
-        graphTheme,
-        setGraphTheme
-    } = useAppContext();
+    const setInitialPosition = useGraphStore(s => s.setInitialPosition);
+    const setIsPosInitial = useGraphStore(s => s.setIsPosInitial);
+    const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
+    const setTargetPosition = useGraphStore(s => s.setTargetPosition);
+    const history = useGraphStore(s => s.history);
+    const currentIndex = useGraphStore(s => s.currentIndex);
+    const goBack = useGraphStore(s => s.goBack);
+    const goForward = useGraphStore(s => s.goForward);
 
     function resetCamera() {
         // Vérifier que graphData et ses noeuds existent

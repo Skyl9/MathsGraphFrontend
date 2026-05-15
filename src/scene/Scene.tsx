@@ -5,10 +5,13 @@ import {Vector3} from "three";
 import Node from "../components/Node";
 import Edge from "../components/Edge";
 import NodeDetails from "../components/NodeDetails";
-import {useAppContext} from "../contexts/AppContext";
 import gsap from "gsap";
 import {NodeData, Graph} from "../types/ApiTypes/graph";
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import {useUIStore} from "../stores/useUIStore";
+import {useFilterStore} from "../stores/useFilterStore";
+import {useGraphStore} from "../stores/useGraphStore";
+
 const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];
     if (typeMath === "théorème") return colors[2];
@@ -24,25 +27,25 @@ interface SceneProps {
 export default function Scene({ graphData }: SceneProps) {
     console.log("Graph Data reçu par Scene:", graphData); // <<< AJOUTÉ
 
-    const {
-        currentView,
-        colorLemme,
-        colorAxiome,
-        colortheoreme,
-        filters,
-        targetPosition,
-        setHistory,
-        currentIndex,
-        setCurrentIndex,
-        history,
-        setDebugMode,
-        debugMode,
-        setTargetPosition,
-        colorSides,
-        selectedNodeId,
-        setSelectedNodeId,
-        graphTheme
-    } = useAppContext();
+    const currentView = useUIStore(s => s.currentView);
+    const colorLemme = useUIStore(s => s.colorLemme);
+    const colorAxiome = useUIStore(s => s.colorAxiome);
+    const colortheoreme = useUIStore(s => s.colortheoreme);
+    const colorSides = useUIStore(s => s.colorSides);
+    const debugMode = useUIStore(s => s.debugMode);
+    const setDebugMode = useUIStore(s => s.setDebugMode);
+    const graphTheme = useUIStore(s => s.graphTheme);
+
+    const filters = useFilterStore(s => s.filters);
+
+    const targetPosition = useGraphStore(s => s.targetPosition);
+    const setTargetPosition = useGraphStore(s => s.setTargetPosition);
+    const history = useGraphStore(s => s.history);
+    const setHistory = useGraphStore(s => s.setHistory);
+    const currentIndex = useGraphStore(s => s.currentIndex);
+    const setCurrentIndex = useGraphStore(s => s.setCurrentIndex);
+    const selectedNodeId = useGraphStore(s => s.selectedNodeId);
+    const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
 
     const {camera, gl} = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
@@ -138,7 +141,7 @@ export default function Scene({ graphData }: SceneProps) {
         const toggleDebug = (event: KeyboardEvent) => {
             if (event.key.toLowerCase() === "m") {
                 console.log("Debug mod activé");
-                setDebugMode((prev) => !prev);
+                setDebugMode((prev) => (typeof prev === 'function' ? prev(!prev) : !prev));
             }
         };
         window.addEventListener("keydown", toggleDebug);
