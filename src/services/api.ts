@@ -73,12 +73,17 @@ const request = async <T>(
                 message: data.error || `Erreur serveur: ${response.status}`,
                 code: data.meta || undefined,
             };
+
+            // 🌟 LE FIX DU BUG DE SESSION ICI
             if (response.status === 401) {
-                // Here, you would trigger a token refresh flow
-                // For now, simply throw the error
-                // await Token.refreshToken();
-                // and then retry the request.
+                console.warn("Session expirée ou token invalide. Déconnexion automatique.");
+                localStorage.removeItem('token');
+                // On évite les boucles infinies de redirection
+                if (window.location.pathname !== '/login') {
+                    window.location.href = '/login?session_expired=true';
+                }
             }
+
             throw error;
         }
 
