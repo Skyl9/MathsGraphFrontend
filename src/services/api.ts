@@ -16,8 +16,8 @@ import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
 import {RecentChange} from "../components/RecentChanges.tsx";
 import {RecentComment} from "../components/recentComment.tsx";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_LINK || '';
-
+const runtimeEnv = window.__RUNTIME_CONFIG__?.VITE_BACKEND_LINK;
+const BASE_URL = runtimeEnv || import.meta.env.VITE_BACKEND_LINK || 'http://localhost:8000';
 // Define a unified error structure
 interface ApiError {
     status: number;
