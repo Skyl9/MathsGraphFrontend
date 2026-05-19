@@ -1,7 +1,6 @@
 // SettingsPage.tsx
-import React, { useEffect, useState } from 'react';
-import { Box, TextField, Button, Switch, FormControlLabel, Typography } from '@mui/material';
-import { nodeApi } from '../services/api';
+import React, { useState } from 'react';
+import { Box, TextField, Switch, FormControlLabel, Typography } from '@mui/material';
 
 interface Settings {
   siteName: string;

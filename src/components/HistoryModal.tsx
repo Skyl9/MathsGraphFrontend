@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useMemo} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
     Button, IconButton, CircularProgress, Typography
@@ -46,7 +46,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [currentIdx, setCurrentIdx] = useState(0);
+    const [_currentIdx, setCurrentIdx] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState<string>('Toutes');
 
     // Filtre sur les rollbacks
@@ -150,8 +150,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
             // Rafraîchir l'historique
             const fresh = await nodeApi.getConceptHistory(conceptId);
             setHistory(fresh);
-        } catch (e: any) {
-            setRollbackError(e.message || 'Erreur inattendue');
+        } catch (e) {
+            setRollbackError(e instanceof Error ? e.message : 'Erreur inattendue');
         } finally {
             setRollbackLoading(false);
         }

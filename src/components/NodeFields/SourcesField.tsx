@@ -6,7 +6,7 @@ interface SourcesFieldProps {
   editable?: boolean;
 }
 
-const SourcesField: React.FC<SourcesFieldProps> = ({ sources, onEdit, editable = true }) => {
+const SourcesField: React.FC<SourcesFieldProps> = ({ sources }) => {
   return (
     <div className="node-wrapper">
       <div className="field-title">Sources :</div>

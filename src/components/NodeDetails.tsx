@@ -1,4 +1,3 @@
-import React from "react";
 import { Html } from "@react-three/drei";
 import { motion } from "framer-motion";
 import { Card, CardContent, Typography, IconButton, Link, Box, CardActions } from "@mui/material";

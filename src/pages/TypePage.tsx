@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
 import Token from "../services/token";
@@ -14,7 +14,7 @@ import FavoriteButton from "../components/FavoriteButton";
 import {Type} from "../types/ApiTypes/type";
 
 
-const TypePage : React.FC = () => {
+const TypePage = () => {
     const {id} = useParams<{ id: string }>();
     const {
         data,
@@ -33,7 +33,7 @@ const TypePage : React.FC = () => {
         refetchData
     } = useEntityEdit<Type>("type",id || "");
 
-    const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
+    const [isUserConnected, setisUserConnected] = useState<boolean>(false);
     useEffect(
         () => {
             if (Token.getToken()){
@@ -51,7 +51,7 @@ const TypePage : React.FC = () => {
         if (data) {
             setData(data);
         }
-    }, [data]);
+    }, [data, setData]);
 
 
     const renderCellCotnent =(field: keyof Type) => {
@@ -64,6 +64,7 @@ const TypePage : React.FC = () => {
             case "id":
                 return <HtmlField title={"Id"} content={value as string}></HtmlField>
             default:
+                return null;
         }
     }
     if (!loading && (error || !data || !data.id)) {
@@ -75,7 +76,7 @@ const TypePage : React.FC = () => {
         <FavoriteButton itemId={id as string} itemType={"type"}/>
 
         <div className="node-container">
-            <h1 className="node-title">{data?.nom}</h1>
+            <h1 className="node-title">{data?.type}</h1>
             <div className="node-info">
                 {propertyOrder
                     .map(field =>(
@@ -99,8 +100,9 @@ const TypePage : React.FC = () => {
 
 
             </div>
-            {isModalOpen && currentEditField &&
-                <EditModal isOpen={isModalOpen}
+            {isModalOpen && currentEditField && data &&
+                <EditModal<Type>
+                           isOpen={isModalOpen}
                            onClose={cancelChanges}
                            onSave={saveChanges}
                            field={currentEditField}
@@ -111,6 +113,7 @@ const TypePage : React.FC = () => {
                            setData={setData}
                            createField={createField}
                            refetchData={refetchData}
+                           isSaving={false}
                 ></EditModal>}
 
             <div className="node-buttons">

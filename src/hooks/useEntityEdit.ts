@@ -12,9 +12,9 @@ const FIELDS_GENERATOR_MAP = {
     category: createCategoryEditableFields,
     type: createTypeEditableFields,
     mathematicien: createMathematicienEditableFields
-};
+} as const;
 
-export const useEntityEdit = <T,>(entityType: EntityType, id: string) => {
+export const useEntityEdit = <T extends object>(entityType: EntityType, id: string) => {
     const {
         data, setData, loading, error, editableFieldsOptions,
         refetchData, updateField, createField
@@ -23,25 +23,25 @@ export const useEntityEdit = <T,>(entityType: EntityType, id: string) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentEditField, setCurrentEditField] = useState<keyof T | null>(null);
 
-    const [newContent, setNewContent] = useState<any>(undefined);
+    const [newContent, setNewContent] = useState<unknown>(undefined);
 
     const [isSaving, setIsSaving] = useState(false);
 
     const editableFields = useMemo(() => {
-        const generateFields = FIELDS_GENERATOR_MAP[entityType];
-        return generateFields(editableFieldsOptions) as any;
+        const generateFields = FIELDS_GENERATOR_MAP[entityType] as any;
+        return generateFields(editableFieldsOptions);
     }, [entityType, editableFieldsOptions]);
 
     const handleEdit = (field: keyof T) => {
         setCurrentEditField(field);
 
-        const currentValue = (data as any)?.[field];
+        const currentValue = data ? (data as Record<keyof T, unknown>)[field] : undefined;
         setNewContent(currentValue !== null && currentValue !== undefined ? currentValue : "");
 
         setIsModalOpen(true);
     };
 
-    const handleChange = (value: any) => {
+    const handleChange = (value: unknown) => {
         setNewContent(value);
     };
 

@@ -43,7 +43,7 @@
   },
   "scripts": {
     "start": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "eslintConfig": {

@@ -7,7 +7,7 @@ interface SpecialFieldProps {
   editable?: boolean;
 }
 
-const VerifField: React.FC<SpecialFieldProps> = ({ title, value, onEdit, editable = true }) => {
+const VerifField: React.FC<SpecialFieldProps> = ({ title, value }) => {
   const renderValue = () => {
     if (typeof value === 'boolean') {
       return value ? "✅" : "❌";

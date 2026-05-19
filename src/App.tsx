@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import {useMemo} from "react";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {Canvas} from "@react-three/fiber";
 import Scene from "./scene/Scene";
@@ -42,7 +42,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {SearchPage} from "./pages/SearchPage.tsx";
 import {useUIStore} from "./stores/useUIStore";
 
-const App: React.FC = () => {
+const App = () => {
     const darkMode = useUIStore(state => state.darkMode);
 
     const theme = useMemo(() => getTheme(darkMode), [darkMode]);
@@ -110,7 +110,7 @@ const App: React.FC = () => {
     );
 };
 
-const AppContent: React.FC = () => {
+const AppContent = () => {
     const {loading, error, graphData} = useGraphData();
     const darkMode = useUIStore(s => s.darkMode);
 

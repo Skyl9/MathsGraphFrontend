@@ -1,7 +1,5 @@
-// hooks/useNodeData.ts
-import {useCallback} from 'react';
 import {AllNodeData} from '../../types/types';
-import {nodeApi} from '../../services/api';
+import {EditableFieldsOptions, nodeApi} from '../../services/api';
 import Token from '../../services/token';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -9,7 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 export const useNodeData = (id: string) => {
     const queryClient = useQueryClient();
 
-    const { data, isLoading: loading, error: queryError, refetch: refetchData } = useQuery({
+    const { data, isLoading: loading, error: queryError, refetch: refetchData } = useQuery<AllNodeData>({
         queryKey: ['concept', id],
         queryFn: () => nodeApi.getConcept(id),
         enabled: !!id
@@ -30,18 +28,19 @@ export const useNodeData = (id: string) => {
         verification: [],
         noms_etrangers: [],
         tags: [],
-    } } = useQuery({
+        date_modification:[]
+    } as EditableFieldsOptions } = useQuery<EditableFieldsOptions>({
         queryKey: ['editableFieldsOptions'],
         queryFn: () => nodeApi.getEditableFieldsOptions()
     });
 
-    const error = queryError ? (queryError as any).message : null;
+    const error = queryError instanceof Error ? queryError.message : (queryError ? String(queryError) : null);
 
-    const setData = (newData: any) => {
+    const setData = (newData: AllNodeData) => {
         queryClient.setQueryData(['concept', id], newData);
     };
 
-    const updateField = async (field: keyof AllNodeData, value: any) => {
+    const updateField = async (field: keyof AllNodeData, value: unknown) => {
         try {
             const username = Token.getUsernameFromToken();
             if (!username) {
@@ -58,48 +57,41 @@ export const useNodeData = (id: string) => {
 
     };
 
-    const createField = async (field: keyof AllNodeData, value: any) => {
+    const createField = async (field: keyof AllNodeData, value: unknown) => {
         try {
             console.log(field.toLowerCase());
             switch (field.toLowerCase()) {
                 case "id":
-                    break;
                 case "nom":
-                    break;
                 case "enonce":
+                case "date_ajout":
+                case "demonstration":
+                case "verification":
+                case "noms_etrangers":
                     break;
                 case "categorie":
-                    await nodeApi.createCategory(value);
+                    await nodeApi.createCategory(value as string);
                     break;
-                case "aliases":
-                    await nodeApi.createAlias(value["id"], value["value"]);
+                case "aliases": {
+                    const aliasData = value as { id: number; value: string };
+                    await nodeApi.createAlias(aliasData.id, aliasData.value);
                     break;
+                }
                 case "mathematicien":
-                    await nodeApi.createMathematicien(value);
-                    break;
-                case "date_ajout":
-                    break;
-                case "demonstration":
+                    await nodeApi.createMathematicien(value as string);
                     break;
                 case "relations":
-                    await nodeApi.createRelation(value);
+                    await nodeApi.createRelation(value as Record<string, unknown>);
                     break;
                 case "sources":
                     await nodeApi.createSources(value);
                     break;
-                case "verification":
-                    break;
-                case "noms_etrangers":
-                    break;
                 case "type":
-                    await nodeApi.createType(value);
+                    await nodeApi.createType(value as string);
                     break;
-
                 case "tags":
-                    await nodeApi.createTags(value);
+                    await nodeApi.createTags(value as string);
                     break;
-
-
                 default:
                     console.log("Champs non trouvé")
             }

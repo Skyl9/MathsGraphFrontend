@@ -16,7 +16,7 @@ export const useNodeEdit = (id: string) => {
     setIsModalOpen(true);
   };
 
-  const handleChange = (value: any) => {
+  const handleChange = (value: unknown) => {
     setNewContent(typeof value === "string" ? value : undefined);
   };
 

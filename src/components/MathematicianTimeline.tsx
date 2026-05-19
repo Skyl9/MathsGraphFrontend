@@ -3,16 +3,16 @@ import { Chrono } from 'react-chrono';
 import { useQuery } from '@tanstack/react-query';
 import { Box, CircularProgress, Typography, useTheme } from '@mui/material';
 import dayjs from 'dayjs';
-import { nodeApi } from '../services/api';
+import {MathTimelineData, nodeApi} from '../services/api';
 
 export const MathematicianTimeline: React.FC = () => {
     const theme = useTheme(); // Pour adapter les couleurs de la frise au mode sombre/clair !
 
-    const { data: mathematicians, isLoading, error } = useQuery({
+    const { data: mathematicians, isLoading, error } = useQuery<MathTimelineData[]>({
         queryKey: ['mathematicians-timeline'],
         queryFn: async () => {
             const result = await nodeApi.getMathematiciensTimeline();
-            return result;
+            return result as MathTimelineData[];
         }
     });
 
@@ -22,7 +22,7 @@ export const MathematicianTimeline: React.FC = () => {
 
     // 🌟 Formatage des données pour react-chrono
     const chronoItems = mathematicians.map(math => {
-        const birthYear = dayjs(math.date_naissance).format('YYYY');
+          const birthYear = dayjs(math.date_naissance).format('YYYY');
         const deathYear = math.date_deces ? dayjs(math.date_deces).format('YYYY') : 'Aujourd\'hui';
 
         return {

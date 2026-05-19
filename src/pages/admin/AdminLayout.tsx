@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
     AppBar,
@@ -20,6 +20,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
 import {nodeApi} from "../../services/api";
 import Token from "../../services/token";
+import { User } from "../../types/ApiTypes/user";
 
 
 const navItems = [
@@ -31,12 +32,16 @@ const navItems = [
 
 const drawerWidth = 240;
 
-const AdminLayout: React.FC = () => {
+const AdminLayout = () => {
     const navigate = useNavigate();
-    const [currentUser,setcurrentUser] = useState<any>({})
+    const [currentUser,setcurrentUser] = useState<Partial<User>>({})
     useEffect(()=>{
-        nodeApi.getUserInfo(Token.getUserIdFromToken() as string).then((data:any)=>setcurrentUser(data))
-            .catch(console.error)
+        const userId = Token.getUserIdFromToken();
+        if (userId) {
+            nodeApi.getUserInfo(userId)
+                .then((data)=>setcurrentUser(data))
+                .catch(console.error);
+        }
     }, []);
 
 
@@ -51,7 +56,7 @@ const AdminLayout: React.FC = () => {
                         <HomeIcon />
                     </IconButton>
                     <Stack direction="row" spacing={1} alignItems="center" sx={{ ml: 2, mr: 2 }}>
-                        <Avatar src={currentUser.avatar} sx={{ width: 28, height: 28 }} />
+                        <Avatar src={currentUser.avatar_url} sx={{ width: 28, height: 28 }} />
                         <Typography variant="body1">{currentUser.username}</Typography>
                     </Stack>
 

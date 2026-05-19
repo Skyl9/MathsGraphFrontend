@@ -1,5 +1,4 @@
 // UsersPage.tsx
-import React from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -7,21 +6,13 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { User } from '../../types/ApiTypes/user';
 
-interface UserRow {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-  is_active: boolean;
-  created_at: string;
-}
-
-const UsersPage: React.FC = () => {
+const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: rows = [], isLoading: loading, error } = useQuery({
+  const { data: rows = [], isLoading: loading, error } = useQuery<User[]>({
     queryKey: ['adminUsers'],
     queryFn: () => nodeApi.getAllUsers()
   });
@@ -30,10 +21,10 @@ const UsersPage: React.FC = () => {
     if (!window.confirm('Confirmer la suppression ?')) return;
     // await nodeApi.deleteUser(id.toString());
     // On invalide le cache pour rafraîchir la liste
-    queryClient.setQueryData(['adminUsers'], (old: UserRow[] | undefined) => old ? old.filter(u => u.id !== id) : []);
+    queryClient.setQueryData(['adminUsers'], (old: User[] | undefined) => old ? old.filter(u => u.id !== id) : []);
   };
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<User>[] = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'username', headerName: 'Nom d’utilisateur', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1.5 },
@@ -47,11 +38,13 @@ const UsersPage: React.FC = () => {
       width: 120,
       getActions: (params) => [
         <GridActionsCellItem
+          key="edit"
           icon={<EditIcon />}
           label="Éditer"
           onClick={() => navigate(`/admin/users/${params.id}`)}
         />,
         <GridActionsCellItem
+          key="delete"
           icon={<DeleteIcon />}
           label="Supprimer"
           onClick={() => handleDelete(Number(params.id))}
@@ -61,7 +54,7 @@ const UsersPage: React.FC = () => {
   ];
 
   if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">{(error as any).message}</Alert>;
+  if (error) return <Alert severity="error">{error instanceof Error ? error.message : 'Une erreur est survenue'}</Alert>;
 
   return (
     <Box sx={{ height: 600, width: '100%' }}>

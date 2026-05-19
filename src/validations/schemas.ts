@@ -48,19 +48,16 @@ const schemas = {
     type: typeSchema
 };
 
-// --- Fonction de validation universelle ---
 export const validateField = (entity: keyof typeof schemas, field: string, value: any) => {
-    const entitySchema = schemas[entity];
+    const entitySchema = schemas[entity] as z.ZodObject;
 
-    // Si le champ n'existe pas dans le schéma strict (ex: les tableaux comme 'relations', 'tags'), on le laisse passer
     if (!(field in entitySchema.shape)) {
         return { success: true };
     }
 
-    // On isole le schéma du champ spécifique
-    const fieldSchema = entitySchema.shape[field as keyof typeof entitySchema.shape];
+    // 🌟 2. On type explicitement le champ comme un validateur Zod
+    const fieldSchema = entitySchema.shape[field] as z.ZodTypeAny;
 
-    // safeParse vérifie sans faire crasher l'app
     const result = fieldSchema.safeParse(value);
 
     if (!result.success) {

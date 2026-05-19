@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {AppBar, Toolbar, Typography, Button, Box, Link, IconButton, useTheme} from "@mui/material";
 import {LogoutButton} from "./LogoutButton";
 import Token from "../services/token";
@@ -14,7 +14,7 @@ export const TopBar: React.FC = () => {
     const theme = useTheme();
     const toggleDarkMode = useUIStore((state) => state.toggleDarkMode);
 
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
     const toggleLanguage = () => {
         const newLang = i18n.language === 'fr' ? 'en' : 'fr';
         i18n.changeLanguage(newLang);

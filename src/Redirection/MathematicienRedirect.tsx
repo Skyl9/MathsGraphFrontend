@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
 import {Mathematicien} from "../types/ApiTypes/mathematicien";
 
 
-export const MathematicienRedirect: React.FC = () => {
+export const MathematicienRedirect = () => {
     const { mathematicienName } = useParams<{ mathematicienName: string }>()
     const navigate = useNavigate()
     const [error, setError] = useState<string | null>(null)

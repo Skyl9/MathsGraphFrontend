@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, ChangeEvent, FormEvent, Fragment } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
     Box, Grid, Typography, Paper, Checkbox, FormGroup,
@@ -9,13 +9,20 @@ import { useQuery } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
 import {TopBar} from "../components/TopBar.tsx";
 
-export const SearchPage: React.FC = () => {
+interface SearchResult {
+    id: number | string;
+    nom: string;
+    entity_type: string;
+    extrait?: string;
+}
+
+export const SearchPage = () => {
     // 1. Récupération du terme tapé dans la barre de recherche globale (?q=...)
     const [searchParams, setSearchParams] = useSearchParams();
     const queryTerm = searchParams.get('q') || '';
     const [localQuery, setLocalQuery] = useState(queryTerm);
 
-    const handleSearchSubmit = (e: React.FormEvent) => {
+    const handleSearchSubmit = (e: FormEvent) => {
         e.preventDefault();
         setSearchParams({ q: localQuery }); // Met à jour l'URL, ce qui déclenche React Query
     };
@@ -28,20 +35,18 @@ export const SearchPage: React.FC = () => {
     });
 
     // Gestion du clic sur un filtre
-    const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
         setFilters({
             ...filters,
             [event.target.name]: event.target.checked,
         });
-        // Optionnel : tu pourrais aussi mettre ces filtres dans l'URL pour pouvoir partager le lien exact !
     };
 
     // 3. Appel API avec React Query (Le moteur sous le capot)
-    const { data: results, isLoading, error } = useQuery({
+    const { data: results, isLoading, error } = useQuery<SearchResult[]>({
         queryKey: ['advancedSearch', queryTerm, filters], // Refetch automatique si le terme ou les filtres changent !
         queryFn: async () => {
             if (!queryTerm) return [];
-            // Tu devras créer cette route backend /search/advanced plus tard
             return await nodeApi.advanceSearch(queryTerm, filters);
             },
         enabled: queryTerm.length > 0 // Ne cherche que s'il y a un mot
@@ -70,7 +75,7 @@ export const SearchPage: React.FC = () => {
                 {/* ==========================================
                     TIER GAUCHE : LES FILTRES (1/3 = xs:12 md:4)
                 ========================================== */}
-                <Grid item xs={12} md={4}>
+                <Grid size={{ xs: 12, md: 4 }}>
                     <Paper elevation={2} sx={{ p: 3, position: 'sticky', top: 20 }}>
                         <Typography variant="h6" gutterBottom>
                             Filtres
@@ -112,7 +117,7 @@ export const SearchPage: React.FC = () => {
                     LES 2 TIERS RESTANTS : RÉSULTATS (2/3 = xs:12 md:8)
                 ========================================== */}
 
-                <Grid item xs={12} md={8}>
+                <Grid size={{ xs: 12, md: 8 }}>
                     {isLoading && <Box display="flex" justifyContent="center" p={4}><CircularProgress /></Box>}
                     {error && <Typography color="error">Une erreur est survenue pendant la recherche.</Typography>}
 
@@ -127,12 +132,12 @@ export const SearchPage: React.FC = () => {
                         </Paper>
                     )}
 
-                    {/* Affichage des résultats (à mapper quand le backend sera prêt) */}
+                    {/* Affichage des résultats */}
                     {!isLoading && results && results.length > 0 && (
                         <Paper elevation={2}>
                             <List>
-                                {results.map((item: any, index: number) => (
-                                    <React.Fragment key={item.id}>
+                                {results.map((item, index) => (
+                                    <Fragment key={item.id}>
                                         <ListItem alignItems="flex-start" sx={{ p: 3 }}>
                                             <ListItemText
                                                 primary={
@@ -155,7 +160,7 @@ export const SearchPage: React.FC = () => {
                                             />
                                         </ListItem>
                                         {index < results.length - 1 && <Divider />}
-                                    </React.Fragment>
+                                    </Fragment>
                                 ))}
                             </List>
                         </Paper>

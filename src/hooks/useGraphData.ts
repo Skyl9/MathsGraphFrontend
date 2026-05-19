@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { nodeApi } from "../services/api";
+import { nodeApi, GraphData } from "../services/api";
 
 export const useGraphData = () => {
     const {
@@ -7,7 +7,7 @@ export const useGraphData = () => {
         isLoading: loading,
         error,
         refetch
-    } = useQuery({
+    } = useQuery<GraphData>({
         queryKey: ['graphData'],
         queryFn: async () => {
             console.log("Fetch réel du graphe via l'API !");

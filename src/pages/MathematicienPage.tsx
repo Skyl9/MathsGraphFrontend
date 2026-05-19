@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
 import {useEntityEdit} from "../hooks/useEntityEdit.ts";
@@ -14,7 +14,7 @@ import FavoriteButton from "../components/FavoriteButton";
 import { Mathematicien } from "../types/ApiTypes/mathematicien";
 
 
-const MathematicienPage : React.FC = () => {
+const MathematicienPage = () => {
     const {id} = useParams<{ id: string }>();
     const {
         data,
@@ -33,7 +33,7 @@ const MathematicienPage : React.FC = () => {
         refetchData
 } = useEntityEdit<Mathematicien>("mathematicien",id || "");
 
-    const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
+    const [isUserConnected, setisUserConnected] = useState<boolean>(false);
     useEffect(
         () => {
             if (Token.getToken()){
@@ -58,7 +58,7 @@ const MathematicienPage : React.FC = () => {
         if (data) {
             setData(data);
         }
-    }, [data]);
+    }, [data, setData]);
 
 
     const renderCellCotnent =(field: keyof Mathematicien) => {
@@ -91,6 +91,7 @@ const MathematicienPage : React.FC = () => {
             case "id":
                 return <HtmlField title={"Id"} content={value as string}></HtmlField>
             default:
+                return null;
         }
     }
     if (!loading && (error || !data || !data.id)) {
@@ -125,8 +126,9 @@ const MathematicienPage : React.FC = () => {
 
 
             </div>
-            {isModalOpen && currentEditField &&
-                <EditModal isOpen={isModalOpen}
+            {isModalOpen && currentEditField && data &&
+                <EditModal<Mathematicien>
+                           isOpen={isModalOpen}
                            onClose={cancelChanges}
                            onSave={saveChanges}
                            field={currentEditField}
@@ -137,6 +139,7 @@ const MathematicienPage : React.FC = () => {
                            setData={setData}
                            createField={createField}
                            refetchData = {refetchData}
+                           isSaving={false}
                 ></EditModal>}
 
             <div className="node-buttons">

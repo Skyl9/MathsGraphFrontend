@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Container, Typography, Alert } from '@mui/material';
 import { nodeApi } from '../services/api';
 
-const UserRedirect: React.FC = () => {
+const UserRedirect = () => {
   const { username } = useParams<{ username: string }>();
   const navigate = useNavigate();
   const [error, setError] = useState<string>('');

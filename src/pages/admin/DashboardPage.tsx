@@ -1,21 +1,33 @@
-import React from 'react';
 import {
     Grid, Card, CardContent, Typography, CircularProgress,
     Box, Paper, Table, TableBody, TableCell, TableHead, TableRow, Chip, Alert
 } from '@mui/material';
 import { nodeApi } from '../../services/api';
 import { useQuery } from "@tanstack/react-query";
+import { AdminStats } from '../../types/ApiTypes/admin';
 
-const DashboardPage: React.FC = () => {
+interface ApiRouteMetric {
+    method: string;
+    endpoint: string;
+    total_hits: number;
+    avg_duration: number;
+}
+
+interface ApiAnalytics {
+    daily_hits: number;
+    top_routes: ApiRouteMetric[];
+}
+
+const DashboardPage = () => {
     // 1. Récupération des analytics en temps réel (rafraîchi toutes les 10s)
-    const { data: analytics, isLoading: loadingAnalytics } = useQuery({
+    const { data: analytics, isLoading: loadingAnalytics } = useQuery<ApiAnalytics>({
         queryKey: ['apiAnalytics'],
         queryFn: () => nodeApi.getApiAnalytics(),
         refetchInterval: 10000
     });
 
     // 2. Récupération des stats générales
-    const { data: stats, isLoading: loadingStats, error } = useQuery({
+    const { data: stats, isLoading: loadingStats, error } = useQuery<AdminStats>({
         queryKey: ['adminStats'],
         queryFn: () => nodeApi.getAdminStats()
     });
@@ -29,7 +41,7 @@ const DashboardPage: React.FC = () => {
     }
 
     if (error) {
-        return <Alert severity="error">{(error as any).message}</Alert>;
+        return <Alert severity="error">{error instanceof Error ? error.message : 'Une erreur est survenue'}</Alert>;
     }
 
     if (!stats) return null;
@@ -54,14 +66,14 @@ const DashboardPage: React.FC = () => {
             ======================================= */}
             <Grid container spacing={2} sx={{ mb: 4 }}>
                 {cards.map((c, index) => (
-                    // Ajout du <Grid item> indispensable pour la mise en page MUI
-                    <Grid item xs={12} sm={6} md={4} lg={2.4} key={index}>
+                    // Utilisation de Grid sans la prop 'item' pour compatibilité MUI v5/v6/v7
+                    <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={index}>
                         <Card elevation={2}>
                             <CardContent>
                                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                                     {c.label}
                                 </Typography>
-                                <Typography variant="h4" color={c.label.includes('API') ? 'primary' : 'text.primary'}>
+                                <Typography variant="h4" color={String(c.label).includes('API') ? 'primary' : 'text.primary'}>
                                     {c.value}
                                 </Typography>
                             </CardContent>
@@ -89,7 +101,7 @@ const DashboardPage: React.FC = () => {
                     </TableHead>
                     <TableBody>
                         {analytics?.top_routes && analytics.top_routes.length > 0 ? (
-                            analytics.top_routes.map((route: any, index: number) => (
+                            analytics.top_routes.map((route, index) => (
                                 <TableRow key={index} hover>
                                     <TableCell>
                                         <Chip

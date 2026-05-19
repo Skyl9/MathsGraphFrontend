@@ -25,8 +25,9 @@ export const createEditableFields = (options: Record<keyof AllNodeData, string[]
     verification: {label: "Vérification", type: "checkbox"},
     noms_etrangers: {label: "Noms étrangers", type: "nom_etranger"},
     tags:{label:"Tags",type:"tag"},
+    date_modification:{label:"Date de modification",type:"none"},
 });
-export const createMathematicienEditableFields=(options:Record<keyof Mathematicien, string[]>):Record<keyof Mathematicien, EditableField> => ({
+export const createMathematicienEditableFields=(_options:Record<keyof Mathematicien, string[]>):Record<keyof Mathematicien, EditableField> => ({
     id: {label: "ID", type: "none"},
     nom: {label: "Nom", type: "text"},
     date_naissance: {label: "Date de naissance", type: "text"},
@@ -41,7 +42,7 @@ export const createMathematicienEditableFields=(options:Record<keyof Mathematici
     updated_at:{label:"Mis à jour le",type:"none"},
 });
 
-export const createTypeEditableFields=(options:Record<keyof Type,string[]>):Record<keyof Type, EditableField> => ({
+export const createTypeEditableFields=(_options:Record<keyof Type,string[]>):Record<keyof Type, EditableField> => ({
     id: {label: "ID", type: "none"},
     type: {label: "Nom", type: "text"},
 })

@@ -1,6 +1,6 @@
-import React, { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { MathJaxContext } from "better-react-mathjax";
-import { DataGrid, GridColDef, GridRowHeightParams, GridRowId, GridRowModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridRowHeightParams, GridRowModel, GridRenderCellParams } from "@mui/x-data-grid";
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import "../../styles/AdminPanel.css";
 import {AllNodeData, NomEtranger} from "../../types/types";
@@ -9,7 +9,6 @@ import {Source} from "../../types/ApiTypes/source";
 export default function AdminPanel() {
     const queryClient = useQueryClient();
 
-    const [editData, setEditData] = useState<{ [key: number]: Partial<AllNodeData> }>({});
     const [filterType, setFilterType] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
 
@@ -23,10 +22,10 @@ export default function AdminPanel() {
         }
     });
 
-    const error = (queryError as Error)?.message;
+    const error = queryError instanceof Error ? queryError.message : (queryError ? String(queryError) : null);
 
     const updateNodeMutation = useMutation({
-        mutationFn: async ({ id, rowToUpdate }: { id: number, rowToUpdate: any }) => {
+        mutationFn: async ({ id, rowToUpdate }: { id: number, rowToUpdate: Partial<AllNodeData> }) => {
             const response = await fetch(import.meta.env.VITE_BACKEND_LINK + `/updateNodes/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -42,18 +41,9 @@ export default function AdminPanel() {
 
     const saveChanges = (id: number) => {
         if (!data) return;
-        const rowToUpdate = data.find((row: any) => row.id === id);
+        const rowToUpdate = data.find((row) => row.id === id);
         if (!rowToUpdate) return;
         updateNodeMutation.mutate({ id, rowToUpdate });
-    };
-
-    const handleEdit = (id: GridRowId, field: keyof AllNodeData, value: string) => {
-        const numericId = typeof id === 'string' ? parseInt(id, 10) : (id as number);
-
-        setEditData(prev => ({
-            ...prev,
-            [numericId]: { ...prev[numericId], [field]: value }
-        }));
     };
 
     const getRowHeight = useCallback((params: GridRowHeightParams) => {
@@ -88,18 +78,18 @@ export default function AdminPanel() {
         return result;
     }, [data, filterType, searchTerm]);
 
-    const renderCenteredCell = (params: any) => (
+    const renderCenteredCell = (params: GridRenderCellParams) => (
         <div className="cell-wrapper">
-            {params.value}
+            {params.value as string}
         </div>
     );
 
-    const columns: GridColDef[] = useMemo(() => [
+    const columns: GridColDef<AllNodeData>[] = useMemo(() => [
         {
             field: 'id',
             headerName: 'ID',
             width: 100,
-            renderCell: (params: { row: AllNodeData }) => {
+            renderCell: (params: GridRenderCellParams<AllNodeData>) => {
                 return (
                     <a href={`/concept/${params.row.id}`} target="_blank" rel="noopener noreferrer" className="cell-wrapper">
                         {params.row.id}
@@ -109,14 +99,18 @@ export default function AdminPanel() {
         },
         { field: 'nom', headerName: 'Nom', width: 200, editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
         { field: 'type', headerName: 'Type', width: 100, editable: true, renderCell: renderCenteredCell },
-        { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, autoHeight: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
-        { field: 'categorie', headerName: 'Catégorie', editable: true, renderCell: renderCenteredCell },
+        { field: 'enonce', headerName: 'Énoncé', width: 600, editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
+        { field: 'categorie', headerName: 'Catégorie', editable: true, renderCell: (params: GridRenderCellParams<AllNodeData>) => {
+            const val = params.value;
+            const categoryName = (typeof val === 'object' && val !== null && 'category' in val) ? (val as { category: string }).category : String(val || '');
+            return <div className="cell-wrapper">{categoryName}</div>;
+        } },
         {
             field: 'aliases',
             headerName: 'Alias',
             editable: true,
             cellClassName: 'enonce-cell',
-            renderCell: (params: { row: AllNodeData }) => {
+            renderCell: (params: GridRenderCellParams<AllNodeData>) => {
                 const aliases = params.row.aliases || [];
                 return (
                     <div className="cell-wrapper">
@@ -132,8 +126,8 @@ export default function AdminPanel() {
         { field: 'date_ajout', headerName: 'Date d\'ajout', editable: true, renderCell: renderCenteredCell },
         { field: 'demonstration', headerName: 'Démonstration', editable: true, cellClassName: 'enonce-cell', width: 400, renderCell: renderCenteredCell },
         { field: 'relations', headerName: 'Relations', editable: true, cellClassName: 'enonce-cell', renderCell: renderCenteredCell },
-        { field: "verification", headerName: "Vérification", editable: true , renderCell:(params:{row:AllNodeData}) => {
-                const verif:boolean = params.row.verification
+        { field: "verification", headerName: "Vérification", editable: true , renderCell:(params: GridRenderCellParams<AllNodeData>) => {
+                const verif = !!params.row.verification
             return (
                 <div key={params.row.id}>
                     {(verif ? '✅' : '❌')}
@@ -147,7 +141,7 @@ export default function AdminPanel() {
             editable: true,
             cellClassName: 'enonce-cell',
             width: 300,
-            renderCell: (params: { row: AllNodeData }) => {
+            renderCell: (params: GridRenderCellParams<AllNodeData>) => {
                 const sources = params.row.sources || [];
                 return (
                     <div className="cell-wrapper">
@@ -166,7 +160,7 @@ export default function AdminPanel() {
             editable: true,
             cellClassName: 'enonce-cell',
             width : 300,
-            renderCell: (params: { row: AllNodeData }) => {
+            renderCell: (params: GridRenderCellParams<AllNodeData>) => {
                 const noms = params.row.noms_etrangers || [];
                 return (
                     <div className={"cell-lang"}  >
@@ -187,7 +181,7 @@ export default function AdminPanel() {
             field: 'actions',
             headerName: 'Actions',
             width: 120,
-            renderCell: (params: { row: AllNodeData }) => (
+            renderCell: (params: GridRenderCellParams<AllNodeData>) => (
                 <button onClick={() => saveChanges(params.row.id)}>Sauvegarder</button>
             ),
         },
@@ -252,3 +246,4 @@ export default function AdminPanel() {
         </div>
     );
 }
+

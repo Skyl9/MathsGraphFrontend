@@ -1,45 +1,35 @@
-import {Mathematicien} from "./ApiTypes/mathematicien";
-import {Category} from "./ApiTypes/category";
-import {Type} from "./ApiTypes/type";
 import {Relations} from "./ApiTypes/Relations";
 import {Source} from "./ApiTypes/source";
 
 
 
-// AllNodeData.ts
+// ModalProps.ts
 
-export interface ModalProps {
+export interface ModalProps<T> {
     isOpen: boolean;
     onClose: () => void;
     onSave: () => void;
-    field: keyof AllNodeData | keyof Mathematicien | keyof Category | keyof Type;
+    field: keyof T;
     value: any;
     onChange: (value: any) => void;
     fieldConfig: EditableField;
-    data?: AllNodeData |Mathematicien | Type | Category | null;
-    setData: (data: AllNodeData |Mathematicien|Type|Category) => void;
+    data: T | null;
+    setData: (data: T) => void;
     createField: any;
-    refetchData:any;
-    isSaving:boolean;
+    refetchData: any;
+    isSaving: boolean;
 }
-
-
-
 
 export interface NomEtranger {
     Nom_étranger: string;
     langue: string;
 }
 
-
-
 export type EditableField = {
     label: string;
     type: 'text' | 'select' | "checkbox" | "none" | "relation" | "alias" | "sources" | "nom_etranger" | "latex"|"tag"|"category";
     options?: string[];
 };
-
-
 
 export interface AllNodeData {
     id: number;
@@ -55,13 +45,14 @@ export interface AllNodeData {
         id: number;
         mathematicien: string;
     };
-    date_ajout: string;
+    date_ajout?: string;
+    date_modification?: string;
     demonstration: string;
     relations: Relations[];
     sources: Source[];
     verification: boolean;
     noms_etrangers?: NomEtranger[];
-    tags?:Tag[];
+    tags?: Tag[];
 }
 export interface Tag{
     id:number;

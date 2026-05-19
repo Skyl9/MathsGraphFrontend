@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {AllNodeData, ModalProps, NomEtranger,} from "../types/types";
 import {RelationEdit} from './NodeFields/RelationEdit';
 import SourceEdit from './NodeFields/SourceEdit';
@@ -19,7 +19,7 @@ import {Source} from "../types/ApiTypes/source";
 import {validateField} from "../validations/schemas.ts";
 
 
-export const EditModal: React.FC<ModalProps> = ({
+export const EditModal = <T extends object>({
                                                     onClose,
                                                     onSave,
                                                     field,
@@ -30,7 +30,7 @@ export const EditModal: React.FC<ModalProps> = ({
                                                     setData,
                                                     createField,
                                                     refetchData, isSaving
-                                                }) => {
+                                                }: ModalProps<T>) => {
     const [valError, setValError] = useState<string | null>(null);
     const isAllNodeData = (data: unknown): data is AllNodeData => {
         return !!data && typeof data === 'object' && 'relations' in data;
@@ -41,14 +41,14 @@ export const EditModal: React.FC<ModalProps> = ({
     };
 
     const isCategory = (d: unknown): d is Category =>
-        !!d && typeof d === 'object' && 'parent_id' in (d as any);
+        !!d && typeof d === 'object' && 'parent_id' in d;
 
     // Pour les relations
     const handleRelationChange = (index: number, updatedRelation: Relations) => {
         if (data && isAllNodeData(data)) {
             const updated = [...data.relations];
             updated[index] = updatedRelation;
-            setData({...data, relations: updated});
+            (setData as unknown as (data: AllNodeData) => void)({...data, relations: updated});
         }
     };
 
@@ -57,7 +57,7 @@ export const EditModal: React.FC<ModalProps> = ({
         if (data && isAllNodeData(data)) {
             const updated = [...data.sources];
             updated[index] = updatedSource;
-            setData({...data, sources: updated});
+            (setData as unknown as (data: AllNodeData) => void)({...data, sources: updated});
         }
     };
     const handleSaveClick = () => {
@@ -72,8 +72,7 @@ export const EditModal: React.FC<ModalProps> = ({
         if (entityType && typeof value === "string") {
             const valRes = validateField(entityType, field as string, value);
             if (!valRes.success) {
-                // 🔴 Bloque l'envoi et affiche l'erreur
-                setValError(valRes.error);
+                setValError(valRes.error as string |null);
                 return;
             }
         }
@@ -86,8 +85,8 @@ export const EditModal: React.FC<ModalProps> = ({
     const handleAliasChange = (index: number, value: string) => {
         if (data && isAllNodeData(data)) {
             const updated = [...data.aliases];
-            updated[index] = value
-            setData({...data, aliases: updated});
+            updated[index] = value;
+            (setData as unknown as (data: AllNodeData) => void)({...data, aliases: updated});
         }
     };
 
@@ -97,7 +96,7 @@ export const EditModal: React.FC<ModalProps> = ({
             if (data.noms_etrangers) {
                 const updated = [...data.noms_etrangers];
                 updated[index] = updatedNom;
-                setData({...data, noms_etrangers: updated});
+                (setData as unknown as (data: AllNodeData) => void)({...data, noms_etrangers: updated});
             }
         }
     };

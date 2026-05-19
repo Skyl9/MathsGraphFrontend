@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useCallback, useRef, useState} from "react";
+import {useEffect, useMemo, useCallback, useRef, useState} from "react";
 import {useThree} from "@react-three/fiber";
 import {OrbitControls} from "@react-three/drei";
 import {Vector3} from "three";
@@ -141,12 +141,12 @@ export default function Scene({ graphData }: SceneProps) {
         const toggleDebug = (event: KeyboardEvent) => {
             if (event.key.toLowerCase() === "m") {
                 console.log("Debug mod activé");
-                setDebugMode((prev) => (typeof prev === 'function' ? prev(!prev) : !prev));
+                setDebugMode(!debugMode);
             }
         };
         window.addEventListener("keydown", toggleDebug);
         return () => window.removeEventListener("keydown", toggleDebug);
-    }, [setDebugMode]);
+    }, [debugMode, setDebugMode]);
 
     useEffect(() => {
         if (targetPosition) {
@@ -259,7 +259,7 @@ export default function Scene({ graphData }: SceneProps) {
 
             {/* 🌟 NOUVEAU : Le post-processing pour le mode Néon */}
             {graphTheme === "neon" && (
-                <EffectComposer disableNormalPass>
+                <EffectComposer>
                     <Bloom
                         luminanceThreshold={0.2}
                         mipmapBlur

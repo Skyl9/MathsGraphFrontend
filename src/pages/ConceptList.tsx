@@ -1,11 +1,10 @@
-import React from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
 import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
 
-const ConceptList: React.FC = () => {
+const ConceptList = () => {
     const { data: concept = [], isLoading: loading, error } = useQuery({
         queryKey: ['concept'],
         queryFn: () => nodeApi.getAllConceptNames()
@@ -32,7 +31,7 @@ const ConceptList: React.FC = () => {
                     )}
 
                     {/* Affichage des erreurs */}
-                    {error && <Alert severity="error">{(error as any).message}</Alert>}
+                    {error && <Alert severity="error">{error instanceof Error ? error.message : "Une erreur est survenue"}</Alert>}
 
                     {/* Liste des catégories */}
                     {!loading && !error && (

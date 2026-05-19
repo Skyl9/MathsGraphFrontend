@@ -23,7 +23,7 @@ const ENTITY_CONFIG = {
     }
 };
 
-export const useEntityData = <T,>(entityType: EntityType, id: string) => {
+export const useEntityData = <T extends object>(entityType: EntityType, id: string) => {
     const config = ENTITY_CONFIG[entityType];
     const queryClient = useQueryClient();
 
@@ -32,7 +32,7 @@ export const useEntityData = <T,>(entityType: EntityType, id: string) => {
         isLoading: loading,
         error: queryError,
         refetch: refetchData
-    } = useQuery({
+    } = useQuery<T, Error>({
         queryKey: [entityType, id],
         queryFn: async () => {
             console.log(`Fetching ${entityType} Data via API...`);
@@ -42,45 +42,46 @@ export const useEntityData = <T,>(entityType: EntityType, id: string) => {
         enabled: !!id,
     });
 
-    const [editableFieldsOptions] = useState<any>(config.defaultFields);
+    const [editableFieldsOptions] = useState(config.defaultFields);
 
     const [mutationError, setMutationError] = useState<string | null>(null);
 
-    const finalError = queryError ? (queryError as Error).message : mutationError;
+    const finalError = queryError ? queryError.message : mutationError;
 
     const setData = (newData: T) => {
         queryClient.setQueryData([entityType, id], newData);
     };
 
-    const updateField = async (field: keyof T, value: any) => {
+    const updateField = async (field: keyof T, value: unknown) => {
         try {
             setMutationError(null);
             await config.update(id, field as string, value);
 
             await queryClient.invalidateQueries({ queryKey: [entityType, id] });
             return true;
-        } catch (err: any) {
-            setMutationError(err.message || 'An unknown error occurred.');
+        } catch (err) {
+            setMutationError(err instanceof Error ? err.message : 'An unknown error occurred.');
             return false;
         }
     };
 
-    const createField = async (field: string, value: any) => {
+    const createField = async (field: string, value: unknown) => {
         try {
             setMutationError(null);
+            const val = value as any; // Temporary cast for polymorphic payload
             switch (field.toLowerCase()) {
-                case "categorie": await nodeApi.createCategory(value); break;
-                case "aliases": await nodeApi.createAlias(value.id, value.value); break;
-                case "mathematicien": await nodeApi.createMathematicien(value); break;
-                case "relations": await nodeApi.createRelation(value); break;
+                case "categorie": await nodeApi.createCategory(value as string); break;
+                case "aliases": await nodeApi.createAlias(val.id, val.value); break;
+                case "mathematicien": await nodeApi.createMathematicien(value as string); break;
+                case "relations": await nodeApi.createRelation(value as Record<string, unknown>); break;
                 case "sources": await nodeApi.createSources(value); break;
-                case "type": await nodeApi.createType(value); break;
+                case "type": await nodeApi.createType(value as string); break;
                 default: console.log("Champ de création non géré:", field);
             }
 
             await queryClient.invalidateQueries({ queryKey: [entityType, id] });
-        } catch (err: any) {
-            setMutationError(err.message || 'An unknown error occurred.');
+        } catch (err) {
+            setMutationError(err instanceof Error ? err.message : 'An unknown error occurred.');
             return false;
         }
     };

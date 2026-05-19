@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
 import {Type} from "../types/ApiTypes/type";
 
 
-export const TypeRedirect: React.FC = () => {
+export const TypeRedirect = () => {
     const { typeName } = useParams<{ typeName: string }>()
     const navigate = useNavigate()
     const [error, setError] = useState<string | null>(null)

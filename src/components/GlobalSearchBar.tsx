@@ -50,7 +50,7 @@ export const GlobalSearchBar: React.FC = () => {
     }, [inputValue]);
 
     // Gère la sélection d'un item dans le menu déroulant
-    const handleSelect = (event: any, newValue: SearchResult | string | null) => {
+    const handleSelect = (_event: any, newValue: SearchResult | string | null) => {
         if (typeof newValue === 'object' && newValue !== null) {
             // L'utilisateur a cliqué sur un aperçu !
             if (newValue.entity_type === 'concept') navigate(`/concept/${newValue.id}`);
@@ -81,7 +81,7 @@ export const GlobalSearchBar: React.FC = () => {
             options={options}
             loading={loading}
             freeSolo // 🌟 Permet de taper ce qu'on veut et de faire "Entrée" sans choisir dans la liste
-            onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+            onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
             onChange={handleSelect}
             renderOption={(props, option) => (
                 <li {...props} key={`${option.entity_type}-${option.id}`}>

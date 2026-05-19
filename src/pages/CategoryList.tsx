@@ -1,4 +1,4 @@
-import React from "react";
+import { Fragment } from "react";
 import {
   Container,
   Typography,
@@ -47,7 +47,7 @@ function buildCategoryTree(categories: Category[]): CategoryTree[] {
 
 const renderTree = (cats: CategoryTree[], level = 0) =>
   cats.map(cat => (
-    <React.Fragment key={cat.id}>
+    <Fragment key={cat.id}>
       <ListItem sx={{ pl: level * 3 }}>
         <ListItemText>
           <Link
@@ -64,10 +64,10 @@ const renderTree = (cats: CategoryTree[], level = 0) =>
           {renderTree(cat.children, level + 1)}
         </List>
       )}
-    </React.Fragment>
+    </Fragment>
   ));
 
-const CategoryList: React.FC = () => {
+const CategoryList = () => {
   const { data: categories = [], isLoading: loading, error } = useQuery({
     queryKey: ['categories'],
     queryFn: () => nodeApi.getAllCategories()
@@ -88,7 +88,7 @@ const CategoryList: React.FC = () => {
               <CircularProgress />
             </Box>
           )}
-          {error && <Alert severity="error">{(error as any).message}</Alert>}
+          {error && <Alert severity="error">{error instanceof Error ? error.message : "Une erreur est survenue"}</Alert>}
           {!loading && !error && (
             <>
               {categories.length === 0 ? (

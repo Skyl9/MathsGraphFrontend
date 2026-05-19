@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Alert, Button } from '@mui/material';
 
 interface Props {
@@ -42,7 +42,7 @@ class ErrorBoundary extends Component<Props, State> {
                     <Alert severity="error" sx={{ mb: 2, textAlign: 'center' }}>
                         <h2>Oups, quelque chose s'est mal passé.</h2>
                         <p>Nous sommes désolés pour le désagrément.</p>
-                        {process.env.NODE_ENV === 'development' && this.state.error && (
+                        {import.meta.env.DEV && this.state.error && (
                             <details style={{ whiteSpace: 'pre-wrap', textAlign: 'left' }}>
                                 {this.state.error.message}
                                 <br />

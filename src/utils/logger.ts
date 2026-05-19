@@ -1,5 +1,5 @@
 // src/utils/logger.ts
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = import.meta.env.DEV;
 
 type LogFn = (...args: unknown[]) => void;
 

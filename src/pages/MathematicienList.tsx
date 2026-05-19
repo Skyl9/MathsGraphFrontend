@@ -1,4 +1,3 @@
-import React from "react";
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
 import { TopBar } from "../components/TopBar";
@@ -6,7 +5,7 @@ import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
 import {MathematicianTimeline} from "../components/MathematicianTimeline.tsx";
 
-const MathematicienList: React.FC = () => {
+const MathematicienList = () => {
     const { data: mathematicien = [], isLoading: loading, error } = useQuery({
         queryKey: ['mathematicien'],
         queryFn: () => nodeApi.getAllMathematicienName()
@@ -35,7 +34,7 @@ const MathematicienList: React.FC = () => {
                     )}
 
                     {/* Affichage des erreurs */}
-                    {error && <Alert severity="error">{(error as any).message}</Alert>}
+                    {error && <Alert severity="error">{error instanceof Error ? error.message : "Une erreur est survenue"}</Alert>}
 
                     {/* Liste des catégories */}
                     {!loading && !error && (

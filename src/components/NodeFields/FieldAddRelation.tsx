@@ -78,7 +78,7 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({nodeName, createFiel
                         size="small"
                         options={theorems}
                         value={theo2}
-                        onChange={(e, newValue) => setTheo2(newValue ?? null)}
+                        onChange={(_e, newValue) => setTheo2(newValue ?? null)}
                         renderInput={(params) => <TextField {...params} label="Théorème 2" />}
                         sx={{ minWidth: 200 }}
                     />

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {TopBar} from "../components/TopBar";
 import {useParams, useNavigate, Navigate} from "react-router-dom";
 import Token from "../services/token";
@@ -15,7 +15,7 @@ import {nodeApi} from "../services/api";
 import {Category} from "../types/ApiTypes/category";
 
 
-const CategoryPage: React.FC = () => {
+const CategoryPage = () => {
     const {id} = useParams<{ id: string }>();
     const {
         data,
@@ -34,11 +34,9 @@ const CategoryPage: React.FC = () => {
         refetchData
     } = useEntityEdit<Category>("category",id || "");
 
-    const [isUserConnected, setisUserConnected] = React.useState<boolean>(false);
-    const [parentCategory, setParentCategory] = React.useState<Category | null>(null);
+    const [isUserConnected, setisUserConnected] = useState<boolean>(false);
+    const [parentCategory, setParentCategory] = useState<Category | null>(null);
     const navigate = useNavigate();
-// redirection si l'id est invalide ou si la requête échoue
-
 
     useEffect(
         () => {
@@ -60,9 +58,9 @@ const CategoryPage: React.FC = () => {
         if (data) {
             setData(data);
         }
-    }, [data]);
+    }, [data, setData]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (data && data.parent_id) {
             nodeApi.getOneCategory(data.parent_id)
                 .then(setParentCategory)
@@ -84,7 +82,7 @@ const CategoryPage: React.FC = () => {
                     <HtmlField title={"Description"} content={data?.[field] as string}></HtmlField>
                 )
             case "id":
-                return <HtmlField title={"Id"} content={data?.[field] as string}></HtmlField>
+                return <HtmlField title={"Id"} content={data?.[field] as unknown as string}></HtmlField>
             case "parent_id":
                 return (
                     <HtmlField
@@ -93,6 +91,7 @@ const CategoryPage: React.FC = () => {
                     />
                 );
             default:
+                return null;
         }
     }
     if (!loading && (error || !data || !data.id)) {
@@ -145,19 +144,20 @@ const CategoryPage: React.FC = () => {
 
 
                 </div>
-                {isModalOpen && currentEditField &&
-                    <EditModal isOpen={isModalOpen}
-                               onClose={cancelChanges}
-                               onSave={saveChanges}
-                               field={currentEditField}
-                               value={newContent}
-                               onChange={setNewContent}
-                               fieldConfig={editableFields[currentEditField]}
-                               data={data}
-                               setData={setData}
-                               createField={createField}
-                               refetchData={refetchData}
-                    ></EditModal>}
+                {isModalOpen && currentEditField && data &&
+                    <EditModal<Category>
+                        isOpen={isModalOpen}
+                        onClose={cancelChanges}
+                        onSave={saveChanges}
+                        field={currentEditField}
+                        value={newContent}
+                        onChange={setNewContent}
+                        fieldConfig={editableFields[currentEditField]}
+                        data={data}
+                        setData={setData}
+                        createField={createField}
+                        refetchData={refetchData}
+                        isSaving={false}                    ></EditModal>}
 
                 <div className="node-buttons">
                     <button className="back-button" onClick={() => window.history.back()}>

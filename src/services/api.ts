@@ -15,6 +15,55 @@ import {Comment} from "../types/ApiTypes/comments";
 import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
 import {RecentChange} from "../components/RecentChanges.tsx";
 import {RecentComment} from "../components/recentComment.tsx";
+import {TimelineItem} from "react-chrono/dist/react-chrono";
+
+declare global {
+    interface Window {
+        __RUNTIME_CONFIG__?: {
+            VITE_BACKEND_LINK?: string;
+        };
+    }
+}
+
+// --- Missing Types Definitions ---
+export interface GraphData {
+    nodes: any[];
+    edges: any[];
+}
+
+export interface MathTimelineData {
+    nom: string;
+    date_naissance: string;
+    date_deces?: string;
+    epoque?: string;
+    biographie?: string;
+}
+
+export interface SearchResult {
+    id: number | string;
+    nom: string;
+    entity_type: string;
+    extrait?: string;
+}
+
+export interface SearchFilters {
+    concept: boolean;
+    mathematicien: boolean;
+    category: boolean;
+    verifiedOnly: boolean;
+}
+
+export interface ApiRouteMetric {
+    method: string;
+    endpoint: string;
+    total_hits: number;
+    avg_duration: number;
+}
+
+export interface ApiAnalytics {
+    daily_hits: number;
+    top_routes: ApiRouteMetric[];
+}
 
 const runtimeEnv = window.__RUNTIME_CONFIG__?.VITE_BACKEND_LINK;
 const BASE_URL = runtimeEnv || import.meta.env.VITE_BACKEND_LINK || 'http://localhost:8000';
@@ -122,20 +171,20 @@ export const nodeApi = {
     getUserIdByUsername: (username: string) => request<{ id: number }>(`/user/id/${username}`, undefined, false),
     getTagsNameFromConceptId: (id: string) => request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
     getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
-    getGraph: () => request<any>(`/graph`, undefined, false),
+    getGraph: () => request<GraphData>(`/graph`, undefined, false),
     getRecentHistory: (limit: number = 20) => request<RecentChange[]>(`/recent-history?limit=${limit}`, undefined, false),
     getRecentComments: (limit: number = 20) => request<RecentComment[]>(`/comments/recent?limit=${limit}`, undefined, false), // CORRIGÉ
     getUserContributions: (userId: string, limit: number = 20) =>
         request<RecentChange[]>(`/user/history/${userId}?limit=${limit}`, undefined, false),
-    getMathematiciensTimeline: () => request<any[]>('/mathematicien/timeline/all'),
-    quickSearch: (inputValue: string) => request<any[]>(`/search/quick?q=${inputValue}`),
-    advanceSearch: (queryTerm: string, filter: any) => request<any[]>("/search/advanced", {
+    getMathematiciensTimeline: () => request< TimelineItem[]>('/mathematicien/timeline/all'),
+    quickSearch: (inputValue: string) => request<SearchResult[]>(`/search/quick?q=${inputValue}`),
+    advanceSearch: (queryTerm: string, filter: SearchFilters) => request<SearchResult[]>("/search/advanced", {
         method: 'POST',
         body: JSON.stringify({ q: queryTerm, filters: filter })
     }, false),
-    getApiAnalytics: () => request<any>(`/admin/analytics`),
+    getApiAnalytics: () => request<ApiAnalytics>(`/admin/analytics`),
     // POST/PATCH/DELETE requests
-    updateConcept: (id: string, field: string, value: any, username: string) =>
+    updateConcept: (id: string, field: string, value: unknown, username: string) =>
         request<null>(`/concept/${id}`, { // 🌟 REST: /concept/{id}
             method: 'PATCH',
             body: JSON.stringify({field, value, username}),
@@ -171,7 +220,7 @@ export const nodeApi = {
                 username: data.username
             }),
         }),
-    createRelation: (dico: {}) =>
+    createRelation: (dico: Record<string, unknown>) =>
         request<null>(`/relation`, { // 🌟 REST: /relation
             method: 'POST',
             body: JSON.stringify({value: dico}),
@@ -196,26 +245,27 @@ export const nodeApi = {
             method: 'POST',
             body: JSON.stringify({id, value: nom})
         }),
-    createSources: (sources: any) =>
+    createSources: (sources: unknown) =>
         request<null>(`/source`, { // 🌟 REST: /source
             method: 'POST',
             body: JSON.stringify({value: sources})
         }),
-    updateOneMathematicien: (id: string, field: string, value: any) =>
+    updateOneMathematicien: (id: string, field: string, value: unknown) =>
         request<null>(`/mathematicien/${id}`, { // 🌟 REST: /mathematicien/{id}
             method: 'PATCH',
             body: JSON.stringify({field, value})
         }),
-    updateOneCategory: (id: string, field: string, value: any) =>
+    updateOneCategory: (id: string, field: string, value: unknown) =>
         request<null>(`/category/${id}`, { // 🌟 REST: /category/{id}
             method: 'PATCH',
             body: JSON.stringify({field, value})
         }),
-    updateOneType: (id: string, field: string, value: any) =>
+    updateOneType: (id: string, field: string, value: unknown) =>
         request<null>(`/type/${id}`, { // 🌟 REST: /type/{id}
             method: 'PATCH',
             body: JSON.stringify({field, value})
         }),
+
     requestPasswordReset: (email: string) =>
         request<null>(`/password-reset/request`, {method: 'POST', body: JSON.stringify({email})}, false),
     resetPassword: (token: string, password: string) =>

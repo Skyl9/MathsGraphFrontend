@@ -1,7 +1,7 @@
 export interface Graph {
     nodes: NodeData[];
     edges: any[];
-};
+}
 export interface EdgeData {
     start: number;
     end: number;

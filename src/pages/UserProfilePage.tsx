@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Avatar,
@@ -9,7 +9,6 @@ import {
   Chip,
   TextField,
   MenuItem,
-  Alert,
 } from '@mui/material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
@@ -18,14 +17,14 @@ import { TopBar } from "../components/TopBar";
 import { EditModalAvatar } from '../components/EditModalAvatar';
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
-import { User } from "../types/ApiTypes/user";
 import UserContributions from "../components/UserContributions.tsx";
+import { User } from '../types/ApiTypes/user';
 
-const UserProfilePage: React.FC = () => {
+const UserProfilePage = () => {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading } = useQuery<User>({
     queryKey: ['userProfile', id],
     queryFn: () => nodeApi.getUserInfo(id || ""),
     enabled: !!id
@@ -85,7 +84,7 @@ const UserProfilePage: React.FC = () => {
       <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
         <Paper elevation={3} sx={{ p: 4 }}>
           <Grid container spacing={4}>
-            <Grid item xs={12} md={6} sx={{ textAlign: 'center' }}>
+            <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: 'center' }}>
               <Avatar
                 src={user.avatar_url || '/default-avatar.png'}
                 sx={{ width: 200, height: 200, margin: '0 auto', mb: 2 }}
@@ -117,15 +116,15 @@ const UserProfilePage: React.FC = () => {
                 sx={{ ml: 1 }}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="h6" gutterBottom>
                     Informations personnelles
                   </Typography>
                 </Grid>
                 {/* Email */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" color="textSecondary">Email</Typography>
                   {editField === "email" ? (
                     <>
@@ -147,7 +146,7 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </Grid>
                 {/* Langue préférée */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" color="textSecondary">Langue préférée</Typography>
                   {editField === "preferred_language" ? (
                     <>
@@ -174,7 +173,7 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </Grid>
                 {/* Bio */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" color="textSecondary">Biographie</Typography>
                   {editField === "bio" ? (
                     <>
@@ -197,14 +196,14 @@ const UserProfilePage: React.FC = () => {
                   )}
                 </Grid>
                 {/* Date d'inscription */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" color="textSecondary">Date d'inscription</Typography>
                   <Typography>
                     {new Date(user.created_at).toLocaleDateString('fr-FR')}
                   </Typography>
                 </Grid>
                 {/* Dernière connexion */}
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Typography variant="subtitle2" color="textSecondary">Dernière connexion</Typography>
                   <Typography>
                     {user.updated_at ? new Date(user.updated_at).toLocaleDateString('fr-FR') : 'Jamais'}
@@ -218,7 +217,7 @@ const UserProfilePage: React.FC = () => {
         <Box sx={{ mt: 4, mb: 4 }}>
           <Grid container spacing={4}>
             {/* Colonne de gauche : Favoris */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h6" gutterBottom>Favoris</Typography>
               <Paper elevation={2} sx={{ p: 2, minHeight: '200px' }}>
                 <FavoriteList userId={id}></FavoriteList>
@@ -226,7 +225,7 @@ const UserProfilePage: React.FC = () => {
             </Grid>
 
             {/* Colonne de droite : Historique des contributions */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               {id && <UserContributions userId={id} />}
             </Grid>
           </Grid>
@@ -242,3 +241,4 @@ const UserProfilePage: React.FC = () => {
 };
 
 export default UserProfilePage;
+

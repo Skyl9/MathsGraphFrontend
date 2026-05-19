@@ -8,7 +8,7 @@ interface RelationsFieldProps {
   editable?: boolean;
 }
 
-const RelationsField: React.FC<RelationsFieldProps> = ({ relations, onEdit, editable = true }) => {
+const RelationsField: React.FC<RelationsFieldProps> = ({ relations}) => {
   const renderRelationSymbol = (type: string) => {
     return RELATION_SYMBOLS[type as keyof typeof RELATION_SYMBOLS] || type;
   };

@@ -1,9 +1,8 @@
-import React, {useEffect} from "react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {HistoryModal} from "../components/HistoryModal";
 
 import {Navigate, useParams} from "react-router-dom";
-import {AllNodeData, NomEtranger } from "../types/types";
+import {AllNodeData, NomEtranger, Tag} from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import {useNodeEdit} from "../hooks/node/useNodeEdit";
@@ -32,7 +31,7 @@ import {Source} from "../types/ApiTypes/source";
 import {Relations} from "../types/ApiTypes/Relations";
 
 
-const NodePage: React.FC = () => {
+const NodePage = () => {
     const {id} = useParams<{ id: string }>();
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -90,7 +89,7 @@ const NodePage: React.FC = () => {
         }
     };
 
-    const [isUserConnected, setIsUserConnected] = React.useState<boolean>(false);
+    const [isUserConnected, setIsUserConnected] = useState<boolean>(false);
 
     useEffect(() => {
         if (Token.getToken()) {
@@ -211,7 +210,7 @@ const NodePage: React.FC = () => {
                 );
             case "tags":
                 return (
-                    <TagsField tags={value}></TagsField>
+                    <TagsField tags={value as Tag[]|null}></TagsField>
                 )
             default:
                 return (
@@ -302,7 +301,7 @@ const NodePage: React.FC = () => {
                 </div>
                 <div className="node-info">
                     {propertyOrder
-                        .filter(field => Object.hasOwn(editableFields, field)) // S'assurer que le champ existe dans editableFields
+                        .filter(field => Object.prototype.hasOwnProperty.call(editableFields, field))
                         .map(field => (
                             <div key={field} className="lineWrapper">
                                 <div className={"field-wrapper"}>
@@ -332,8 +331,9 @@ const NodePage: React.FC = () => {
 
                 </div>
 
-                {isModalOpen && currentEditField &&
-                    <EditModal isOpen={isModalOpen}
+                {isModalOpen && currentEditField && data &&
+                    <EditModal<AllNodeData> 
+                               isOpen={isModalOpen}
                                onClose={cancelChanges}
                                onSave={saveChanges}
                                field={currentEditField}
@@ -344,6 +344,7 @@ const NodePage: React.FC = () => {
                                setData={setData}
                                createField={createField}
                                refetchData={refetchData}
+                               isSaving={false}
                     ></EditModal>}
 
                 <div className="node-buttons">

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useMemo} from "react";
+import {useState, useRef, useMemo} from "react";
 import {Billboard, Text} from "@react-three/drei";
 import { Mesh, MeshStandardMaterial } from "three";
 import { PointerEvent } from "react";
@@ -17,7 +17,7 @@ interface NodeProps {
     isNeighbor?: boolean;
 }
 
-export default function Node({ id, position, color, isSelected, nom, onClick, debug,isNeighbor = false }: NodeProps) {
+export default function Node({ position, color, isSelected, nom, onClick, debug,isNeighbor = false }: NodeProps) {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
     const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
