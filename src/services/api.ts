@@ -68,11 +68,22 @@ export interface ApiAnalytics {
 const runtimeEnv = window.__RUNTIME_CONFIG__?.VITE_BACKEND_LINK;
 const BASE_URL = runtimeEnv || import.meta.env.VITE_BACKEND_LINK || 'http://localhost:8000';
 // Define a unified error structure
-interface ApiError {
+export interface ApiError {
     status: number;
     code?: string;
     message: string;
 }
+
+export const isApiError = (error: unknown): error is ApiError => {
+    return (
+        typeof error === 'object' &&
+        error !== null &&
+        'status' in error &&
+        'message' in error &&
+        typeof (error as Record<string, unknown>).status === 'number' &&
+        typeof (error as Record<string, unknown>).message === 'string'
+    );
+};
 
 // Define the shape of a successful API response
 interface ApiResponse<T> {
