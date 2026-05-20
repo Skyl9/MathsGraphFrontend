@@ -1,5 +1,5 @@
 import {useCallback, useState} from 'react';
-import {Box3, Vector3} from "three";
+import {Vector3} from "three";
 import {
     Drawer,
     IconButton,
@@ -38,42 +38,9 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
     const filters = useFilterStore(s => s.filters);
     const setFilters = useFilterStore(s => s.setFilters);
 
-    const setInitialPosition = useGraphStore(s => s.setInitialPosition);
-    const setIsPosInitial = useGraphStore(s => s.setIsPosInitial);
-    const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
+       const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
     const setTargetPosition = useGraphStore(s => s.setTargetPosition);
-    const history = useGraphStore(s => s.history);
-    const currentIndex = useGraphStore(s => s.currentIndex);
-    const goBack = useGraphStore(s => s.goBack);
-    const goForward = useGraphStore(s => s.goForward);
 
-    function resetCamera() {
-        // Vérifier que graphData et ses noeuds existent
-        if (!graphData || !graphData.nodes || graphData.nodes.length === 0) {
-            console.warn("Pas de données de graphe pour réinitialiser la caméra.");
-            return;
-        }
-
-        const positions = graphData.nodes.map((node) => new Vector3(
-            node.position[currentView].x,
-            node.position[currentView].y,
-            node.position[currentView].z
-        ));
-
-        const bbox = new Box3().setFromPoints(positions); // Boîte englobante pour inclure tous les points visibles
-        const center = new Vector3();
-        bbox.getCenter(center); // Centre de tous les nœuds
-        const size = bbox.getSize(new Vector3()).length(); // Taille de la scène
-        const distance = size * 1.5; // Calcul d'une distance adéquate pour inclure tous les points mécaniquement
-
-        // Mettez à jour la position initiale pour recentrer la caméra
-        setInitialPosition(
-            new Vector3(center.x, center.y, center.z + distance)
-        );
-        setIsPosInitial(true); // Change l'état pour permettre le recentrage
-
-
-    }
     const exportGraph = () => {
         const dataStr = JSON.stringify(graphData, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
@@ -108,48 +75,45 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
         }
     }, [graphData]);
 
-    function handleResultsSearch (node:NodeData) {
-        if (node){
-            const {x,y,z} = node.position[currentView]
-            console.log(x,y,z)
-            setTargetPosition(new Vector3(x,y,z));
+    function handleResultsSearch(node: NodeData) {
+        if (node && node.position[currentView]) {
+            const { x, y, z } = node.position[currentView];
+            setTargetPosition(new Vector3(x, y, z));
             setSelectedNodeId(node.id);
+        } else {
+            console.warn("Position introuvable pour la vue actuelle.");
         }
-
     }
     const renderMode = useUIStore(s => s.renderMode);
     const setRenderMode = useUIStore(s => s.setRenderMode);
 
     return (
-        <div className={darkMode ? 'dark-mode' : ''}>
+        <>
             <div className="menu-container">
                 <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-                    <MenuIcon />
+                    <MenuIcon/>
                 </IconButton>
                 <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-                    <Box sx={{ width: 250, p: 2 }} role="presentation">
-                        <Typography variant="h5" sx={{ mb: 2 }}>
+                    <Box sx={{width: 250, p: 2}} role="presentation">
+                        <Typography variant="h5" sx={{mb: 2}}>
                             Menu d'Options
                         </Typography>
-
-                        <Button variant="outlined" onClick={resetCamera} sx={{ mb: 1 }}>
-                            Réinitialiser la caméra
-                        </Button>
-                        <Typography variant="h6" sx={{ mb: 1 }}>Mode d'affichage :</Typography>
-                        <FormControl fullWidth size="small" sx={{ mb: 3 }}>
+                        <Typography variant="h6" sx={{mb: 1}}>Mode d'affichage :</Typography>
+                        <FormControl fullWidth size="small" sx={{mb: 3}}>
                             <InputLabel>Vue actuelle</InputLabel>
                             <Select
                                 value={currentView}
                                 label="Vue actuelle"
                                 onChange={(e) => setCurrentView(e.target.value)}
                             >
-                                <MenuItem value="grille"><GridOn sx={{ mr: 1, fontSize: 20 }}/> Grille 3D</MenuItem>
-                                <MenuItem value="physique"><AutoGraph sx={{ mr: 1, fontSize: 20 }}/> Physique Organique</MenuItem>
+                                <MenuItem value="grille"><GridOn sx={{mr: 1, fontSize: 20}}/> Grille 3D</MenuItem>
+                                <MenuItem value="physique"><AutoGraph sx={{mr: 1, fontSize: 20}}/> Physique
+                                    Organique</MenuItem>
                                 {/* MenuItem value="arbre">Arbre Hiérarchique</MenuItem */}
                             </Select>
                         </FormControl>
-                        <Divider sx={{ my: 2 }} />
-                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                        <Divider sx={{my: 2}}/>
+                        <FormControl fullWidth size="small" sx={{mb: 2}}>
                             <InputLabel id="render-mode-label">Moteur de rendu</InputLabel>
                             <Select
                                 labelId="render-mode-label"
@@ -161,78 +125,60 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
                                 <MenuItem value="performance">Performances (Fluide +1000 nœuds)</MenuItem>
                             </Select>
                         </FormControl>
-                        <Divider sx={{ my: 2 }} />
+                        <Divider sx={{my: 2}}/>
 
-                        <Typography variant="h6" sx={{ mb: 1 }}>
-                            Navigation
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                            <Button variant="outlined" onClick={goBack} disabled={currentIndex <= 0}>
-                                ⬅ Précédent
-                            </Button>
-                            <Button variant="outlined" onClick={goForward} disabled={currentIndex >= history.length - 1}>
-                                ➡ Suivant
-                            </Button>
-                        </Box>
-
-                        <Divider sx={{ my: 2 }} />
-
-                        <Typography variant="h6" sx={{ mb: 1 }}>
+                        <Typography variant="h6" sx={{mb: 1}}>
                             Téléchargement du fichier JSON :
                         </Typography>
-                        <Button variant="outlined" onClick={exportGraph} sx={{ mb: 1 }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        <Button variant="outlined" onClick={exportGraph} sx={{mb: 1}}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none"
                                  stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
                             </svg>
                             Télécharger le graphe
                         </Button>
 
-                        <Divider sx={{ my: 2 }} />
+                        <Divider sx={{my: 2}}/>
 
-                        <Typography variant="h6" sx={{ mb: 1 }}>
+                        <Typography variant="h6" sx={{mb: 1}}>
                             Filtre :
                         </Typography>
-                        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Box sx={{display: 'flex', flexDirection: 'column'}}>
                             <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={filters.axiome}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))}
-                                    />
-                                }
-                                label="Axiomes"
-                            />
+                                control={<Checkbox
+                                    checked={filters.axiome}
+                                    onChange={() => setFilters((prev: any) => ({...prev, axiome: !prev.axiome}))}/>}
+                                label="Axiomes"/>
                             <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={filters.théorème}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))}
-                                    />
-                                }
-                                label="Théorèmes"
-                            />
+                                control={<Checkbox
+                                    checked={filters.théorème}
+                                    onChange={() => setFilters((prev: any) => ({...prev, théorème: !prev.théorème}))}/>}
+                                label="Théorèmes"/>
                             <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={filters.lemme}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))}
-                                    />
-                                }
-                                label="Lemmes"
-                            />
+                                control={<Checkbox
+                                    checked={filters.lemme}
+                                    onChange={() => setFilters((prev: any) => ({...prev, lemme: !prev.lemme}))}/>}
+                                label="Lemmes"/>
+                            <FormControlLabel
+                                control={<Checkbox
+                                    checked={filters.réciproque}
+                                    onChange={() => setFilters((prev: any) => ({
+                                        ...prev,
+                                        réciproque: !prev.réciproque
+                                    }))}/>}
+                                label="Réciproques"/>
                         </Box>
-                        <Divider sx={{ my: 2 }} />
+                        <Divider sx={{my: 2}}/>
                         <FormControlLabel
-                            control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
-                            label="Mode sombre"
-                        />
+                            control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)}/>}
+                            label="Mode sombre"/>
                     </Box>
-                    <Divider sx={{ my: 2 }} />
-                    <Typography variant="h6" sx={{ mb: 1 }}>
+                    <Divider sx={{my: 2}}/>
+                    <Typography variant="h6" sx={{mb: 1}}>
                         Style Visuel :
                     </Typography>
-                    <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                    <FormControl fullWidth size="small" sx={{mb: 2}}>
                         <InputLabel id="theme-select-label">Thème 3D</InputLabel>
                         <Select
                             labelId="theme-select-label"
@@ -245,20 +191,15 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
                             <MenuItem value="focus">Focus (Isolation)</MenuItem>
                         </Select>
                     </FormControl>
-
-                    <Divider sx={{ my: 2 }} />
-                    <FormControlLabel
-                        control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
-                        label="Mode sombre UI"
-                    />
                 </Drawer>
             </div>
             <div className="search-bar-container">
-                <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch} />
+                <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch}/>
                 {searchResults.length > 0 && isSearch && (
                     <div className="search-results">
                         {searchResults.map((result) => (
-                            <div key={result.id} className="search-result-item" onClick={() => handleResultsSearch(result)}>
+                            <div key={result.id} className="search-result-item"
+                                 onClick={() => handleResultsSearch(result)}>
                                 {result.nom} ({result.typeMath})
                             </div>
                         ))}
@@ -270,6 +211,7 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
                     </div>
                 )}
             </div>
-        </div>
+        </>
+
     );
 }
