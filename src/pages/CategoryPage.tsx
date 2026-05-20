@@ -40,7 +40,7 @@ const CategoryPage = () => {
 
     useEffect(
         () => {
-            if (Token.getToken()) {
+            if (Token.isUserConnected()) {
                 setisUserConnected(true);
             }
         },

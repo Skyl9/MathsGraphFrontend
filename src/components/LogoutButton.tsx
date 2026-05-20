@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import  Token  from "../services/token";
+import {nodeApi} from "../services/api.ts";
 
 interface LogoutButtonProps {
     onLogout?: () => void; // Fonction optionnelle à exécuter après la déconnexion
@@ -10,12 +11,17 @@ interface LogoutButtonProps {
 export const LogoutButton: React.FC<LogoutButtonProps> = ({ onLogout }) => {
     const navigate = useNavigate();
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            await nodeApi.logout();
+        } catch (error) {
+            console.error("Erreur lors de la déconnexion côté serveur :", error);
+        }
         Token.clearToken();
         if (onLogout) {
             onLogout();
         }
-        navigate("/login"); // Rediriger vers la page de connexion
+        navigate("/");
     };
 
     return (

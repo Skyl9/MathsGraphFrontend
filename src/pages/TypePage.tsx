@@ -36,7 +36,7 @@ const TypePage = () => {
     const [isUserConnected, setisUserConnected] = useState<boolean>(false);
     useEffect(
         () => {
-            if (Token.getToken()){
+            if (Token.isUserConnected()){
                 setisUserConnected(true);
             }
         },

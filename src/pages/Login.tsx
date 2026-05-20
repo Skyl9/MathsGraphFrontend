@@ -7,6 +7,7 @@ import { nodeApi } from "../services/api";
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Token from "../services/token.ts";
 
 const loginSchema = z.object({
     username: z.string().min(1, "Le nom d'utilisateur est requis"),
@@ -36,7 +37,8 @@ export const Login: React.FC = () => {
             formData.append("password", data.password);
 
             const responseData = await nodeApi.getToken(formData);
-            localStorage.setItem("token", responseData.access_token);
+            const payload = Token.decodeToken(responseData.access_token);
+            Token.saveUserInfo(payload);
 
             navigate("/");
         } catch (e: any) {

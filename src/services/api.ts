@@ -96,17 +96,11 @@ const request = async <T>(
         'Content-Type': 'application/json',
         ...(options?.headers || {}), // Fusionne les en-têtes
     });
-    if (authRequired) {
-        const token = Token.getToken();
-        if (!token) {
-            throw {status: 401, message: "Authentification requise: Token non trouvé."} as ApiError;
-        }
-        headers.set('Authorization', `Bearer ${token}`);
-    }
 
     const config: RequestInit = {
         ...options,
         headers,
+        credentials: "include",
         signal: controller.signal,
     };
 
@@ -123,10 +117,9 @@ const request = async <T>(
                 code: data.meta || undefined,
             };
 
-            // 🌟 LE FIX DU BUG DE SESSION ICI
             if (response.status === 401) {
                 console.warn("Session expirée ou token invalide. Déconnexion automatique.");
-                localStorage.removeItem('token');
+                Token.clearToken();
                 // On évite les boucles infinies de redirection
                 if (window.location.pathname !== '/login') {
                     window.location.href = '/login?session_expired=true';
@@ -299,11 +292,15 @@ export const nodeApi = {
             body: JSON.stringify({username: username, email: email, password: password})
         }, false),
     recalculateGraph: () => request<string>(`/admin/recalculate-graph`, {method: 'POST'}),
+
+    logout: () => request<null>('/logout', { method: 'POST' }, false),
+
     getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
         const response = await fetch(`${BASE_URL}/token`, {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
             body: formData.toString(),
+            credentials: "include",
         });
 
         if (!response.ok) {
@@ -313,8 +310,6 @@ export const nodeApi = {
                 message: errorData.detail || "Erreur d'authentification : Identifiants invalides",
             } as ApiError;
         }
-
-        // Renvoie directement { access_token: "...", token_type: "bearer" }
         return await response.json();
     },
 };

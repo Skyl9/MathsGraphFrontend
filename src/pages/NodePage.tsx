@@ -92,7 +92,7 @@ const NodePage = () => {
     const [isUserConnected, setIsUserConnected] = useState<boolean>(false);
 
     useEffect(() => {
-        if (Token.getToken()) {
+        if (Token.isUserConnected()) {
             setIsUserConnected(true);
             logger.debug("Utilisateur connecté détecté");
         } else {
