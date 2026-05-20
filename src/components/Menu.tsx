@@ -117,7 +117,8 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
         }
 
     }
-
+    const renderMode = useUIStore(s => s.renderMode);
+    const setRenderMode = useUIStore(s => s.setRenderMode);
 
     return (
         <div className={darkMode ? 'dark-mode' : ''}>
@@ -145,6 +146,19 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
                                 <MenuItem value="grille"><GridOn sx={{ mr: 1, fontSize: 20 }}/> Grille 3D</MenuItem>
                                 <MenuItem value="physique"><AutoGraph sx={{ mr: 1, fontSize: 20 }}/> Physique Organique</MenuItem>
                                 {/* MenuItem value="arbre">Arbre Hiérarchique</MenuItem */}
+                            </Select>
+                        </FormControl>
+                        <Divider sx={{ my: 2 }} />
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel id="render-mode-label">Moteur de rendu</InputLabel>
+                            <Select
+                                labelId="render-mode-label"
+                                value={renderMode}
+                                label="Moteur de rendu"
+                                onChange={(e) => setRenderMode(e.target.value as "quality" | "performance")}
+                            >
+                                <MenuItem value="quality">Qualité (Beaux graphismes)</MenuItem>
+                                <MenuItem value="performance">Performances (Fluide +1000 nœuds)</MenuItem>
                             </Select>
                         </FormControl>
                         <Divider sx={{ my: 2 }} />

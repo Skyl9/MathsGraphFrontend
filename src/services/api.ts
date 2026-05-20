@@ -88,7 +88,7 @@ export type EditableFieldsOptions = Record<keyof AllNodeData, string[]>;
 const request = async <T>(
     endpoint: string,
     options?: RequestInit,
-    authRequired: boolean = true
+    _authRequired: boolean = true
 ): Promise<T> => {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout

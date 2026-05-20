@@ -1,16 +1,16 @@
 import {useEffect, useMemo, useCallback, useRef, useState} from "react";
 import {useThree} from "@react-three/fiber";
-import {OrbitControls} from "@react-three/drei";
-import {Vector3} from "three";
-import Node from "../components/Node";
-import Edge from "../components/Edge";
+import {OrbitControls, Billboard, Text, Instances, Instance} from "@react-three/drei";
+import {Vector3, Color} from "three";
 import NodeDetails from "../components/NodeDetails";
+import Edge from "../components/Edge";
 import gsap from "gsap";
 import {NodeData, Graph} from "../types/ApiTypes/graph";
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import {EffectComposer, Bloom} from '@react-three/postprocessing';
 import {useUIStore} from "../stores/useUIStore";
 import {useFilterStore} from "../stores/useFilterStore";
 import {useGraphStore} from "../stores/useGraphStore";
+import CustomNode from "../components/Node";
 
 const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];
@@ -19,14 +19,65 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
     return "purple";
 };
 
-// Définir les props attendues pour le composant Scene
 interface SceneProps {
     graphData: Graph;
 }
 
-export default function Scene({ graphData }: SceneProps) {
-    console.log("Graph Data reçu par Scene:", graphData); // <<< AJOUTÉ
+// 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU)
+const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim}) => {
+    const [hovered, setHovered] = useState(false);
+    const sphereSize = 0.3;
 
+    // Calcul de la couleur finale :
+    // Si on est en mode "Focus" et que ce nœud n'est pas lié, on l'assombrit drastiquement.
+    const finalColor = useMemo(() => {
+        const activeColor = hovered ? "#99C2FF" : color;
+        const c = new Color(activeColor);
+        if (isSelected) return new Color("#ffffff"); // Blanc pur si sélectionné
+        if (shouldDim) return c.multiplyScalar(0.15); // Très sombre si hors focus
+        return c;
+    }, [hovered, color, isSelected, shouldDim]);
+
+    return (
+        <group position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}>
+            {/* L'instance virtuelle de la sphère (1 draw call global) */}
+            <Instance
+                color={finalColor}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClick();
+                }}
+                onPointerOver={(e) => {
+                    e.stopPropagation();
+                    setHovered(true);
+                }}
+                onPointerOut={(e) => {
+                    e.stopPropagation();
+                    setHovered(false);
+                }}
+            />
+
+            {/* On garde le Billboard pour le texte, affiché intelligemment */}
+            {(!shouldDim || hovered) && (
+                <Billboard position={[0, sphereSize + 0.4, 0]}>
+                    <Text fontSize={0.3} color={color} anchorX="center" anchorY="middle">
+                        {node.nom}
+                    </Text>
+                </Billboard>
+            )}
+
+            {/* Hitbox debug optionnelle */}
+            {debug && (
+                <mesh>
+                    <sphereGeometry args={[sphereSize * 0.7, 16, 16]}/>
+                    <meshBasicMaterial color="red" wireframe/>
+                </mesh>
+            )}
+        </group>
+    );
+};
+
+export default function Scene({graphData}: SceneProps) {
     const currentView = useUIStore(s => s.currentView);
     const colorLemme = useUIStore(s => s.colorLemme);
     const colorAxiome = useUIStore(s => s.colorAxiome);
@@ -35,7 +86,6 @@ export default function Scene({ graphData }: SceneProps) {
     const debugMode = useUIStore(s => s.debugMode);
     const setDebugMode = useUIStore(s => s.setDebugMode);
     const graphTheme = useUIStore(s => s.graphTheme);
-
     const filters = useFilterStore(s => s.filters);
 
     const targetPosition = useGraphStore(s => s.targetPosition);
@@ -53,22 +103,15 @@ export default function Scene({ graphData }: SceneProps) {
     const controlsRef = useRef<any>(null);
     const [shouldBeShowNode, setShouldBeShowNode] = useState(false);
 
-
     const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
-
     const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
 
     const visibleNodes = useMemo(() => {
-        const filtered = nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
-        console.log("Nœuds filtrés (visibleNodes) dans Scene:", filtered); // <<< AJOUTÉ
-        return filtered;
+        return nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
     }, [nodes, filters]);
-
-    console.log("Arêtes dans Scene:", edges); // <<< AJOUTÉ
 
     const neighborIds = useMemo(() => {
         if (selectedNodeId === null) return new Set<number>();
-
         const neighbors = new Set<number>();
         edges.forEach(edge => {
             if (edge.start === selectedNodeId) neighbors.add(edge.end);
@@ -77,58 +120,40 @@ export default function Scene({ graphData }: SceneProps) {
         return neighbors;
     }, [selectedNodeId, edges]);
 
+    // Animations GSAP
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
-            // 1. On anime la CIBLE de la caméra avec GSAP (au lieu d'un lerp brutal)
             gsap.to(controlsRef.current.target, {
-                x: targetPosition.x,
-                y: targetPosition.y,
-                z: targetPosition.z,
-                duration: 1.2,
-                ease: "power3.inOut",
-                onUpdate: () => controlsRef.current.update(), // Demande à Three.js de recalculer l'angle
+                x: targetPosition.x, y: targetPosition.y, z: targetPosition.z,
+                duration: 1.2, ease: "power3.inOut",
+                onUpdate: () => controlsRef.current.update(),
             });
-
-            // 2. On anime la POSITION de la caméra pour l'éloigner un peu du nœud
-            // On la décale un peu sur X et Y pour un effet plus dramatique/cinématique
             gsap.to(camera.position, {
-                x: targetPosition.x + 2,
-                y: targetPosition.y + 1.5,
-                z: targetPosition.z + 5, // On garde un bon recul
-                duration: 1.2,
-                ease: "power3.inOut"
+                x: targetPosition.x + 2, y: targetPosition.y + 1.5, z: targetPosition.z + 5,
+                duration: 1.2, ease: "power3.inOut"
             });
         }
-        // Note : j'ai retiré controlsRef des dépendances pour éviter des déclenchements parasites
     }, [selectedNode, targetPosition, camera, currentView]);
 
+    // Raccourcis clavier (D, Q, Arrow)
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (visibleNodes.length === 0) {
-                return;
-            }
-            if (selectedNodeId === null) {
-                setSelectedNodeId(visibleNodes[0].id);
-            }
-            if (!camera || !event) {
-                console.log("Camera is null");
-                return;
-            }
-            let positionListe = visibleNodes.findIndex((node: NodeData) => node.id === selectedNodeId);
+            if (visibleNodes.length === 0) return;
+            if (selectedNodeId === null) setSelectedNodeId(visibleNodes[0].id);
+            if (!camera || !event) return;
 
-            if (positionListe === -1) {
-                console.log("erreur de position dans la liste, élément non trouvé");
-            } else {
+            let positionListe = visibleNodes.findIndex((node: NodeData) => node.id === selectedNodeId);
+            if (positionListe !== -1) {
                 if (event.key === "d" || event.key === "ArrowRight") {
-                    setSelectedNodeId(visibleNodes[(positionListe + 1) % visibleNodes.length].id);
-                    const {x, y, z} = visibleNodes[(positionListe + 1) % visibleNodes.length].position[currentView];
-                    setTargetPosition(new Vector3(x, y, z));
+                    const nextNode = visibleNodes[(positionListe + 1) % visibleNodes.length];
+                    setSelectedNodeId(nextNode.id);
+                    setTargetPosition(new Vector3(nextNode.position[currentView].x, nextNode.position[currentView].y, nextNode.position[currentView].z));
                     setShouldBeShowNode(true);
                 }
                 if (event.key === "q" || event.key === "ArrowLeft") {
-                    setSelectedNodeId(visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].id);
-                    const {x, y, z} = visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length].position[currentView];
-                    setTargetPosition(new Vector3(x, y, z));
+                    const prevNode = visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length];
+                    setSelectedNodeId(prevNode.id);
+                    setTargetPosition(new Vector3(prevNode.position[currentView].x, prevNode.position[currentView].y, prevNode.position[currentView].z));
                     setShouldBeShowNode(true);
                 }
             }
@@ -137,23 +162,20 @@ export default function Scene({ graphData }: SceneProps) {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [selectedNodeId, visibleNodes, camera, setTargetPosition, setSelectedNodeId, currentView]);
 
+    // Mode debug
     useEffect(() => {
         const toggleDebug = (event: KeyboardEvent) => {
-            if (event.key.toLowerCase() === "m") {
-                console.log("Debug mod activé");
-                setDebugMode(!debugMode);
-            }
+            if (event.key.toLowerCase() === "m") setDebugMode(!debugMode);
         };
         window.addEventListener("keydown", toggleDebug);
         return () => window.removeEventListener("keydown", toggleDebug);
     }, [debugMode, setDebugMode]);
 
+    // Historique
     useEffect(() => {
         if (targetPosition) {
             setHistory((prevHistory: Vector3[]) => {
-                if (currentIndex < prevHistory.length - 1) {
-                    return prevHistory;
-                }
+                if (currentIndex < prevHistory.length - 1) return prevHistory;
                 if (prevHistory.length === 0 || !prevHistory[prevHistory.length - 1].equals(targetPosition)) {
                     return [...prevHistory, targetPosition];
                 }
@@ -161,8 +183,7 @@ export default function Scene({ graphData }: SceneProps) {
             });
             setCurrentIndex((prevIndex: number) =>
                 history.length === 0 || (history[currentIndex] && !history[currentIndex].equals(targetPosition))
-                    ? prevIndex + 1
-                    : prevIndex
+                    ? prevIndex + 1 : prevIndex
             );
         }
     }, [currentIndex, history, setCurrentIndex, setHistory, targetPosition]);
@@ -180,60 +201,88 @@ export default function Scene({ graphData }: SceneProps) {
     }, [setSelectedNodeId, setShouldBeShowNode]);
 
     const handleCanvasClick = useCallback((event: MouseEvent) => {
-        if (event.target === gl.domElement) {
-            setShouldBeShowNode(false);
-        }
+        if (event.target === gl.domElement) setShouldBeShowNode(false);
     }, [gl, setShouldBeShowNode]);
 
-    if (!graphData) {
-        return <group>Pas de données pour la scène.</group>;
-    }
+    const renderMode = useUIStore(s => s.renderMode);
+    if (!graphData) return <group>Pas de données pour la scène.</group>;
 
     return (
         <>
-            {/* 🌟 NOUVEAU : Changement de la couleur de fond dynamique */}
-            {graphTheme === "neon" && <color attach="background" args={["#0a0a10"]} />}
-            {/* 🌟 NOUVEAU : En mode néon, on baisse la lumière ambiante pour faire ressortir les sphères */}
-            <ambientLight intensity={graphTheme === "neon" ? 0.1 : 0.5} />
-            <pointLight position={[10, 10, 10]} intensity={graphTheme === "neon" ? 0.2 : 1} />
+            {graphTheme === "neon" && <color attach="background" args={["#0a0a10"]}/>}
+            <ambientLight intensity={graphTheme === "neon" ? 0.1 : 0.5}/>
+            <pointLight position={[10, 10, 10]} intensity={graphTheme === "neon" ? 0.2 : 1}/>
 
             <group onPointerMissed={handleCanvasClick}>
-                {visibleNodes.map((node) => (
-                    <Node
-                        key={node.id}
-                        id={node.id}
-                        position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}
-                        color={getNodeColor(node.typeMath, colors)}
-                        nom={node.nom}
-                        isSelected={shouldBeShowNode && selectedNodeId === node.id}
-                        isNeighbor={neighborIds.has(node.id)} // 🌟 NOUVEAU
-                        onClick={() => {
-                            setSelectedNodeId(node.id);
-                            setShouldBeShowNode(true);
-                        }}
-                        debug={debugMode}
-                    />
-                ))}
+                {renderMode === "performance" ? (
+                    /* ==========================================
+                       MODE PERFORMANCE (InstancedMesh)
+                    ========================================== */
+                    <Instances limit={10000}>
+                        <sphereGeometry args={[0.3, 16, 16]}/>
+                        <meshStandardMaterial
+                            transparent={true}
+                            emissive={graphTheme === "neon" ? "white" : "black"}
+                            emissiveIntensity={graphTheme === "neon" ? 0.8 : 0}
+                        />
+                        {visibleNodes.map((node) => {
+                            const isSelected = shouldBeShowNode && selectedNodeId === node.id;
+                            const isNeighbor = neighborIds.has(node.id);
+                            const isFocus = graphTheme === "focus";
+                            const shouldDim = isFocus && selectedNodeId !== null && !isSelected && !isNeighbor;
 
+                            return (
+                                <GraphNode
+                                    key={`inst-${node.id}`}
+                                    node={node}
+                                    currentView={currentView}
+                                    color={getNodeColor(node.typeMath, colors)}
+                                    isSelected={isSelected}
+                                    shouldDim={shouldDim}
+                                    debug={debugMode}
+                                    onClick={() => {
+                                        setSelectedNodeId(node.id);
+                                        setShouldBeShowNode(true);
+                                    }}
+                                />
+                            );
+                        })}
+                    </Instances>
+                ) : (
+                    /* ==========================================
+                       MODE QUALITÉ (Noeuds individuels classiques)
+                    ========================================== */
+                    visibleNodes.map((node) => (
+                        <CustomNode
+                            key={`node-${node.id}`}
+                            id={node.id}
+                            position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}
+                            color={getNodeColor(node.typeMath, colors)}
+                            nom={node.nom}
+                            isSelected={shouldBeShowNode && selectedNodeId === node.id}
+                            isNeighbor={neighborIds.has(node.id)}
+                            onClick={() => {
+                                setSelectedNodeId(node.id);
+                                setShouldBeShowNode(true);
+                            }}
+                            debug={debugMode}
+                        />
+                    ))
+                )}
+
+                {/* 🌟 Les Arêtes inchangées */}
                 {edges
-                    .filter(edge => {
-                        const startNode = visibleNodes.find(node => node.id === edge.start);
-                        const endNode = visibleNodes.find(node => node.id === edge.end);
-                        return startNode && endNode;
-                    })
+                    .filter(edge => visibleNodes.find(n => n.id === edge.start) && visibleNodes.find(n => n.id === edge.end))
                     .map((edge, index) => {
                         const startNode = visibleNodes.find(node => node.id === edge.start)!;
                         const endNode = visibleNodes.find(node => node.id === edge.end)!;
 
-                        // 🌟 NOUVEAU : Opacité de la ligne en mode focus
                         const isFocus = graphTheme === "focus";
                         const isLineConnectedToSelected = edge.start === selectedNodeId || edge.end === selectedNodeId;
                         const lineOpacity = (isFocus && selectedNodeId !== null && !isLineConnectedToSelected) ? 0.1 : 1;
 
                         return (
                             <group key={index}>
-                                {/* Astuce: On enveloppe l'Edge pour contrôler son opacité si possible,
-                                ou tu passeras lineOpacity à Edge plus tard. Pour l'instant le focus est sur les Noeuds */}
                                 <Edge
                                     start={[startNode.position[currentView].x, startNode.position[currentView].y, startNode.position[currentView].z]}
                                     end={[endNode.position[currentView].x, endNode.position[currentView].y, endNode.position[currentView].z]}
@@ -257,15 +306,9 @@ export default function Scene({ graphData }: SceneProps) {
                 )}
             </group>
 
-            {/* 🌟 NOUVEAU : Le post-processing pour le mode Néon */}
             {graphTheme === "neon" && (
                 <EffectComposer>
-                    <Bloom
-                        luminanceThreshold={0.2}
-                        mipmapBlur
-                        intensity={1.5}
-                        radius={0.8}
-                    />
+                    <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.8}/>
                 </EffectComposer>
             )}
 
