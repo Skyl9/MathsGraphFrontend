@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReplyIcon from "@mui/icons-material/Reply";
-import {nodeApi} from "../services/api";
+import {nodeApi, isApiError} from "../services/api";
 import Token from "../services/token";
 import {Comment} from "../types/ApiTypes/comments";
 
@@ -66,9 +66,14 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             try {
                 const data = await nodeApi.getComments(conceptId);
                 setComments(data);
-            } catch (err) {
-                const errorMessage = (err as any).message || 'An unknown error occurred.';
-                setError(errorMessage);
+            } catch (err: unknown) {
+                if (isApiError(err)) {
+                    setError(err.message);
+                } else if (err instanceof Error) {
+                    setError(err.message);
+                } else {
+                    setError("Une erreur inattendue est survenue.");
+                }
             } finally {
                 setLoading(false);
             }
@@ -89,9 +94,14 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             setReplyTo(null);
             const data = await nodeApi.getComments(conceptId);
             setComments(data);
-        } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
+        } catch (err: unknown) {
+            if (isApiError(err)) {
+                setError(err.message);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Une erreur inattendue est survenue.");
+            }
         } finally {
             setSubmitting(false);
         }
@@ -101,9 +111,14 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
         try {
             await nodeApi.deleteComment(id);
             setComments((c) => c.filter((x) => String(x.id) !== id));
-        } catch (err) {
-            const errorMessage = (err as any).message || 'An unknown error occurred.';
-            setError(errorMessage);
+        } catch (err: unknown) {
+            if (isApiError(err)) {
+                setError(err.message);
+            } else if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError("Une erreur inattendue est survenue.");
+            }
         }
     };
 

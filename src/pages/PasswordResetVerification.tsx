@@ -8,7 +8,7 @@ import {
   Alert,
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { nodeApi } from '../services/api';
+import { nodeApi, isApiError } from '../services/api';
 import {TopBar} from "../components/TopBar";
 import {ReportIssueButton} from "../components/Issue";
 
@@ -49,9 +49,14 @@ const PasswordResetVerification: React.FC = () => {
       setTimeout(() => {
         navigate('/login');
       }, 3000);
-    } catch (err) {
-      const errorMessage = (err as any).message || 'An unknown error occurred.';
-      setError(errorMessage);
+    } catch (err: unknown) {
+      if (isApiError(err)) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Une erreur inattendue est survenue.");
+      }
     } finally {
       setIsLoading(false);
     }
