@@ -41,6 +41,7 @@ import ErrorBoundary from "./ErrorBoundary";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {SearchPage} from "./pages/SearchPage.tsx";
 import {useUIStore} from "./stores/useUIStore";
+import NewContentPage from "./pages/admin/NewContentPage.tsx";
 
 const App = () => {
     const darkMode = useUIStore(state => state.darkMode);
@@ -76,7 +77,9 @@ const App = () => {
                                     <Route index element={<DashboardPage/>}/>
                                     <Route path="users" element={<UsersPage/>}/>
                                     <Route path="contents" element={<ContentsPage/>}/>
+                                    <Route path="contents/new" element={<NewContentPage/>}/>
                                     <Route path="settings" element={<SettingsPage/>}/>
+
                                 </Route>
 
 

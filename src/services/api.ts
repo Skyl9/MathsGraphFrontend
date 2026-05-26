@@ -305,7 +305,11 @@ export const nodeApi = {
     recalculateGraph: () => request<string>(`/admin/recalculate-graph`, {method: 'POST'}),
 
     logout: () => request<null>('/logout', { method: 'POST' }, false),
-
+    createConcept: (data: { nom: string; type: string; enonce: string; demonstration?: string; categorie_id?: number | null; mathematicien_id?: number | null }) =>
+        request<{id: number, nom: string}>(`/concept`, {
+            method: 'POST',
+            body: JSON.stringify(data)
+        }),
     getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
         const response = await fetch(`${BASE_URL}/token`, {
             method: "POST",
