@@ -1,173 +1,298 @@
-.node-container {
-    max-width: 80%;
-    margin: 20px auto;
-    padding: 20px;
-    background: #f8f8f8;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+/* NodePage.css */
+
+/* Conteneur principal en grille */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 24px auto;
+    padding: 0 16px;
 }
-.node-wrapper{
+
+@media (min-width: 900px) {
+    .details-grid {
+        grid-template-columns: 2.8fr 1.2fr;
+    }
+}
+
+/* Colonnes */
+.main-content-column {
     display: flex;
-    flex-direction: row;
-
-}
-.node-title {
-    font-size: 22px;
-    text-align: center;
-    margin-bottom: 10px;
+    flex-direction: column;
+    gap: 24px;
 }
 
-.node-info {
+.sidebar-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Cartes Premium pour le contenu mathématique */
+.math-card {
     background: white;
-    padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.lineWrapper{
-    margin: 5px 0;
-    font-size: 16px;
-    line-height: 1.4;
-    display:flex;
-    flex-direction: row;
-    justify-content: space-between;
+.dark-mode .math-card {
+    background: #0f1428;
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.math-card-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.01);
+    display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
-.node-relations {
-    margin-top: 15px;
-    padding: 10px;
-    background: #eef;
-    border-radius: 6px;
+.dark-mode .math-card-header {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.01);
 }
 
-.node-relations h2 {
-    font-size: 18px;
+.math-card-title {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #0ea5e9;
+}
+
+.dark-mode .math-card-title {
+    color: #7dd3fc;
+}
+
+.math-card-body {
+    padding: 24px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* Styles spécifiques pour Énoncé et Démonstration */
+.enonce-card {
+    border-left: 4px solid #0ea5e9 !important;
+}
+
+.dark-mode .enonce-card {
+    border-left-color: #7dd3fc !important;
+}
+
+.proof-card {
+    border-left: 4px solid #8b5cf6 !important;
+}
+
+.dark-mode .proof-card {
+    border-left-color: #c4b5fd !important;
+}
+
+/* Sidebar Cards */
+.sidebar-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .sidebar-card {
+    background: #0f1428;
+    border-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-card-title {
+    font-weight: 700 !important;
+    margin-bottom: 20px !important;
+    position: relative;
+    padding-left: 10px;
+}
+
+.sidebar-card-title::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 3px;
+    border-radius: 2px;
+    background: #0ea5e9;
+}
+
+.dark-mode .sidebar-card-title::before {
+    background: #7dd3fc;
+}
+
+/* Listes de métadonnées */
+.metadata-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metadata-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.dark-mode .metadata-label {
+    color: #94a3b8;
+}
+
+.metadata-value {
+    font-size: 0.95rem;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dark-mode .metadata-value {
+    color: #e2e8f0;
+}
+
+/* Zone d'action de l'édition en ligne */
+.field-wrapper-interactive {
+    position: relative;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.field-wrapper-interactive.edit-active:hover {
+    background-color: rgba(14, 165, 233, 0.03);
+}
+
+.dark-mode .field-wrapper-interactive.edit-active:hover {
+    background-color: rgba(125, 211, 252, 0.03);
+}
+
+.edit-action-trigger {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.field-wrapper-interactive:hover .edit-action-trigger {
+    opacity: 1;
+}
+
+/* Boutons d'action */
+.sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.sidebar-actions button {
+    justify-content: flex-start;
+}
+
+/* Retour & Titres */
+.concept-header {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     margin-bottom: 8px;
 }
 
-.node-relations ul {
-    list-style-type: none;
-    padding: 0;
+.concept-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.node-relations li {
+.concept-title {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+}
+
+/* Pour la compatibilité avec les anciennes pages de fiches */
+.node-container {
+    max-width: 800px;
+    margin: 32px auto;
+    padding: 32px;
     background: white;
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    font-size: 15px;
-    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .node-container {
+    background: #0f1428;
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.node-title {
+    font-size: 2rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 24px !important;
+    text-align: center;
+}
+
+.node-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.lineWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.01);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: 12px;
+}
+
+.dark-mode .lineWrapper {
+    background: rgba(255, 255, 255, 0.01);
+    border-color: rgba(255, 255, 255, 0.04);
+}
+
+.field-wrapper {
+    flex-grow: 1;
+}
+
+.field-title {
+    font-weight: 600;
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.dark-mode .field-title {
+    color: #94a3b8;
+}
+
+.field-content {
+    font-size: 1rem;
+    color: #0f172a;
+}
+
+.dark-mode .field-content {
+    color: #e2e8f0;
 }
 
 .node-buttons {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.edit-button, .back-button {
-    padding: 8px 15px;
-    font-size: 14px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-.edit-button {
-    background: #4CAF50;
-    color: white;
-}
-
-.edit-button:hover {
-    background: #43A047;
-}
-
-.back-button {
-    background: #f44336;
-    color: white;
-}
-
-.back-button:hover {
-    background: #d32f2f;
-}
-
-.field-title {
-    font-weight: bold;
-    font-size: 18px;
-    color: #333;
-    margin-bottom: 8px;
-    padding : 10px;
-}
-
-.field-content {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 12px;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-    padding : 10px;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    max-width: 80%;
-
-}
-/* Collapse button */
-.collapse-button {
-    background-color: #f0f0f0;
-    border: 1px solid #ccc;
-    color: #333;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    margin-bottom: 6px;
-    transition: background-color 0.2s ease;
-}
-
-.collapse-button:hover {
-    background-color: #e0e0e0;
-}
-
-/* Contenu affiché lorsque le collapse est ouvert */
-.field-content {
-    margin-top: 6px;
-    padding: 8px;
-    background-color: #fafafa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-/* Chaque ligne de nom étranger */
-.field-content div {
-    padding: 2px 0;
-    font-size: 0.95rem;
-}
-
-.source-edit-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.source-edit-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.source-input {
-    min-width: 120px;
-    flex: 1;
-}
-
-.source-select {
-    min-width: 120px;
-}
-.field-wrapper{
-    width:90%
+    gap: 12px;
 }

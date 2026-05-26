@@ -18,9 +18,11 @@ import CommentIcon from '@mui/icons-material/Comment';
 import {CommentsModal, FieldOption} from "../components/CommentsModal";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import EditIcon from '@mui/icons-material/Edit';
+import HistoryIcon from '@mui/icons-material/History';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import DOMPurify from 'dompurify';
-import {Button, Fab, Link, Tooltip} from "@mui/material";
+import {Button, Tooltip, Link, Switch, FormControlLabel, Typography, IconButton} from "@mui/material";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
 import {logger} from "../utils/logger";
@@ -28,13 +30,14 @@ import {ReportIssueButton} from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import {Source} from "../types/ApiTypes/source";
 import {Relations} from "../types/ApiTypes/Relations";
+import MathMarkdown from "../components/MathMarkdown";
 
 
 const NodePage = () => {
     const {id} = useParams<{ id: string }>();
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-
+    const [editModeActive, setEditModeActive] = useState(false);
 
     logger.info("NodePage rendu", {id});
     const {
@@ -52,8 +55,6 @@ const NodePage = () => {
         setData,
         createField: rawCreateField,
         refetchData: rawRefetchData,
-
-
     } = useNodeEdit(id || "");
 
     const handleEdit = (field: keyof AllNodeData) => {
@@ -99,32 +100,12 @@ const NodePage = () => {
         }
     }, []);
 
-
-    // Local state for editing dataconst
-    const propertyOrder: (keyof AllNodeData)[] = [
-        "id",
-        "nom",
-        "type",
-        "enonce",
-        "categorie",
-        "mathematicien",
-        "date_ajout",
-        "demonstration",
-        "aliases",
-        "sources",
-        "relations",
-        "verification",
-        "noms_etrangers",
-        "tags"
-    ];
-
     useEffect(() => {
         if (data) {
             logger.debug("Mise à jour state local avec data", data);
             setData(data);
         }
-    }, [data]);
-
+    }, [data, setData]);
 
     const renderCellContent = (field: keyof AllNodeData) => {
         const value = data?.[field];
@@ -217,6 +198,7 @@ const NodePage = () => {
                 );
         }
     };
+
     useEffect(() => {
         if (loading) {
             logger.debug("NodePage: chargement en cours...");
@@ -227,20 +209,12 @@ const NodePage = () => {
             logger.warn("NodePage: erreur détectée", error);
         }
     }, [error]);
-    useEffect(() => {
-        if (isModalOpen) {
-            logger.info("Modal d'édition ouvert", {field: currentEditField});
-        } else {
-            logger.info("Modal d'édition fermé");
-        }
-    }, [isModalOpen, currentEditField]);
-
 
     if (loading) return <p>Chargement...</p>;
     if (!loading && (error || !data || !data.id)) {
         return <Navigate to="/404" replace/>;
     }
-    // liste prédéfinie des champs + alias
+
     const commentFields: FieldOption[] = [
         {value: "nom", label: "Nom"},
         {value: "type", label: "Type"},
@@ -253,25 +227,10 @@ const NodePage = () => {
         {value: "relation", label: "Relation"},
         {value: "tag", label: "Tag"},
         {value: "Historique", label: "Historique"},
-        // ajouter d’autres paires value/label si besoin
     ];
 
     return (
         <>
-            <div className="node-actions">
-
-                <Button
-                    startIcon={<CommentIcon/>}
-                    onClick={() => setIsCommentsOpen(true)}
-                >
-                    Commentaires
-                </Button>
-
-                <Button variant="outlined" onClick={() => setIsHistoryOpen(true)}>
-                    Voir l’historique
-                </Button>
-            </div>
-
             <HistoryModal
                 conceptId={id || ""}
                 open={isHistoryOpen}
@@ -282,78 +241,312 @@ const NodePage = () => {
                 onClose={() => setIsCommentsOpen(false)}
                 conceptId={id || ""}
                 fields={commentFields}
-
             />
-            <FavoriteButton itemId={id as string} itemType={"concept"}/>
 
-            <div className="node-container">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <h1 className="node-title" style={{ marginBottom: 0 }}>{data?.nom}</h1>
+            <div className="details-grid">
+                {/* Colonne Principale (Gauche) */}
+                <div className="main-content-column">
+                    <div className="concept-header">
+                        <div className="concept-title-row">
+                            <Typography className="concept-title" variant="h1">{data?.nom}</Typography>
+                            {data?.verification && (
+                                <Tooltip title="Concept vérifié et approuvé par la modération" arrow>
+                                    <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
+                                </Tooltip>
+                            )}
+                            <FavoriteButton itemId={id as string} itemType={"concept"}/>
+                            {editModeActive && isUserConnected && editableFields["nom"] && (
+                                <IconButton size="small" onClick={() => handleEdit("nom")}>
+                                    <EditIcon fontSize="small" />
+                                </IconButton>
+                            )}
+                        </div>
+                    </div>
 
-                    {/* 🌟 LE BADGE DE VÉRIFICATION */}
-                    {data?.verification && (
-                        <Tooltip title="Concept vérifié et approuvé par la modération" arrow>
-                            <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
-                        </Tooltip>
+                    {/* Énoncé Card */}
+                    {editableFields["enonce"] && (
+                        <div className="math-card enonce-card">
+                            <div className="math-card-header">
+                                <Typography className="math-card-title">Énoncé</Typography>
+                                {editModeActive && isUserConnected && (
+                                    <IconButton size="small" onClick={() => handleEdit("enonce")}>
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                )}
+                            </div>
+                            <div className="math-card-body">
+                                <MathMarkdown content={data?.enonce} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Démonstration Card */}
+                    {editableFields["demonstration"] && (
+                        <div className="math-card proof-card">
+                            <div className="math-card-header">
+                                <Typography className="math-card-title" sx={{ color: "secondary.main" }}>Démonstration</Typography>
+                                {editModeActive && isUserConnected && (
+                                    <IconButton size="small" onClick={() => handleEdit("demonstration")}>
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                )}
+                            </div>
+                            <div className="math-card-body">
+                                <MathMarkdown content={data?.demonstration || "Aucune démonstration disponible."} />
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Relations Card */}
+                    {editableFields["relations"] && (
+                        <div className="math-card">
+                            <div className="math-card-header">
+                                <Typography className="math-card-title" sx={{ color: "text.primary" }}>Relations</Typography>
+                                {editModeActive && isUserConnected && (
+                                    <IconButton size="small" onClick={() => handleEdit("relations")}>
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                )}
+                            </div>
+                            <div className="math-card-body">
+                                {renderCellContent("relations")}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Sources Card */}
+                    {editableFields["sources"] && (
+                        <div className="math-card">
+                            <div className="math-card-header">
+                                <Typography className="math-card-title" sx={{ color: "text.primary" }}>Sources</Typography>
+                                {editModeActive && isUserConnected && (
+                                    <IconButton size="small" onClick={() => handleEdit("sources")}>
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                )}
+                            </div>
+                            <div className="math-card-body">
+                                {renderCellContent("sources")}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Aliases Card */}
+                    {editableFields["aliases"] && (
+                        <div className="math-card">
+                            <div className="math-card-header">
+                                <Typography className="math-card-title" sx={{ color: "text.primary" }}>Alias</Typography>
+                                {editModeActive && isUserConnected && (
+                                    <IconButton size="small" onClick={() => handleEdit("aliases")}>
+                                        <EditIcon fontSize="small" />
+                                    </IconButton>
+                                )}
+                            </div>
+                            <div className="math-card-body">
+                                {renderCellContent("aliases")}
+                            </div>
+                        </div>
                     )}
                 </div>
-                <div className="node-info">
-                    {propertyOrder
-                        .filter(field => Object.prototype.hasOwnProperty.call(editableFields, field))
-                        .map(field => (
-                            <div key={field} className="lineWrapper">
-                                <div className={"field-wrapper"}>
-                                    {renderCellContent(field)}
+
+                {/* Colonne Latérale (Droite) */}
+                <div className="sidebar-column">
+                    {/* Switch Mode Édition (si connecté) */}
+                    {isUserConnected && (
+                        <div className="sidebar-card">
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={editModeActive}
+                                        onChange={(e) => setEditModeActive(e.target.checked)}
+                                        color="primary"
+                                    />
+                                }
+                                label="Mode Édition"
+                                sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
+                            />
+                        </div>
+                    )}
+
+                    {/* Carte Métadonnées */}
+                    <div className="sidebar-card">
+                        <Typography variant="h6" className="sidebar-card-title">
+                            Détails du Concept
+                        </Typography>
+                        <div className="metadata-list">
+                            {/* Catégorie */}
+                            {editableFields["categorie"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Catégorie</span>
+                                    <div className="metadata-value">
+                                        <span>
+                                            {data?.categorie && typeof data.categorie === "object" && "category" in data.categorie ? (
+                                                <Link href={"/category/redirect/" + data.categorie.category as string} underline="hover">
+                                                    {data.categorie.category}
+                                                </Link>
+                                            ) : (
+                                                "Aucune"
+                                            )}
+                                        </span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("categorie")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
                                 </div>
-                                {(editableFields[field].type === 'text' ||
-                                        editableFields[field].type === 'select' ||
-                                        editableFields[field].type === "checkbox" ||
-                                        editableFields[field].type === "relation" ||
-                                        editableFields[field].type === "alias" ||
-                                        editableFields[field].type === "sources" ||
-                                        editableFields[field].type === "latex" ||
-                                        editableFields[field].type === "nom_etranger" ||
-                                        editableFields[field].type === "tag") &&
-                                    !isModalOpen
-                                    && isUserConnected && (
-                                        <Fab color="primary" aria-label="edit" size="small">
-                                            <EditIcon
-                                                className="edit_button"
-                                                onClick={() => {
-                                                    handleEdit(field);
-                                                }}/>
-                                        </Fab>
-                                    )}
-                            </div>
-                        ))}
+                            )}
 
+                            {/* Mathématicien */}
+                            {editableFields["mathematicien"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Mathématicien</span>
+                                    <div className="metadata-value">
+                                        <span>
+                                            {data?.mathematicien && typeof data.mathematicien === "object" && "mathematicien" in data.mathematicien ? (
+                                                <Link href={"/mathematicien/redirect/" + data.mathematicien.mathematicien as string} underline="hover">
+                                                    {data.mathematicien.mathematicien}
+                                                </Link>
+                                            ) : (
+                                                "Aucun"
+                                            )}
+                                        </span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("mathematicien")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Type */}
+                            {editableFields["type"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Type</span>
+                                    <div className="metadata-value">
+                                        <span>
+                                            {data?.type ? (
+                                                <Link href={"/type/redirect/" + data.type as string} underline="hover">
+                                                    {data.type}
+                                                </Link>
+                                            ) : (
+                                                "Non classifié"
+                                            )}
+                                        </span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("type")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Date d'ajout */}
+                            {editableFields["date_ajout"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Date d'ajout</span>
+                                    <div className="metadata-value">
+                                        <span>{renderCellContent("date_ajout")}</span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("date_ajout")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Noms étrangers */}
+                            {editableFields["noms_etrangers"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Noms étrangers</span>
+                                    <div className="metadata-value">
+                                        <span>{renderCellContent("noms_etrangers")}</span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("noms_etrangers")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Tags */}
+                            {editableFields["tags"] && (
+                                <div className="metadata-item">
+                                    <span className="metadata-label">Tags</span>
+                                    <div className="metadata-value">
+                                        <span>{renderCellContent("tags")}</span>
+                                        {editModeActive && (
+                                            <IconButton size="small" onClick={() => handleEdit("tags")}>
+                                                <EditIcon fontSize="small" />
+                                            </IconButton>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Carte Actions */}
+                    <div className="sidebar-card">
+                        <Typography variant="h6" className="sidebar-card-title">
+                            Actions
+                        </Typography>
+                        <div className="sidebar-actions">
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                startIcon={<CommentIcon />}
+                                onClick={() => setIsCommentsOpen(true)}
+                                sx={{ borderRadius: 2 }}
+                            >
+                                Commentaires
+                            </Button>
+
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                startIcon={<HistoryIcon />}
+                                onClick={() => setIsHistoryOpen(true)}
+                                sx={{ borderRadius: 2 }}
+                            >
+                                Historique
+                            </Button>
+
+                            <Button
+                                fullWidth
+                                variant="text"
+                                startIcon={<ArrowBackIcon />}
+                                onClick={() => window.history.back()}
+                                sx={{ borderRadius: 2, mt: 1 }}
+                            >
+                                Retour
+                             </Button>
+                        </div>
+                    </div>
+
+                    <ReportIssueButton />
                 </div>
-
-                {isModalOpen && currentEditField && data &&
-                    <EditModal<AllNodeData> 
-                               isOpen={isModalOpen}
-                               onClose={cancelChanges}
-                               onSave={saveChanges}
-                               field={currentEditField}
-                               value={newContent}
-                               onChange={setNewContent}
-                               fieldConfig={editableFields[currentEditField]}
-                               data={data}
-                               setData={setData}
-                               createField={createField}
-                               refetchData={refetchData}
-                               isSaving={false}
-                    ></EditModal>}
-
-                <div className="node-buttons">
-                    <button className="back-button" onClick={() => window.history.back()}>
-                        Retour
-                    </button>
-
-                </div>
-                <ReportIssueButton/>
-
             </div>
+
+            {isModalOpen && currentEditField && data &&
+                <EditModal<AllNodeData> 
+                           isOpen={isModalOpen}
+                           onClose={cancelChanges}
+                           onSave={saveChanges}
+                           field={currentEditField}
+                           value={newContent}
+                           onChange={setNewContent}
+                           fieldConfig={editableFields[currentEditField]}
+                           data={data}
+                           setData={setData}
+                           createField={createField}
+                           refetchData={refetchData}
+                           isSaving={false}
+                ></EditModal>}
         </>
     );
 };
