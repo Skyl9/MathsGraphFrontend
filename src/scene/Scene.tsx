@@ -23,8 +23,18 @@ interface SceneProps {
     graphData: Graph;
 }
 
+interface GraphNodeProps {
+    node: NodeData;
+    currentView: string;
+    color: string;
+    isSelected: boolean;
+    onClick: () => void;
+    debug: boolean;
+    shouldDim: boolean;
+}
+
 // 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU)
-const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim}) => {
+const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim}: GraphNodeProps) => {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
 

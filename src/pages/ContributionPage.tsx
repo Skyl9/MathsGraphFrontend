@@ -3,11 +3,10 @@ import { Box, Paper, Typography, List, ListItem, ListItemIcon, ListItemText, Div
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
-import {TopBar} from "../components/TopBar";
 
 const ContributionPage: React.FC = () => (
 
-   <> <TopBar></TopBar>
+   <>
   <Box sx={{ maxWidth: 650, mx: "auto", my: 4 }}>
     <Paper sx={{ p: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>

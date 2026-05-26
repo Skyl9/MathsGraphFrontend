@@ -9,7 +9,6 @@ import {
 } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { nodeApi, isApiError } from '../services/api';
-import {TopBar} from "../components/TopBar";
 import {ReportIssueButton} from "../components/Issue";
 
 interface ResetPasswordVerificationData {
@@ -71,7 +70,6 @@ const PasswordResetVerification: React.FC = () => {
 
   return (
       <>
-        <TopBar/>
       <Container maxWidth="sm">
         <Box
             sx={{

@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {TopBar} from "../components/TopBar";
 import {Navigate, useParams} from "react-router-dom";
 import {useEntityEdit} from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
@@ -99,7 +98,6 @@ const MathematicienPage = () => {
     }
     return(
     <>
-    <TopBar></TopBar>
         <FavoriteButton itemId={id as string} itemType={"mathematicien"}/>
         <div className="node-container">
             <h1 className="node-title">{data?.nom}</h1>

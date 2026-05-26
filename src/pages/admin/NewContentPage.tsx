@@ -62,7 +62,7 @@ const NewContentPage = () => {
                     <TextField
                         select label="Catégorie" fullWidth
                         value={formData.categorie_id}
-                        onChange={e => setFormData({...formData, categorie_id: e.target.value as number})}
+                        onChange={e => setFormData({...formData, categorie_id: e.target.value === '' ? '' : Number(e.target.value)})}
                     >
                         <MenuItem value=""><em>Aucune</em></MenuItem>
                         {categories?.map(c => <MenuItem key={c.id} value={c.id}>{c.nom}</MenuItem>)}
@@ -71,7 +71,7 @@ const NewContentPage = () => {
                     <TextField
                         select label="Mathématicien" fullWidth
                         value={formData.mathematicien_id}
-                        onChange={e => setFormData({...formData, mathematicien_id: e.target.value as number})}
+                        onChange={e => setFormData({...formData, mathematicien_id: e.target.value === '' ? '' : Number(e.target.value)})}
                     >
                         <MenuItem value=""><em>Aucun</em></MenuItem>
                         {mathematiciens?.map(m => <MenuItem key={m.id} value={m.id}>{m.nom}</MenuItem>)}

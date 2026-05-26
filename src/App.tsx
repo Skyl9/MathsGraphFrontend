@@ -43,6 +43,8 @@ import {SearchPage} from "./pages/SearchPage.tsx";
 import {useUIStore} from "./stores/useUIStore";
 import NewContentPage from "./pages/admin/NewContentPage.tsx";
 
+import {MainLayout} from "./components/MainLayout";
+
 const App = () => {
     const darkMode = useUIStore(state => state.darkMode);
 
@@ -69,10 +71,8 @@ const App = () => {
                             <Routes>
                                 <Route path="/login" element={<Login/>}/>
                                 <Route path="/register" element={<Register/>}/>
-                                <Route path="/" element={<HomePage/>}/>
                                 <Route path="/graph"
                                        element={<AppContent/>}/>
-                                <Route path="/concept/:id" element={<ConceptPage/>}/>
                                 <Route path="/admin" element={<AdminLayout/>}>
                                     <Route index element={<DashboardPage/>}/>
                                     <Route path="users" element={<UsersPage/>}/>
@@ -82,28 +82,31 @@ const App = () => {
 
                                 </Route>
 
-
-                                <Route path="/about" element={<AboutPage/>}/>
-                                <Route path="/support" element={<SupportPage/>}/>
-                                <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
-                                <Route path="*" element={<LostPage/>}/>
-                                <Route path={"/category/:id"} element={<CategoryPage/>}/>
-                                <Route path={"/type/:id"} element={<TypePage/>}/>
-                                <Route path={"/category"} element={<CategoryList/>}/>
-                                <Route path={"/type"} element={<TypeList/>}/>
-                                <Route path={"/mathematicien"} element={<MathematicienList/>}/>
-                                <Route path={"/concept"} element={<ConceptList/>}/>
-                                <Route path={"/user/:id"} element={<UserProfilePage/>}/>
-                                <Route path={"/reset-password"} element={<PasswordReset/>}/>
-                                <Route path={"/reset-password-verification/:token"}
-                                       element={<PasswordResetVerification/>}/>
-                                <Route path={"/username/:username"} element={<UserRedirect/>}/>
-                                <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
-                                <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
-                                <Route path={"/mathematicien/redirect/:mathematicienName"}
-                                       element={<MathematicienRedirect/>}/>
-                                <Route path={"/contribution"} element={<ContributionPage/>}/>
-                                <Route path={"/search"} element={<SearchPage/>}/>
+                                <Route element={<MainLayout/>}>
+                                    <Route path="/" element={<HomePage/>}/>
+                                    <Route path="/concept/:id" element={<ConceptPage/>}/>
+                                    <Route path="/about" element={<AboutPage/>}/>
+                                    <Route path="/support" element={<SupportPage/>}/>
+                                    <Route path="/mathematicien/:id" element={<MathematicienPage/>}/>
+                                    <Route path={"/category/:id"} element={<CategoryPage/>}/>
+                                    <Route path={"/type/:id"} element={<TypePage/>}/>
+                                    <Route path={"/category"} element={<CategoryList/>}/>
+                                    <Route path={"/type"} element={<TypeList/>}/>
+                                    <Route path={"/mathematicien"} element={<MathematicienList/>}/>
+                                    <Route path={"/concept"} element={<ConceptList/>}/>
+                                    <Route path={"/user/:id"} element={<UserProfilePage/>}/>
+                                    <Route path={"/reset-password"} element={<PasswordReset/>}/>
+                                    <Route path={"/reset-password-verification/:token"}
+                                           element={<PasswordResetVerification/>}/>
+                                    <Route path={"/username/:username"} element={<UserRedirect/>}/>
+                                    <Route path={"/category/redirect/:categoryName"} element={<CategoryRedirect/>}/>
+                                    <Route path={"/type/redirect/:typeName"} element={<TypeRedirect/>}/>
+                                    <Route path={"/mathematicien/redirect/:mathematicienName"}
+                                           element={<MathematicienRedirect/>}/>
+                                    <Route path={"/contribution"} element={<ContributionPage/>}/>
+                                    <Route path={"/search"} element={<SearchPage/>}/>
+                                    <Route path="*" element={<LostPage/>}/>
+                                </Route>
                             </Routes>
                         </Router>
                     </ErrorBoundary>

@@ -1,6 +1,5 @@
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
-import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
 
@@ -12,9 +11,6 @@ const TypeList = () => {
 
     return (
         <>
-            {/* Barre supérieure */}
-            <TopBar />
-
             {/* Conteneur principal */}
             <Container maxWidth="md" sx={{ mt: 4 }}>
                 <Stack spacing={4}>

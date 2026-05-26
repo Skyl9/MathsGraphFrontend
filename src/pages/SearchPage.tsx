@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
-import {TopBar} from "../components/TopBar.tsx";
 
 interface SearchResult {
     id: number | string;
@@ -54,7 +53,6 @@ export const SearchPage = () => {
 
     return (
         <>
-            <TopBar/>
         <Box sx={{ p: 4, maxWidth: 1200, margin: '0 auto', minHeight: '80vh' }}>
             <Typography variant="h4" gutterBottom>
                 Résultats pour "{queryTerm}"

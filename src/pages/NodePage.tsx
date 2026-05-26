@@ -21,7 +21,6 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import DOMPurify from 'dompurify';
 import {Button, Fab, Link, Tooltip} from "@mui/material";
-import {TopBar} from "../components/TopBar";
 import Token from "../services/token";
 import TagsField from "../components/NodeFields/TagsField";
 import {logger} from "../utils/logger";
@@ -259,7 +258,6 @@ const NodePage = () => {
 
     return (
         <>
-            <TopBar/>
             <div className="node-actions">
 
                 <Button

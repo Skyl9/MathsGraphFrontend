@@ -13,7 +13,6 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
 import { useParams } from "react-router-dom";
-import { TopBar } from "../components/TopBar";
 import { EditModalAvatar } from '../components/EditModalAvatar';
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
@@ -74,7 +73,6 @@ const UserProfilePage = () => {
 
   return (
     <>
-      <TopBar />
       <EditModalAvatar
         open={editField === "avatar"}
         onClose={() => setEditField(null)}

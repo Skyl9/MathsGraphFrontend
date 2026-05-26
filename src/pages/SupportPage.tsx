@@ -1,9 +1,7 @@
 import { Container, Typography, Button, Stack } from '@mui/material';
-import {TopBar} from "../components/TopBar";
+
 export function SupportPage() {
     return (
-        <>
-        <TopBar/>
         <Container maxWidth="md" sx={{ py: 8 }}>
             <Stack spacing={4} textAlign="center">
                 <Typography variant="h3" component="h1" gutterBottom>
@@ -17,6 +15,5 @@ export function SupportPage() {
                 </Button>
             </Stack>
         </Container>
-        </>
     );
 }

@@ -12,7 +12,6 @@ import {
   Link
 } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
-import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import { ReportIssueButton } from "../components/Issue";
 import { Category } from "../types/ApiTypes/category";
@@ -76,9 +75,7 @@ const CategoryList = () => {
   const categoryTree = buildCategoryTree(categories);
 
   return (
-    <>
-      <TopBar />
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+    <Container maxWidth="md" sx={{ mt: 4 }}>
         <Stack spacing={4}>
           <Typography variant="h4" component="h1" textAlign="center">
             Liste des Catégories
@@ -107,7 +104,6 @@ const CategoryList = () => {
         </Stack>
         <ReportIssueButton />
       </Container>
-    </>
   );
 };
 

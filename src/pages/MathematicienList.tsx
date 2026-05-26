@@ -1,6 +1,5 @@
 import { Container, Typography, Stack, CircularProgress, Box, Alert, List, ListItem, ListItemText, Link } from "@mui/material";
 import { useQuery } from '@tanstack/react-query';
-import { TopBar } from "../components/TopBar";
 import { nodeApi } from "../services/api";
 import {ReportIssueButton} from "../components/Issue";
 import {MathematicianTimeline} from "../components/MathematicianTimeline.tsx";
@@ -13,9 +12,6 @@ const MathematicienList = () => {
 
     return (
         <>
-            {/* Barre supérieure */}
-            <TopBar />
-
             <MathematicianTimeline></MathematicianTimeline>
 
             {/* Conteneur principal */}

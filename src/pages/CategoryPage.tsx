@@ -1,5 +1,4 @@
 import {useEffect, useState} from "react";
-import {TopBar} from "../components/TopBar";
 import {useParams, useNavigate, Navigate} from "react-router-dom";
 import Token from "../services/token";
 import HtmlField from "../components/NodeFields/HtmlField";
@@ -100,7 +99,6 @@ const CategoryPage = () => {
 
     return (
         <>
-            <TopBar></TopBar>
             <FavoriteButton itemId={id as string} itemType={"category"}/>
             <div className="node-container">
                 <h1 className="node-title">{data?.nom}</h1>
