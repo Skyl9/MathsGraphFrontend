@@ -155,26 +155,6 @@ export function AboutPage() {
                         </Grid>
                     </Box>
 
-                    {/* Section Citation Inspirante */}
-                    <motion.div variants={itemVariants}>
-                        <Box 
-                            sx={{
-                                p: 5,
-                                borderRadius: 4,
-                                borderLeft: `6px solid ${isDark ? '#a78bfa' : '#7c3aed'}`,
-                                bgcolor: isDark ? 'rgba(139, 92, 246, 0.05)' : 'rgba(139, 92, 246, 0.02)',
-                                maxWidth: 800,
-                                mx: 'auto'
-                            }}
-                        >
-                            <Typography variant="h5" sx={{ fontStyle: 'italic', mb: 2, fontWeight: 500, lineHeight: 1.6 }}>
-                                "Les mathématiques ne sont pas seulement un ensemble de vérités froides et rigides, elles possèdent une beauté et une élégance qui n'ont rien à envier à l'art."
-                            </Typography>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 700, textAlign: 'right', color: 'primary.main' }}>
-                                — Adapté de Bertrand Russell
-                            </Typography>
-                        </Box>
-                    </motion.div>
 
                     {/* Appel à l'action */}
                     <motion.div variants={itemVariants} style={{ textAlign: 'center' }}>

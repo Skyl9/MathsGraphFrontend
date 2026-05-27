@@ -110,14 +110,6 @@ export const Login: React.FC = () => {
                         <Typography variant="body1" sx={{ color: "grey.400", mb: 4, lineHeight: 1.6 }}>
                             Connectez-vous pour explorer les démonstrations interactives, ajouter des favoris et contribuer à l'édification de la cartographie collaborative du savoir mathématique.
                         </Typography>
-                        <Box sx={{ borderLeft: "4px solid #0ea5e9", pl: 2, textAlign: "left" }}>
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "grey.300" }}>
-                                "Les mathématiques sont la musique de la raison."
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: "grey.500", mt: 0.5, display: "block" }}>
-                                — James Joseph Sylvester
-                            </Typography>
-                        </Box>
                     </Box>
                 </Grid>
 

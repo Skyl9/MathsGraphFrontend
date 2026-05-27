@@ -112,14 +112,6 @@ export const Register: React.FC = () => {
                         <Typography variant="body1" sx={{ color: "grey.400", mb: 4, lineHeight: 1.6 }}>
                             Créez un compte pour commencer à soumettre des corrections, proposer des démonstrations et participer activement à la communauté.
                         </Typography>
-                        <Box sx={{ borderLeft: "4px solid #7c3aed", pl: 2, textAlign: "left" }}>
-                            <Typography variant="body2" sx={{ fontStyle: "italic", color: "grey.300" }}>
-                                "La beauté des mathématiques ne se révèle qu'à ses adeptes les plus patients."
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: "grey.500", mt: 0.5, display: "block" }}>
-                                — Maryam Mirzakhani
-                            </Typography>
-                        </Box>
                     </Box>
                 </Grid>
 
