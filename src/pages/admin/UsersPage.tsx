@@ -1,8 +1,19 @@
-// UsersPage.tsx
+import { useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Box, CircularProgress, Alert } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  Alert,
+  Typography,
+  TextField,
+  InputAdornment,
+  Chip,
+  Paper,
+  useTheme
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
 import { nodeApi } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -11,6 +22,9 @@ import { User } from '../../types/ApiTypes/user';
 const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { data: rows = [], isLoading: loading, error } = useQuery<User[]>({
     queryKey: ['adminUsers'],
@@ -20,32 +34,106 @@ const UsersPage = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm('Confirmer la suppression ?')) return;
     // await nodeApi.deleteUser(id.toString());
-    // On invalide le cache pour rafraîchir la liste
     queryClient.setQueryData(['adminUsers'], (old: User[] | undefined) => old ? old.filter(u => u.id !== id) : []);
   };
+
+  const filteredRows = rows.filter(user => {
+    const query = searchQuery.toLowerCase();
+    return (
+      user.username.toLowerCase().includes(query) ||
+      user.email.toLowerCase().includes(query) ||
+      user.role.toLowerCase().includes(query)
+    );
+  });
 
   const columns: GridColDef<User>[] = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'username', headerName: 'Nom d’utilisateur', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1.5 },
-    { field: 'role', headerName: 'Rôle', width: 120 },
-    { field: 'is_active', headerName: 'Actif', width: 100, type: 'boolean' },
-    { field: 'created_at', headerName: 'Créé le', width: 160 },
+    {
+      field: 'role',
+      headerName: 'Rôle',
+      width: 130,
+      renderCell: (params) => {
+        const role = params.value as string;
+        let color: 'error' | 'warning' | 'info' | 'default' = 'default';
+        if (role === 'admin') color = 'error';
+        else if (role === 'moderator' || role === 'mod') color = 'warning';
+        else if (role === 'user') color = 'info';
+
+        return (
+          <Chip
+            label={role.toUpperCase()}
+            color={color}
+            size="small"
+            variant="outlined"
+            sx={{ fontWeight: 600, borderRadius: 1.5 }}
+          />
+        );
+      }
+    },
+    {
+      field: 'is_active',
+      headerName: 'Statut',
+      width: 120,
+      renderCell: (params) => {
+        const isActive = params.value as boolean;
+        return (
+          <Chip
+            label={isActive ? 'Actif' : 'Inactif'}
+            color={isActive ? 'success' : 'default'}
+            size="small"
+            variant={isActive ? 'outlined' : 'outlined'}
+            sx={{
+              fontWeight: 600,
+              borderRadius: 1.5,
+              ...(isActive ? {
+                bgcolor: isDark ? 'rgba(46, 125, 50, 0.12)' : 'rgba(46, 125, 50, 0.08)',
+                borderColor: 'success.main',
+                color: isDark ? 'success.light' : 'success.dark',
+              } : {
+                bgcolor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
+                borderColor: 'action.disabled',
+                color: 'text.secondary',
+              })
+            }}
+          />
+        );
+      }
+    },
+    {
+      field: 'created_at',
+      headerName: 'Créé le',
+      width: 150,
+      renderCell: (params) => {
+        const val = params.value;
+        if (!val) return '';
+        try {
+          return new Date(val).toLocaleDateString('fr-FR', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+        } catch (e) {
+          return val;
+        }
+      }
+    },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      width: 120,
+      width: 100,
       getActions: (params) => [
         <GridActionsCellItem
           key="edit"
-          icon={<EditIcon />}
+          icon={<EditIcon sx={{ color: 'primary.main' }} />}
           label="Éditer"
           onClick={() => navigate(`/admin/users/${params.id}`)}
         />,
         <GridActionsCellItem
           key="delete"
-          icon={<DeleteIcon />}
+          icon={<DeleteIcon sx={{ color: 'error.main' }} />}
           label="Supprimer"
           onClick={() => handleDelete(Number(params.id))}
         />
@@ -53,12 +141,104 @@ const UsersPage = () => {
     }
   ];
 
-  if (loading) return <CircularProgress />;
-  if (error) return <Alert severity="error">{error instanceof Error ? error.message : 'Une erreur est survenue'}</Alert>;
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">
+          {error instanceof Error ? error.message : 'Une erreur est survenue lors du chargement des utilisateurs.'}
+        </Alert>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ height: 600, width: '100%' }}>
-      <DataGrid rows={rows} columns={columns}/>
+    <Box sx={{ p: 1 }}>
+      <Box sx={{ mb: 4, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, gap: 2 }}>
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 0.5 }}>
+            Utilisateurs
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Gérer les comptes utilisateurs, attribuer les rôles et activer/désactiver les comptes.
+          </Typography>
+        </Box>
+        <TextField
+          placeholder="Rechercher..."
+          variant="outlined"
+          size="small"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          sx={{
+            minWidth: 260,
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 3,
+              bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+              '& fieldset': {
+                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+              },
+            }
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="action" fontSize="small" />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+
+      <Paper
+        elevation={0}
+        sx={{
+          p: 0,
+          borderRadius: 4,
+          overflow: 'hidden',
+          background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.65)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid',
+          borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
+          boxShadow: isDark ? '0 8px 32px 0 rgba(0, 0, 0, 0.2)' : '0 8px 32px 0 rgba(31, 38, 135, 0.04)',
+        }}
+      >
+        <Box sx={{ height: 600, width: '100%' }}>
+          <DataGrid
+            rows={filteredRows}
+            columns={columns}
+            disableRowSelectionOnClick
+            sx={{
+              border: 'none',
+              '& .MuiDataGrid-columnHeaders': {
+                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.015)',
+                borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+              },
+              '& .MuiDataGrid-columnHeaderTitle': {
+                fontWeight: 650,
+              },
+              '& .MuiDataGrid-cell': {
+                borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)'}`,
+              },
+              '& .MuiDataGrid-row:hover': {
+                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+              },
+              '& .MuiDataGrid-row:nth-of-type(even)': {
+                bgcolor: isDark ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.005)',
+              },
+              '& .MuiDataGrid-footerContainer': {
+                borderTop: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+              }
+            }}
+          />
+        </Box>
+      </Paper>
     </Box>
   );
 };

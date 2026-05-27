@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { EditModalAvatar } from '../components/EditModalAvatar';
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
@@ -40,7 +40,7 @@ const UserProfilePage: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === 'dark';
 
-  const { data: user, isLoading } = useQuery<User>({
+  const { data: queryUser, isLoading, error } = useQuery<User>({
     queryKey: ['userProfile', id],
     queryFn: () => nodeApi.getUserInfo(id || ""),
     enabled: !!id
@@ -54,12 +54,12 @@ const UserProfilePage: React.FC = () => {
 
   // Synchroniser l'état local avec les données reçues pour l'édition
   useEffect(() => {
-    if (user) {
-      setEmail(user.email);
-      setLang(user.preferred_language);
-      setBio(user.bio);
+    if (queryUser) {
+      setEmail(queryUser.email);
+      setLang(queryUser.preferred_language);
+      setBio(queryUser.bio);
     }
-  }, [user]);
+  }, [queryUser]);
 
   const updateUserMutation = useMutation({
     mutationFn: async ({ field, value }: { field: string, value: string }) => {
@@ -84,7 +84,11 @@ const UserProfilePage: React.FC = () => {
     updateUserMutation.mutate({ field: "avatar_url", value: avatarUrl });
   };
 
-  if (isLoading || !user) {
+  if (error || (!isLoading && !queryUser)) {
+    return <Navigate to="/404" replace />;
+  }
+
+  if (isLoading || !queryUser) {
     return (
       <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="60vh" gap={2}>
         <CircularProgress />
@@ -94,6 +98,8 @@ const UserProfilePage: React.FC = () => {
       </Box>
     );
   }
+
+  const user = queryUser;
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { CircularProgress, Container, Typography } from '@mui/material'
 import { nodeApi } from '../services/api'
@@ -8,11 +8,10 @@ import {Mathematicien} from "../types/ApiTypes/mathematicien";
 export const MathematicienRedirect = () => {
     const { mathematicienName } = useParams<{ mathematicienName: string }>()
     const navigate = useNavigate()
-    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         if (!mathematicienName) {
-            setError("Type invalide.")
+            navigate('/404', { replace: true })
             return
         }
 
@@ -23,22 +22,12 @@ export const MathematicienRedirect = () => {
                 navigate(`/mathematicien/${data.id}`, { replace: true })
             } catch (err) {
                 console.error(err)
-                setError("Impossible de trouver la catégorie demandée.")
+                navigate('/404', { replace: true })
             }
         }
 
         fetchAndRedirect()
     }, [mathematicienName, navigate])
-
-    if (error) {
-        return (
-            <Container sx={{ mt: 4 }}>
-                <Typography color="error" variant="h6">
-                    {error}
-                </Typography>
-            </Container>
-        )
-    }
 
     return (
         <Container

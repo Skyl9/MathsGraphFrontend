@@ -55,6 +55,13 @@ const App = () => {
             queries: {
                 staleTime: 1000 * 60 * 5, // 🌟 Les données restent en cache pendant 5 minutes !
                 refetchOnWindowFocus: false, // Évite de recharger si l'utilisateur change d'onglet
+                retry: (failureCount, error: any) => {
+                    // Ne pas retenter si c'est une erreur 404
+                    if (error && (error.status === 404 || error.response?.status === 404)) {
+                        return false;
+                    }
+                    return failureCount < 3;
+                }
             },
         },
     });
