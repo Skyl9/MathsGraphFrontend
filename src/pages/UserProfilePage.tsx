@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Avatar,
@@ -9,6 +9,11 @@ import {
   Chip,
   TextField,
   MenuItem,
+  Stack,
+  useTheme,
+  CircularProgress,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
@@ -19,9 +24,21 @@ import FavoriteList from "../components/FavoriteList";
 import UserContributions from "../components/UserContributions.tsx";
 import { User } from '../types/ApiTypes/user';
 
-const UserProfilePage = () => {
+// Icônes
+import EditIcon from '@mui/icons-material/Edit';
+import EmailIcon from '@mui/icons-material/Email';
+import LanguageIcon from '@mui/icons-material/Language';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+
+const UserProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
 
   const { data: user, isLoading } = useQuery<User>({
     queryKey: ['userProfile', id],
@@ -68,7 +85,14 @@ const UserProfilePage = () => {
   };
 
   if (isLoading || !user) {
-    return <Typography>Chargement...</Typography>;
+    return (
+      <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center" height="60vh" gap={2}>
+        <CircularProgress />
+        <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 600 }}>
+          Chargement du profil...
+        </Typography>
+      </Box>
+    );
   }
 
   return (
@@ -79,157 +103,306 @@ const UserProfilePage = () => {
         onSubmit={handleAvatarSubmit}
       />
 
-      <Box sx={{ p: 3, maxWidth: 1200, margin: '0 auto' }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Grid container spacing={4}>
-            <Grid size={{ xs: 12, md: 6 }} sx={{ textAlign: 'center' }}>
-              <Avatar
-                src={user.avatar_url || '/default-avatar.png'}
-                sx={{ width: 200, height: 200, margin: '0 auto', mb: 2 }}
-              />
-              <Button onClick={() => setEditField("avatar")}>
-                {user.avatar_url
-                  ? "Modifier la photo de profil"
-                  : "Ajouter une photo de profil"
-                }
-              </Button>
+      <Box sx={{ p: 1, maxWidth: 1200, margin: '0 auto', py: 4 }}>
+        <Grid container spacing={4}>
+          
+          {/* Colonne Gauche : Identité de l'utilisateur */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Paper 
+              elevation={0} 
+              sx={{ 
+                p: 4, 
+                textAlign: 'center',
+                borderRadius: 4,
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+                position: 'relative'
+              }}
+            >
+              <Box sx={{ position: 'relative', display: 'inline-block', mb: 3 }}>
+                <Avatar
+                  src={user.avatar_url || '/default-avatar.png'}
+                  sx={{ 
+                    width: 150, 
+                    height: 150, 
+                    margin: '0 auto',
+                    border: `4px solid ${theme.palette.primary.main}`,
+                    boxShadow: "0 8px 24px rgba(14, 165, 233, 0.15)"
+                  }}
+                />
+                <Tooltip title="Modifier la photo de profil" placement="top">
+                  <IconButton 
+                    onClick={() => setEditField("avatar")}
+                    color="primary"
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      right: 4,
+                      bgcolor: 'background.paper',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                      '&:hover': { bgcolor: 'primary.main', color: '#ffffff' }
+                    }}
+                    size="small"
+                  >
+                    <PhotoCameraIcon sx={{ fontSize: 18 }} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
 
-              <Typography variant="h5" gutterBottom>
+              <Typography variant="h4" sx={{ fontWeight: 800, mb: 1, letterSpacing: '-0.01em' }}>
                 {user.username}
               </Typography>
-              <Chip
-                label={user.role}
-                color={
-                  user.role === 'admin'
-                    ? 'error'
-                    : user.role === 'moderator'
-                      ? 'warning'
-                      : 'primary'
-                }
-                sx={{ mb: 2 }}
-              />
-              <Chip
-                label={user.is_active ? 'Actif' : 'Inactif'}
-                color={user.is_active ? 'success' : 'default'}
-                sx={{ ml: 1 }}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Informations personnelles
-                  </Typography>
-                </Grid>
-                {/* Email */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="textSecondary">Email</Typography>
+
+              <Stack direction="row" spacing={1.5} justifyContent="center" sx={{ mb: 3 }}>
+                <Chip
+                  label={user.role}
+                  color={
+                    user.role === 'admin'
+                      ? 'error'
+                      : user.role === 'moderator'
+                        ? 'warning'
+                        : 'primary'
+                  }
+                  sx={{ fontWeight: 700, textTransform: 'capitalize' }}
+                />
+                <Chip
+                  label={user.is_active ? 'Actif' : 'Inactif'}
+                  color={user.is_active ? 'success' : 'default'}
+                  sx={{ fontWeight: 700 }}
+                />
+              </Stack>
+
+              <Button 
+                variant="outlined" 
+                size="small"
+                onClick={() => setEditField("avatar")}
+                sx={{ borderRadius: 2, textTransform: 'none', fontWeight: 600 }}
+              >
+                Gérer l'avatar
+              </Button>
+            </Paper>
+          </Grid>
+
+          {/* Colonne Droite : Formulaires / Infos éditables */}
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Paper 
+              elevation={0}
+              sx={{ 
+                p: 4,
+                borderRadius: 4,
+                border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+                height: '100%'
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 800, mb: 4 }}>
+                Informations Personnelles
+              </Typography>
+
+              <Stack spacing={4}>
+                
+                {/* Champ Email */}
+                <Box>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
+                      <EmailIcon sx={{ fontSize: 20 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Email</Typography>
+                    </Stack>
+                    {editField !== "email" && (
+                      <Button 
+                        size="small" 
+                        startIcon={<EditIcon />} 
+                        onClick={() => setEditField("email")}
+                        sx={{ textTransform: 'none', fontWeight: 600 }}
+                      >
+                        Modifier
+                      </Button>
+                    )}
+                  </Stack>
+
                   {editField === "email" ? (
-                    <>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
                       <TextField
                         value={email}
                         onChange={e => setEmail(e.target.value)}
                         fullWidth
                         size="small"
-                        sx={{ mt: 1, mb: 1 }}
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                       />
-                      <Button onClick={() => handleFieldSave("email")} variant="contained" size="small" sx={{ mr: 1 }}>Enregistrer</Button>
-                      <Button onClick={() => { setEditField(null); setEmail(user.email); }} size="small">Annuler</Button>
-                    </>
+                      <IconButton onClick={() => handleFieldSave("email")} color="success">
+                        <SaveIcon />
+                      </IconButton>
+                      <IconButton onClick={() => { setEditField(null); setEmail(user.email); }} color="error">
+                        <CancelIcon />
+                      </IconButton>
+                    </Stack>
                   ) : (
-                    <>
-                      <Typography>{user.email}</Typography>
-                      <Button onClick={() => setEditField("email")} size="small" sx={{ ml: 1 }}>Modifier</Button>
-                    </>
+                    <Typography variant="body1" sx={{ pl: 3.5, fontWeight: 500, color: 'text.primary' }}>
+                      {user.email}
+                    </Typography>
                   )}
-                </Grid>
-                {/* Langue préférée */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="textSecondary">Langue préférée</Typography>
+                </Box>
+
+                {/* Champ Langue */}
+                <Box>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
+                      <LanguageIcon sx={{ fontSize: 20 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Langue Préférée</Typography>
+                    </Stack>
+                    {editField !== "preferred_language" && (
+                      <Button 
+                        size="small" 
+                        startIcon={<EditIcon />} 
+                        onClick={() => setEditField("preferred_language")}
+                        sx={{ textTransform: 'none', fontWeight: 600 }}
+                      >
+                        Modifier
+                      </Button>
+                    )}
+                  </Stack>
+
                   {editField === "preferred_language" ? (
-                    <>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
                       <TextField
                         value={lang}
                         onChange={e => setLang(e.target.value)}
                         select
                         fullWidth
                         size="small"
-                        sx={{ mt: 1, mb: 1 }}
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                       >
                         <MenuItem value="fr">Français</MenuItem>
                         <MenuItem value="en">Anglais</MenuItem>
                         <MenuItem value="es">Espagnol</MenuItem>
                       </TextField>
-                      <Button onClick={() => handleFieldSave("preferred_language")} variant="contained" size="small" sx={{ mr: 1 }}>Enregistrer</Button>
-                      <Button onClick={() => { setEditField(null); setLang(user.preferred_language); }} size="small">Annuler</Button>
-                    </>
+                      <IconButton onClick={() => handleFieldSave("preferred_language")} color="success">
+                        <SaveIcon />
+                      </IconButton>
+                      <IconButton onClick={() => { setEditField(null); setLang(user.preferred_language); }} color="error">
+                        <CancelIcon />
+                      </IconButton>
+                    </Stack>
                   ) : (
-                    <>
-                      <Typography>{user.preferred_language}</Typography>
-                      <Button onClick={() => setEditField("preferred_language")} size="small" sx={{ ml: 1 }}>Modifier</Button>
-                    </>
+                    <Typography variant="body1" sx={{ pl: 3.5, fontWeight: 500, textTransform: 'capitalize' }}>
+                      {user.preferred_language === 'fr' ? 'Français' : user.preferred_language === 'en' ? 'Anglais' : 'Espagnol'}
+                    </Typography>
                   )}
-                </Grid>
-                {/* Bio */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="textSecondary">Biographie</Typography>
+                </Box>
+
+                {/* Champ Biographie */}
+                <Box>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
+                    <Stack direction="row" spacing={1} alignItems="center" sx={{ color: 'text.secondary' }}>
+                      <EditIcon sx={{ fontSize: 20 }} />
+                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Biographie</Typography>
+                    </Stack>
+                    {editField !== "bio" && (
+                      <Button 
+                        size="small" 
+                        startIcon={<EditIcon />} 
+                        onClick={() => setEditField("bio")}
+                        sx={{ textTransform: 'none', fontWeight: 600 }}
+                      >
+                        Modifier
+                      </Button>
+                    )}
+                  </Stack>
+
                   {editField === "bio" ? (
-                    <>
+                    <Stack spacing={1} sx={{ mt: 1 }}>
                       <TextField
                         multiline
-                        rows={4}
+                        rows={3}
                         fullWidth
                         value={bio}
                         onChange={e => setBio(e.target.value)}
-                        sx={{ mt: 1, mb: 1 }}
+                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                       />
-                      <Button onClick={() => handleFieldSave("bio")} variant="contained" size="small" sx={{ mr: 1 }}>Enregistrer</Button>
-                      <Button onClick={() => { setEditField(null); setBio(user.bio); }} size="small">Annuler</Button>
-                    </>
+                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                        <Button 
+                          onClick={() => handleFieldSave("bio")} 
+                          variant="contained" 
+                          size="small" 
+                          startIcon={<SaveIcon />}
+                          sx={{ borderRadius: 1.5 }}
+                        >
+                          Enregistrer
+                        </Button>
+                        <Button 
+                          onClick={() => { setEditField(null); setBio(user.bio); }} 
+                          variant="outlined"
+                          size="small" 
+                          startIcon={<CancelIcon />}
+                          sx={{ borderRadius: 1.5 }}
+                        >
+                          Annuler
+                        </Button>
+                      </Stack>
+                    </Stack>
                   ) : (
-                    <>
-                      <Typography sx={{ mt: 1 }}>{user.bio || 'Aucune biographie'}</Typography>
-                      <Button onClick={() => setEditField("bio")} size="small" sx={{ ml: 1 }}>Modifier</Button>
-                    </>
+                    <Typography variant="body1" sx={{ pl: 3.5, fontWeight: 500, fontStyle: user.bio ? 'normal' : 'italic', color: user.bio ? 'text.primary' : 'text.secondary' }}>
+                      {user.bio || 'Aucune biographie rédigée.'}
+                    </Typography>
                   )}
-                </Grid>
-                {/* Date d'inscription */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="textSecondary">Date d'inscription</Typography>
-                  <Typography>
-                    {new Date(user.created_at).toLocaleDateString('fr-FR')}
-                  </Typography>
-                </Grid>
-                {/* Dernière connexion */}
-                <Grid size={{ xs: 12 }}>
-                  <Typography variant="subtitle2" color="textSecondary">Dernière connexion</Typography>
-                  <Typography>
-                    {user.updated_at ? new Date(user.updated_at).toLocaleDateString('fr-FR') : 'Jamais'}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
+                </Box>
+
+                {/* Dates Système */}
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={4} sx={{ pt: 2, borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <CalendarMonthIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                    <Typography variant="body2" color="text.secondary">
+                      Inscrit le : <strong>{new Date(user.created_at).toLocaleDateString('fr-FR')}</strong>
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <AccessTimeIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
+                    <Typography variant="body2" color="text.secondary">
+                      Dernière connexion : <strong>{user.updated_at ? new Date(user.updated_at).toLocaleDateString('fr-FR') : 'Jamais'}</strong>
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Stack>
+            </Paper>
           </Grid>
-        </Paper>
-        <ReportIssueButton />
-        <Box sx={{ mt: 4, mb: 4 }}>
+        </Grid>
+
+        {/* Section Favoris & Contributions */}
+        <Box sx={{ mt: 5, mb: 4 }}>
           <Grid container spacing={4}>
+            
             {/* Colonne de gauche : Favoris */}
             <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="h6" gutterBottom>Favoris</Typography>
-              <Paper elevation={2} sx={{ p: 2, minHeight: '200px' }}>
-                <FavoriteList userId={id}></FavoriteList>
+              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
+                Mes Favoris
+              </Typography>
+              <Paper 
+                elevation={0} 
+                sx={{ 
+                  p: 3, 
+                  minHeight: '260px',
+                  borderRadius: 4,
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+                  background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff"
+                }}
+              >
+                <FavoriteList userId={id} />
               </Paper>
             </Grid>
 
             {/* Colonne de droite : Historique des contributions */}
             <Grid size={{ xs: 12, md: 6 }}>
-              {id && <UserContributions userId={id} />}
+              <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
+                Mes Contributions
+              </Typography>
+              <Box sx={{ minHeight: '260px' }}>
+                {id && <UserContributions userId={id} />}
+              </Box>
             </Grid>
           </Grid>
         </Box>
 
-        <Box textAlign="center" mt={4}>
+        <Box textAlign="center" mt={6} sx={{ pt: 3, borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}` }}>
           <ReportIssueButton />
         </Box>
 
@@ -239,4 +412,3 @@ const UserProfilePage = () => {
 };
 
 export default UserProfilePage;
-

@@ -1,6 +1,9 @@
-// SettingsPage.tsx
 import React, { useState } from 'react';
-import { Box, TextField, Switch, FormControlLabel, Typography } from '@mui/material';
+import { Box, TextField, Switch, FormControlLabel, Typography, Paper, Button, Stack, useTheme, MenuItem, Snackbar, Alert, CircularProgress } from '@mui/material';
+import SaveIcon from "@mui/icons-material/Save";
+import SettingsIcon from "@mui/icons-material/Settings";
+import LanguageIcon from "@mui/icons-material/Language";
+import ConstructionIcon from "@mui/icons-material/Construction";
 
 interface Settings {
   siteName: string;
@@ -9,17 +12,17 @@ interface Settings {
 }
 
 const SettingsPage: React.FC = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === 'dark';
+
   const [settings, setSettings] = useState<Settings>({
-    siteName: '',
-    defaultLanguage: '',
+    siteName: 'MathGraph',
+    defaultLanguage: 'fr',
     maintenanceMode: false
   });
-/*
-  useEffect(() => {
-    nodeApi.getSettings()
-      .then((data: Settings) => setSettings(data))
-      .catch(console.error);
-  }, []);*/
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleChange =
     (key: keyof Settings) =>
@@ -30,42 +33,139 @@ const SettingsPage: React.FC = () => {
   const handleToggle = () => {
     setSettings((s) => ({ ...s, maintenanceMode: !s.maintenanceMode }));
   };
-/*
-  const handleSave = async () => {
-    try {
-      await nodeApi.updateSettings(settings);
-      alert('Paramètres sauvegardés');
-    } catch (err) {
-      console.error(err);
-      alert('Erreur lors de la sauvegarde');
-    }
-  };*/
+
+  const handleSave = () => {
+    setIsSaving(true);
+    // Simulation d'une sauvegarde API
+    setTimeout(() => {
+      setIsSaving(false);
+      setSnackbarOpen(true);
+    }, 1200);
+  };
 
   return (
-    <Box component="form" sx={{ maxWidth: 600, display: 'grid', gap: 2 }}>
-      <Typography variant="h5">Paramètres généraux</Typography>
-      <TextField
-        label="Nom du site"
-        value={settings.siteName}
-        onChange={handleChange('siteName')}
-        fullWidth
-      />
-      <TextField
-        label="Langue par défaut"
-        value={settings.defaultLanguage}
-        onChange={handleChange('defaultLanguage')}
-        fullWidth
-      />
-      <FormControlLabel
-        control={
-          <Switch
-            checked={settings.maintenanceMode}
-            onChange={handleToggle}
-          />
-        }
-        label="Mode maintenance"
-      />
+    <Box sx={{ maxWidth: 800, mx: "auto", p: 1 }}>
+      <Typography variant="h4" sx={{ fontWeight: 800, mb: 3, letterSpacing: "-0.01em" }}>
+        Paramètres du Site
+      </Typography>
 
+      <Stack spacing={3}>
+        {/* Section 1: Configuration Générale */}
+        <Paper 
+          elevation={0}
+          sx={{
+            p: 4,
+            borderRadius: 4,
+            border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff"
+          }}
+        >
+          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
+            <SettingsIcon color="primary" />
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Configuration Générale
+            </Typography>
+          </Stack>
+
+          <Stack spacing={3.5}>
+            <TextField
+              label="Nom du site"
+              value={settings.siteName}
+              onChange={handleChange('siteName')}
+              fullWidth
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+            />
+
+            <TextField
+              select
+              label="Langue par défaut"
+              value={settings.defaultLanguage}
+              onChange={handleChange('defaultLanguage')}
+              fullWidth
+              sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              InputProps={{
+                startAdornment: <LanguageIcon color="action" sx={{ mr: 1 }} />
+              }}
+            >
+              <MenuItem value="fr">Français (FR)</MenuItem>
+              <MenuItem value="en">Anglais (EN)</MenuItem>
+              <MenuItem value="es">Espagnol (ES)</MenuItem>
+            </TextField>
+          </Stack>
+        </Paper>
+
+        {/* Section 2: Mode Maintenance */}
+        <Paper 
+          elevation={0}
+          sx={{
+            p: 4,
+            borderRadius: 4,
+            border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff"
+          }}
+        >
+          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 3 }}>
+            <ConstructionIcon color="warning" />
+            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+              Maintenance & Sécurité
+            </Typography>
+          </Stack>
+
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2.5, lineHeight: 1.5 }}>
+            Activer le mode maintenance redirige temporairement tous les visiteurs non administratifs vers une page d'information hors-ligne.
+          </Typography>
+
+          <FormControlLabel
+            control={
+              <Switch
+                checked={settings.maintenanceMode}
+                onChange={handleToggle}
+                color="warning"
+              />
+            }
+            label={settings.maintenanceMode ? "Mode maintenance activé" : "Mode maintenance désactivé"}
+            sx={{ m: 0, fontWeight: 600 }}
+          />
+        </Paper>
+
+        {/* Bouton de sauvegarde */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleSave}
+            disabled={isSaving}
+            startIcon={isSaving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+            sx={{
+              py: 1.5,
+              px: 4,
+              borderRadius: 3,
+              fontWeight: 700,
+              boxShadow: "0 4px 12px rgba(14, 165, 233, 0.25)"
+            }}
+          >
+            {isSaving ? "Enregistrement..." : "Sauvegarder les modifications"}
+          </Button>
+        </Box>
+      </Stack>
+
+      {/* Message de succès */}
+      <Snackbar 
+        open={snackbarOpen} 
+        autoHideDuration={4000} 
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbarOpen(false)} 
+          severity="success" 
+          variant="filled"
+          sx={{ borderRadius: 2, fontWeight: 600 }}
+        >
+          Les paramètres ont été sauvegardés avec succès !
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
