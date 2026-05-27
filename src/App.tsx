@@ -3,6 +3,10 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import {Canvas} from "@react-three/fiber";
 import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
+import NodeDetails from "./components/NodeDetails";
+import {GraphHUD} from "./components/GraphHUD";
+import {AnimatePresence} from "framer-motion";
+import {useGraphStore} from "./stores/useGraphStore";
 import ConceptPage from "./pages/NodePage";
 import {ThemeProvider} from "@mui/material";
 import {AboutPage} from "./pages/AboutPage";
@@ -126,6 +130,10 @@ const App = () => {
 const AppContent = () => {
     const {loading, error, graphData} = useGraphData();
     const darkMode = useUIStore(s => s.darkMode);
+    const graphTheme = useUIStore(s => s.graphTheme);
+    const selectedNodeId = useGraphStore(s => s.selectedNodeId);
+    const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
+    const isSearchActive = useGraphStore(s => s.isSearchActive);
 
     if (loading) {
         return (
@@ -154,16 +162,42 @@ const AppContent = () => {
 
     console.log("GraphData reçu par AppContent (avant de passer à Scene/Menu):", graphData);
 
+    const getBackground = () => {
+        if (graphTheme === "neon") {
+            return "radial-gradient(circle at center, #0B0B1E 0%, #03030A 100%)";
+        }
+        return darkMode 
+            ? "radial-gradient(circle at center, #0F172A 0%, #020617 100%)" 
+            : "radial-gradient(circle at center, #F8FAFC 0%, #E2E8F0 100%)";
+    };
+
+    const handleCloseNodeDetails = () => {
+        setSelectedNodeId(null);
+    };
+
     return (
-        <div style={{width: "100vw", height: "100vh"}} className={darkMode ? "dark-mode" : ""}>
-            {" "}
-            <Canvas style={{background: darkMode ? "#222" : "lightgrey"}}>
-                {" "}
-                <ambientLight intensity={0.5}/>
-                <pointLight position={[10, 10, 10]}/>
+        <div 
+            style={{
+                width: "100vw", 
+                height: "100vh", 
+                position: "relative",
+                overflow: "hidden",
+                background: getBackground(),
+                transition: "background 0.3s ease"
+            }} 
+            className={darkMode ? "dark-mode" : ""}
+        >
+            <Canvas gl={{ antialias: true, alpha: true }} style={{ background: "transparent" }}>
                 <Scene graphData={graphData}/>
             </Canvas>
-            <Menu graphData={graphData}/>{" "}
+            <Menu graphData={graphData}/>
+            <GraphHUD />
+            
+            <AnimatePresence>
+                {selectedNodeId !== null && !isSearchActive && (
+                    <NodeDetails id={selectedNodeId} onClose={handleCloseNodeDetails} />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

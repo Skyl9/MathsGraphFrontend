@@ -1,8 +1,7 @@
 import {useEffect, useMemo, useCallback, useRef, useState} from "react";
-import {useThree} from "@react-three/fiber";
+import {useThree, useFrame} from "@react-three/fiber";
 import {OrbitControls, Billboard, Text, Instances, Instance} from "@react-three/drei";
-import {Vector3, Color} from "three";
-import NodeDetails from "../components/NodeDetails";
+import {Vector3, Color, Mesh} from "three";
 import Edge from "../components/Edge";
 import gsap from "gsap";
 import {NodeData, Graph} from "../types/ApiTypes/graph";
@@ -17,6 +16,32 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
     if (typeMath === "théorème") return colors[2];
     if (typeMath === "lemme") return colors[0];
     return "purple";
+};
+
+// 🌟 NOUVEAU : Anneau holographique de sélection
+const SelectionRing = ({ position, color }: { position: [number, number, number]; color: string }) => {
+    const ringRef = useRef<Mesh>(null);
+    useFrame(({ clock }) => {
+        if (ringRef.current) {
+            // Rotation sur l'axe Y/Z
+            ringRef.current.rotation.z = clock.getElapsedTime() * 0.6;
+            // Pulsation d'échelle douce
+            const scale = 1.0 + Math.sin(clock.getElapsedTime() * 4) * 0.06;
+            ringRef.current.scale.set(scale, scale, scale);
+        }
+    });
+    return (
+        <mesh ref={ringRef} position={position} rotation={[Math.PI / 2, 0, 0]}>
+            <torusGeometry args={[0.55, 0.015, 8, 48]} />
+            <meshStandardMaterial 
+                color={color} 
+                emissive={color} 
+                emissiveIntensity={2.5} 
+                transparent 
+                opacity={0.8} 
+            />
+        </mesh>
+    );
 };
 
 interface SceneProps {
@@ -100,10 +125,6 @@ export default function Scene({graphData}: SceneProps) {
 
     const targetPosition = useGraphStore(s => s.targetPosition);
     const setTargetPosition = useGraphStore(s => s.setTargetPosition);
-    const history = useGraphStore(s => s.history);
-    const setHistory = useGraphStore(s => s.setHistory);
-    const currentIndex = useGraphStore(s => s.currentIndex);
-    const setCurrentIndex = useGraphStore(s => s.setCurrentIndex);
     const selectedNodeId = useGraphStore(s => s.selectedNodeId);
     const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
 
@@ -111,7 +132,7 @@ export default function Scene({graphData}: SceneProps) {
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
     const controlsRef = useRef<any>(null);
-    const [shouldBeShowNode, setShouldBeShowNode] = useState(false);
+    const darkMode = useUIStore(s => s.darkMode);
 
     const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
     const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
@@ -145,6 +166,63 @@ export default function Scene({graphData}: SceneProps) {
         }
     }, [selectedNode, targetPosition, camera, currentView]);
 
+    // Écouteurs d'événements pour le HUD de navigation (Zoom / Reset)
+    useEffect(() => {
+        const handleZoomIn = () => {
+            if (controlsRef.current) {
+                const target = controlsRef.current.target;
+                gsap.to(camera.position, {
+                    x: target.x + (camera.position.x - target.x) * 0.7,
+                    y: target.y + (camera.position.y - target.y) * 0.7,
+                    z: target.z + (camera.position.z - target.z) * 0.7,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            }
+        };
+
+        const handleZoomOut = () => {
+            if (controlsRef.current) {
+                const target = controlsRef.current.target;
+                gsap.to(camera.position, {
+                    x: target.x + (camera.position.x - target.x) * 1.4,
+                    y: target.y + (camera.position.y - target.y) * 1.4,
+                    z: target.z + (camera.position.z - target.z) * 1.4,
+                    duration: 0.4,
+                    ease: "power2.out"
+                });
+            }
+        };
+
+        const handleReset = () => {
+            setSelectedNodeId(null);
+            setTargetPosition(new Vector3(0, 0, 0));
+            if (controlsRef.current) {
+                gsap.to(controlsRef.current.target, {
+                    x: 0, y: 0, z: 0,
+                    duration: 1.2,
+                    ease: "power3.inOut",
+                    onUpdate: () => controlsRef.current.update()
+                });
+            }
+            gsap.to(camera.position, {
+                x: 0, y: 10, z: 35,
+                duration: 1.2,
+                ease: "power3.inOut"
+            });
+        };
+
+        window.addEventListener("graph-zoom-in", handleZoomIn);
+        window.addEventListener("graph-zoom-out", handleZoomOut);
+        window.addEventListener("graph-reset-view", handleReset);
+
+        return () => {
+            window.removeEventListener("graph-zoom-in", handleZoomIn);
+            window.removeEventListener("graph-zoom-out", handleZoomOut);
+            window.removeEventListener("graph-reset-view", handleReset);
+        };
+    }, [camera, setSelectedNodeId, setTargetPosition]);
+
     // Raccourcis clavier (D, Q, Arrow)
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -158,13 +236,11 @@ export default function Scene({graphData}: SceneProps) {
                     const nextNode = visibleNodes[(positionListe + 1) % visibleNodes.length];
                     setSelectedNodeId(nextNode.id);
                     setTargetPosition(new Vector3(nextNode.position[currentView].x, nextNode.position[currentView].y, nextNode.position[currentView].z));
-                    setShouldBeShowNode(true);
                 }
                 if (event.key === "q" || event.key === "ArrowLeft") {
                     const prevNode = visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length];
                     setSelectedNodeId(prevNode.id);
                     setTargetPosition(new Vector3(prevNode.position[currentView].x, prevNode.position[currentView].y, prevNode.position[currentView].z));
-                    setShouldBeShowNode(true);
                 }
             }
         };
@@ -181,22 +257,6 @@ export default function Scene({graphData}: SceneProps) {
         return () => window.removeEventListener("keydown", toggleDebug);
     }, [debugMode, setDebugMode]);
 
-    // Historique
-    useEffect(() => {
-        if (targetPosition) {
-            setHistory((prevHistory: Vector3[]) => {
-                if (currentIndex < prevHistory.length - 1) return prevHistory;
-                if (prevHistory.length === 0 || !prevHistory[prevHistory.length - 1].equals(targetPosition)) {
-                    return [...prevHistory, targetPosition];
-                }
-                return prevHistory;
-            });
-            setCurrentIndex((prevIndex: number) =>
-                history.length === 0 || (history[currentIndex] && !history[currentIndex].equals(targetPosition))
-                    ? prevIndex + 1 : prevIndex
-            );
-        }
-    }, [currentIndex, history, setCurrentIndex, setHistory, targetPosition]);
 
     useEffect(() => {
         if (selectedNode) {
@@ -205,23 +265,23 @@ export default function Scene({graphData}: SceneProps) {
         }
     }, [selectedNode, setTargetPosition, currentView]);
 
-    const handleCloseNodeDetails = useCallback(() => {
-        setSelectedNodeId(null);
-        setShouldBeShowNode(false);
-    }, [setSelectedNodeId, setShouldBeShowNode]);
-
     const handleCanvasClick = useCallback((event: MouseEvent) => {
-        if (event.target === gl.domElement) setShouldBeShowNode(false);
-    }, [gl, setShouldBeShowNode]);
+        if (event.target === gl.domElement) setSelectedNodeId(null);
+    }, [gl, setSelectedNodeId]);
 
     const renderMode = useUIStore(s => s.renderMode);
     if (!graphData) return <group>Pas de données pour la scène.</group>;
 
     return (
         <>
-            {graphTheme === "neon" && <color attach="background" args={["#0a0a10"]}/>}
-            <ambientLight intensity={graphTheme === "neon" ? 0.1 : 0.5}/>
-            <pointLight position={[10, 10, 10]} intensity={graphTheme === "neon" ? 0.2 : 1}/>
+            <ambientLight intensity={graphTheme === "neon" ? 0.35 : (darkMode ? 0.45 : 0.75)}/>
+            <directionalLight position={[10, 20, 10]} intensity={graphTheme === "neon" ? 0.6 : 0.95} />
+            <pointLight position={[-10, -20, -10]} intensity={0.2} />
+
+            <gridHelper 
+                args={[200, 80, darkMode ? "rgba(56, 189, 248, 0.45)" : "rgba(14, 165, 233, 0.55)", darkMode ? "rgba(148, 163, 184, 0.08)" : "rgba(71, 85, 105, 0.1)"]} 
+                position={[0, -12, 0]} 
+            />
 
             <group onPointerMissed={handleCanvasClick}>
                 {renderMode === "performance" ? (
@@ -236,7 +296,7 @@ export default function Scene({graphData}: SceneProps) {
                             emissiveIntensity={graphTheme === "neon" ? 0.8 : 0}
                         />
                         {visibleNodes.map((node) => {
-                            const isSelected = shouldBeShowNode && selectedNodeId === node.id;
+                            const isSelected = selectedNodeId === node.id;
                             const isNeighbor = neighborIds.has(node.id);
                             const isFocus = graphTheme === "focus";
                             const shouldDim = isFocus && selectedNodeId !== null && !isSelected && !isNeighbor;
@@ -252,7 +312,6 @@ export default function Scene({graphData}: SceneProps) {
                                     debug={debugMode}
                                     onClick={() => {
                                         setSelectedNodeId(node.id);
-                                        setShouldBeShowNode(true);
                                     }}
                                 />
                             );
@@ -269,18 +328,17 @@ export default function Scene({graphData}: SceneProps) {
                             position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}
                             color={getNodeColor(node.typeMath, colors)}
                             nom={node.nom}
-                            isSelected={shouldBeShowNode && selectedNodeId === node.id}
+                            isSelected={selectedNodeId === node.id}
                             isNeighbor={neighborIds.has(node.id)}
                             onClick={() => {
                                 setSelectedNodeId(node.id);
-                                setShouldBeShowNode(true);
                             }}
                             debug={debugMode}
                         />
                     ))
                 )}
 
-                {/* 🌟 Les Arêtes inchangées */}
+                {/* 🌟 Les Arêtes */}
                 {edges
                     .filter(edge => visibleNodes.find(n => n.id === edge.start) && visibleNodes.find(n => n.id === edge.end))
                     .map((edge, index) => {
@@ -305,13 +363,11 @@ export default function Scene({graphData}: SceneProps) {
                         );
                     })}
 
-                {selectedNode && shouldBeShowNode && (
-                    <NodeDetails
+                {/* 🌟 Anneau de sélection holographique */}
+                {selectedNode && (
+                    <SelectionRing
                         position={[selectedNode.position[currentView].x, selectedNode.position[currentView].y, selectedNode.position[currentView].z]}
-                        nom={selectedNode.nom}
-                        typeMath={selectedNode.typeMath}
-                        id={selectedNode.id}
-                        onClose={handleCloseNodeDetails}
+                        color={getNodeColor(selectedNode.typeMath, colors)}
                     />
                 )}
             </group>

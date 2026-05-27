@@ -1,37 +1,97 @@
-/* Styles pour le conteneur du menu */
+/* Container for the menu */
 .menu-container {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px;
-    z-index: 50;
+    top: 24px;
+    left: 24px;
+    z-index: 100;
 }
 
-/* Styles pour le conteneur de la barre de recherche */
+/* Floating Glassmorphic Menu Panel */
+.floating-glass-menu {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.floating-glass-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.floating-glass-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.floating-glass-menu::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 4px;
+}
+
+.floating-glass-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4);
+}
+
+/* Container for search bar and spotlight suggestions */
 .search-bar-container {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 50;
-}
-.search-results {
-    position: absolute;
-    top: 60px; /* Position sous la barre de recherche */
-    right: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
-    z-index: 51; /* Au-dessus de la barre de recherche */
-    width: 200px; /* Ajustez la largeur selon vos besoins */
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    top: 24px;
+    right: 24px;
+    z-index: 110;
+    display: flex;
+    flex-direction: column;
+    width: 340px;
 }
 
+/* Glassmorphic Search Results Dropdown */
+.search-results {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15);
+    max-height: 280px;
+    overflow-y: auto;
+    font-family: 'Inter', Roboto, sans-serif;
+    transition: all 0.2s ease;
+}
+
+.search-results::-webkit-scrollbar {
+    width: 4px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 2px;
+}
+
+/* Search results items */
 .search-result-item {
-    padding: 5px;
-    border-bottom: 1px solid #eee;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 2px;
 }
 
 .search-result-item:last-child {
-    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.search-result-title {
+    font-weight: 600;
+}
+
+.search-result-meta {
+    font-size: 0.75rem;
+    opacity: 0.7;
+    text-transform: capitalize;
+}
+
+/* Empty state info */
+.search-no-results {
+    padding: 12px 16px;
+    font-size: 0.875rem;
+    text-align: center;
+    opacity: 0.7;
 }

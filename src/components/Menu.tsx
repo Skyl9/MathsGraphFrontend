@@ -1,33 +1,37 @@
 import {useCallback, useState} from 'react';
 import {Vector3} from "three";
 import {
-    Drawer,
     IconButton,
     Typography,
     Box,
     Button,
     FormControlLabel,
     Checkbox,
-    Divider, Switch,
+    Divider,
+    Switch,
     Select,
     MenuItem,
     FormControl,
     InputLabel
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import HomeIcon from '@mui/icons-material/Home';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SearchBar from "./SearchBar";
 import "../styles/Menu.css";
 import {Graph, NodeData} from "../types/ApiTypes/graph";
-import {AutoGraph, GridOn} from "@mui/icons-material"; // Importer Graph
+import {AutoGraph, GridOn} from "@mui/icons-material";
 import {useUIStore} from "../stores/useUIStore";
 import {useFilterStore} from "../stores/useFilterStore";
 import {useGraphStore} from "../stores/useGraphStore";
+import {motion, AnimatePresence} from "framer-motion";
 
 interface MenuProps {
-    graphData: Graph; // Ajouter graphData aux props
+    graphData: Graph;
 }
 
-export default function Menu( { graphData }: MenuProps){ // Accepter graphData comme prop
+export default function Menu({ graphData }: MenuProps) {
     const darkMode = useUIStore(s => s.darkMode);
     const setDarkMode = useUIStore(s => s.setDarkMode);
     const currentView = useUIStore(s => s.currentView);
@@ -38,8 +42,13 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
     const filters = useFilterStore(s => s.filters);
     const setFilters = useFilterStore(s => s.setFilters);
 
-       const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
+    const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
     const setTargetPosition = useGraphStore(s => s.setTargetPosition);
+
+    const [open, setOpen] = useState(false);
+    const [searchResults, setSearchResults] = useState<NodeData[]>([]);
+    const isSearchActive = useGraphStore(s => s.isSearchActive);
+    const setIsSearchActive = useGraphStore(s => s.setIsSearchActive);
 
     const exportGraph = () => {
         const dataStr = JSON.stringify(graphData, null, 2);
@@ -52,12 +61,6 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
         a.click();
         document.body.removeChild(a);
     };
-    const [open, setOpen] = useState(false);
-    const [isSearch, setIsSearch] = useState(false);
-    const toggleDrawer = (newOpen:boolean) => () => {
-        setOpen(newOpen);
-    }
-    const [searchResults, setSearchResults] = useState<NodeData[]>([]); // Typage précis
 
     const handleSearch = useCallback((query: string) => {
         if (!query || typeof query !== 'string') {
@@ -80,138 +83,262 @@ export default function Menu( { graphData }: MenuProps){ // Accepter graphData c
             const { x, y, z } = node.position[currentView];
             setTargetPosition(new Vector3(x, y, z));
             setSelectedNodeId(node.id);
+            setIsSearchActive(false); // fermer la recherche après sélection
         } else {
             console.warn("Position introuvable pour la vue actuelle.");
         }
     }
+
     const renderMode = useUIStore(s => s.renderMode);
     const setRenderMode = useUIStore(s => s.setRenderMode);
 
     return (
         <>
             <div className="menu-container">
-                <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer(true)}>
-                    <MenuIcon/>
-                </IconButton>
-                <Drawer anchor="left" open={open} onClose={toggleDrawer(false)}>
-                    <Box sx={{width: 250, p: 2}} role="presentation">
-                        <Typography variant="h5" sx={{mb: 2}}>
-                            Menu d'Options
-                        </Typography>
-                        <Typography variant="h6" sx={{mb: 1}}>Mode d'affichage :</Typography>
-                        <FormControl fullWidth size="small" sx={{mb: 3}}>
-                            <InputLabel>Vue actuelle</InputLabel>
-                            <Select
-                                value={currentView}
-                                label="Vue actuelle"
-                                onChange={(e) => setCurrentView(e.target.value)}
-                            >
-                                <MenuItem value="grille"><GridOn sx={{mr: 1, fontSize: 20}}/> Grille 3D</MenuItem>
-                                <MenuItem value="physique"><AutoGraph sx={{mr: 1, fontSize: 20}}/> Physique
-                                    Organique</MenuItem>
-                                {/* MenuItem value="arbre">Arbre Hiérarchique</MenuItem */}
-                            </Select>
-                        </FormControl>
-                        <Divider sx={{my: 2}}/>
-                        <FormControl fullWidth size="small" sx={{mb: 2}}>
-                            <InputLabel id="render-mode-label">Moteur de rendu</InputLabel>
-                            <Select
-                                labelId="render-mode-label"
-                                value={renderMode}
-                                label="Moteur de rendu"
-                                onChange={(e) => setRenderMode(e.target.value as "quality" | "performance")}
-                            >
-                                <MenuItem value="quality">Qualité (Beaux graphismes)</MenuItem>
-                                <MenuItem value="performance">Performances (Fluide +1000 nœuds)</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Divider sx={{my: 2}}/>
-
-                        <Typography variant="h6" sx={{mb: 1}}>
-                            Téléchargement du fichier JSON :
-                        </Typography>
-                        <Button variant="outlined" onClick={exportGraph} sx={{mb: 1}}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="#000000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M3 15v4c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2v-4M17 9l-5 5-5-5M12 12.8V2.5"/>
-                            </svg>
-                            Télécharger le graphe
-                        </Button>
-
-                        <Divider sx={{my: 2}}/>
-
-                        <Typography variant="h6" sx={{mb: 1}}>
-                            Filtre :
-                        </Typography>
-                        <Box sx={{display: 'flex', flexDirection: 'column'}}>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={filters.axiome}
-                                    onChange={() => setFilters((prev: any) => ({...prev, axiome: !prev.axiome}))}/>}
-                                label="Axiomes"/>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={filters.théorème}
-                                    onChange={() => setFilters((prev: any) => ({...prev, théorème: !prev.théorème}))}/>}
-                                label="Théorèmes"/>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={filters.lemme}
-                                    onChange={() => setFilters((prev: any) => ({...prev, lemme: !prev.lemme}))}/>}
-                                label="Lemmes"/>
-                            <FormControlLabel
-                                control={<Checkbox
-                                    checked={filters.réciproque}
-                                    onChange={() => setFilters((prev: any) => ({
-                                        ...prev,
-                                        réciproque: !prev.réciproque
-                                    }))}/>}
-                                label="Réciproques"/>
-                        </Box>
-                        <Divider sx={{my: 2}}/>
-                        <FormControlLabel
-                            control={<Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)}/>}
-                            label="Mode sombre"/>
-                    </Box>
-                    <Divider sx={{my: 2}}/>
-                    <Typography variant="h6" sx={{mb: 1}}>
-                        Style Visuel :
-                    </Typography>
-                    <FormControl fullWidth size="small" sx={{mb: 2}}>
-                        <InputLabel id="theme-select-label">Thème 3D</InputLabel>
-                        <Select
-                            labelId="theme-select-label"
-                            value={graphTheme}
-                            label="Thème 3D"
-                            onChange={(e) => setGraphTheme(e.target.value as "classique" | "neon" | "focus")}
+                <AnimatePresence>
+                    {!open ? (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2 }}
                         >
-                            <MenuItem value="classique">Classique (Fluide)</MenuItem>
-                            <MenuItem value="neon">Néon (Lumineux)</MenuItem>
-                            <MenuItem value="focus">Focus (Isolation)</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Drawer>
+                            <IconButton
+                                color="primary"
+                                aria-label="menu"
+                                onClick={() => setOpen(true)}
+                                sx={{
+                                    backdropFilter: "blur(12px)",
+                                    background: darkMode ? "rgba(15, 23, 42, 0.75)" : "rgba(255, 255, 255, 0.75)",
+                                    border: darkMode ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(15, 23, 42, 0.08)",
+                                    boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
+                                    p: 1.5,
+                                    "&:hover": {
+                                        background: darkMode ? "rgba(30, 41, 59, 0.85)" : "rgba(241, 245, 249, 0.85)",
+                                    }
+                                }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        </motion.div>
+                    ) : (
+                        <motion.div
+                            initial={{ opacity: 0, x: -40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -40 }}
+                            transition={{ type: "spring", stiffness: 280, damping: 26 }}
+                            className="floating-glass-menu"
+                            style={{
+                                width: 280,
+                                padding: 20,
+                                background: darkMode ? "rgba(15, 23, 42, 0.75)" : "rgba(255, 255, 255, 0.75)",
+                                backdropFilter: "blur(16px)",
+                                border: darkMode ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(15, 23, 42, 0.08)",
+                                borderRadius: 16,
+                                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+                                color: darkMode ? "#E2E8F0" : "#0F172A",
+                                maxHeight: "88vh",
+                                overflowY: "auto"
+                            }}
+                        >
+                            <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                                <Typography variant="h6" sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}>
+                                    Configuration
+                                </Typography>
+                                <IconButton size="small" onClick={() => setOpen(false)}>
+                                    <CloseIcon fontSize="small" />
+                                </IconButton>
+                            </Box>
+
+                            <Button
+                                variant="outlined"
+                                color="inherit"
+                                fullWidth
+                                href="/"
+                                startIcon={<HomeIcon />}
+                                sx={{
+                                    mb: 2,
+                                    justifyContent: "flex-start",
+                                    borderColor: darkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.15)",
+                                    borderRadius: "10px",
+                                    fontWeight: 600,
+                                    fontSize: "0.875rem",
+                                    py: 1,
+                                    "&:hover": {
+                                        background: darkMode ? "rgba(255, 255, 255, 0.05)" : "rgba(15, 23, 42, 0.03)",
+                                        borderColor: darkMode ? "rgba(255, 255, 255, 0.3)" : "rgba(15, 23, 42, 0.3)"
+                                    }
+                                }}
+                            >
+                                Retour au portail
+                            </Button>
+
+                            <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
+                            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}>
+                                Mode d'affichage
+                            </Typography>
+                            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                                <InputLabel id="current-view-label">Disposition</InputLabel>
+                                <Select
+                                    labelId="current-view-label"
+                                    value={currentView}
+                                    label="Disposition"
+                                    onChange={(e) => setCurrentView(e.target.value)}
+                                    sx={{ borderRadius: "10px" }}
+                                >
+                                    <MenuItem value="grille"><GridOn sx={{ mr: 1, fontSize: 18 }} /> Grille 3D</MenuItem>
+                                    <MenuItem value="physique"><AutoGraph sx={{ mr: 1, fontSize: 18 }} /> Physique</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                                <InputLabel id="render-mode-label">Moteur 3D</InputLabel>
+                                <Select
+                                    labelId="render-mode-label"
+                                    value={renderMode}
+                                    label="Moteur 3D"
+                                    onChange={(e) => setRenderMode(e.target.value as "quality" | "performance")}
+                                    sx={{ borderRadius: "10px" }}
+                                >
+                                    <MenuItem value="quality">Qualité (Mesh physique)</MenuItem>
+                                    <MenuItem value="performance">Performances (Instancing)</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                                <InputLabel id="theme-select-label">Thème Visuel</InputLabel>
+                                <Select
+                                    labelId="theme-select-label"
+                                    value={graphTheme}
+                                    label="Thème Visuel"
+                                    onChange={(e) => setGraphTheme(e.target.value as "classique" | "neon" | "focus")}
+                                    sx={{ borderRadius: "10px" }}
+                                >
+                                    <MenuItem value="classique">Classique</MenuItem>
+                                    <MenuItem value="neon">Néon (Luminescent)</MenuItem>
+                                    <MenuItem value="focus">Focus (Isolation)</MenuItem>
+                                </Select>
+                            </FormControl>
+
+                            <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
+                            <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}>
+                                Catégories visibles
+                            </Typography>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5 }}>
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        size="small"
+                                        checked={filters.axiome}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))} />}
+                                    label={<Typography variant="body2">Axiomes</Typography>} />
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        size="small"
+                                        checked={filters.théorème}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))} />}
+                                    label={<Typography variant="body2">Théorèmes</Typography>} />
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        size="small"
+                                        checked={filters.lemme}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))} />}
+                                    label={<Typography variant="body2">Lemmes</Typography>} />
+                                <FormControlLabel
+                                    control={<Checkbox
+                                        size="small"
+                                        checked={filters.réciproque}
+                                        onChange={() => setFilters((prev: any) => ({ ...prev, réciproque: !prev.réciproque }))} />}
+                                    label={<Typography variant="body2">Réciproques</Typography>} />
+                            </Box>
+
+                            <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+                                <FormControlLabel
+                                    control={<Switch size="small" checked={darkMode} onChange={() => setDarkMode(!darkMode)} />}
+                                    label={<Typography variant="body2" sx={{ fontWeight: 600 }}>Mode sombre</Typography>}
+                                />
+                                
+                                <Button 
+                                    variant="contained" 
+                                    onClick={exportGraph} 
+                                    startIcon={<FileDownloadIcon />}
+                                    fullWidth
+                                    sx={{
+                                        borderRadius: "10px",
+                                        fontWeight: 600,
+                                        py: 1,
+                                        background: darkMode ? "rgba(255, 255, 255, 0.15)" : "rgba(15, 23, 42, 0.9)",
+                                        color: darkMode ? "#ffffff" : "#ffffff",
+                                        "&:hover": {
+                                            background: darkMode ? "rgba(255, 255, 255, 0.25)" : "rgba(15, 23, 42, 1)"
+                                        }
+                                    }}
+                                >
+                                    Exporter JSON
+                                </Button>
+                            </Box>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
+
             <div className="search-bar-container">
-                <SearchBar onSearch={handleSearch} setIsSearch={setIsSearch}/>
-                {searchResults.length > 0 && isSearch && (
-                    <div className="search-results">
-                        {searchResults.map((result) => (
-                            <div key={result.id} className="search-result-item"
-                                 onClick={() => handleResultsSearch(result)}>
-                                {result.nom} ({result.typeMath})
-                            </div>
-                        ))}
+                <SearchBar onSearch={handleSearch} setIsSearch={setIsSearchActive} />
+                {searchResults.length > 0 && isSearchActive && (
+                    <div
+                        className="search-results"
+                        style={{
+                            background: darkMode ? "rgba(15, 23, 42, 0.85)" : "rgba(255, 255, 255, 0.85)",
+                            backdropFilter: "blur(16px)",
+                            border: darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(15, 23, 42, 0.08)",
+                            color: darkMode ? "#F1F5F9" : "#0F172A",
+                        }}
+                    >
+                        {searchResults.map((result) => {
+                            let badgeColor = "#7DD3FC";
+                            if (result.typeMath === "axiome") badgeColor = "#52C575";
+                            else if (result.typeMath === "théorème") badgeColor = "#F99D1C";
+                            else if (result.typeMath === "lemme") badgeColor = "#AE66CC";
+
+                            return (
+                                <div
+                                    key={result.id}
+                                    className="search-result-item"
+                                    onClick={() => handleResultsSearch(result)}
+                                    style={{
+                                        borderLeft: `3px solid ${badgeColor}`,
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.background = darkMode ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.background = "transparent";
+                                    }}
+                                >
+                                    <span className="search-result-title">{result.nom}</span>
+                                    <span className="search-result-meta" style={{ color: badgeColor }}>{result.typeMath}</span>
+                                </div>
+                            );
+                        })}
                     </div>
                 )}
-                {searchResults.length === 0 && isSearch && (
-                    <div className="search-results">
-                        Pas de démonstration trouvé
+                {searchResults.length === 0 && isSearchActive && (
+                    <div
+                        className="search-results"
+                        style={{
+                            background: darkMode ? "rgba(15, 23, 42, 0.85)" : "rgba(255, 255, 255, 0.85)",
+                            backdropFilter: "blur(16px)",
+                            border: darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(15, 23, 42, 0.08)",
+                            color: darkMode ? "#F1F5F9" : "#0F172A",
+                        }}
+                    >
+                        <div className="search-no-results">Aucun concept trouvé</div>
                     </div>
                 )}
             </div>
         </>
-
     );
 }

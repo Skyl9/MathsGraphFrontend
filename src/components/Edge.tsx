@@ -14,6 +14,7 @@ interface EdgeProps {
 
 export default function Edge({ start, end, color = "#888888", type, debug, opacity = 1 }: EdgeProps) {
     const graphTheme = useUIStore(s => s.graphTheme);
+    const darkMode = useUIStore(s => s.darkMode);
     const [hovered, setHovered] = useState(false);
     // Calculs géométriques pour éviter que la ligne ne rentre à l'intérieur de la sphère
     const { startOffset, endOffset, direction, midPoint, length } = useMemo(() => {
@@ -93,12 +94,18 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
             {hovered && (
                 <Html position={midPoint.toArray()} center style={{ pointerEvents: "none" }}>
                     <div style={{
-                        background: "rgba(0,0,0,0.8)",
-                        color: "white",
-                        padding: "4px 8px",
-                        borderRadius: "4px",
-                        fontSize: "12px",
-                        whiteSpace: "nowrap"
+                        background: darkMode ? "rgba(15, 23, 42, 0.8)" : "rgba(255, 255, 255, 0.85)",
+                        backdropFilter: "blur(8px)",
+                        color: darkMode ? "#E2E8F0" : "#0F172A",
+                        border: darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(15, 23, 42, 0.08)",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        letterSpacing: "0.03em",
+                        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
+                        whiteSpace: "nowrap",
+                        fontFamily: "Inter, Roboto, sans-serif"
                     }}>
                         {type || "Relation"}
                     </div>
