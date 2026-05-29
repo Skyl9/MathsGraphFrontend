@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
-import {useUIStore} from "../stores/useUIStore";
+import { useFrame } from "@react-three/fiber";
+import { useUIStore } from "../stores/useUIStore";
 
 interface EdgeProps {
     start: [number, number, number];
@@ -10,12 +11,25 @@ interface EdgeProps {
     type?: string;
     debug: boolean;
     opacity?: number;
+    startScale?: number;
+    endScale?: number;
 }
 
-export default function Edge({ start, end, color = "#888888", type, debug, opacity = 1 }: EdgeProps) {
+export default function Edge({ 
+    start, 
+    end, 
+    color = "#888888", 
+    type, 
+    debug, 
+    opacity = 1,
+    startScale = 1,
+    endScale = 1
+}: EdgeProps) {
     const graphTheme = useUIStore(s => s.graphTheme);
     const darkMode = useUIStore(s => s.darkMode);
     const [hovered, setHovered] = useState(false);
+    const lineRef = useRef<any>(null);
+
     // Calculs géométriques pour éviter que la ligne ne rentre à l'intérieur de la sphère
     const { startOffset, endOffset, direction, midPoint, length } = useMemo(() => {
         const s = new THREE.Vector3(...start);
@@ -23,15 +37,17 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
         const dir = e.clone().sub(s).normalize();
         const len = s.distanceTo(e);
 
-        const nodeRadius = 0.3; // Doit correspondre à la taille de tes noeuds dans Node.tsx
+        // Rayon dynamique basé sur l'échelle des nœuds connectés
+        const startRadius = 0.3 * startScale;
+        const endRadius = 0.3 * endScale;
 
         // On décale le début et la fin
-        const sOff = s.clone().add(dir.clone().multiplyScalar(nodeRadius));
-        const eOff = e.clone().add(dir.clone().multiplyScalar(-nodeRadius - 0.1)); // -0.1 laisse la place à la pointe de la flèche
+        const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
+        const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15)); // -0.15 laisse la place à la pointe de la flèche
         const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
 
         return { startOffset: sOff, endOffset: eOff, direction: dir, midPoint: mid, length: len };
-    }, [start, end]);
+    }, [start, end, startScale, endScale]);
 
     const isNeon = graphTheme === "neon";
 
@@ -39,6 +55,18 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
     // On force un blanc/bleuté si on est en Néon et que la couleur est noire.
     const baseColor = (isNeon && color === "black") ? "#ffffff" : color;
     const edgeColor = hovered ? "#99C2FF" : baseColor;
+
+    // Détermination du style de ligne (Solid vs Dashed animé pour les implications/équivalences)
+    const isAnimatedDash = type === "implication" || type === "reciproque" || type === "equivalence";
+    const dashSize = type === "equivalence" ? 0.6 : 0.3;
+    const gapSize = type === "equivalence" ? 0.15 : 0.2;
+
+    useFrame((state) => {
+        if (isAnimatedDash && lineRef.current && lineRef.current.material) {
+            const speed = type === "equivalence" ? 1.0 : 2.0;
+            lineRef.current.material.dashOffset = -state.clock.getElapsedTime() * speed;
+        }
+    });
 
     // Sécurité : Si les noeuds sont trop proches ou superposés, on ne dessine rien
     if (length < 0.6) return null;
@@ -54,12 +82,17 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
         >
             {/* 1. La Ligne Principale */}
             <Line
+                ref={lineRef}
                 points={[startOffset.toArray(), endOffset.toArray()]}
                 color={edgeColor}
-                lineWidth={isNeon ? 2 : 1.5}
+                lineWidth={isNeon ? (hovered ? 3.0 : 2.0) : (hovered ? 2.5 : 1.5)}
                 transparent={true}
                 opacity={opacity}
                 toneMapped={!isNeon} // Permet au Bloom d'ignorer la correction colorimétrique
+                dashed={isAnimatedDash}
+                dashScale={1}
+                dashSize={dashSize}
+                gapSize={gapSize}
             />
 
             {/* 2. La pointe de la flèche (Cone) */}
@@ -76,7 +109,7 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
             </mesh>
 
             {/* Optionnel : Flèche retour si équivalence */}
-            {type === "equivalence" && (
+            {(type === "equivalence" || type === "reciproque") && (
                 <mesh position={startOffset} quaternion={reverseArrowQuaternion}>
                     <coneGeometry args={[0.08, 0.2, 8]} />
                     <meshStandardMaterial
@@ -105,7 +138,8 @@ export default function Edge({ start, end, color = "#888888", type, debug, opaci
                         letterSpacing: "0.03em",
                         boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
                         whiteSpace: "nowrap",
-                        fontFamily: "Inter, Roboto, sans-serif"
+                        fontFamily: "Inter, Roboto, sans-serif",
+                        textTransform: "capitalize"
                     }}>
                         {type || "Relation"}
                     </div>

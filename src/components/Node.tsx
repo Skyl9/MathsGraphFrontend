@@ -1,8 +1,9 @@
 import {useState, useRef, useMemo} from "react";
 import {Billboard, Text} from "@react-three/drei";
-import { Mesh, MeshStandardMaterial } from "three";
+import { Mesh, MeshStandardMaterial, Vector3 } from "three";
 import { PointerEvent } from "react";
 import {useTheme} from "@mui/material";
+import {useFrame} from "@react-three/fiber";
 import {useUIStore} from "../stores/useUIStore";
 import {useGraphStore} from "../stores/useGraphStore";
 
@@ -15,12 +16,14 @@ interface NodeProps {
     onClick: () => void;
     debug: boolean;
     isNeighbor?: boolean;
+    scale?: number;
 }
 
-export default function Node({ position, color, isSelected, nom, onClick, debug,isNeighbor = false }: NodeProps) {
+export default function Node({ position, color, isSelected, nom, onClick, debug, isNeighbor = false, scale = 1 }: NodeProps) {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
     const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
+    const billboardRef = useRef<any>(null);
     const theme = useTheme();
 
     const graphTheme = useUIStore(s => s.graphTheme);
@@ -42,6 +45,18 @@ export default function Node({ position, color, isSelected, nom, onClick, debug,
     const isFocus = graphTheme === "focus";
     const shouldDim = isFocus && selectedNodeId !== null && !isSelected && !isNeighbor;
     const opacity = shouldDim ? 0.15 : 1;
+
+    const tempV = useMemo(() => new Vector3(...position), [position]);
+
+    useFrame(({ camera }) => {
+        if (billboardRef.current) {
+            const dist = camera.position.distanceTo(tempV);
+            const isFar = dist > 35;
+            const shouldShowText = (!shouldDim || hovered) && (isSelected || hovered || !isFar);
+            billboardRef.current.visible = shouldShowText;
+        }
+    });
+
     return (
         <group position={position} onClick={onClick}
                onPointerOver={(event: PointerEvent<HTMLCanvasElement>) => {
@@ -53,7 +68,7 @@ export default function Node({ position, color, isSelected, nom, onClick, debug,
                    setHovered(false);
                }}
         >
-            <mesh ref={meshRef}>
+            <mesh ref={meshRef} scale={[scale, scale, scale]}>
                 <sphereGeometry args={[sphereSize, 24, 24]} />
                 <meshPhysicalMaterial
                     color={hovered ? "#99C2FF" : color}
@@ -70,22 +85,19 @@ export default function Node({ position, color, isSelected, nom, onClick, debug,
                 />
             </mesh>
 
-            {/* On cache le texte des nœuds lointains en mode focus pour désencombrer l'écran */}
-            {(!shouldDim || hovered) && (
-                <Billboard position={[0, sphereSize + 0.4, 0]}>
-                    <Text 
-                        fontSize={0.28} 
-                        color={labelColor} 
-                        anchorX="center" 
-                        anchorY="middle"
-                    >
-                        {nom}
-                    </Text>
-                </Billboard>
-            )}
+            <Billboard ref={billboardRef} position={[0, (sphereSize * scale) + 0.3, 0]}>
+                <Text 
+                    fontSize={0.28} 
+                    color={labelColor} 
+                    anchorX="center" 
+                    anchorY="middle"
+                >
+                    {nom}
+                </Text>
+            </Billboard>
 
             {debug && (
-                <mesh>
+                <mesh scale={[scale, scale, scale]}>
                     <sphereGeometry args={[sphereSize * 0.7, 16, 16]} />
                     <meshBasicMaterial color="red" wireframe />
                 </mesh>

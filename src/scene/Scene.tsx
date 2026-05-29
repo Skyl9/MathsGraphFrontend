@@ -1,6 +1,6 @@
 import {useEffect, useMemo, useCallback, useRef, useState} from "react";
 import {useThree, useFrame} from "@react-three/fiber";
-import {OrbitControls, Billboard, Text, Instances, Instance} from "@react-three/drei";
+import {OrbitControls, Billboard, Text, Instances, Instance, Stars, Grid} from "@react-three/drei";
 import {Vector3, Color, Mesh} from "three";
 import Edge from "../components/Edge";
 import gsap from "gsap";
@@ -19,15 +19,16 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
 };
 
 // 🌟 NOUVEAU : Anneau holographique de sélection
-const SelectionRing = ({ position, color }: { position: [number, number, number]; color: string }) => {
+const SelectionRing = ({ position, color, scale }: { position: [number, number, number]; color: string; scale: number }) => {
     const ringRef = useRef<Mesh>(null);
     useFrame(({ clock }) => {
         if (ringRef.current) {
             // Rotation sur l'axe Y/Z
             ringRef.current.rotation.z = clock.getElapsedTime() * 0.6;
             // Pulsation d'échelle douce
-            const scale = 1.0 + Math.sin(clock.getElapsedTime() * 4) * 0.06;
-            ringRef.current.scale.set(scale, scale, scale);
+            const pulse = 1.0 + Math.sin(clock.getElapsedTime() * 4) * 0.06;
+            const finalScale = scale * pulse;
+            ringRef.current.scale.set(finalScale, finalScale, finalScale);
         }
     });
     return (
@@ -56,12 +57,15 @@ interface GraphNodeProps {
     onClick: () => void;
     debug: boolean;
     shouldDim: boolean;
+    scale: number;
 }
 
-// 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU)
-const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim}: GraphNodeProps) => {
+// 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU) avec LOD
+const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim, scale}: GraphNodeProps) => {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
+    const billboardRef = useRef<any>(null);
+    const tempV = useMemo(() => new Vector3(), []);
 
     // Calcul de la couleur finale :
     // Si on est en mode "Focus" et que ce nœud n'est pas lié, on l'assombrit drastiquement.
@@ -73,11 +77,23 @@ const GraphNode = ({node, currentView, color, isSelected, onClick, debug, should
         return c;
     }, [hovered, color, isSelected, shouldDim]);
 
+    useFrame(({ camera }) => {
+        if (billboardRef.current) {
+            const pos = node.position[currentView];
+            tempV.set(pos.x, pos.y, pos.z);
+            const dist = camera.position.distanceTo(tempV);
+            const isFar = dist > 35;
+            const shouldShowText = (!shouldDim || hovered) && (isSelected || hovered || !isFar);
+            billboardRef.current.visible = shouldShowText;
+        }
+    });
+
     return (
         <group position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}>
             {/* L'instance virtuelle de la sphère (1 draw call global) */}
             <Instance
                 color={finalColor}
+                scale={[scale, scale, scale]}
                 onClick={(e) => {
                     e.stopPropagation();
                     onClick();
@@ -92,18 +108,16 @@ const GraphNode = ({node, currentView, color, isSelected, onClick, debug, should
                 }}
             />
 
-            {/* On garde le Billboard pour le texte, affiché intelligemment */}
-            {(!shouldDim || hovered) && (
-                <Billboard position={[0, sphereSize + 0.4, 0]}>
-                    <Text fontSize={0.3} color={color} anchorX="center" anchorY="middle">
-                        {node.nom}
-                    </Text>
-                </Billboard>
-            )}
+            {/* On garde le Billboard pour le texte, affiché intelligemment via LOD */}
+            <Billboard ref={billboardRef} position={[0, (sphereSize * scale) + 0.3, 0]}>
+                <Text fontSize={0.3} color={color} anchorX="center" anchorY="middle">
+                    {node.nom}
+                </Text>
+            </Billboard>
 
             {/* Hitbox debug optionnelle */}
             {debug && (
-                <mesh>
+                <mesh scale={[scale, scale, scale]}>
                     <sphereGeometry args={[sphereSize * 0.7, 16, 16]}/>
                     <meshBasicMaterial color="red" wireframe/>
                 </mesh>
@@ -141,6 +155,21 @@ export default function Scene({graphData}: SceneProps) {
         return nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
     }, [nodes, filters]);
 
+    // Calcul des degrés de chaque nœud pour la taille dynamique
+    const nodeDegrees = useMemo(() => {
+        const degrees: Record<number, number> = {};
+        edges.forEach(edge => {
+            degrees[edge.start] = (degrees[edge.start] || 0) + 1;
+            degrees[edge.end] = (degrees[edge.end] || 0) + 1;
+        });
+        return degrees;
+    }, [edges]);
+
+    const getNodeScale = useCallback((nodeId: number) => {
+        const deg = nodeDegrees[nodeId] || 0;
+        return 1.0 + Math.min(deg * 0.15, 1.2); // Échelle allant de 1.0 à 2.2 maximum
+    }, [nodeDegrees]);
+
     const neighborIds = useMemo(() => {
         if (selectedNodeId === null) return new Set<number>();
         const neighbors = new Set<number>();
@@ -151,20 +180,42 @@ export default function Scene({graphData}: SceneProps) {
         return neighbors;
     }, [selectedNodeId, edges]);
 
-    // Animations GSAP
+    // Animations GSAP : Cadrage intelligent
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
+            const {x, y, z} = selectedNode.position[currentView];
+            let maxDistance = 3;
+
+            // Trouver la distance maximale avec les voisins pour ajuster le zoom
+            edges.forEach(edge => {
+                let neighbor: NodeData | undefined;
+                if (edge.start === selectedNode.id) {
+                    neighbor = nodes.find(n => n.id === edge.end);
+                } else if (edge.end === selectedNode.id) {
+                    neighbor = nodes.find(n => n.id === edge.start);
+                }
+                if (neighbor) {
+                    const pos = neighbor.position[currentView];
+                    const d = new Vector3(pos.x, pos.y, pos.z).distanceTo(new Vector3(x, y, z));
+                    if (d > maxDistance) maxDistance = d;
+                }
+            });
+            const cameraOffset = Math.max(5, maxDistance * 1.5);
+
             gsap.to(controlsRef.current.target, {
                 x: targetPosition.x, y: targetPosition.y, z: targetPosition.z,
                 duration: 1.2, ease: "power3.inOut",
                 onUpdate: () => controlsRef.current.update(),
             });
             gsap.to(camera.position, {
-                x: targetPosition.x + 2, y: targetPosition.y + 1.5, z: targetPosition.z + 5,
-                duration: 1.2, ease: "power3.inOut"
+                x: targetPosition.x + cameraOffset * 0.4,
+                y: targetPosition.y + cameraOffset * 0.3,
+                z: targetPosition.z + cameraOffset,
+                duration: 1.2,
+                ease: "power3.inOut"
             });
         }
-    }, [selectedNode, targetPosition, camera, currentView]);
+    }, [selectedNode, targetPosition, camera, currentView, edges, nodes]);
 
     // Écouteurs d'événements pour le HUD de navigation (Zoom / Reset)
     useEffect(() => {
@@ -258,12 +309,30 @@ export default function Scene({graphData}: SceneProps) {
     }, [debugMode, setDebugMode]);
 
 
+    // Calcul du focus intelligent centré sur le nœud sélectionné et ses voisins
     useEffect(() => {
         if (selectedNode) {
             const {x, y, z} = selectedNode.position[currentView];
-            setTargetPosition(new Vector3(x, y, z));
+            const sumPosition = new Vector3(x, y, z);
+            let count = 1;
+
+            edges.forEach(edge => {
+                let neighbor: NodeData | undefined;
+                if (edge.start === selectedNode.id) {
+                    neighbor = nodes.find(n => n.id === edge.end);
+                } else if (edge.end === selectedNode.id) {
+                    neighbor = nodes.find(n => n.id === edge.start);
+                }
+                if (neighbor) {
+                    const pos = neighbor.position[currentView];
+                    sumPosition.add(new Vector3(pos.x, pos.y, pos.z));
+                    count++;
+                }
+            });
+
+            setTargetPosition(sumPosition.divideScalar(count));
         }
-    }, [selectedNode, setTargetPosition, currentView]);
+    }, [selectedNode, setTargetPosition, currentView, edges, nodes]);
 
     const handleCanvasClick = useCallback((event: MouseEvent) => {
         if (event.target === gl.domElement) setSelectedNodeId(null);
@@ -278,9 +347,22 @@ export default function Scene({graphData}: SceneProps) {
             <directionalLight position={[10, 20, 10]} intensity={graphTheme === "neon" ? 0.6 : 0.95} />
             <pointLight position={[-10, -20, -10]} intensity={0.2} />
 
-            <gridHelper 
-                args={[200, 80, darkMode ? "rgba(56, 189, 248, 0.45)" : "rgba(14, 165, 233, 0.55)", darkMode ? "rgba(148, 163, 184, 0.08)" : "rgba(71, 85, 105, 0.1)"]} 
-                position={[0, -12, 0]} 
+            {/* Arrière-plan d'étoiles immersif */}
+            <Stars radius={120} depth={50} count={600} factor={4} saturation={0.5} fade speed={1} />
+
+            {/* Grille moderne avec dégradé de distance */}
+            <Grid
+                position={[0, -12, 0]}
+                args={[150, 150]}
+                cellSize={1.5}
+                cellThickness={1.0}
+                cellColor={darkMode ? "#334155" : "#cbd5e1"}
+                sectionSize={4.5}
+                sectionThickness={1.5}
+                sectionColor={darkMode ? "#38bdf8" : "#0284c7"}
+                fadeDistance={100}
+                fadeStrength={1}
+                infiniteGrid
             />
 
             <group onPointerMissed={handleCanvasClick}>
@@ -310,6 +392,7 @@ export default function Scene({graphData}: SceneProps) {
                                     isSelected={isSelected}
                                     shouldDim={shouldDim}
                                     debug={debugMode}
+                                    scale={getNodeScale(node.id)}
                                     onClick={() => {
                                         setSelectedNodeId(node.id);
                                     }}
@@ -330,6 +413,7 @@ export default function Scene({graphData}: SceneProps) {
                             nom={node.nom}
                             isSelected={selectedNodeId === node.id}
                             isNeighbor={neighborIds.has(node.id)}
+                            scale={getNodeScale(node.id)}
                             onClick={() => {
                                 setSelectedNodeId(node.id);
                             }}
@@ -358,6 +442,8 @@ export default function Scene({graphData}: SceneProps) {
                                     color={colorSides}
                                     debug={debugMode}
                                     opacity={lineOpacity}
+                                    startScale={getNodeScale(edge.start)}
+                                    endScale={getNodeScale(edge.end)}
                                 />
                             </group>
                         );
@@ -368,6 +454,7 @@ export default function Scene({graphData}: SceneProps) {
                     <SelectionRing
                         position={[selectedNode.position[currentView].x, selectedNode.position[currentView].y, selectedNode.position[currentView].z]}
                         color={getNodeColor(selectedNode.typeMath, colors)}
+                        scale={getNodeScale(selectedNode.id)}
                     />
                 )}
             </group>
