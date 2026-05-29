@@ -3,6 +3,7 @@ import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { useUIStore } from "../stores/useUIStore";
+import MathMarkdown from "./MathMarkdown";
 
 interface EdgeProps {
     start: [number, number, number];
@@ -13,6 +14,10 @@ interface EdgeProps {
     opacity?: number;
     startScale?: number;
     endScale?: number;
+    isStartFiltered?: boolean;
+    isEndFiltered?: boolean;
+    isHighlighted?: boolean;
+    isAnyNodeHovered?: boolean;
 }
 
 export default function Edge({ 
@@ -23,12 +28,18 @@ export default function Edge({
     debug, 
     opacity = 1,
     startScale = 1,
-    endScale = 1
+    endScale = 1,
+    isStartFiltered = false,
+    isEndFiltered = false,
+    isHighlighted = false,
+    isAnyNodeHovered = false
 }: EdgeProps) {
     const graphTheme = useUIStore(s => s.graphTheme);
     const darkMode = useUIStore(s => s.darkMode);
     const [hovered, setHovered] = useState(false);
     const lineRef = useRef<any>(null);
+
+    const isFiltered = isStartFiltered || isEndFiltered;
 
     // Calculs géométriques pour éviter que la ligne ne rentre à l'intérieur de la sphère
     const { startOffset, endOffset, direction, midPoint, length } = useMemo(() => {
@@ -51,10 +62,32 @@ export default function Edge({
 
     const isNeon = graphTheme === "neon";
 
-    // Si la couleur par défaut est "black" (ce que tu as dans AppContext), ça ne brille pas en Néon.
-    // On force un blanc/bleuté si on est en Néon et que la couleur est noire.
-    const baseColor = (isNeon && color === "black") ? "#ffffff" : color;
-    const edgeColor = hovered ? "#99C2FF" : baseColor;
+    // Couleur dynamique d'arête : highlight au survol
+    const activeColor = useMemo(() => {
+        if (hovered) return "#38bdf8";
+        if (isAnyNodeHovered) {
+            return isHighlighted ? "#38bdf8" : (darkMode ? "#1e293b" : "#e2e8f0");
+        }
+        return (isNeon && color === "black") ? "#ffffff" : color;
+    }, [hovered, isAnyNodeHovered, isHighlighted, isNeon, color, darkMode]);
+
+    // Opacité dynamique au survol et filtrage
+    const finalOpacity = useMemo(() => {
+        if (isFiltered) return 0;
+        if (isAnyNodeHovered) {
+            return isHighlighted ? 1.0 : 0.08;
+        }
+        return opacity;
+    }, [isFiltered, isAnyNodeHovered, isHighlighted, opacity]);
+
+    // Épaisseur de ligne dynamique
+    const finalLineWidth = useMemo(() => {
+        const base = isNeon ? 2.0 : 1.5;
+        if (hovered || (isAnyNodeHovered && isHighlighted)) {
+            return base * 2.0;
+        }
+        return base;
+    }, [isNeon, hovered, isAnyNodeHovered, isHighlighted]);
 
     // Détermination du style de ligne (Solid vs Dashed animé pour les implications/équivalences)
     const isAnimatedDash = type === "implication" || type === "reciproque" || type === "equivalence";
@@ -63,10 +96,21 @@ export default function Edge({
 
     useFrame((state) => {
         if (isAnimatedDash && lineRef.current && lineRef.current.material) {
-            const speed = type === "equivalence" ? 1.0 : 2.0;
-            lineRef.current.material.dashOffset = -state.clock.getElapsedTime() * speed;
+            // Accélérer l'animation d'impulsion si survolé/highlighted
+            const baseSpeed = type === "equivalence" ? 1.0 : 2.0;
+            const multiplier = (hovered || (isAnyNodeHovered && isHighlighted)) ? 2.5 : 1.0;
+            lineRef.current.material.dashOffset = -state.clock.getElapsedTime() * baseSpeed * multiplier;
         }
     });
+
+    // Formule LaTeX selon la sémantique de relation
+    const mathFormula = useMemo(() => {
+        if (type === "implication") return "$A \\implies B$";
+        if (type === "reciproque") return "$B \\implies A$";
+        if (type === "equivalence") return "$A \\iff B$";
+        if (type === "utilise") return "$A \\supset B$";
+        return `$A \\text{ ${type} } B$`;
+    }, [type]);
 
     // Sécurité : Si les noeuds sont trop proches ou superposés, on ne dessine rien
     if (length < 0.6) return null;
@@ -77,17 +121,25 @@ export default function Edge({
 
     return (
         <group
-            onPointerOver={(e) => { e.stopPropagation(); setHovered(true); }}
-            onPointerOut={(e) => { e.stopPropagation(); setHovered(false); }}
+            onPointerOver={(e) => { 
+                if (isFiltered) return;
+                e.stopPropagation(); 
+                setHovered(true); 
+            }}
+            onPointerOut={(e) => { 
+                if (isFiltered) return;
+                e.stopPropagation(); 
+                setHovered(false); 
+            }}
         >
             {/* 1. La Ligne Principale */}
             <Line
                 ref={lineRef}
                 points={[startOffset.toArray(), endOffset.toArray()]}
-                color={edgeColor}
-                lineWidth={isNeon ? (hovered ? 3.0 : 2.0) : (hovered ? 2.5 : 1.5)}
+                color={activeColor}
+                lineWidth={finalLineWidth}
                 transparent={true}
-                opacity={opacity}
+                opacity={finalOpacity}
                 toneMapped={!isNeon} // Permet au Bloom d'ignorer la correction colorimétrique
                 dashed={isAnimatedDash}
                 dashScale={1}
@@ -96,52 +148,50 @@ export default function Edge({
             />
 
             {/* 2. La pointe de la flèche (Cone) */}
-            <mesh position={endOffset} quaternion={arrowQuaternion}>
-                <coneGeometry args={[0.08, 0.2, 8]} />
-                <meshStandardMaterial
-                    color={edgeColor}
-                    emissive={isNeon ? edgeColor : "black"}
-                    emissiveIntensity={isNeon ? 2 : 0}
-                    transparent={true}
-                    opacity={opacity}
-                    depthWrite={false} // Evite les bugs de transparence avec la sphère
-                />
-            </mesh>
+            {finalOpacity > 0.1 && (
+                <mesh position={endOffset} quaternion={arrowQuaternion}>
+                    <coneGeometry args={[0.08, 0.2, 8]} />
+                    <meshStandardMaterial
+                        color={activeColor}
+                        emissive={isNeon ? activeColor : "black"}
+                        emissiveIntensity={isNeon ? 2 : 0}
+                        transparent={true}
+                        opacity={finalOpacity}
+                        depthWrite={false} // Evite les bugs de transparence avec la sphère
+                    />
+                </mesh>
+            )}
 
-            {/* Optionnel : Flèche retour si équivalence */}
-            {(type === "equivalence" || type === "reciproque") && (
+            {/* Optionnel : Flèche retour si équivalence ou reciproque */}
+            {finalOpacity > 0.1 && (type === "equivalence" || type === "reciproque") && (
                 <mesh position={startOffset} quaternion={reverseArrowQuaternion}>
                     <coneGeometry args={[0.08, 0.2, 8]} />
                     <meshStandardMaterial
-                        color={edgeColor}
-                        emissive={isNeon ? edgeColor : "black"}
+                        color={activeColor}
+                        emissive={isNeon ? activeColor : "black"}
                         emissiveIntensity={isNeon ? 2 : 0}
                         transparent={true}
-                        opacity={opacity}
+                        opacity={finalOpacity}
                         depthWrite={false}
                     />
                 </mesh>
             )}
 
-            {/* 3. Infobulle au survol (Tooltips) */}
-            {hovered && (
+            {/* 3. Infobulle LaTeX au survol (MathJax) */}
+            {hovered && !isFiltered && (
                 <Html position={midPoint.toArray()} center style={{ pointerEvents: "none" }}>
                     <div style={{
-                        background: darkMode ? "rgba(15, 23, 42, 0.8)" : "rgba(255, 255, 255, 0.85)",
+                        background: darkMode ? "rgba(15, 23, 42, 0.9)" : "rgba(255, 255, 255, 0.95)",
                         backdropFilter: "blur(8px)",
                         color: darkMode ? "#E2E8F0" : "#0F172A",
-                        border: darkMode ? "1px solid rgba(255, 255, 255, 0.1)" : "1px solid rgba(15, 23, 42, 0.08)",
-                        padding: "6px 12px",
+                        border: darkMode ? "1px solid rgba(255, 255, 255, 0.15)" : "1px solid rgba(15, 23, 42, 0.12)",
+                        padding: "4px 10px",
                         borderRadius: "8px",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        letterSpacing: "0.03em",
-                        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
+                        boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
                         whiteSpace: "nowrap",
-                        fontFamily: "Inter, Roboto, sans-serif",
-                        textTransform: "capitalize"
+                        fontFamily: "Inter, Roboto, sans-serif"
                     }}>
-                        {type || "Relation"}
+                        <MathMarkdown content={mathFormula} />
                     </div>
                 </Html>
             )}

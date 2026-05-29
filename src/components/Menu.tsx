@@ -21,7 +21,7 @@ import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import SearchBar from "./SearchBar";
 import "../styles/Menu.css";
 import {Graph, NodeData} from "../types/ApiTypes/graph";
-import {AutoGraph, GridOn} from "@mui/icons-material";
+import {AutoGraph, GridOn, AccountTree, Timeline} from "@mui/icons-material";
 import {useUIStore} from "../stores/useUIStore";
 import {useFilterStore} from "../stores/useFilterStore";
 import {useGraphStore} from "../stores/useGraphStore";
@@ -79,13 +79,13 @@ export default function Menu({ graphData }: MenuProps) {
     }, [graphData]);
 
     function handleResultsSearch(node: NodeData) {
-        if (node && node.position[currentView]) {
-            const { x, y, z } = node.position[currentView];
-            setTargetPosition(new Vector3(x, y, z));
+        if (node) {
+            const pos = node.position[currentView] || node.position["grille"] || node.position["physique"] || { x: 0, y: 0, z: 0 };
+            setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
             setSelectedNodeId(node.id);
             setIsSearchActive(false); // fermer la recherche après sélection
         } else {
-            console.warn("Position introuvable pour la vue actuelle.");
+            console.warn("Position introuvable pour le nœud.");
         }
     }
 
@@ -189,6 +189,8 @@ export default function Menu({ graphData }: MenuProps) {
                                 >
                                     <MenuItem value="grille"><GridOn sx={{ mr: 1, fontSize: 18 }} /> Grille 3D</MenuItem>
                                     <MenuItem value="physique"><AutoGraph sx={{ mr: 1, fontSize: 18 }} /> Physique</MenuItem>
+                                    <MenuItem value="arbre"><AccountTree sx={{ mr: 1, fontSize: 18 }} /> Arbre Hiérarchique</MenuItem>
+                                    <MenuItem value="timeline"><Timeline sx={{ mr: 1, fontSize: 18 }} /> Chronologique</MenuItem>
                                 </Select>
                             </FormControl>
 

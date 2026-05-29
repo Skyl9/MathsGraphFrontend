@@ -51,17 +51,17 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
     else if (concept.typeMath === "lemme") typeColor = "#AE66CC";
 
     const handleFocusNode = () => {
-        if (concept.position && concept.position[currentView]) {
-            const { x, y, z } = concept.position[currentView];
-            setTargetPosition(new Vector3(x, y, z));
+        if (concept.position) {
+            const pos = concept.position[currentView] || concept.position["grille"] || concept.position["physique"] || { x: 0, y: 0, z: 0 };
+            setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
         }
     };
 
     const handleSelectNeighbor = (neighborId: number, position: any) => {
         setSelectedNodeId(neighborId);
-        if (position && position[currentView]) {
-            const { x, y, z } = position[currentView];
-            setTargetPosition(new Vector3(x, y, z));
+        if (position) {
+            const pos = position[currentView] || position["grille"] || position["physique"] || { x: 0, y: 0, z: 0 };
+            setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
         }
     };
 

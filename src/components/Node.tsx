@@ -1,6 +1,6 @@
 import {useState, useRef, useMemo} from "react";
 import {Billboard, Text} from "@react-three/drei";
-import { Mesh, MeshStandardMaterial, Vector3 } from "three";
+import { Mesh, MeshStandardMaterial, Vector3, MathUtils } from "three";
 import { PointerEvent } from "react";
 import {useTheme} from "@mui/material";
 import {useFrame} from "@react-three/fiber";
@@ -17,9 +17,24 @@ interface NodeProps {
     debug: boolean;
     isNeighbor?: boolean;
     scale?: number;
+    isFiltered?: boolean;
+    onHoverStart?: () => void;
+    onHoverEnd?: () => void;
 }
 
-export default function Node({ position, color, isSelected, nom, onClick, debug, isNeighbor = false, scale = 1 }: NodeProps) {
+export default function Node({ 
+    position, 
+    color, 
+    isSelected, 
+    nom, 
+    onClick, 
+    debug, 
+    isNeighbor = false, 
+    scale = 1,
+    isFiltered = false,
+    onHoverStart,
+    onHoverEnd
+}: NodeProps) {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
     const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
@@ -47,35 +62,58 @@ export default function Node({ position, color, isSelected, nom, onClick, debug,
     const opacity = shouldDim ? 0.15 : 1;
 
     const tempV = useMemo(() => new Vector3(...position), [position]);
+    const currentScaleRef = useRef(isFiltered ? 0.0 : scale);
 
     useFrame(({ camera }) => {
+        // LERP doux pour l'échelle (scale-to-0 si filtré)
+        const targetScaleVal = isFiltered ? 0.0 : scale;
+        currentScaleRef.current = MathUtils.lerp(currentScaleRef.current, targetScaleVal, 0.15);
+
+        // Applique l'échelle dynamique au mesh R3F
+        if (meshRef.current) {
+            meshRef.current.scale.set(currentScaleRef.current, currentScaleRef.current, currentScaleRef.current);
+        }
+
         if (billboardRef.current) {
             const dist = camera.position.distanceTo(tempV);
             const isFar = dist > 35;
-            const shouldShowText = (!shouldDim || hovered) && (isSelected || hovered || !isFar);
+            const isScaleTiny = currentScaleRef.current < 0.1;
+            
+            // Masque le texte si filtré ou si trop loin (sauf sélection/survol)
+            const shouldShowText = !isScaleTiny && (!shouldDim || hovered) && (isSelected || hovered || !isFar);
             billboardRef.current.visible = shouldShowText;
         }
     });
 
+    const isInteractive = !isFiltered && currentScaleRef.current > 0.1;
+
     return (
-        <group position={position} onClick={onClick}
+        <group position={position} 
+               onClick={() => {
+                   if (!isInteractive) return;
+                   onClick();
+               }}
                onPointerOver={(event: PointerEvent<HTMLCanvasElement>) => {
+                   if (!isInteractive) return;
                    event.stopPropagation();
                    setHovered(true);
+                   if (onHoverStart) onHoverStart();
                }}
                onPointerOut={(event: PointerEvent<HTMLCanvasElement>) => {
+                   if (!isInteractive) return;
                    event.stopPropagation();
                    setHovered(false);
+                   if (onHoverEnd) onHoverEnd();
                }}
         >
-            <mesh ref={meshRef} scale={[scale, scale, scale]}>
+            <mesh ref={meshRef}>
                 <sphereGeometry args={[sphereSize, 24, 24]} />
                 <meshPhysicalMaterial
                     color={hovered ? "#99C2FF" : color}
                     emissive={isNeon || isSelected ? (hovered ? "#99C2FF" : color) : "black"}
                     emissiveIntensity={isNeon ? (isSelected ? 3 : 1.5) : (isSelected ? 1.5 : 0)}
                     transparent={true}
-                    opacity={opacity}
+                    opacity={isFiltered ? 0 : opacity}
                     roughness={0.15}
                     metalness={0.2}
                     clearcoat={1.0}

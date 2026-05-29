@@ -18,6 +18,11 @@ const getNodeColor = (typeMath: string, colors: string[]): string => {
     return "purple";
 };
 
+// 🌟 Sécurité : Fallback de coordonnées si un layout n'est pas encore calculé par le backend
+const getNodePos = (node: NodeData, view: string): { x: number; y: number; z: number } => {
+    return node.position[view] || node.position["grille"] || node.position["physique"] || { x: 0, y: 0, z: 0 };
+};
+
 // 🌟 NOUVEAU : Anneau holographique de sélection
 const SelectionRing = ({ position, color, scale }: { position: [number, number, number]; color: string; scale: number }) => {
     const ringRef = useRef<Mesh>(null);
@@ -58,10 +63,25 @@ interface GraphNodeProps {
     debug: boolean;
     shouldDim: boolean;
     scale: number;
+    isFiltered: boolean;
+    onHoverStart?: () => void;
+    onHoverEnd?: () => void;
 }
 
 // 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU) avec LOD
-const GraphNode = ({node, currentView, color, isSelected, onClick, debug, shouldDim, scale}: GraphNodeProps) => {
+const GraphNode = ({
+    node, 
+    currentView, 
+    color, 
+    isSelected, 
+    onClick, 
+    debug, 
+    shouldDim, 
+    scale,
+    isFiltered,
+    onHoverStart,
+    onHoverEnd
+}: GraphNodeProps) => {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
     const billboardRef = useRef<any>(null);
@@ -79,32 +99,40 @@ const GraphNode = ({node, currentView, color, isSelected, onClick, debug, should
 
     useFrame(({ camera }) => {
         if (billboardRef.current) {
-            const pos = node.position[currentView];
+            const pos = getNodePos(node, currentView);
             tempV.set(pos.x, pos.y, pos.z);
             const dist = camera.position.distanceTo(tempV);
             const isFar = dist > 35;
-            const shouldShowText = (!shouldDim || hovered) && (isSelected || hovered || !isFar);
+            const shouldShowText = !isFiltered && (!shouldDim || hovered) && (isSelected || hovered || !isFar);
             billboardRef.current.visible = shouldShowText;
         }
     });
 
+    const pos = useMemo(() => getNodePos(node, currentView), [node, currentView]);
+    const targetScale = isFiltered ? 0.0 : scale;
+
     return (
-        <group position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}>
+        <group position={[pos.x, pos.y, pos.z]}>
             {/* L'instance virtuelle de la sphère (1 draw call global) */}
             <Instance
                 color={finalColor}
-                scale={[scale, scale, scale]}
+                scale={[targetScale, targetScale, targetScale]}
                 onClick={(e) => {
+                    if (isFiltered) return;
                     e.stopPropagation();
                     onClick();
                 }}
                 onPointerOver={(e) => {
+                    if (isFiltered) return;
                     e.stopPropagation();
                     setHovered(true);
+                    if (onHoverStart) onHoverStart();
                 }}
                 onPointerOut={(e) => {
+                    if (isFiltered) return;
                     e.stopPropagation();
                     setHovered(false);
+                    if (onHoverEnd) onHoverEnd();
                 }}
             />
 
@@ -117,7 +145,7 @@ const GraphNode = ({node, currentView, color, isSelected, onClick, debug, should
 
             {/* Hitbox debug optionnelle */}
             {debug && (
-                <mesh scale={[scale, scale, scale]}>
+                <mesh scale={[targetScale, targetScale, targetScale]}>
                     <sphereGeometry args={[sphereSize * 0.7, 16, 16]}/>
                     <meshBasicMaterial color="red" wireframe/>
                 </mesh>
@@ -142,6 +170,8 @@ export default function Scene({graphData}: SceneProps) {
     const selectedNodeId = useGraphStore(s => s.selectedNodeId);
     const setSelectedNodeId = useGraphStore(s => s.setSelectedNodeId);
 
+    const [hoveredNodeId, setHoveredNodeId] = useState<number | null>(null);
+
     const {camera, gl} = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
@@ -150,10 +180,6 @@ export default function Scene({graphData}: SceneProps) {
 
     const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
     const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
-
-    const visibleNodes = useMemo(() => {
-        return nodes.filter((node) => filters[node.typeMath as keyof typeof filters] ?? false);
-    }, [nodes, filters]);
 
     // Calcul des degrés de chaque nœud pour la taille dynamique
     const nodeDegrees = useMemo(() => {
@@ -183,7 +209,7 @@ export default function Scene({graphData}: SceneProps) {
     // Animations GSAP : Cadrage intelligent
     useEffect(() => {
         if (selectedNode && targetPosition && controlsRef.current) {
-            const {x, y, z} = selectedNode.position[currentView];
+            const {x, y, z} = getNodePos(selectedNode, currentView);
             let maxDistance = 3;
 
             // Trouver la distance maximale avec les voisins pour ajuster le zoom
@@ -195,7 +221,7 @@ export default function Scene({graphData}: SceneProps) {
                     neighbor = nodes.find(n => n.id === edge.start);
                 }
                 if (neighbor) {
-                    const pos = neighbor.position[currentView];
+                    const pos = getNodePos(neighbor, currentView);
                     const d = new Vector3(pos.x, pos.y, pos.z).distanceTo(new Vector3(x, y, z));
                     if (d > maxDistance) maxDistance = d;
                 }
@@ -277,27 +303,29 @@ export default function Scene({graphData}: SceneProps) {
     // Raccourcis clavier (D, Q, Arrow)
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
-            if (visibleNodes.length === 0) return;
-            if (selectedNodeId === null) setSelectedNodeId(visibleNodes[0].id);
+            if (nodes.length === 0) return;
+            if (selectedNodeId === null) setSelectedNodeId(nodes[0].id);
             if (!camera || !event) return;
 
-            let positionListe = visibleNodes.findIndex((node: NodeData) => node.id === selectedNodeId);
+            let positionListe = nodes.findIndex((node: NodeData) => node.id === selectedNodeId);
             if (positionListe !== -1) {
                 if (event.key === "d" || event.key === "ArrowRight") {
-                    const nextNode = visibleNodes[(positionListe + 1) % visibleNodes.length];
+                    const nextNode = nodes[(positionListe + 1) % nodes.length];
                     setSelectedNodeId(nextNode.id);
-                    setTargetPosition(new Vector3(nextNode.position[currentView].x, nextNode.position[currentView].y, nextNode.position[currentView].z));
+                    const pos = getNodePos(nextNode, currentView);
+                    setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
                 }
                 if (event.key === "q" || event.key === "ArrowLeft") {
-                    const prevNode = visibleNodes[(positionListe - 1 + visibleNodes.length) % visibleNodes.length];
+                    const prevNode = nodes[(positionListe - 1 + nodes.length) % nodes.length];
                     setSelectedNodeId(prevNode.id);
-                    setTargetPosition(new Vector3(prevNode.position[currentView].x, prevNode.position[currentView].y, prevNode.position[currentView].z));
+                    const pos = getNodePos(prevNode, currentView);
+                    setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
                 }
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [selectedNodeId, visibleNodes, camera, setTargetPosition, setSelectedNodeId, currentView]);
+    }, [selectedNodeId, nodes, camera, setTargetPosition, setSelectedNodeId, currentView]);
 
     // Mode debug
     useEffect(() => {
@@ -312,7 +340,7 @@ export default function Scene({graphData}: SceneProps) {
     // Calcul du focus intelligent centré sur le nœud sélectionné et ses voisins
     useEffect(() => {
         if (selectedNode) {
-            const {x, y, z} = selectedNode.position[currentView];
+            const {x, y, z} = getNodePos(selectedNode, currentView);
             const sumPosition = new Vector3(x, y, z);
             let count = 1;
 
@@ -324,7 +352,7 @@ export default function Scene({graphData}: SceneProps) {
                     neighbor = nodes.find(n => n.id === edge.start);
                 }
                 if (neighbor) {
-                    const pos = neighbor.position[currentView];
+                    const pos = getNodePos(neighbor, currentView);
                     sumPosition.add(new Vector3(pos.x, pos.y, pos.z));
                     count++;
                 }
@@ -377,11 +405,12 @@ export default function Scene({graphData}: SceneProps) {
                             emissive={graphTheme === "neon" ? "white" : "black"}
                             emissiveIntensity={graphTheme === "neon" ? 0.8 : 0}
                         />
-                        {visibleNodes.map((node) => {
+                        {nodes.map((node) => {
                             const isSelected = selectedNodeId === node.id;
                             const isNeighbor = neighborIds.has(node.id);
                             const isFocus = graphTheme === "focus";
                             const shouldDim = isFocus && selectedNodeId !== null && !isSelected && !isNeighbor;
+                            const isFiltered = !(filters[node.typeMath as keyof typeof filters] ?? false);
 
                             return (
                                 <GraphNode
@@ -393,6 +422,9 @@ export default function Scene({graphData}: SceneProps) {
                                     shouldDim={shouldDim}
                                     debug={debugMode}
                                     scale={getNodeScale(node.id)}
+                                    isFiltered={isFiltered}
+                                    onHoverStart={() => setHoveredNodeId(node.id)}
+                                    onHoverEnd={() => setHoveredNodeId(null)}
                                     onClick={() => {
                                         setSelectedNodeId(node.id);
                                     }}
@@ -404,46 +436,65 @@ export default function Scene({graphData}: SceneProps) {
                     /* ==========================================
                        MODE QUALITÉ (Noeuds individuels classiques)
                     ========================================== */
-                    visibleNodes.map((node) => (
-                        <CustomNode
-                            key={`node-${node.id}`}
-                            id={node.id}
-                            position={[node.position[currentView].x, node.position[currentView].y, node.position[currentView].z]}
-                            color={getNodeColor(node.typeMath, colors)}
-                            nom={node.nom}
-                            isSelected={selectedNodeId === node.id}
-                            isNeighbor={neighborIds.has(node.id)}
-                            scale={getNodeScale(node.id)}
-                            onClick={() => {
-                                setSelectedNodeId(node.id);
-                            }}
-                            debug={debugMode}
-                        />
-                    ))
+                    nodes.map((node) => {
+                        const pos = getNodePos(node, currentView);
+                        const isFiltered = !(filters[node.typeMath as keyof typeof filters] ?? false);
+                        return (
+                            <CustomNode
+                                key={`node-${node.id}`}
+                                id={node.id}
+                                position={[pos.x, pos.y, pos.z]}
+                                color={getNodeColor(node.typeMath, colors)}
+                                nom={node.nom}
+                                isSelected={selectedNodeId === node.id}
+                                isNeighbor={neighborIds.has(node.id)}
+                                scale={getNodeScale(node.id)}
+                                isFiltered={isFiltered}
+                                onHoverStart={() => setHoveredNodeId(node.id)}
+                                onHoverEnd={() => setHoveredNodeId(null)}
+                                onClick={() => {
+                                    setSelectedNodeId(node.id);
+                                }}
+                                debug={debugMode}
+                            />
+                        );
+                    })
                 )}
 
                 {/* 🌟 Les Arêtes */}
-                {edges
-                    .filter(edge => visibleNodes.find(n => n.id === edge.start) && visibleNodes.find(n => n.id === edge.end))
-                    .map((edge, index) => {
-                        const startNode = visibleNodes.find(node => node.id === edge.start)!;
-                        const endNode = visibleNodes.find(node => node.id === edge.end)!;
+                {edges.map((edge, index) => {
+                        const startNode = nodes.find(node => node.id === edge.start)!;
+                        const endNode = nodes.find(node => node.id === edge.end)!;
+                        if (!startNode || !endNode) return null;
+
+                        const isStartFiltered = !(filters[startNode.typeMath as keyof typeof filters] ?? false);
+                        const isEndFiltered = !(filters[endNode.typeMath as keyof typeof filters] ?? false);
 
                         const isFocus = graphTheme === "focus";
                         const isLineConnectedToSelected = edge.start === selectedNodeId || edge.end === selectedNodeId;
                         const lineOpacity = (isFocus && selectedNodeId !== null && !isLineConnectedToSelected) ? 0.1 : 1;
 
+                        const startPos = getNodePos(startNode, currentView);
+                        const endPos = getNodePos(endNode, currentView);
+
+                        // Vérification du highlight au survol
+                        const isHighlighted = hoveredNodeId !== null && (edge.start === hoveredNodeId || edge.end === hoveredNodeId);
+
                         return (
                             <group key={index}>
                                 <Edge
-                                    start={[startNode.position[currentView].x, startNode.position[currentView].y, startNode.position[currentView].z]}
-                                    end={[endNode.position[currentView].x, endNode.position[currentView].y, endNode.position[currentView].z]}
+                                    start={[startPos.x, startPos.y, startPos.z]}
+                                    end={[endPos.x, endPos.y, endPos.z]}
                                     type={edge.type}
                                     color={colorSides}
                                     debug={debugMode}
                                     opacity={lineOpacity}
                                     startScale={getNodeScale(edge.start)}
                                     endScale={getNodeScale(edge.end)}
+                                    isStartFiltered={isStartFiltered}
+                                    isEndFiltered={isEndFiltered}
+                                    isHighlighted={isHighlighted}
+                                    isAnyNodeHovered={hoveredNodeId !== null}
                                 />
                             </group>
                         );
@@ -452,7 +503,10 @@ export default function Scene({graphData}: SceneProps) {
                 {/* 🌟 Anneau de sélection holographique */}
                 {selectedNode && (
                     <SelectionRing
-                        position={[selectedNode.position[currentView].x, selectedNode.position[currentView].y, selectedNode.position[currentView].z]}
+                        position={(() => {
+                            const p = getNodePos(selectedNode, currentView);
+                            return [p.x, p.y, p.z];
+                        })()}
                         color={getNodeColor(selectedNode.typeMath, colors)}
                         scale={getNodeScale(selectedNode.id)}
                     />
