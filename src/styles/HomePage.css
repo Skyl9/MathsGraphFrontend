@@ -1,0 +1,265 @@
+/* HomePage.css */
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    padding: 90px 24px;
+    border-radius: 32px;
+    margin-bottom: 56px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.12) 0%, rgba(14, 165, 233, 0.05) 45%, transparent 80%);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.02);
+}
+
+.dark-mode .hero-section {
+    background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.16) 0%, rgba(14, 165, 233, 0.05) 45%, transparent 80%);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.2);
+}
+
+/* Background blueprint mathematical grid */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.025;
+    background-size: 26px 26px;
+    background-image: linear-gradient(to right, #6366f1 1px, transparent 1px),
+                      linear-gradient(to bottom, #6366f1 1px, transparent 1px);
+    pointer-events: none;
+}
+
+.dark-mode .hero-section::before {
+    opacity: 0.06;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hero-title {
+    font-size: clamp(2.8rem, 6.5vw, 4.2rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+    margin-bottom: 20px !important;
+    background: linear-gradient(135deg, #6366f1 0%, #0ea5e9 50%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.03em;
+}
+
+.dark-mode .hero-title {
+    background: linear-gradient(135deg, #a5b4fc 0%, #38bdf8 50%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    max-width: 650px;
+    font-size: 1.15rem !important;
+    line-height: 1.65 !important;
+    color: #475569 !important;
+    margin-bottom: 36px !important;
+    font-weight: 500 !important;
+}
+
+.dark-mode .hero-subtitle {
+    color: #94a3b8 !important;
+}
+
+.hero-button {
+    font-weight: 700 !important;
+    padding: 14px 36px !important;
+    font-size: 1.05rem !important;
+    border-radius: 14px !important;
+    text-transform: none !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3) !important;
+    background: linear-gradient(135deg, #6366f1 0%, #0ea5e9 100%) !important;
+    border: none !important;
+    color: #ffffff !important;
+}
+
+.hero-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5) !important;
+}
+
+/* Glass Cards for Exploration */
+.glass-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 24px !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02) !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.dark-mode .glass-card {
+    background: rgba(15, 20, 35, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.glass-card:hover {
+    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.08) !important;
+}
+
+.dark-mode .glass-card:hover {
+    box-shadow: 0 16px 36px rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Specific theme glow borders on hover */
+.glass-card-concept:hover {
+    border-color: rgba(99, 102, 241, 0.4) !important;
+}
+.dark-mode .glass-card-concept:hover {
+    border-color: rgba(165, 180, 252, 0.4) !important;
+}
+
+.glass-card-category:hover {
+    border-color: rgba(14, 165, 233, 0.4) !important;
+}
+.dark-mode .glass-card-category:hover {
+    border-color: rgba(125, 211, 252, 0.4) !important;
+}
+
+.glass-card-mathematician:hover {
+    border-color: rgba(168, 85, 247, 0.4) !important;
+}
+.dark-mode .glass-card-mathematician:hover {
+    border-color: rgba(216, 180, 254, 0.4) !important;
+}
+
+.glass-card-type:hover {
+    border-color: rgba(16, 185, 129, 0.4) !important;
+}
+.dark-mode .glass-card-type:hover {
+    border-color: rgba(110, 231, 183, 0.4) !important;
+}
+
+/* Icon Wrappers with color coding */
+.card-icon-wrapper {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease;
+}
+
+.card-icon-concept {
+    background: rgba(99, 102, 241, 0.08);
+    color: #6366f1;
+    border: 1px solid rgba(99, 102, 241, 0.15);
+}
+.dark-mode .card-icon-concept {
+    background: rgba(165, 180, 252, 0.12);
+    color: #a5b4fc;
+    border: 1px solid rgba(165, 180, 252, 0.2);
+}
+
+.card-icon-category {
+    background: rgba(14, 165, 233, 0.08);
+    color: #0ea5e9;
+    border: 1px solid rgba(14, 165, 233, 0.15);
+}
+.dark-mode .card-icon-category {
+    background: rgba(125, 211, 252, 0.12);
+    color: #7dd3fc;
+    border: 1px solid rgba(125, 211, 252, 0.2);
+}
+
+.card-icon-mathematician {
+    background: rgba(168, 85, 247, 0.08);
+    color: #a855f7;
+    border: 1px solid rgba(168, 85, 247, 0.15);
+}
+.dark-mode .card-icon-mathematician {
+    background: rgba(216, 180, 254, 0.12);
+    color: #d8b4fe;
+    border: 1px solid rgba(216, 180, 254, 0.2);
+}
+
+.card-icon-type {
+    background: rgba(16, 185, 129, 0.08);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.15);
+}
+.dark-mode .card-icon-type {
+    background: rgba(110, 231, 183, 0.12);
+    color: #6ee7b7;
+    border: 1px solid rgba(110, 231, 183, 0.2);
+}
+
+/* Contribution Banner CTA */
+.contribution-banner {
+    margin-top: 56px !important;
+    padding: 40px !important;
+    border-radius: 28px !important;
+    border: 1px solid rgba(0, 0, 0, 0.04) !important;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.04) 0%, rgba(14, 165, 233, 0.04) 50%, rgba(16, 185, 129, 0.02) 100%) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.02) !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+}
+
+.dark-mode .contribution-banner {
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(14, 165, 233, 0.06) 50%, rgba(16, 185, 129, 0.03) 100%) !important;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15) !important;
+}
+
+.contribution-title {
+    font-weight: 800 !important;
+    letter-spacing: -0.01em;
+}
+
+.contribution-link {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #6366f1;
+    text-decoration: none;
+    transition: color 0.2s ease, transform 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.dark-mode .contribution-link {
+    color: #a5b4fc;
+}
+
+.contribution-link:hover {
+    color: #0ea5e9;
+    text-decoration: none;
+    transform: translateX(3px);
+}
+
+.dark-mode .contribution-link:hover {
+    color: #38bdf8;
+}
+
+/* Sections des modifications et commentaires récents */
+.recent-sections-grid {
+    margin-top: 56px;
+}
