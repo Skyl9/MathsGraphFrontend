@@ -4,6 +4,7 @@ import { DataGrid, GridColDef, GridRowHeightParams, GridRowModel, GridRenderCell
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import "../../styles/AdminPanel.css";
 import {AllNodeData, NomEtranger} from "../../types/types";
+import { nodeApi } from "../../services/api";
 import {Source} from "../../types/ApiTypes/source";
 
 export default function AdminPanel() {
@@ -11,6 +12,20 @@ export default function AdminPanel() {
 
     const [filterType, setFilterType] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState<string>("");
+    const [isRecalculating, setIsRecalculating] = useState(false);
+
+    const handleRecalculate = async () => {
+        setIsRecalculating(true);
+        try {
+            await nodeApi.recalculateGraph();
+            alert("Recalcul terminé ! Les nouvelles positions seront visibles après un rechargement.");
+            queryClient.invalidateQueries({ queryKey: ['adminNodes'] });
+        } catch (e) {
+            alert("Erreur lors du recalcul : " + String(e));
+        } finally {
+            setIsRecalculating(false);
+        }
+    };
 
     const { data, isLoading: loading, error: queryError } = useQuery<AllNodeData[]>({
         queryKey: ['adminNodes'],
@@ -207,6 +222,17 @@ export default function AdminPanel() {
         <div className="admin-container">
             <MathJaxContext>
                 <h1 className="admin-title">🔧 Panel d'administration</h1>
+
+                <div className="admin-global-actions" style={{ marginBottom: "20px" }}>
+                    <button 
+                        className="admin-btn-action" 
+                        onClick={handleRecalculate} 
+                        disabled={isRecalculating}
+                        style={{ padding: "10px 20px", background: "#f44336", color: "white", border: "none", borderRadius: "5px", cursor: isRecalculating ? "not-allowed" : "pointer" }}
+                    >
+                        {isRecalculating ? "⏳ Recalcul en cours..." : "🔄 Recalculer les positions du graphe"}
+                    </button>
+                </div>
 
                 <input
                     type="text"

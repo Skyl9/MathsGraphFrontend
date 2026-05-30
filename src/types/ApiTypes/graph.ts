@@ -16,6 +16,7 @@ export interface EdgeData {
 export interface NodeData {
     id: number;
     nom: string;
+    enonce?: string;
     position: {
         [vue: string]: { x: number; y: number; z: number };
     };

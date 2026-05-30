@@ -172,12 +172,17 @@ export default function Scene({graphData}: SceneProps) {
 
     const {camera, gl} = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
+    const nodesMap = useMemo(() => {
+        const map = new Map<number, NodeData>();
+        nodes.forEach(n => map.set(n.id, n));
+        return map;
+    }, [nodes]);
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
     const controlsRef = useRef<OrbitControlsImpl>(null);
     const darkMode = useUIStore(s => s.darkMode);
 
     const colors = useMemo(() => [colorLemme, colorAxiome, colorTheoreme], [colorLemme, colorAxiome, colorTheoreme]);
-    const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
+    const selectedNode = useMemo(() => (selectedNodeId !== null ? nodesMap.get(selectedNodeId) : null) || null, [nodesMap, selectedNodeId]);
 
     // Calcul des degrés de chaque nœud pour la taille dynamique
     const nodeDegrees = useMemo(() => {
@@ -214,9 +219,9 @@ export default function Scene({graphData}: SceneProps) {
             edges.forEach(edge => {
                 let neighbor: NodeData | undefined;
                 if (edge.start === selectedNode.id) {
-                    neighbor = nodes.find(n => n.id === edge.end);
+                    neighbor = nodesMap.get(edge.end);
                 } else if (edge.end === selectedNode.id) {
-                    neighbor = nodes.find(n => n.id === edge.start);
+                    neighbor = nodesMap.get(edge.start);
                 }
                 if (neighbor) {
                     const pos = getNodePos(neighbor, currentView);
@@ -333,9 +338,9 @@ export default function Scene({graphData}: SceneProps) {
             edges.forEach(edge => {
                 let neighbor: NodeData | undefined;
                 if (edge.start === selectedNode.id) {
-                    neighbor = nodes.find(n => n.id === edge.end);
+                    neighbor = nodesMap.get(edge.end);
                 } else if (edge.end === selectedNode.id) {
-                    neighbor = nodes.find(n => n.id === edge.start);
+                    neighbor = nodesMap.get(edge.start);
                 }
                 if (neighbor) {
                     const pos = getNodePos(neighbor, currentView);
@@ -447,8 +452,8 @@ export default function Scene({graphData}: SceneProps) {
 
                 {/* 🌟 Les Arêtes */}
                 {edges.map((edge, index) => {
-                        const startNode = nodes.find(node => node.id === edge.start)!;
-                        const endNode = nodes.find(node => node.id === edge.end)!;
+                        const startNode = nodesMap.get(edge.start)!;
+                        const endNode = nodesMap.get(edge.end)!;
                         if (!startNode || !endNode) return null;
 
                         const isStartFiltered = !(filters[startNode.typeMath as keyof typeof filters] ?? false);

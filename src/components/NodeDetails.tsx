@@ -8,6 +8,7 @@ import { Vector3 } from "three";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
+import MathMarkdown from "./MathMarkdown";
 
 import '../styles/NodeDetails.css';
 
@@ -119,9 +120,15 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                         <Typography className="section-label" sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}>
                             Description & Détails
                         </Typography>
-                        <Typography variant="body2" sx={{ color: darkMode ? "#CBD5E1" : "#334155" }}>
-                            Ce concept est défini mathématiquement comme un {concept.typeMath}. Vous pouvez explorer sa structure complète, ses démonstrations associées, ainsi que ses commentaires en ouvrant sa fiche détaillée.
-                        </Typography>
+                        <Box sx={{ color: darkMode ? "#CBD5E1" : "#334155", fontSize: '0.875rem' }}>
+                            {concept.enonce ? (
+                                <MathMarkdown content={concept.enonce} />
+                            ) : (
+                                <Typography variant="body2">
+                                    Ce concept est défini mathématiquement comme un {concept.typeMath}. Vous pouvez explorer sa structure complète, ses démonstrations associées, ainsi que ses commentaires en ouvrant sa fiche détaillée.
+                                </Typography>
+                            )}
+                        </Box>
                     </Box>
 
                     <Divider sx={{ opacity: 0.4 }} />
