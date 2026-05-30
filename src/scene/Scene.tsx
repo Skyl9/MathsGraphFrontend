@@ -514,7 +514,7 @@ export default function Scene({graphData}: SceneProps) {
             </group>
 
             {graphTheme === "neon" && (
-                <EffectComposer>
+                <EffectComposer enableNormalPass={false}>
                     <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.8}/>
                 </EffectComposer>
             )}
