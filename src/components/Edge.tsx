@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from "react";
+import { useMemo, useState, useRef, memo } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { Line2 } from "three-stdlib";
@@ -21,7 +21,7 @@ interface EdgeProps {
     isAnyNodeHovered?: boolean;
 }
 
-export default function Edge({ 
+const Edge = memo(function Edge({ 
     start, 
     end, 
     color = "#888888", 
@@ -206,4 +206,6 @@ export default function Edge({
             )}
         </group>
     );
-}
+});
+
+export default Edge;

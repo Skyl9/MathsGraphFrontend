@@ -1,4 +1,4 @@
-import {useState, useRef, useMemo} from "react";
+import {useState, useRef, useMemo, memo} from "react";
 import {Billboard, Text} from "@react-three/drei";
 import { Mesh, MeshStandardMaterial, Group, Vector3, MathUtils } from "three";
 import { PointerEvent } from "react";
@@ -21,7 +21,7 @@ interface NodeProps {
     onHoverEnd?: () => void;
 }
 
-export default function Node({ 
+const Node = memo(function Node({ 
     position, 
     color, 
     isSelected, 
@@ -141,4 +141,6 @@ export default function Node({
             )}
         </group>
     );
-}
+});
+
+export default Node;

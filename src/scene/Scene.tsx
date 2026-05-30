@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useCallback, useRef, useState} from "react";
+import {useEffect, useMemo, useCallback, useRef, useState, memo} from "react";
 import {useThree, useFrame} from "@react-three/fiber";
 import {OrbitControls, Billboard, Text, Instances, Instance, Stars, Grid} from "@react-three/drei";
 import {Vector3, Color, Mesh, Group} from "three";
@@ -65,7 +65,7 @@ interface GraphNodeProps {
 }
 
 // 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU) avec LOD
-const GraphNode = ({
+const GraphNode = memo(({
     node, 
     currentView, 
     color, 
@@ -148,7 +148,7 @@ const GraphNode = ({
             )}
         </group>
     );
-};
+});
 
 export default function Scene({graphData}: SceneProps) {
     const currentView = useUIStore(s => s.currentView);
@@ -502,7 +502,7 @@ export default function Scene({graphData}: SceneProps) {
                 )}
             </group>
 
-            {graphTheme === "neon" && (
+            {graphTheme === "neon" && renderMode === "quality" && (
                 <EffectComposer enableNormalPass={false}>
                     <Bloom luminanceThreshold={0.2} mipmapBlur intensity={1.5} radius={0.8}/>
                 </EffectComposer>
