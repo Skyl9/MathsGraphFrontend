@@ -11,12 +11,7 @@ import {useFilterStore} from "../stores/useFilterStore";
 import {useGraphStore} from "../stores/useGraphStore";
 import CustomNode from "../components/Node";
 
-const getNodeColor = (typeMath: string | undefined, colors: string[]): string => {
-    if (typeMath === "axiome") return colors[1];
-    if (typeMath === "théorème") return colors[2];
-    if (typeMath === "lemme") return colors[0];
-    return "purple";
-};
+import {getNodeColor} from "../utils/nodeColors";
 
 // 🌟 Sécurité : Fallback de coordonnées si un layout n'est pas encore calculé par le backend
 const getNodePos = (node: NodeData, view: string): { x: number; y: number; z: number } => {
@@ -158,7 +153,7 @@ export default function Scene({graphData}: SceneProps) {
     const currentView = useUIStore(s => s.currentView);
     const colorLemme = useUIStore(s => s.colorLemme);
     const colorAxiome = useUIStore(s => s.colorAxiome);
-    const colortheoreme = useUIStore(s => s.colortheoreme);
+    const colorTheoreme = useUIStore(s => s.colorTheoreme);
     const colorSides = useUIStore(s => s.colorSides);
     const debugMode = useUIStore(s => s.debugMode);
     const setDebugMode = useUIStore(s => s.setDebugMode);
@@ -178,7 +173,7 @@ export default function Scene({graphData}: SceneProps) {
     const controlsRef = useRef<any>(null);
     const darkMode = useUIStore(s => s.darkMode);
 
-    const colors = useMemo(() => [colorLemme, colorAxiome, colortheoreme], [colorLemme, colorAxiome, colortheoreme]);
+    const colors = useMemo(() => [colorLemme, colorAxiome, colorTheoreme], [colorLemme, colorAxiome, colorTheoreme]);
     const selectedNode = useMemo(() => nodes.find((node) => node.id === selectedNodeId) || null, [nodes, selectedNodeId]);
 
     // Calcul des degrés de chaque nœud pour la taille dynamique

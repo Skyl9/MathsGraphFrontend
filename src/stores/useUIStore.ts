@@ -8,7 +8,7 @@ interface UIState {
 
     colorAxiome: string;
     colorLemme: string;
-    colortheoreme: string;
+    colorTheoreme: string;
     colorSides: string;
 
     debugMode: boolean;
@@ -32,7 +32,7 @@ export const useUIStore = create<UIState>()(
 
             colorAxiome: "#52C575",
             colorLemme: "#AE66CC",
-            colortheoreme: "#F99D1C",
+            colorTheoreme: "#F99D1C",
             colorSides: "black",
 
             debugMode: false,
