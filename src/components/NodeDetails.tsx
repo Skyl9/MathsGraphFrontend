@@ -57,7 +57,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         }
     };
 
-    const handleSelectNeighbor = (neighborId: number, position: any) => {
+    const handleSelectNeighbor = (neighborId: number, position: Record<string, {x: number, y: number, z: number}> | undefined) => {
         setSelectedNodeId(neighborId);
         if (position) {
             const pos = position[currentView] || position["grille"] || position["physique"] || { x: 0, y: 0, z: 0 };

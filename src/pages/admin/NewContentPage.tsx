@@ -49,8 +49,8 @@ const NewContentPage = () => {
             const result = await nodeApi.createConcept(payload);
             // Redirection vers la page du concept nouvellement créé
             navigate(`/concept/${result.id}`);
-        } catch (err: any) {
-            setError(err.message || "Erreur lors de la création");
+        } catch (err) {
+            setError((err as Error).message || "Erreur lors de la création.");
         }
     };
 

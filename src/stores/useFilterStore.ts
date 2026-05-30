@@ -7,7 +7,7 @@ interface FilterState {
         lemme: boolean;
         réciproque: boolean;
     };
-    setFilters: (updater: any) => void;
+    setFilters: (updater: Partial<FilterState["filters"]> | ((prev: FilterState["filters"]) => FilterState["filters"])) => void;
 }
 
 export const useFilterStore = create<FilterState>((set) => ({
@@ -17,7 +17,8 @@ export const useFilterStore = create<FilterState>((set) => ({
         lemme: true,
         réciproque: true,
     },
-    setFilters: (updater) => set((state) => ({
-        filters: typeof updater === 'function' ? updater(state.filters) : updater
-    })),
+    setFilters: (updater) => set((state) => {
+        const nextFilters = typeof updater === 'function' ? updater(state.filters) : updater;
+        return { filters: { ...state.filters, ...nextFilters } };
+    }),
 }));

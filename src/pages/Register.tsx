@@ -47,8 +47,8 @@ export const Register: React.FC = () => {
             await nodeApi.register(data.username, data.email, data.password);
             setApiSuccess("Compte créé avec succès ! Redirection...");
             setTimeout(() => navigate('/login'), 2000);
-        } catch (err: any) {
-            setApiError(err.message || "Erreur lors de l'inscription.");
+        } catch (err) {
+            setApiError((err as Error).message || "Erreur lors de l'inscription.");
         }
     };
 

@@ -233,25 +233,25 @@ export default function Menu({ graphData }: MenuProps) {
                                     control={<Checkbox
                                         size="small"
                                         checked={filters.axiome}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, axiome: !prev.axiome }))} />}
+                                        onChange={() => setFilters((prev) => ({ ...prev, axiome: !prev.axiome }))} />}
                                     label={<Typography variant="body2">Axiomes</Typography>} />
                                 <FormControlLabel
                                     control={<Checkbox
                                         size="small"
                                         checked={filters.théorème}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, théorème: !prev.théorème }))} />}
+                                        onChange={() => setFilters((prev) => ({ ...prev, théorème: !prev.théorème }))} />}
                                     label={<Typography variant="body2">Théorèmes</Typography>} />
                                 <FormControlLabel
                                     control={<Checkbox
                                         size="small"
                                         checked={filters.lemme}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, lemme: !prev.lemme }))} />}
+                                        onChange={() => setFilters((prev) => ({ ...prev, lemme: !prev.lemme }))} />}
                                     label={<Typography variant="body2">Lemmes</Typography>} />
                                 <FormControlLabel
                                     control={<Checkbox
                                         size="small"
                                         checked={filters.réciproque}
-                                        onChange={() => setFilters((prev: any) => ({ ...prev, réciproque: !prev.réciproque }))} />}
+                                        onChange={() => setFilters((prev) => ({ ...prev, réciproque: !prev.réciproque }))} />}
                                     label={<Typography variant="body2">Réciproques</Typography>} />
                             </Box>
 

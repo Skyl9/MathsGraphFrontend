@@ -51,7 +51,7 @@ export const RecentComments: React.FC = () => {
     if (error) {
         return (
             <Typography color="error" align="center" sx={{ p: 4 }}>
-                Erreur lors de la récupération des commentaires : {(error as any).message}
+                Erreur lors de la récupération des commentaires : {error instanceof Error ? error.message : String(error)}
             </Typography>
         );
     }

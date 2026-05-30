@@ -57,7 +57,7 @@ export const useNodeData = (id: string) => {
 
     };
 
-    const createField = async (field: keyof AllNodeData, value: unknown) => {
+    const createField = async (field: string, value: unknown) => {
         try {
             console.log(field.toLowerCase());
             switch (field.toLowerCase()) {

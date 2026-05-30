@@ -2,7 +2,7 @@ import React from 'react';
 
 interface ObjectFieldProps {
   title: string;
-  object: { [key: string]: any };
+  object: Record<string, React.ReactNode>;
   displayKey: string;
   onEdit?: () => void;
   editable?: boolean;

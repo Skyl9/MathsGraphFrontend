@@ -146,7 +146,7 @@ export const EditModal = <T extends object>({
                         <Select
                             labelId="LabelSelection"
                             id="simple-select"
-                            value={fieldConfig.options.includes(value) ? value : ''}
+                            value={typeof value === 'string' && fieldConfig.options.includes(value) ? value : ''}
                             onChange={(e) => onChange(e.target.value)}
                         >
                             {fieldConfig.options.map((option, index) => (
@@ -213,6 +213,8 @@ export const EditModal = <T extends object>({
                             <FieldAddRelation
                                 nodeName={data.nom}
                                 createField={createField}
+                                id={data.id}
+                                value={null}
                             />
                         </FormControl>
                     </div>
@@ -245,7 +247,7 @@ export const EditModal = <T extends object>({
                     </div>
 
                 ) : fieldConfig.type === "latex" ? (
-                    <LatexEditor onChange={onChange} text={value || ""}/>
+                    <LatexEditor onChange={onChange} text={typeof value === 'string' ? value : ""}/>
 
 
                 ) : fieldConfig.type === "tag" && data && isAllNodeData(data) ? (

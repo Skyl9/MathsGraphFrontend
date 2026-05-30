@@ -3,7 +3,7 @@ import React from "react";
 
 
 type FieldWithAddProps = {
-    createField: any;
+    createField: (field: string, value: unknown) => Promise<boolean | void>;
     id: number;
 };
 

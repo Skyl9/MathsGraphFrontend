@@ -28,8 +28,8 @@ export const useEntityEdit = <T extends object>(entityType: EntityType, id: stri
     const [isSaving, setIsSaving] = useState(false);
 
     const editableFields = useMemo(() => {
-        const generateFields = FIELDS_GENERATOR_MAP[entityType] as any;
-        return generateFields(editableFieldsOptions);
+        const generateFields = FIELDS_GENERATOR_MAP[entityType as keyof typeof FIELDS_GENERATOR_MAP];
+        return generateFields(editableFieldsOptions as any) as Record<keyof T, any>;
     }, [entityType, editableFieldsOptions]);
 
     const handleEdit = (field: keyof T) => {

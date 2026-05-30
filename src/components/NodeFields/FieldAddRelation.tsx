@@ -5,7 +5,9 @@ import { nodeApi } from '../../services/api';
 
 type FieldAddRelationProps = {
     nodeName: string;
-    createField: (type: string, data: any) => void;
+    createField: (field: string, value: unknown) => Promise<boolean | void>;
+    id: number;
+    value: { label: string; value: number }[] | null; // Or a more specific type if known
 };
 interface LabelValue {
     label: string;
@@ -23,7 +25,7 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({nodeName, createFiel
         const fetchTheorems = async () => {
             const names = await nodeApi.getAllConceptNames();
             console.log(names)
-            const list = names.map((name: any) => ({ label: name["nom"],value: name["id"] }));
+            const list = names.map((name: { nom: string; id: number }) => ({ label: name["nom"],value: name["id"] }));
             setTheorems(list);
         };
 

@@ -48,7 +48,7 @@ const NodePage = () => {
         isModalOpen,
         currentEditField,
         newContent,
-        setNewContent,
+        handleChange: setNewContent,
         handleEdit: rawHandleEdit,
         saveChanges: rawSaveChanges,
         cancelChanges: rawCancelChanges,

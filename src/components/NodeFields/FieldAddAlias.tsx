@@ -2,8 +2,8 @@ import { Box, Button, TextField } from "@mui/material";
 import React from "react";
 
 type FieldWithAddProps = {
-    onChange: any;
-    createField: any;
+    onChange: (value: unknown) => void;
+    createField: (field: string, value: unknown) => Promise<boolean | void>;
     id:number;
     // onAdd: (newItem: string) => Promise<void>; // ou gérer l’API ici directement
 };

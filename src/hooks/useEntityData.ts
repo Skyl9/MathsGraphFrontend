@@ -68,10 +68,10 @@ export const useEntityData = <T extends object>(entityType: EntityType, id: stri
     const createField = async (field: string, value: unknown) => {
         try {
             setMutationError(null);
-            const val = value as any; // Temporary cast for polymorphic payload
+            const val = value as Record<string, unknown>; // Temporary cast for polymorphic payload
             switch (field.toLowerCase()) {
                 case "categorie": await nodeApi.createCategory(value as string); break;
-                case "aliases": await nodeApi.createAlias(val.id, val.value); break;
+                case "aliases": await nodeApi.createAlias(val.id as number, val.value as string); break;
                 case "mathematicien": await nodeApi.createMathematicien(value as string); break;
                 case "relations": await nodeApi.createRelation(value as Record<string, unknown>); break;
                 case "sources": await nodeApi.createSources(value); break;

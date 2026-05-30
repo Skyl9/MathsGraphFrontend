@@ -16,8 +16,8 @@ interface GraphState {
     setSelectedNodeId: (id: number | null) => void;
     setIsSearchActive: (val: boolean) => void;
 
-    setHistory: (updater: any) => void;
-    setCurrentIndex: (updater: any) => void;
+    setHistory: (updater: number[] | ((prev: number[]) => number[])) => void;
+    setCurrentIndex: (updater: number | ((prev: number) => number)) => void;
 
     goBack: () => void;
     goForward: () => void;

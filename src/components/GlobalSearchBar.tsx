@@ -32,7 +32,7 @@ export const GlobalSearchBar: React.FC = () => {
             try {
                 const results = await nodeApi.quickSearch(inputValue);
                 if (active) {
-                    setOptions(results as any);
+                    setOptions(results as SearchResult[]);
                 }
             } catch (error) {
                 console.error(error);
@@ -50,7 +50,7 @@ export const GlobalSearchBar: React.FC = () => {
     }, [inputValue]);
 
     // Gère la sélection d'un item dans le menu déroulant
-    const handleSelect = (_event: any, newValue: SearchResult | string | null) => {
+    const handleSelect = (_event: React.SyntheticEvent, newValue: SearchResult | string | null) => {
         if (typeof newValue === 'object' && newValue !== null) {
             // L'utilisateur a cliqué sur un aperçu !
             if (newValue.entity_type === 'concept') navigate(`/concept/${newValue.id}`);
@@ -102,7 +102,7 @@ export const GlobalSearchBar: React.FC = () => {
             onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
             onChange={handleSelect}
             renderOption={(props, option) => {
-                const { key, ...restProps } = props as any;
+                const { key, ...restProps } = props;
                 return (
                     <li {...restProps} key={`${option.entity_type}-${option.id}`}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" width="100%" sx={{ py: 0.5 }}>

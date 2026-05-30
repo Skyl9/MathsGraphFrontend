@@ -44,8 +44,8 @@ export const Login: React.FC = () => {
             if (payload) Token.saveUserInfo(payload);
 
             navigate("/");
-        } catch (e: any) {
-            setApiError(e.message || "Une erreur est survenue. Veuillez réessayer.");
+        } catch (e) {
+            setApiError((e as Error).message || "Une erreur est survenue. Veuillez réessayer.");
             console.error(e);
         }
     };

@@ -53,7 +53,7 @@ export const RecentChanges: React.FC = () => {
     if (error) {
         return (
             <Typography color="error" align="center" sx={{ p: 4 }}>
-                Erreur lors de la récupération de l'historique : {(error as any).message}
+                Erreur lors de la récupération de l'historique : {error instanceof Error ? error.message : String(error)}
             </Typography>
         );
     }

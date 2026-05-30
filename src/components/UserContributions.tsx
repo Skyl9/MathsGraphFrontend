@@ -23,7 +23,7 @@ const UserContributions: React.FC<UserContributionsProps> = ({ userId }) => {
     });
 
     if (loading) return <Box display="flex" justifyContent="center" p={2}><CircularProgress size={30} /></Box>;
-    if (error) return <Alert severity="error">{(error as any).message}</Alert>;
+    if (error) return <Alert severity="error">{error instanceof Error ? error.message : String(error)}</Alert>;
     if (contributions.length === 0) return <Alert severity="info">Cet utilisateur n'a pas encore contribué.</Alert>;
 
     return (
