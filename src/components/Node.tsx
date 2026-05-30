@@ -1,6 +1,6 @@
 import {useState, useRef, useMemo} from "react";
 import {Billboard, Text} from "@react-three/drei";
-import { Mesh, MeshStandardMaterial, Vector3, MathUtils } from "three";
+import { Mesh, MeshStandardMaterial, Group, Vector3, MathUtils } from "three";
 import { PointerEvent } from "react";
 import {useTheme} from "@mui/material";
 import {useFrame} from "@react-three/fiber";
@@ -8,7 +8,6 @@ import {useUIStore} from "../stores/useUIStore";
 import {useGraphStore} from "../stores/useGraphStore";
 
 interface NodeProps {
-    id: number;
     position: [number, number, number];
     color: string;
     nom: string;
@@ -38,7 +37,7 @@ export default function Node({
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
     const meshRef = useRef<Mesh<any, MeshStandardMaterial>>(null);
-    const billboardRef = useRef<any>(null);
+    const billboardRef = useRef<Group>(null);
     const theme = useTheme();
 
     const graphTheme = useUIStore(s => s.graphTheme);

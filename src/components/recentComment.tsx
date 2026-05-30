@@ -18,19 +18,10 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/fr';
 import { nodeApi } from '../services/api';
 import { useQuery } from '@tanstack/react-query';
+import { RecentComment } from '../types/ApiTypes/comments';
 
 dayjs.extend(relativeTime);
 dayjs.locale('fr');
-
-export interface RecentComment {
-    id: number;
-    concept_id: number;
-    concept_nom: string;
-    username: string;
-    content: string;
-    created_at: string;
-    field: string;
-}
 
 export const RecentComments: React.FC = () => {
     const theme = useTheme();

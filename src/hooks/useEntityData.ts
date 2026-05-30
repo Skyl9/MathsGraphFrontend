@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
+import Token from "../services/token";
 
-export type EntityType = "category" | "type" | "mathematicien";
+export type EntityType = "category" | "type" | "mathematicien" | "concept";
 
 const ENTITY_CONFIG = {
     category: {
@@ -20,6 +21,11 @@ const ENTITY_CONFIG = {
         get: nodeApi.getOneMathematicien,
         update: nodeApi.updateOneMathematicien,
         defaultFields: { id: [], nom: [], date_naissance: [], date_deces: [], biographie: [], nationalite: [], domaine: [], url: [], recompenses: [], epoque: [], created_at: [], updated_at: [] }
+    },
+    concept: {
+        get: nodeApi.getConcept,
+        update: (id: string, field: string, value: unknown) => nodeApi.updateConcept(id, field, value, Token.getUsernameFromToken() || ""),
+        defaultFields: { id: [], type: [], enonce: [], demonstration: [], mathematicien: [], nom: [], categorie: [], aliases: [], date_ajout: [], relations: [], sources: [], verification: [], noms_etrangers: [], tags: [], date_modification: [] }
     }
 };
 

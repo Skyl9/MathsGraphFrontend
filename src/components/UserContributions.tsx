@@ -6,7 +6,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/fr';
 import { useQuery } from '@tanstack/react-query';
 import { nodeApi } from '../services/api';
-import { RecentChange } from './RecentChanges'; // On réutilise l'interface existante
+import { RecentChange } from '../types/ApiTypes/concept'; // On réutilise l'interface existante
 
 dayjs.extend(relativeTime);
 dayjs.locale('fr');

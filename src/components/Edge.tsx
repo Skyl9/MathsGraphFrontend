@@ -1,6 +1,7 @@
 import { useMemo, useState, useRef } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
+import { Line2 } from "three-stdlib";
 import { useFrame } from "@react-three/fiber";
 import { useUIStore } from "../stores/useUIStore";
 import MathMarkdown from "./MathMarkdown";
@@ -37,7 +38,7 @@ export default function Edge({
     const graphTheme = useUIStore(s => s.graphTheme);
     const darkMode = useUIStore(s => s.darkMode);
     const [hovered, setHovered] = useState(false);
-    const lineRef = useRef<any>(null);
+    const lineRef = useRef<Line2>(null);
 
     const isFiltered = isStartFiltered || isEndFiltered;
 

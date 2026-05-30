@@ -4,14 +4,16 @@ import { useEntityData, EntityType } from "./useEntityData";
 import {
     createCategoryEditableFields,
     createTypeEditableFields,
-    createMathematicienEditableFields
+    createMathematicienEditableFields,
+    createEditableFields
 } from "../constants/editableFields";
 
 // Mapping pour récupérer les configurations de modales
 const FIELDS_GENERATOR_MAP = {
     category: createCategoryEditableFields,
     type: createTypeEditableFields,
-    mathematicien: createMathematicienEditableFields
+    mathematicien: createMathematicienEditableFields,
+    concept: createEditableFields
 } as const;
 
 export const useEntityEdit = <T extends object>(entityType: EntityType, id: string) => {

@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useCallback, useRef, useState} from "react";
 import {useThree, useFrame} from "@react-three/fiber";
 import {OrbitControls, Billboard, Text, Instances, Instance, Stars, Grid} from "@react-three/drei";
-import {Vector3, Color, Mesh} from "three";
+import {Vector3, Color, Mesh, Group} from "three";
 import Edge from "../components/Edge";
 import gsap from "gsap";
 import {NodeData, Graph} from "../types/ApiTypes/graph";
@@ -12,6 +12,7 @@ import {useGraphStore} from "../stores/useGraphStore";
 import CustomNode from "../components/Node";
 
 import {getNodeColor} from "../utils/nodeColors";
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 // 🌟 Sécurité : Fallback de coordonnées si un layout n'est pas encore calculé par le backend
 const getNodePos = (node: NodeData, view: string): { x: number; y: number; z: number } => {
@@ -79,7 +80,7 @@ const GraphNode = ({
 }: GraphNodeProps) => {
     const [hovered, setHovered] = useState(false);
     const sphereSize = 0.3;
-    const billboardRef = useRef<any>(null);
+    const billboardRef = useRef<Group>(null);
     const tempV = useMemo(() => new Vector3(), []);
 
     // Calcul de la couleur finale :
@@ -156,6 +157,8 @@ export default function Scene({graphData}: SceneProps) {
     const colorTheoreme = useUIStore(s => s.colorTheoreme);
     const colorSides = useUIStore(s => s.colorSides);
     const debugMode = useUIStore(s => s.debugMode);
+    const renderMode = useUIStore(s => s.renderMode);
+    const zoomAction = useUIStore(s => s.zoomAction);
     const setDebugMode = useUIStore(s => s.setDebugMode);
     const graphTheme = useUIStore(s => s.graphTheme);
     const filters = useFilterStore(s => s.filters);
@@ -170,7 +173,7 @@ export default function Scene({graphData}: SceneProps) {
     const {camera, gl} = useThree();
     const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
     const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
-    const controlsRef = useRef<any>(null);
+    const controlsRef = useRef<OrbitControlsImpl>(null);
     const darkMode = useUIStore(s => s.darkMode);
 
     const colors = useMemo(() => [colorLemme, colorAxiome, colorTheoreme], [colorLemme, colorAxiome, colorTheoreme]);
@@ -226,7 +229,7 @@ export default function Scene({graphData}: SceneProps) {
             gsap.to(controlsRef.current.target, {
                 x: targetPosition.x, y: targetPosition.y, z: targetPosition.z,
                 duration: 1.2, ease: "power3.inOut",
-                onUpdate: () => controlsRef.current.update(),
+                onUpdate: () => controlsRef.current?.update(),
             });
             gsap.to(camera.position, {
                 x: targetPosition.x + cameraOffset * 0.4,
@@ -238,9 +241,11 @@ export default function Scene({graphData}: SceneProps) {
         }
     }, [selectedNode, targetPosition, camera, currentView, edges, nodes]);
 
-    // Écouteurs d'événements pour le HUD de navigation (Zoom / Reset)
+    // Écouteurs d'événements pour le HUD de navigation (Zoom / Reset) via Zustand
     useEffect(() => {
-        const handleZoomIn = () => {
+        if (!zoomAction.action) return;
+
+        if (zoomAction.action === "in") {
             if (controlsRef.current) {
                 const target = controlsRef.current.target;
                 gsap.to(camera.position, {
@@ -251,9 +256,7 @@ export default function Scene({graphData}: SceneProps) {
                     ease: "power2.out"
                 });
             }
-        };
-
-        const handleZoomOut = () => {
+        } else if (zoomAction.action === "out") {
             if (controlsRef.current) {
                 const target = controlsRef.current.target;
                 gsap.to(camera.position, {
@@ -264,9 +267,7 @@ export default function Scene({graphData}: SceneProps) {
                     ease: "power2.out"
                 });
             }
-        };
-
-        const handleReset = () => {
+        } else if (zoomAction.action === "reset") {
             setSelectedNodeId(null);
             setTargetPosition(new Vector3(0, 0, 0));
             if (controlsRef.current) {
@@ -274,7 +275,7 @@ export default function Scene({graphData}: SceneProps) {
                     x: 0, y: 0, z: 0,
                     duration: 1.2,
                     ease: "power3.inOut",
-                    onUpdate: () => controlsRef.current.update()
+                    onUpdate: () => controlsRef.current?.update()
                 });
             }
             gsap.to(camera.position, {
@@ -282,18 +283,8 @@ export default function Scene({graphData}: SceneProps) {
                 duration: 1.2,
                 ease: "power3.inOut"
             });
-        };
-
-        window.addEventListener("graph-zoom-in", handleZoomIn);
-        window.addEventListener("graph-zoom-out", handleZoomOut);
-        window.addEventListener("graph-reset-view", handleReset);
-
-        return () => {
-            window.removeEventListener("graph-zoom-in", handleZoomIn);
-            window.removeEventListener("graph-zoom-out", handleZoomOut);
-            window.removeEventListener("graph-reset-view", handleReset);
-        };
-    }, [camera, setSelectedNodeId, setTargetPosition]);
+        }
+    }, [zoomAction, camera, setSelectedNodeId, setTargetPosition]);
 
     // Raccourcis clavier (D, Q, Arrow)
     useEffect(() => {
@@ -361,7 +352,6 @@ export default function Scene({graphData}: SceneProps) {
         if (event.target === gl.domElement) setSelectedNodeId(null);
     }, [gl, setSelectedNodeId]);
 
-    const renderMode = useUIStore(s => s.renderMode);
     if (!graphData) return <group>Pas de données pour la scène.</group>;
 
     return (
@@ -437,7 +427,6 @@ export default function Scene({graphData}: SceneProps) {
                         return (
                             <CustomNode
                                 key={`node-${node.id}`}
-                                id={node.id}
                                 position={[pos.x, pos.y, pos.z]}
                                 color={getNodeColor(node.typeMath, colors)}
                                 nom={node.nom}

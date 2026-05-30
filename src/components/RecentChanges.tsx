@@ -24,15 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 dayjs.extend(relativeTime);
 dayjs.locale('fr');
 
-export interface RecentChange {
-    id: number;
-    concept_id: number;
-    concept_nom: string;
-    username: string;
-    modified_at: string;
-    field_modified: string;
-    is_rollback: boolean;
-}
+import { RecentChange } from '../types/ApiTypes/concept';
 
 export const RecentChanges: React.FC = () => {
     const theme = useTheme();

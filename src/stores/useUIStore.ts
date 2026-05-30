@@ -21,6 +21,9 @@ interface UIState {
     setGraphTheme: (theme: "classique" | "neon" | "focus") => void;
     renderMode: "quality" | "performance";
     setRenderMode: (mode: "quality" | "performance") => void;
+
+    zoomAction: { action: "in" | "out" | "reset" | null, timestamp: number };
+    triggerZoomAction: (action: "in" | "out" | "reset") => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -33,7 +36,7 @@ export const useUIStore = create<UIState>()(
             colorAxiome: "#52C575",
             colorLemme: "#AE66CC",
             colorTheoreme: "#F99D1C",
-            colorSides: "black",
+            colorSides: "#ffffff",
 
             debugMode: false,
             setDebugMode: (value) => set((state) => ({
@@ -46,8 +49,11 @@ export const useUIStore = create<UIState>()(
             graphTheme: "classique",
             setGraphTheme: (theme) => set({ graphTheme: theme }),
             renderMode: "quality", // Mode beau par défaut
-            setRenderMode: (mode) => set({ renderMode: mode
-        }),}),
+            setRenderMode: (mode) => set({ renderMode: mode }),
+            
+            zoomAction: { action: null, timestamp: 0 },
+            triggerZoomAction: (action) => set({ zoomAction: { action, timestamp: Date.now() } }),
+        }),
         {
             name: 'mathgraph-ui-storage', // Nom dans le localStorage
             partialize: (state) => ({ darkMode: state.darkMode, graphTheme: state.graphTheme, renderMode: state.renderMode }), // On sauvegarde uniquement ces 2 valeurs !
