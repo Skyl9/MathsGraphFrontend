@@ -112,175 +112,129 @@ export const EditModal = <T extends object>({
     }, [field, data]);
 
 
+    const renderField = () => {
+        const renderers: Record<string, () => React.ReactNode> = {
+            "category": () => isCategory(data) && field === "parent_id" ? (
+                <FormControl fullWidth>
+                    <InputLabel id="parent-select-label">Catégorie parente</InputLabel>
+                    <Select
+                        labelId="parent-select-label"
+                        value={value ?? ""}
+                        label="Catégorie parente"
+                        onChange={e => onChange(e.target.value === "" ? null : Number(e.target.value))}
+                    >
+                        <MenuItem value="">Aucune</MenuItem>
+                        {categories.map(cat => (
+                            <MenuItem key={cat.id} value={cat.id}>{cat.nom}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            ) : null,
+            "select": () => fieldConfig.options ? (
+                <FormControl fullWidth>
+                    <InputLabel id="labelField">{fieldConfig.label}</InputLabel>
+                    <Select
+                        labelId="LabelSelection"
+                        id="simple-select"
+                        value={typeof value === 'string' && fieldConfig.options.includes(value) ? value : ''}
+                        onChange={(e) => onChange(e.target.value)}
+                    >
+                        {fieldConfig.options.map((option, index) => (
+                            <MenuItem key={index} value={option}>{option}</MenuItem>
+                        ))}
+                    </Select>
+                    {field === "type" && <FieldAdd label="Type" onChange={onChange} createField={createField} />}
+                    {field === "categorie" && <FieldAdd label="categorie" onChange={onChange} createField={createField} />}
+                    {field === "mathematicien" && <FieldAdd label="mathematicien" onChange={onChange} createField={createField} />}
+                </FormControl>
+            ) : null,
+            "checkbox": () => (
+                <FormControl>
+                    <FormControlLabel 
+                        control={<Switch checked={Boolean(value).valueOf()} onChange={(e) => onChange(e.target.checked)} name="Vérification"/>} 
+                        label="Vérification du concept" 
+                    />
+                </FormControl>
+            ),
+            "none": () => <></>,
+            "alias": () => isAllNodeData(data) && Array.isArray(data?.aliases) && data ? (
+                <div className="alias-edit-wrapper">
+                    {data.aliases.map((alias, index) => (
+                        <AliasEdit key={index} alias={alias} index={index} onChange={handleAliasChange} />
+                    ))}
+                    <FormControl>
+                        <FieldAddAlias createField={createField} onChange={onChange} id={data.id} />
+                    </FormControl>
+                </div>
+            ) : null,
+            "relation": () => isAllNodeData(data) && Array.isArray(data?.relations) && data ? (
+                <div className="relation-edit-wrapper">
+                    {data.relations.map((rel, index) => (
+                        <RelationEdit key={rel.id} relation={rel} onChange={(updatedRelation) => handleRelationChange(index, updatedRelation)} />
+                    ))}
+                    <FormControl>
+                        <FieldAddRelation nodeName={data.nom} createField={createField} id={data.id} value={null} />
+                    </FormControl>
+                </div>
+            ) : null,
+            "sources": () => data && isAllNodeData(data) ? (
+                <div className="source-edit-wrapper">
+                    {data.sources.map((src, index) => (
+                        <SourceEdit key={src.id} source={src} onChange={(updatedSource) => handleSourceChange(index, updatedSource)} />
+                    ))}
+                    <FormControl>
+                        <FieldAddSource createField={createField} id={data.id} />
+                    </FormControl>
+                </div>
+            ) : null,
+            "nom_etranger": () => isAllNodeData(data) && Array.isArray(data?.noms_etrangers) && data ? (
+                <div className="nom-etranger-edit-wrapper">
+                    {data.noms_etrangers.map((nom, index) => (
+                        <NomEtrangerEdit key={index} nomEtranger={nom} index={index} onChange={handleNomEtrangerChange} />
+                    ))}
+                </div>
+            ) : null,
+            "latex": () => <LatexEditor onChange={onChange} text={typeof value === 'string' ? value : ""} />,
+            "tag": () => data && isAllNodeData(data) ? (
+                <TagEdit tags={data.tags} conceptId={data.id.toString()} refetchData={refetchData} />
+            ) : null,
+            "text": () => (
+                <TextField
+                    multiline
+                    fullWidth
+                    minRows={4}
+                    value={value || ""}
+                    onChange={(e) => onChange(e.target.value)}
+                    label={fieldConfig.label}
+                    variant="outlined"
+                />
+            ),
+            "default": () => (
+                <TextField
+                    label={`Modifier ${fieldConfig.label} (Markdown & LaTeX)`}
+                    multiline
+                    fullWidth
+                    minRows={8}
+                    maxRows={15}
+                    value={value || ""}
+                    onChange={(e) => onChange(e.target.value)}
+                    variant="outlined"
+                    placeholder="Rédigez ici... Utilisez **gras**, *italique*, et $x^2$ pour les maths."
+                />
+            )
+        };
+
+        const renderFn = renderers[fieldConfig.type] || renderers["default"];
+        return renderFn();
+    };
+
     return (
         <div className="modal">
             <div className="modal-content">
                 <h2>Modifier {fieldConfig.label}</h2>
                 {valError && <Alert severity="error" sx={{ mb: 2 }}>{valError}</Alert>}
-                {fieldConfig.type === "category"
-                && isCategory(data)
-                && field === "parent_id" ? (
-                    <FormControl fullWidth>
-                        <InputLabel id="parent-select-label">Catégorie parente</InputLabel>
-                        <Select
-                            labelId="parent-select-label"
-                            value={value ?? ""}
-                            label="Catégorie parente"
-                            onChange={e => onChange(
-                                e.target.value === ""
-                                    ? null
-                                    : Number(e.target.value)
-                            )}
-                        >
-                            <MenuItem value="">Aucune</MenuItem>
-                            {categories.map(cat => (
-                                <MenuItem key={cat.id} value={cat.id}>
-                                    {cat.nom}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                ) : fieldConfig.type === "select" && fieldConfig.options ? (
-                    <FormControl fullWidth>
-                        <InputLabel id="labelField">{fieldConfig.label}</InputLabel>
-                        <Select
-                            labelId="LabelSelection"
-                            id="simple-select"
-                            value={typeof value === 'string' && fieldConfig.options.includes(value) ? value : ''}
-                            onChange={(e) => onChange(e.target.value)}
-                        >
-                            {fieldConfig.options.map((option, index) => (
-                                <MenuItem key={index} value={option}>
-                                    {option}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {field === "type" && (
-                            <FieldAdd
-                                label="Type"
-                                onChange={onChange}
-                                createField={createField}
-                            />
-                        )}
-                        {field === "categorie" && (
-                            <FieldAdd
-                                label="categorie"
-                                onChange={onChange}
-                                createField={createField}
-                            />
-                        )}
-                        {field === "mathematicien" && (
-                            <FieldAdd
-                                label="mathematicien"
-                                onChange={onChange}
-                                createField={createField}
-                            />
-                        )}
-                    </FormControl>
-                ) : fieldConfig.type === "checkbox" ? (
-                    // Si c'est un champ de type "checkbox", afficher une case à cocher
-                    <FormControl>
-                        <FormControlLabel control={<Switch checked={Boolean(value).valueOf()}
-                                                           onChange={(e) => onChange(e.target.checked)}
-                                                           name="Vérification"/>} label="Vérification du concept"/>
-                    </FormControl>
-                ) : fieldConfig.type === "none" ? (
-                    <></>
-                ) : fieldConfig.type === "alias" && isAllNodeData(data) && Array.isArray(data?.aliases) && data ? (
-                    <div className="alias-edit-wrapper">
-                        {data.aliases.map((alias, index) => (
-                            <AliasEdit
-                                key={index}
-                                alias={alias}
-                                index={index}
-                                onChange={handleAliasChange}
-                            />
-                        ))}
-                        <FormControl>
-                            <FieldAddAlias createField={createField} onChange={onChange} id={data.id}></FieldAddAlias>
-                        </FormControl>
-                    </div>
-                ) : fieldConfig.type === "relation" && isAllNodeData(data) && Array.isArray(data?.relations) && data ? (
-                    <div className="relation-edit-wrapper">
-                        {data.relations.map((rel, index) => (
-                            <RelationEdit
-                                key={rel.id}
-                                relation={rel}
-                                onChange={(updatedRelation) => handleRelationChange(index, updatedRelation)}
-                            />
-                        ))}
-                        <FormControl>
-                            <FieldAddRelation
-                                nodeName={data.nom}
-                                createField={createField}
-                                id={data.id}
-                                value={null}
-                            />
-                        </FormControl>
-                    </div>
-                ) : fieldConfig.type === "sources" && data && isAllNodeData(data) ? (
-                    <div className="source-edit-wrapper">
-                        {data.sources.map((src, index) => (
-                            <SourceEdit
-                                key={src.id}
-                                source={src}
-                                onChange={(updatedSource) => handleSourceChange(index, updatedSource)}
-                            />
-                        ))}
-                        <FormControl>
-                            <FieldAddSource
-                                createField={createField}
-                                id={data.id}
-                            />
-                        </FormControl>
-                    </div>
-                ) : fieldConfig.type === "nom_etranger" && isAllNodeData(data) && Array.isArray(data?.noms_etrangers) && data ? (
-                    <div className="nom-etranger-edit-wrapper">
-                        {data.noms_etrangers.map((nom, index) => (
-                            <NomEtrangerEdit
-                                key={index}
-                                nomEtranger={nom}
-                                index={index}
-                                onChange={handleNomEtrangerChange}
-                            />
-                        ))}
-                    </div>
-
-                ) : fieldConfig.type === "latex" ? (
-                    <LatexEditor onChange={onChange} text={typeof value === 'string' ? value : ""}/>
-
-
-                ) : fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
-                    <TagEdit tags={data.tags} conceptId={data.id.toString()} refetchData={refetchData}
-                    ></TagEdit>
-
-
-                ) : fieldConfig.type === "text" ? (
-                    // Permet de ne pas avoir de balise visible sur le titre de la page
-                    <TextField
-                        multiline
-                        fullWidth
-                        minRows={4}
-                        value={value || ""}
-                        onChange={(e) => onChange(e.target.value)}
-                        label={fieldConfig.label}
-                        variant="outlined"
-                    />
-                ) : (
-                    // Sinon, afficher un éditeur de texte comme ReactQuill
-                    <TextField
-                        label={`Modifier ${fieldConfig.label} (Markdown & LaTeX)`}
-                        multiline
-                        fullWidth
-                        minRows={8}
-                        maxRows={15}
-                        value={value || ""}
-                        onChange={(e) => onChange(e.target.value)}
-                        variant="outlined"
-                        placeholder="Rédigez ici... Utilisez **gras**, *italique*, et $x^2$ pour les maths."
-                    />
-
-                )}
+                
+                {renderField()}
 
                 {fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
                     <div className="modal-buttons">
