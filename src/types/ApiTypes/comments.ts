@@ -10,3 +10,13 @@ export type Comment = {
     field: string,
     username: string;
 }
+
+export interface RecentComment {
+    id: number;
+    concept_id: number;
+    concept_nom: string;
+    username: string;
+    content: string;
+    created_at: string;
+    field: string;
+}

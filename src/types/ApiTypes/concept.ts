@@ -33,3 +33,13 @@ export interface ConceptName{
     nom:string,
     id:number
 }
+
+export interface RecentChange {
+    id: number;
+    concept_id: number;
+    concept_nom: string;
+    username: string;
+    modified_at: string;
+    field_modified: string;
+    is_rollback: boolean;
+}

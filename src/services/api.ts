@@ -14,8 +14,8 @@ import {Tag} from "../types/ApiTypes/tag";
 import {Comment} from "../types/ApiTypes/comments";
 import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
 import {NodeData, EdgeData} from "../types/ApiTypes/graph";
-import {RecentChange} from "../components/RecentChanges.tsx";
-import {RecentComment} from "../components/recentComment.tsx";
+import {RecentChange} from "../types/ApiTypes/concept";
+import {RecentComment} from "../types/ApiTypes/comments";
 import {TimelineItem} from "react-chrono/dist/react-chrono";
 
 declare global {
