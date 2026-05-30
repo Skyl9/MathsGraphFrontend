@@ -27,7 +27,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
 
   const { data: favs = [], isLoading: loading, error } = useQuery({
     queryKey: ['favorites', uid],
-    queryFn: () => nodeApi.getFavorites(uid!),
+    queryFn: () => nodeApi.getFavorites(uid!.toString()),
     enabled: !!uid
   });
 

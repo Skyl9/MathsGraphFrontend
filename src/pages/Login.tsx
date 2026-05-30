@@ -41,7 +41,7 @@ export const Login: React.FC = () => {
 
             const responseData = await nodeApi.getToken(formData);
             const payload = Token.decodeToken(responseData.access_token);
-            Token.saveUserInfo(payload);
+            if (payload) Token.saveUserInfo(payload);
 
             navigate("/");
         } catch (e: any) {

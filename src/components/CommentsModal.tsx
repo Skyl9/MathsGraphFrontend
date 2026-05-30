@@ -184,7 +184,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                                                 </IconButton>
                                             )}
                                             {/* Seuls les admins/modérateurs ou l'auteur peuvent supprimer */}
-                                            {!c.is_deleted && (isPrivileged || String(c.user_id) === currentUserId) && (
+                                            {!c.is_deleted && (isPrivileged || c.user_id === currentUserId) && (
                                                 <IconButton
                                                     edge="end"
                                                     onClick={() => handleDelete(String(c.id))}

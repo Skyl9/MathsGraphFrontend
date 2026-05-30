@@ -8,7 +8,7 @@ import { Vector3 } from "three";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
-import { NodeData } from "../types/ApiTypes/graph";
+
 import '../styles/NodeDetails.css';
 
 interface NodeDetailsProps {
@@ -38,7 +38,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                 const neighborNode = graphData.nodes.find(n => n.id === neighborId);
                 return neighborNode ? { ...neighborNode, relType: edge.type } : null;
             })
-            .filter((n): n is (NodeData & { relType?: string }) => n !== null);
+            .filter((n): n is NonNullable<typeof n> => n !== null);
     }, [graphData, id]);
 
     if (!concept) return null;

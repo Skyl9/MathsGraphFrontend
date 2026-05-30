@@ -49,8 +49,8 @@ const AdminLayout = () => {
 
     useEffect(() => {
         const userId = Token.getUserIdFromToken();
-        if (userId) {
-            nodeApi.getUserInfo(userId)
+        if (userId !== null) {
+            nodeApi.getUserInfo(userId.toString())
                 .then((data) => setCurrentUser(data))
                 .catch(console.error);
         }

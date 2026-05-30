@@ -11,7 +11,7 @@ import {useFilterStore} from "../stores/useFilterStore";
 import {useGraphStore} from "../stores/useGraphStore";
 import CustomNode from "../components/Node";
 
-const getNodeColor = (typeMath: string, colors: string[]): string => {
+const getNodeColor = (typeMath: string | undefined, colors: string[]): string => {
     if (typeMath === "axiome") return colors[1];
     if (typeMath === "théorème") return colors[2];
     if (typeMath === "lemme") return colors[0];
@@ -438,7 +438,7 @@ export default function Scene({graphData}: SceneProps) {
                     ========================================== */
                     nodes.map((node) => {
                         const pos = getNodePos(node, currentView);
-                        const isFiltered = !(filters[node.typeMath as keyof typeof filters] ?? false);
+                        const isFiltered = !(filters[(node.typeMath ?? "") as keyof typeof filters] ?? false);
                         return (
                             <CustomNode
                                 key={`node-${node.id}`}

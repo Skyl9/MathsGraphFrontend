@@ -13,6 +13,7 @@ import {Favorite, User} from "../types/ApiTypes/user";
 import {Tag} from "../types/ApiTypes/tag";
 import {Comment} from "../types/ApiTypes/comments";
 import {AdminStats, ContentAdmin} from "../types/ApiTypes/admin";
+import {NodeData, EdgeData} from "../types/ApiTypes/graph";
 import {RecentChange} from "../components/RecentChanges.tsx";
 import {RecentComment} from "../components/recentComment.tsx";
 import {TimelineItem} from "react-chrono/dist/react-chrono";
@@ -25,10 +26,10 @@ declare global {
     }
 }
 
-// --- Missing Types Definitions ---
+// --- Types ---
 export interface GraphData {
-    nodes: any[];
-    edges: any[];
+    nodes: NodeData[];
+    edges: EdgeData[];
 }
 
 export interface MathTimelineData {
@@ -181,7 +182,7 @@ export const nodeApi = {
     getUserContributions: (userId: string, limit: number = 20) =>
         request<RecentChange[]>(`/user/history/${userId}?limit=${limit}`, undefined, false),
     getMathematiciensTimeline: () => request< TimelineItem[]>('/mathematicien/timeline/all'),
-    quickSearch: (inputValue: string) => request<SearchResult[]>(`/search/quick?q=${inputValue}`),
+    quickSearch: (inputValue: string) => request<SearchResult[]>(`/search/quick?q=${encodeURIComponent(inputValue)}`),
     advanceSearch: (queryTerm: string, filter: SearchFilters) => request<SearchResult[]>("/search/advanced", {
         method: 'POST',
         body: JSON.stringify({ q: queryTerm, filters: filter })

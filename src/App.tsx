@@ -49,26 +49,29 @@ import NewContentPage from "./pages/admin/NewContentPage.tsx";
 
 import {MainLayout} from "./components/MainLayout";
 
+// QueryClient instancié UNE SEULE FOIS en dehors du composant
+// pour éviter de perdre le cache React Query à chaque re-render
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            staleTime: 1000 * 60 * 5, // Les données restent en cache pendant 5 minutes
+            refetchOnWindowFocus: false, // Évite de recharger si l'utilisateur change d'onglet
+            retry: (failureCount, error: unknown) => {
+                // Ne pas retenter si c'est une erreur 404
+                const err = error as { status?: number; response?: { status?: number } };
+                if (err && (err.status === 404 || err.response?.status === 404)) {
+                    return false;
+                }
+                return failureCount < 3;
+            }
+        },
+    },
+});
+
 const App = () => {
     const darkMode = useUIStore(state => state.darkMode);
 
     const theme = useMemo(() => getTheme(darkMode), [darkMode]);
-
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: {
-                staleTime: 1000 * 60 * 5, // 🌟 Les données restent en cache pendant 5 minutes !
-                refetchOnWindowFocus: false, // Évite de recharger si l'utilisateur change d'onglet
-                retry: (failureCount, error: any) => {
-                    // Ne pas retenter si c'est une erreur 404
-                    if (error && (error.status === 404 || error.response?.status === 404)) {
-                        return false;
-                    }
-                    return failureCount < 3;
-                }
-            },
-        },
-    });
 
     return (
         <QueryClientProvider client={queryClient}>

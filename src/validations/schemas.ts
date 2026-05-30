@@ -48,14 +48,14 @@ const schemas = {
     type: typeSchema
 };
 
-export const validateField = (entity: keyof typeof schemas, field: string, value: any) => {
-    const entitySchema = schemas[entity] as z.ZodObject;
+export const validateField = (entity: keyof typeof schemas, field: string, value: unknown) => {
+    const entitySchema = schemas[entity] as z.ZodObject<z.ZodRawShape>;
 
     if (!(field in entitySchema.shape)) {
         return { success: true };
     }
 
-    // 🌟 2. On type explicitement le champ comme un validateur Zod
+    // On type explicitement le champ comme un validateur Zod
     const fieldSchema = entitySchema.shape[field] as z.ZodTypeAny;
 
     const result = fieldSchema.safeParse(value);
