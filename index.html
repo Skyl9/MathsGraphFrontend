@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.ico" />
@@ -7,18 +7,21 @@
     <meta name="theme-color" content="#000000" />
     <meta
       name="description"
-      content="Web site created using create-react-app"
+      content="MathGraph — Explorez les concepts mathématiques en graphe interactif"
     />
     <link rel="apple-touch-icon" href="/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="/manifest.json" />
-    <title>React App</title>
+    <title>MathGraph</title>
+
+    <!--
+      Ce script est GÉNÉRÉ au démarrage du conteneur nginx par env.sh.
+      Il expose les variables d'environnement runtime via window.__RUNTIME_CONFIG__.
+      Il DOIT être chargé avant le bundle React pour que api.ts puisse y accéder.
+    -->
+    <script src="/env-config.js"></script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>Vous devez activer JavaScript pour utiliser cette application.</noscript>
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
   </body>
