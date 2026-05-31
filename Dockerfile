@@ -1,5 +1,5 @@
 # Étape 1 : Le build 
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 
 ARG VITE_BACKEND_LINK
 ARG GENERATE_SOURCEMAP

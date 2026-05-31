@@ -1,8 +1,8 @@
 # Liste des fournisseurs à utiliser lors de la construction
-providers = ["...", "node"]
+providers = ["node"]
+
 # Variables d'environnement à définir lors de la construction
 [variables]
 NODE_ENV = "production"
 NPM_CONFIG_PRODUCTION = "false"
-
-NIXPACKS_NODE_VERSION= "20"
+NIXPACKS_NODE_VERSION = "22"
