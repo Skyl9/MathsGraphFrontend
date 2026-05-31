@@ -5,29 +5,32 @@ ARG VITE_BACKEND_LINK
 ARG GENERATE_SOURCEMAP
 ARG NODE_ENV
 
-# On crée un fichier .env à l'intérieur du conteneur avec les nouvelles variables VITE
+# On définit le dossier de travail EN PREMIER
+WORKDIR /app
+
+# Maintenant, le .env sera bien créé dans /app/.env
 RUN echo "VITE_BACKEND_LINK=$VITE_BACKEND_LINK" >> .env && \
     echo "GENERATE_SOURCEMAP=$GENERATE_SOURCEMAP" >> .env && \
     echo "NODE_ENV=$NODE_ENV" >> .env
 
-WORKDIR /app
-
+# Installation des dépendances
 COPY package*.json ./
 RUN npm install
 
+# Copie du code source et build
 COPY . .
-
-# Construire l'application (Vite va générer le dossier /app/dist)
 RUN npm run build
 
 # Étape 2 : Le serveur
 FROM nginx:alpine
 
+# Copie de la configuration NGINX
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# On copie depuis le dossier "dist" (généré par Vite) au lieu de "build"
+# Copie de l'application compilée
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Script d'environnement au runtime (si tu l'utilises pour remplacer des variables dans le JS)
 COPY env.sh /docker-entrypoint.d/env.sh
 RUN chmod +x /docker-entrypoint.d/env.sh
 
