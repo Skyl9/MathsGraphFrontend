@@ -2,7 +2,7 @@
   "name": "maths_graph_typescript",
   "version": "0.1.0",
   "engines": {
-    "node": "20.x"
+    "node": ">=22.22.1"
   },
   "private": true,
   "dependencies": {
