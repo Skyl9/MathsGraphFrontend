@@ -18,7 +18,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import { useParams, Navigate } from "react-router-dom";
-import { EditModalAvatar } from "../components/EditModalAvatar";
+import { AvatarEditModal } from "../components/AvatarEditModal";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
 import UserContributions from "../components/UserContributions.tsx";
@@ -121,7 +121,7 @@ const UserProfilePage: React.FC = () => {
 
   return (
     <>
-      <EditModalAvatar
+      <AvatarEditModal
         open={editField === "avatar"}
         onClose={() => setEditField(null)}
         onSubmit={handleAvatarSubmit}

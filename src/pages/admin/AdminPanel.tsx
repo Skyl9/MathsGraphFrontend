@@ -12,6 +12,8 @@ import "../../styles/AdminPanel.css";
 import { AllNodeData, NomEtranger } from "../../types/types";
 import { nodeApi } from "../../services/api";
 import { Source } from "../../types/ApiTypes/source";
+import Token from "../../services/token.ts";
+import { Navigate } from "react-router-dom";
 
 export default function AdminPanel() {
   const queryClient = useQueryClient();
@@ -321,6 +323,9 @@ export default function AdminPanel() {
     },
     [queryClient],
   );
+  if (Token.getUserRoleFromToken() !== "admin") {
+    return <Navigate to="/404" replace />;
+  }
 
   return (
     <div className="admin-container">
