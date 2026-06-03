@@ -17,12 +17,14 @@ export default defineConfig({
         chunkSizeWarningLimit: 1000,
         rollupOptions: {
             output: {
-                manualChunks: {
-                    vendor: ['react', 'react-dom', 'react-router-dom'],
-                    mui: ['@mui/material', '@mui/icons-material', '@mui/system', '@emotion/react', '@emotion/styled'],
-                    three: ['three', '@react-three/fiber', '@react-three/drei'],
-                    math: ['better-react-mathjax', 'katex'],
-                    utils: ['framer-motion', 'react-window', '@tanstack/react-query', 'gsap']
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) return 'vendor';
+                        if (id.includes('@mui') || id.includes('@emotion')) return 'mui';
+                        if (id.includes('three') || id.includes('@react-three')) return 'three';
+                        if (id.includes('better-react-mathjax') || id.includes('katex')) return 'math';
+                        if (id.includes('framer-motion') || id.includes('react-window') || id.includes('@tanstack') || id.includes('gsap')) return 'utils';
+                    }
                 }
             }
         }
