@@ -20,9 +20,14 @@ import {
   CardContent,
   CardActions,
   useTheme,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { nodeApi } from "../services/api";
+import { nodeApi, SearchFilters } from "../services/api";
 import { motion } from "framer-motion";
 
 // Icônes
@@ -63,20 +68,77 @@ export const SearchPage = () => {
   };
 
   // État de nos filtres (Tier gauche)
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<SearchFilters>({
     concept: true,
     mathematicien: true,
     category: true,
     verifiedOnly: false,
+    categorie_id: null,
+    type_id: null,
+    mathematicien_id: null,
+    date_start: null,
+    date_end: null,
   });
 
-  // Gestion du clic sur un filtre
+  // Gestion du clic sur un filtre (checkbox)
   const handleFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFilters({
       ...filters,
       [event.target.name]: event.target.checked,
     });
   };
+
+  // Gestion des listes déroulantes (Select)
+  const handleSelectChange = (event: SelectChangeEvent<number | "">) => {
+    const name = event.target.name;
+    const value = event.target.value;
+    setFilters({
+      ...filters,
+      [name]: value === "" ? null : Number(value),
+    });
+  };
+
+  // Gestion des champs dates (TextField)
+  const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const name = event.target.name;
+    const value = event.target.value;
+
+    // Si vide, on met null. Sinon on formate en YYYY-01-01
+    let formattedDate = null;
+    if (value.trim() !== "") {
+      // Nettoie l'entrée (on accepte les nombres négatifs pour l'Antiquité)
+      const year = parseInt(value, 10);
+      if (!isNaN(year)) {
+        // Formate sur au moins 4 chiffres avec des zéros devant si besoin
+        // Le backend PostgreSQL / Pydantic accepte généralement YYYY-01-01
+        // Pour les années avant J.C, il faudra peut-être une string spéciale ou juste l'envoyer tel quel
+        const absYear = Math.abs(year).toString().padStart(4, "0");
+        const sign = year < 0 ? "-" : "";
+        formattedDate = `${sign}${absYear}-01-01`;
+      }
+    }
+
+    setFilters({
+      ...filters,
+      [name]: formattedDate,
+    });
+  };
+
+  // Requêtes pour pré-remplir les listes de sélection
+  const { data: categories } = useQuery({
+    queryKey: ["allCategories"],
+    queryFn: () => nodeApi.getAllCategories(),
+  });
+
+  const { data: types } = useQuery({
+    queryKey: ["allTypes"],
+    queryFn: () => nodeApi.getAllTypeNames(),
+  });
+
+  const { data: mathematiciens } = useQuery({
+    queryKey: ["allMathematiciens"],
+    queryFn: () => nodeApi.getAllMathematicienName(),
+  });
 
   // Appel API avec React Query
   const {
@@ -198,6 +260,127 @@ export const SearchPage = () => {
             }}
           />
         </FormGroup>
+      </Box>
+
+      <Divider />
+
+      <Box>
+        <Typography
+          variant="subtitle2"
+          color="text.secondary"
+          sx={{
+            fontWeight: 700,
+            mb: 2,
+            textTransform: "uppercase",
+            fontSize: "0.75rem",
+            letterSpacing: "0.05em",
+          }}
+        >
+          Spécificités
+        </Typography>
+        <Stack spacing={2}>
+          <FormControl fullWidth size="small">
+            <InputLabel>Catégorie</InputLabel>
+            <Select
+              name="categorie_id"
+              value={filters.categorie_id === null ? "" : filters.categorie_id}
+              onChange={handleSelectChange}
+              label="Catégorie"
+              disabled={!categories}
+            >
+              <MenuItem value="">
+                <em>Toutes</em>
+              </MenuItem>
+              {categories?.map((cat) => (
+                <MenuItem key={cat.id} value={cat.id}>
+                  {cat.nom}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth size="small">
+            <InputLabel>Type</InputLabel>
+            <Select
+              name="type_id"
+              value={filters.type_id === null ? "" : filters.type_id}
+              onChange={handleSelectChange}
+              label="Type"
+              disabled={!types}
+            >
+              <MenuItem value="">
+                <em>Tous</em>
+              </MenuItem>
+              {types?.map((type) => (
+                <MenuItem key={type.id} value={type.id}>
+                  {type.nom}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl fullWidth size="small">
+            <InputLabel>Mathématicien</InputLabel>
+            <Select
+              name="mathematicien_id"
+              value={
+                filters.mathematicien_id === null
+                  ? ""
+                  : filters.mathematicien_id
+              }
+              onChange={handleSelectChange}
+              label="Mathématicien"
+              disabled={!mathematiciens}
+            >
+              <MenuItem value="">
+                <em>Tous</em>
+              </MenuItem>
+              {mathematiciens?.map((math) => (
+                <MenuItem key={math.id} value={math.id}>
+                  {math.nom}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+      </Box>
+
+      <Divider />
+
+      <Box>
+        <Typography
+          variant="subtitle2"
+          color="text.secondary"
+          sx={{
+            fontWeight: 700,
+            mb: 2,
+            textTransform: "uppercase",
+            fontSize: "0.75rem",
+            letterSpacing: "0.05em",
+          }}
+        >
+          Période (Années)
+        </Typography>
+        <Stack direction="row" spacing={1.5}>
+          <TextField
+            name="date_start"
+            label="De (ex: -300)"
+            variant="outlined"
+            size="small"
+            placeholder="-300"
+            onChange={handleDateChange}
+            sx={{ flex: 1 }}
+          />
+          <TextField
+            name="date_end"
+            label="À (ex: 1800)"
+            variant="outlined"
+            size="small"
+            placeholder="1800"
+            onChange={handleDateChange}
+            sx={{ flex: 1 }}
+          />
+        </Stack>
       </Box>
     </Stack>
   );

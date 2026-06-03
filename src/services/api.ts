@@ -52,6 +52,11 @@ export interface SearchFilters {
   mathematicien: boolean;
   category: boolean;
   verifiedOnly: boolean;
+  categorie_id?: number | null;
+  type_id?: number | null;
+  mathematicien_id?: number | null;
+  date_start?: string | null;
+  date_end?: string | null;
 }
 
 export interface ApiRouteMetric {
