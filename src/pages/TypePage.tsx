@@ -37,14 +37,8 @@ const TypePage = () => {
     refetchData,
   } = useEntityEdit<Type>("type", id || "");
 
-  const [isUserConnected, setIsUserConnected] = useState<boolean>(false);
+  const [isUserConnected] = useState<boolean>(() => Token.isUserConnected());
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (Token.isUserConnected()) {
-      setIsUserConnected(true);
-    }
-  }, []);
 
   useEffect(() => {
     if (data) {

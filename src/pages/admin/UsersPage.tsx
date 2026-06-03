@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { useState } from "react";
+import { DataGrid, GridColDef, GridActionsCellItem } from "@mui/x-data-grid";
 import {
   Box,
   CircularProgress,
@@ -9,35 +9,41 @@ import {
   InputAdornment,
   Chip,
   Paper,
-  useTheme
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SearchIcon from '@mui/icons-material/Search';
-import { nodeApi } from '../../services/api';
-import { useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { User } from '../../types/ApiTypes/user';
+  useTheme,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from "@mui/icons-material/Search";
+import { nodeApi } from "../../services/api";
+import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { User } from "../../types/ApiTypes/user";
 
 const UsersPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const theme = useTheme();
-  const isDark = theme.palette.mode === 'dark';
-  const [searchQuery, setSearchQuery] = useState('');
+  const isDark = theme.palette.mode === "dark";
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: rows = [], isLoading: loading, error } = useQuery<User[]>({
-    queryKey: ['adminUsers'],
-    queryFn: () => nodeApi.getAllUsers()
+  const {
+    data: rows = [],
+    isLoading: loading,
+    error,
+  } = useQuery<User[]>({
+    queryKey: ["adminUsers"],
+    queryFn: () => nodeApi.getAllUsers(),
   });
 
   const handleDelete = async (id: number) => {
-    if (!window.confirm('Confirmer la suppression ?')) return;
+    if (!window.confirm("Confirmer la suppression ?")) return;
     // await nodeApi.deleteUser(id.toString());
-    queryClient.setQueryData(['adminUsers'], (old: User[] | undefined) => old ? old.filter(u => u.id !== id) : []);
+    queryClient.setQueryData(["adminUsers"], (old: User[] | undefined) =>
+      old ? old.filter((u) => u.id !== id) : [],
+    );
   };
 
-  const filteredRows = rows.filter(user => {
+  const filteredRows = rows.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
       user.username.toLowerCase().includes(query) ||
@@ -47,19 +53,19 @@ const UsersPage = () => {
   });
 
   const columns: GridColDef<User>[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'username', headerName: 'Nom d’utilisateur', flex: 1 },
-    { field: 'email', headerName: 'Email', flex: 1.5 },
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "username", headerName: "Nom d’utilisateur", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1.5 },
     {
-      field: 'role',
-      headerName: 'Rôle',
+      field: "role",
+      headerName: "Rôle",
       width: 130,
       renderCell: (params) => {
         const role = params.value as string;
-        let color: 'error' | 'warning' | 'info' | 'default' = 'default';
-        if (role === 'admin') color = 'error';
-        else if (role === 'moderator' || role === 'mod') color = 'warning';
-        else if (role === 'user') color = 'info';
+        let color: "error" | "warning" | "info" | "default" = "default";
+        if (role === "admin") color = "error";
+        else if (role === "moderator" || role === "mod") color = "warning";
+        else if (role === "user") color = "info";
 
         return (
           <Chip
@@ -70,80 +76,93 @@ const UsersPage = () => {
             sx={{ fontWeight: 600, borderRadius: 1.5 }}
           />
         );
-      }
+      },
     },
     {
-      field: 'is_active',
-      headerName: 'Statut',
+      field: "is_active",
+      headerName: "Statut",
       width: 120,
       renderCell: (params) => {
         const isActive = params.value as boolean;
         return (
           <Chip
-            label={isActive ? 'Actif' : 'Inactif'}
-            color={isActive ? 'success' : 'default'}
+            label={isActive ? "Actif" : "Inactif"}
+            color={isActive ? "success" : "default"}
             size="small"
-            variant={isActive ? 'outlined' : 'outlined'}
+            variant={isActive ? "outlined" : "outlined"}
             sx={{
               fontWeight: 600,
               borderRadius: 1.5,
-              ...(isActive ? {
-                bgcolor: isDark ? 'rgba(46, 125, 50, 0.12)' : 'rgba(46, 125, 50, 0.08)',
-                borderColor: 'success.main',
-                color: isDark ? 'success.light' : 'success.dark',
-              } : {
-                bgcolor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.04)',
-                borderColor: 'action.disabled',
-                color: 'text.secondary',
-              })
+              ...(isActive
+                ? {
+                    bgcolor: isDark
+                      ? "rgba(46, 125, 50, 0.12)"
+                      : "rgba(46, 125, 50, 0.08)",
+                    borderColor: "success.main",
+                    color: isDark ? "success.light" : "success.dark",
+                  }
+                : {
+                    bgcolor: isDark
+                      ? "rgba(255, 255, 255, 0.05)"
+                      : "rgba(0, 0, 0, 0.04)",
+                    borderColor: "action.disabled",
+                    color: "text.secondary",
+                  }),
             }}
           />
         );
-      }
+      },
     },
     {
-      field: 'created_at',
-      headerName: 'Créé le',
+      field: "created_at",
+      headerName: "Créé le",
       width: 150,
       renderCell: (params) => {
         const val = params.value;
-        if (!val) return '';
+        if (!val) return "";
         try {
-          return new Date(val).toLocaleDateString('fr-FR', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
+          return new Date(val).toLocaleDateString("fr-FR", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
           });
-        } catch (e) {
+        } catch {
           return val;
         }
-      }
+      },
     },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
+      field: "actions",
+      type: "actions",
+      headerName: "Actions",
       width: 100,
       getActions: (params) => [
         <GridActionsCellItem
           key="edit"
-          icon={<EditIcon sx={{ color: 'primary.main' }} />}
+          icon={<EditIcon sx={{ color: "primary.main" }} />}
           label="Éditer"
           onClick={() => navigate(`/admin/users/${params.id}`)}
         />,
         <GridActionsCellItem
           key="delete"
-          icon={<DeleteIcon sx={{ color: 'error.main' }} />}
+          icon={<DeleteIcon sx={{ color: "error.main" }} />}
           label="Supprimer"
           onClick={() => handleDelete(Number(params.id))}
-        />
-      ]
-    }
+        />,
+      ],
+    },
   ];
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "50vh",
+        }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -153,7 +172,9 @@ const UsersPage = () => {
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="error">
-          {error instanceof Error ? error.message : 'Une erreur est survenue lors du chargement des utilisateurs.'}
+          {error instanceof Error
+            ? error.message
+            : "Une erreur est survenue lors du chargement des utilisateurs."}
         </Alert>
       </Box>
     );
@@ -161,13 +182,26 @@ const UsersPage = () => {
 
   return (
     <Box sx={{ p: 1 }}>
-      <Box sx={{ mb: 4, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, gap: 2 }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          justifyContent: "space-between",
+          alignItems: { xs: "stretch", sm: "center" },
+          gap: 2,
+        }}
+      >
         <Box>
-          <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 0.5 }}>
+          <Typography
+            variant="h5"
+            sx={{ fontWeight: 800, letterSpacing: "-0.02em", mb: 0.5 }}
+          >
             Utilisateurs
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Gérer les comptes utilisateurs, attribuer les rôles et activer/désactiver les comptes.
+            Gérer les comptes utilisateurs, attribuer les rôles et
+            activer/désactiver les comptes.
           </Typography>
         </Box>
         <TextField
@@ -178,13 +212,17 @@ const UsersPage = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           sx={{
             minWidth: 260,
-            '& .MuiOutlinedInput-root': {
+            "& .MuiOutlinedInput-root": {
               borderRadius: 3,
-              bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
-              '& fieldset': {
-                borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+              bgcolor: isDark
+                ? "rgba(255, 255, 255, 0.03)"
+                : "rgba(0, 0, 0, 0.02)",
+              "& fieldset": {
+                borderColor: isDark
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "rgba(0, 0, 0, 0.1)",
               },
-            }
+            },
           }}
           InputProps={{
             startAdornment: (
@@ -201,40 +239,52 @@ const UsersPage = () => {
         sx={{
           p: 0,
           borderRadius: 4,
-          overflow: 'hidden',
-          background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(255, 255, 255, 0.65)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid',
-          borderColor: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)',
-          boxShadow: isDark ? '0 8px 32px 0 rgba(0, 0, 0, 0.2)' : '0 8px 32px 0 rgba(31, 38, 135, 0.04)',
+          overflow: "hidden",
+          background: isDark
+            ? "rgba(255, 255, 255, 0.02)"
+            : "rgba(255, 255, 255, 0.65)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid",
+          borderColor: isDark
+            ? "rgba(255, 255, 255, 0.08)"
+            : "rgba(0, 0, 0, 0.06)",
+          boxShadow: isDark
+            ? "0 8px 32px 0 rgba(0, 0, 0, 0.2)"
+            : "0 8px 32px 0 rgba(31, 38, 135, 0.04)",
         }}
       >
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{ height: 600, width: "100%" }}>
           <DataGrid
             rows={filteredRows}
             columns={columns}
             disableRowSelectionOnClick
             sx={{
-              border: 'none',
-              '& .MuiDataGrid-columnHeaders': {
-                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.015)',
-                borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
+              border: "none",
+              "& .MuiDataGrid-columnHeaders": {
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.03)"
+                  : "rgba(0, 0, 0, 0.015)",
+                borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"}`,
               },
-              '& .MuiDataGrid-columnHeaderTitle': {
+              "& .MuiDataGrid-columnHeaderTitle": {
                 fontWeight: 650,
               },
-              '& .MuiDataGrid-cell': {
-                borderBottom: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)'}`,
+              "& .MuiDataGrid-cell": {
+                borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)"}`,
               },
-              '& .MuiDataGrid-row:hover': {
-                bgcolor: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.02)',
+              "& .MuiDataGrid-row:hover": {
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.03)"
+                  : "rgba(0, 0, 0, 0.02)",
               },
-              '& .MuiDataGrid-row:nth-of-type(even)': {
-                bgcolor: isDark ? 'rgba(255, 255, 255, 0.01)' : 'rgba(0, 0, 0, 0.005)',
+              "& .MuiDataGrid-row:nth-of-type(even)": {
+                bgcolor: isDark
+                  ? "rgba(255, 255, 255, 0.01)"
+                  : "rgba(0, 0, 0, 0.005)",
               },
-              '& .MuiDataGrid-footerContainer': {
-                borderTop: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)'}`,
-              }
+              "& .MuiDataGrid-footerContainer": {
+                borderTop: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"}`,
+              },
             }}
           />
         </Box>

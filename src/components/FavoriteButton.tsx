@@ -4,14 +4,17 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
-import {Favorite} from "../types/ApiTypes/user";
+import { Favorite } from "../types/ApiTypes/user";
 
 export interface FavoriteButtonProps {
   itemId: string;
   itemType: string; // ex. "category", "mathematicien", "concept", etc.
 }
 
-const FavoriteButton: React.FC<FavoriteButtonProps> = ({ itemId, itemType }) => {
+const FavoriteButton: React.FC<FavoriteButtonProps> = ({
+  itemId,
+  itemType,
+}) => {
   const userId = Token.getUserIdFromToken();
   const [isFav, setIsFav] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
@@ -19,6 +22,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ itemId, itemType }) => 
 
   useEffect(() => {
     if (!userId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
@@ -26,7 +30,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({ itemId, itemType }) => 
       .getFavorites()
       .then((favs: Favorite[]) => {
         const found = favs.some(
-          (f) => f.id.toString() === itemId && f.category === itemType
+          (f) => f.id.toString() === itemId && f.category === itemType,
         );
         setIsFav(found);
       })

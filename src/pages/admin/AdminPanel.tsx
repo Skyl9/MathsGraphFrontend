@@ -84,12 +84,15 @@ export default function AdminPanel() {
     },
   });
 
-  const saveChanges = (id: number) => {
-    if (!data) return;
-    const rowToUpdate = data.find((row) => row.id === id);
-    if (!rowToUpdate) return;
-    updateNodeMutation.mutate({ id, rowToUpdate });
-  };
+  const saveChanges = useCallback(
+    (id: number) => {
+      if (!data) return;
+      const rowToUpdate = data.find((row) => row.id === id);
+      if (!rowToUpdate) return;
+      updateNodeMutation.mutate({ id, rowToUpdate });
+    },
+    [data, updateNodeMutation],
+  );
 
   const getRowHeight = useCallback((params: GridRowHeightParams) => {
     const lineHeight = 1.5;
@@ -290,7 +293,7 @@ export default function AdminPanel() {
         ),
       },
     ],
-    [data],
+    [saveChanges],
   );
 
   const rows = useMemo(
