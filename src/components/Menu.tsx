@@ -169,7 +169,7 @@ export default function Menu({ graphData }: MenuProps) {
                   variant="h6"
                   sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
                 >
-                  Configuration
+                  {t("menu.configuration")}
                 </Typography>
                 <IconButton size="small" onClick={() => setOpen(false)}>
                   <CloseIcon fontSize="small" />
@@ -487,7 +487,9 @@ export default function Menu({ graphData }: MenuProps) {
               color: darkMode ? "#F1F5F9" : "#0F172A",
             }}
           >
-            <div className="search-no-results">Aucun concept trouvé</div>
+            <div className="search-no-results">
+              {t("search.no_concept_found")}
+            </div>
           </div>
         )}
       </div>

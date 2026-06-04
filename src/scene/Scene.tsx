@@ -18,6 +18,7 @@ import { useUIStore } from "../stores/useUIStore";
 import { useFilterStore } from "../stores/useFilterStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import CustomNode, { CustomNodeData } from "../components/Node";
+import { useTranslation } from "react-i18next";
 
 import { getNodeColor } from "../utils/nodeColors";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
@@ -220,6 +221,7 @@ export default function Scene({ graphData }: SceneProps) {
   const setDebugMode = useUIStore((s) => s.setDebugMode);
   const graphTheme = useUIStore((s) => s.graphTheme);
   const filters = useFilterStore((s) => s.filters);
+  const { t } = useTranslation();
 
   const targetPosition = useGraphStore((s) => s.targetPosition);
   const setTargetPosition = useGraphStore((s) => s.setTargetPosition);
@@ -503,7 +505,7 @@ export default function Scene({ graphData }: SceneProps) {
     [gl, setSelectedNodeId],
   );
 
-  if (!graphData) return <group>Pas de données pour la scène.</group>;
+  if (!graphData) return <group>{t("scene.no_data")}</group>;
 
   return (
     <>

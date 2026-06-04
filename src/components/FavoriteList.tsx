@@ -5,12 +5,13 @@ import {
   ListItemButton,
   ListItemText,
   CircularProgress,
-  Alert
+  Alert,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
+import { useTranslation } from "react-i18next";
 
 interface Favorite {
   id: string | number;
@@ -24,15 +25,20 @@ interface FavoritesListProps {
 
 const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
   const uid = userId || Token.getUserIdFromToken();
+  const { t } = useTranslation();
 
-  const { data: favs = [], isLoading: loading, error } = useQuery({
-    queryKey: ['favorites', uid],
+  const {
+    data: favs = [],
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: ["favorites", uid],
     queryFn: () => nodeApi.getFavorites(uid!.toString()),
-    enabled: !!uid
+    enabled: !!uid,
   });
 
   if (!uid) {
-    return <Alert severity="error">Utilisateur non connecté</Alert>;
+    return <Alert severity="error">{t("favorite_list.not_logged_in")}</Alert>;
   }
 
   if (loading) {
@@ -42,7 +48,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
     return <Alert severity="error">{(error as any).message}</Alert>;
   }
   if (favs.length === 0) {
-    return <Alert severity="info">Aucun favori pour cet utilisateur.</Alert>;
+    return <Alert severity="info">{t("favorite_list.no_favorites")}</Alert>;
   }
 
   const getPath = (fav: Favorite) => {
@@ -65,7 +71,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
           <ListItemButton component={Link} to={getPath(fav)}>
             <ListItemText
               primary={fav.nom}
-              secondary={`Type : ${fav.category}`}
+              secondary={`${t("favorite_list.type")} ${fav.category}`}
             />
           </ListItemButton>
         </ListItem>

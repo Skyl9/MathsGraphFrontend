@@ -300,5 +300,146 @@
     "save_btn": "Sauvegarder les modifications",
     "recalculate_success": "Le graphe a été recalculé avec succès !",
     "recalculate_error": "Erreur lors du recalcul du graphe"
+  },
+  "recent_changes_widget": {
+    "title": "Modifications récentes",
+    "no_activity": "Aucune activité récente.",
+    "error": "Erreur lors de la récupération de l'historique :",
+    "restored": "restauré",
+    "modified": "modifié"
+  },
+  "recent_comments": {
+    "title": "Dernières discussions",
+    "no_comments": "Aucun commentaire récent.",
+    "error": "Erreur lors de la récupération des commentaires :",
+    "on": "sur",
+    "field": "Champ :"
+  },
+  "timeline": {
+    "title": "Chronologie des Mathématiciens",
+    "search_placeholder": "Recherche par nom ou mots-clés...",
+    "year_min": "Année Min (ex: -300)",
+    "year_max": "Année Max (ex: 1800)",
+    "no_data": "Aucune date disponible.",
+    "no_match": "Aucun mathématicien ne correspond à ces critères.",
+    "error": "Erreur lors du chargement de la chronologie.",
+    "view_profile": "Voir Profil",
+    "bce": "av. J.-C.",
+    "today": "Aujourd'hui",
+    "to": "à",
+    "no_biography": "Aucune biographie disponible pour ce mathématicien."
+  },
+  "graph_hud": {
+    "prev_concept": "Concept précédent",
+    "next_concept": "Concept suivant",
+    "zoom_in": "Zoomer",
+    "zoom_out": "Dézoomer",
+    "reset_view": "Réinitialiser la vue",
+    "shortcuts": "Raccourcis clavier",
+    "nav_right": "Naviguer à droite",
+    "nav_left": "Naviguer à gauche",
+    "debug_mode": "Activer le mode Debug"
+  },
+  "favorite_list": {
+    "not_logged_in": "Utilisateur non connecté",
+    "no_favorites": "Aucun favori pour cet utilisateur.",
+    "type": "Type :"
+  },
+  "favorite_button": {
+    "remove": "Retirer des favoris",
+    "add": "Ajouter aux favoris"
+  },
+  "user_contributions": {
+    "title": "Dernières contributions",
+    "no_contributions": "Cet utilisateur n'a pas encore contribué.",
+    "restored": "restauré",
+    "modified": "modifié"
+  },
+  "footer": {
+    "about": "À propos",
+    "contribute": "Contribuer",
+    "support": "Soutenir",
+    "rights": "Tous droits réservés.",
+    "tagline": "Visualisation interactive et collaborative des concepts mathématiques."
+  },
+  "app": {
+    "login": "Connexion",
+    "register": "Inscription",
+    "hello": "Bonjour"
+  },
+  "menu": {
+    "configuration": "Configuration"
+  },
+  "search": {
+    "no_concept_found": "Aucun concept trouvé",
+    "concept": "Concept",
+    "mathematician": "Mathématicien",
+    "category": "Catégorie",
+    "placeholder": "Recherche globale...",
+    "concept_placeholder": "Rechercher un concept..."
+  },
+  "node_details": {
+    "description": "Description & Détails",
+    "fallback_desc": "Ce concept est défini mathématiquement comme un {{type}}. Vous pouvez explorer sa structure complète, ses démonstrations associées, ainsi que ses commentaires en ouvrant sa fiche détaillée.",
+    "linked_concepts": "Concepts liés ({{count}})",
+    "no_linked_concepts": "Aucun concept lié répertorié.",
+    "focus": "Centrer",
+    "profile": "Fiche"
+  },
+  "scene": {
+    "no_data": "Pas de données pour la scène."
+  },
+  "avatar_edit": {
+    "instruction": "Ajouter un lien vers une photo de profil (Vérifiez bien que le lien possède la bonne extension à la fin)",
+    "url_label": "URL de l'avatar"
+  },
+  "diff": {
+    "no_change": "Aucune modification"
+  },
+  "history": {
+    "title": "Historique des modifications",
+    "no_records": "Aucune modification enregistrée.",
+    "entry_type": "Type d'entrée",
+    "all_types": "Tous types",
+    "rollbacks": "Rollbacks",
+    "no_rollbacks": "Sans rollbacks",
+    "category": "Catégorie",
+    "version": "Version #",
+    "global": " (global ",
+    "modified_by": ") — Modifié par #",
+    "on": " le ",
+    "modified_field": "Champ modifié :",
+    "note": "Note: ",
+    "rollback_loading": "Rollback...",
+    "rollback_category": "Rollback catégorie",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "rollback_success": "Rollback effectué avec succès sur la catégorie « {{category}} »",
+    "unauthenticated": "Utilisateur non authentifié"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "deleted_comment": "Ce commentaire a été supprimé",
+    "user_label": "Utilisateur : ",
+    "reply_to_label": "Réponse à : ",
+    "no_comments_field": "Aucun commentaire pour ce champ",
+    "field": "Champ",
+    "login_to_comment": "Connectez-vous pour commenter.",
+    "reply_to": "Réponse à {{username}}",
+    "new_comment": "Nouveau commentaire",
+    "sending": "Envoi…",
+    "send": "Envoyer"
+  },
+  "edit_modal": {
+    "parent_category": "Catégorie parente",
+    "none": "Aucune",
+    "concept_verification": "Vérification du concept"
+  },
+  "common": {
+    "report_issue": "Signaler un problème",
+    "cancel": "Annuler",
+    "validate": "Valider",
+    "unexpected_error": "Une erreur inattendue est survenue.",
+    "close": "Fermer"
   }
 }

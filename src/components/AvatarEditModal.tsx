@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface AvatarEditModalProps {
   open: boolean;
@@ -13,6 +14,7 @@ export const AvatarEditModal: React.FC<AvatarEditModalProps> = ({
   onSubmit,
 }) => {
   const [avatarUrl, setAvatarUrl] = useState("");
+  const { t } = useTranslation();
 
   const handleSubmit = () => {
     onSubmit(avatarUrl);
@@ -35,24 +37,23 @@ export const AvatarEditModal: React.FC<AvatarEditModalProps> = ({
         }}
       >
         <Typography variant="h6" gutterBottom>
-          Ajouter un lien vers une photo de profil (Vérifier bien que le lien
-          possède la bonne extension à la fin)
+          {t("avatar_edit.instruction")}
         </Typography>
         <TextField
-          label="URL de l'avatar"
+          label={t("avatar_edit.url_label")}
           fullWidth
           value={avatarUrl}
           onChange={(e) => setAvatarUrl(e.target.value)}
           sx={{ mb: 2 }}
         />
         <Box display="flex" justifyContent="flex-end" gap={1}>
-          <Button onClick={onClose}>Annuler</Button>
+          <Button onClick={onClose}>{t("common.cancel")}</Button>
           <Button
             variant="contained"
             onClick={handleSubmit}
             disabled={!avatarUrl}
           >
-            Valider
+            {t("common.validate")}
           </Button>
         </Box>
       </Box>

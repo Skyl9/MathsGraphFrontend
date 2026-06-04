@@ -19,6 +19,7 @@ import dayjs from "dayjs";
 import "react-diff-view/style/index.css";
 import { WordDiff } from "./WordDiff";
 import Token from "../services/token";
+import { useTranslation } from "react-i18next";
 
 export interface HistoryEntry {
   id: number;
@@ -67,6 +68,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
 
   const [rollbackLoading, setRollbackLoading] = useState(false);
   const [rollbackError, setRollbackError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   // Regrouper par version_number
   const versions: VersionGroup[] = useMemo(() => {
@@ -146,7 +148,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
     if (!current || selectedCategory === "Toutes") return;
     const username = Token.getUsernameFromToken();
     if (!username) {
-      setRollbackError("Utilisateur non authentifié");
+      setRollbackError(t("history.unauthenticated"));
       return;
     }
 
@@ -159,16 +161,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         username,
       });
       // Optionnel : message utilisateur
-      alert(
-        "Rollback effectué avec succès sur la catégorie « " +
-          selectedCategory +
-          " »",
-      );
+      alert(t("history.rollback_success", { category: selectedCategory }));
       // Rafraîchir l'historique
       const fresh = await nodeApi.getConceptHistory(conceptId);
       setHistory(fresh);
     } catch (e) {
-      setRollbackError(e instanceof Error ? e.message : "Erreur inattendue");
+      setRollbackError(
+        e instanceof Error ? e.message : t("common.unexpected_error"),
+      );
     } finally {
       setRollbackLoading(false);
     }
@@ -179,7 +179,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle>
-        Historique des modifications
+        {t("history.title")}
         <IconButton
           edge="end"
           onClick={onClose}
@@ -192,7 +192,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
         {loading && <CircularProgress />}
         {error && <Typography color="error">{error}</Typography>}
         {!loading && !error && versions.length === 0 && (
-          <Typography>Aucune modification enregistrée.</Typography>
+          <Typography>{t("history.no_records")}</Typography>
         )}
         {!loading && !error && filteredVersions.length > 0 && current && (
           <>
@@ -203,17 +203,23 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                 size="small"
                 style={{ minWidth: 180 }}
               >
-                <InputLabel>Type d'entrée</InputLabel>
+                <InputLabel>{t("history.entry_type")}</InputLabel>
                 <Select
                   value={selectedRollbackFilter}
                   onChange={(e) =>
                     setSelectedRollbackFilter(e.target.value as RollbackFilter)
                   }
-                  label="Type d'entrée"
+                  label={t("history.entry_type")}
                 >
-                  <MenuItem value="Tous types">Tous types</MenuItem>
-                  <MenuItem value="Rollbacks">Rollbacks</MenuItem>
-                  <MenuItem value="Sans rollbacks">Sans rollbacks</MenuItem>
+                  <MenuItem value="Tous types">
+                    {t("history.all_types")}
+                  </MenuItem>
+                  <MenuItem value="Rollbacks">
+                    {t("history.rollbacks")}
+                  </MenuItem>
+                  <MenuItem value="Sans rollbacks">
+                    {t("history.no_rollbacks")}
+                  </MenuItem>
                 </Select>
               </FormControl>
               <FormControl
@@ -221,11 +227,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                 size="small"
                 style={{ minWidth: 200 }}
               >
-                <InputLabel>Catégorie</InputLabel>
+                <InputLabel>{t("history.category")}</InputLabel>
                 <Select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  label="Catégorie"
+                  label={t("history.category")}
                 >
                   {categories.map((cat) => (
                     <MenuItem key={cat} value={cat}>
@@ -235,11 +241,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                 </Select>
               </FormControl>
             </div>
-
             <Typography variant="subtitle1" gutterBottom>
-              Version #{current.versionNumber}
-              (global {current.globalVersion}) — Modifié par #
-              {current.modifiedBy} le{" "}
+              {t("history.version")}
+              {current.versionNumber}
+              {t("history.global")}
+              {current.globalVersion}
+              {t("history.modified_by")}
+              {current.modifiedBy}
+              {t("history.on")}
               {dayjs(current.modifiedAt).format("YYYY-MM-DD HH:mm")}
             </Typography>
             {current.entries
@@ -252,7 +261,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                 return (
                   <div key={i} style={{ marginBottom: 24 }}>
                     <Typography variant="body2" gutterBottom>
-                      Champ modifié : <strong>{entry.field_modified}</strong>
+                      {t("history.modified_field")}{" "}
+                      <strong>{entry.field_modified}</strong>
                     </Typography>
                     <WordDiff
                       oldText={entry.old_value || ""}
@@ -260,7 +270,8 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                     />
                     {entry.note && (
                       <Typography variant="caption">
-                        Note: {entry.note}
+                        {t("history.note")}
+                        {entry.note}
                       </Typography>
                     )}
                   </div>
@@ -277,7 +288,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
               onClick={handleRollback}
               disabled={rollbackLoading}
             >
-              {rollbackLoading ? "Rollback..." : "Rollback catégorie"}
+              {rollbackLoading
+                ? t("history.rollback_loading")
+                : t("history.rollback_category")}
             </Button>
           )}
           {rollbackError && (
@@ -289,12 +302,11 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
               {rollbackError}
             </Typography>
           )}
-
           <Button
             onClick={() => setCatIdx((idx) => Math.max(0, idx - 1))}
             disabled={catIdx === 0}
           >
-            Précédent
+            {t("history.prev")}
           </Button>
           <Button
             onClick={() =>
@@ -302,7 +314,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
             }
             disabled={catIdx === filteredVersions.length - 1}
           >
-            Suivant
+            {t("history.next")}
           </Button>
         </DialogActions>
       )}

@@ -75,7 +75,7 @@ export const TopBar: React.FC = () => {
           {username ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Typography variant="body1">
-                {i18n.language === "en" ? "Hello" : "Bonjour"},{" "}
+                {t("app.hello")},{" "}
                 <Link href={"/username/" + username}>{username}</Link>
               </Typography>
               <LogoutButton onLogout={() => setUsername(null)} />

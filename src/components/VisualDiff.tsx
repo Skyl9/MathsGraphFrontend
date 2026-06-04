@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { diffWordsWithSpace, diffChars } from "diff";
+import { useTranslation } from "react-i18next";
 
 interface VisualDiffProps {
   oldValue: any;
@@ -15,6 +16,7 @@ export const VisualDiff: React.FC<VisualDiffProps> = ({
 }) => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t } = useTranslation();
 
   const oldStr =
     typeof oldValue === "string"
@@ -36,7 +38,7 @@ export const VisualDiff: React.FC<VisualDiffProps> = ({
         color="text.secondary"
         sx={{ fontStyle: "italic" }}
       >
-        Aucune modification
+        {t("diff.no_change")}
       </Typography>
     );
   }

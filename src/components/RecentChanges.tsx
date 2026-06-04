@@ -26,9 +26,11 @@ dayjs.extend(relativeTime);
 dayjs.locale("fr");
 
 import { RecentChange } from "../types/ApiTypes/concept";
+import { useTranslation } from "react-i18next";
 
 export const RecentChanges: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
 
   const {
@@ -50,7 +52,7 @@ export const RecentChanges: React.FC = () => {
   if (error) {
     return (
       <Typography color="error" align="center" sx={{ p: 4 }}>
-        Erreur lors de la récupération de l'historique :{" "}
+        {t("recent_changes_widget.error")}
         {error instanceof Error ? error.message : String(error)}
       </Typography>
     );
@@ -63,7 +65,7 @@ export const RecentChanges: React.FC = () => {
         align="center"
         sx={{ p: 4 }}
       >
-        Aucune activité récente.
+        {t("recent_changes_widget.no_activity")}
       </Typography>
     );
   }
@@ -114,7 +116,7 @@ export const RecentChanges: React.FC = () => {
           letterSpacing: "-0.01em",
         }}
       >
-        <EditIcon color="primary" /> Modifications récentes
+        <EditIcon color="primary" /> {t("recent_changes_widget.title")}
       </Typography>
       <List sx={{ py: 0 }}>
         {changes.map((change: RecentChange) => (
@@ -196,7 +198,9 @@ export const RecentChanges: React.FC = () => {
                     color="text.secondary"
                     sx={{ fontSize: "0.9rem" }}
                   >
-                    a {change.is_rollback ? "restauré" : "modifié"}
+                    {change.is_rollback
+                      ? t("recent_changes_widget.restored")
+                      : t("recent_changes_widget.modified")}
                   </Typography>
                   <Typography
                     variant="subtitle2"

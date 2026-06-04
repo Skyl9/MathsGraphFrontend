@@ -22,15 +22,16 @@ import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
+import { useTranslation } from "react-i18next";
 
-const formatYear = (dateString: string | undefined): string => {
-  if (!dateString) return "Aujourd'hui";
+const formatYear = (dateString: string | undefined, t: any): string => {
+  if (!dateString) return t("timeline.today");
   // Les dates avant JC commencent par un -, ex: "-0300-01-01"
   const match = dateString.match(/^(-?)(\d+)-/);
   if (match) {
     const isBCE = match[1] === "-";
     const year = parseInt(match[2], 10);
-    return isBCE ? `${year} av. J.-C.` : `${year}`;
+    return isBCE ? `${year} ${t("timeline.bce")}` : `${year}`;
   }
   // Fallback if the format is unexpected
   return dateString.substring(0, 4);
@@ -50,6 +51,7 @@ const getYearFromDate = (dateString?: string): number | null => {
 export const MathematicianTimeline: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     data: mathematicians,
@@ -131,11 +133,7 @@ export const MathematicianTimeline: React.FC = () => {
       </Box>
     );
   if (error)
-    return (
-      <Typography color="error">
-        Erreur lors du chargement de la chronologie.
-      </Typography>
-    );
+    return <Typography color="error">{t("timeline.error")}</Typography>;
 
   return (
     <Box sx={{ width: "100%", height: "100%", p: 2, overflowY: "auto" }}>
@@ -145,7 +143,7 @@ export const MathematicianTimeline: React.FC = () => {
         align="center"
         sx={{ mb: 4, fontWeight: 700 }}
       >
-        Chronologie des Mathématiciens
+        {t("timeline.title")}
       </Typography>
 
       <Box sx={{ mb: 5, maxWidth: 900, mx: "auto" }}>
@@ -153,7 +151,7 @@ export const MathematicianTimeline: React.FC = () => {
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               fullWidth
-              label="Recherche par nom ou mots-clés..."
+              label={t("timeline.search_placeholder")}
               variant="outlined"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
@@ -162,7 +160,7 @@ export const MathematicianTimeline: React.FC = () => {
           <Grid size={{ xs: 6, md: 3 }}>
             <TextField
               fullWidth
-              label="Année Min (ex: -300)"
+              label={t("timeline.year_min")}
               type="number"
               variant="outlined"
               value={searchStartYear}
@@ -172,7 +170,7 @@ export const MathematicianTimeline: React.FC = () => {
           <Grid size={{ xs: 6, md: 3 }}>
             <TextField
               fullWidth
-              label="Année Max (ex: 1800)"
+              label={t("timeline.year_max")}
               type="number"
               variant="outlined"
               value={searchEndYear}
@@ -183,10 +181,10 @@ export const MathematicianTimeline: React.FC = () => {
       </Box>
 
       {!mathematicians || mathematicians.length === 0 ? (
-        <Typography align="center">Aucune date disponible.</Typography>
+        <Typography align="center">{t("timeline.no_data")}</Typography>
       ) : filteredMathematicians.length === 0 ? (
         <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
-          Aucun mathématicien ne correspond à ces critères.
+          {t("timeline.no_match")}
         </Typography>
       ) : (
         <Timeline position="alternate">
@@ -198,14 +196,12 @@ export const MathematicianTimeline: React.FC = () => {
                 variant="body2"
                 color="text.secondary"
               >
-                <Typography variant="h6" color="text.primary" fontWeight="bold">
-                  {formatYear(math.date_naissance)}
+                <Typography variant="h6" fontWeight={700} color="primary">
+                  {formatYear(math.date_naissance, t)}
                 </Typography>
-                {math.epoque && (
-                  <Typography variant="caption" color="text.secondary">
-                    {math.epoque}
-                  </Typography>
-                )}
+                <Typography variant="body2">
+                  {t("timeline.to")} {formatYear(math.date_deces, t)}
+                </Typography>
               </TimelineOppositeContent>
 
               <TimelineSeparator>
@@ -255,8 +251,8 @@ export const MathematicianTimeline: React.FC = () => {
                         mb: 1.5,
                       }}
                     >
-                      {formatYear(math.date_naissance)} -{" "}
-                      {formatYear(math.date_deces)}
+                      {formatYear(math.date_naissance, t)} -{" "}
+                      {formatYear(math.date_deces, t)}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -270,8 +266,7 @@ export const MathematicianTimeline: React.FC = () => {
                         overflow: "hidden",
                       }}
                     >
-                      {math.biographie ||
-                        "Aucune biographie disponible pour ce mathématicien."}
+                      {math.biographie || t("timeline.no_biography")}
                     </Typography>
                     <Button
                       variant="contained"
@@ -285,7 +280,7 @@ export const MathematicianTimeline: React.FC = () => {
                         boxShadow: "none",
                       }}
                     >
-                      En savoir plus
+                      {t("timeline.view_profile")}
                     </Button>
                   </CardContent>
                 </Card>

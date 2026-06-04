@@ -5,6 +5,7 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
 import { Favorite } from "../types/ApiTypes/user";
+import { useTranslation } from "react-i18next";
 
 export interface FavoriteButtonProps {
   itemId: string;
@@ -16,6 +17,7 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   itemType,
 }) => {
   const userId = Token.getUserIdFromToken();
+  const { t } = useTranslation();
   const [isFav, setIsFav] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [submitting, setSubmitting] = useState<boolean>(false);
@@ -62,7 +64,9 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   if (loading) return <CircularProgress size={24} />;
 
   return (
-    <Tooltip title={isFav ? "Retirer des favoris" : "Ajouter aux favoris"}>
+    <Tooltip
+      title={isFav ? t("favorite_button.remove") : t("favorite_button.add")}
+    >
       <span>
         <IconButton
           onClick={handleClick}

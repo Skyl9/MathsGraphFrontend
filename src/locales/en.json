@@ -300,5 +300,146 @@
     "save_btn": "Save Changes",
     "recalculate_success": "The graph has been successfully recalculated!",
     "recalculate_error": "Error recalculating the graph"
+  },
+  "recent_changes_widget": {
+    "title": "Recent Changes",
+    "no_activity": "No recent activity.",
+    "error": "Error loading history:",
+    "restored": "restored",
+    "modified": "modified"
+  },
+  "recent_comments": {
+    "title": "Recent Discussions",
+    "no_comments": "No recent comments.",
+    "error": "Error loading comments:",
+    "on": "on",
+    "field": "Field:"
+  },
+  "timeline": {
+    "title": "Timeline of Mathematicians",
+    "search_placeholder": "Search by name or keywords...",
+    "year_min": "Min Year (e.g., -300)",
+    "year_max": "Max Year (e.g., 1800)",
+    "no_data": "No date available.",
+    "no_match": "No mathematician matches these criteria.",
+    "error": "Error loading the timeline.",
+    "view_profile": "View Profile",
+    "bce": "BCE",
+    "today": "Today",
+    "to": "to",
+    "no_biography": "No biography available for this mathematician."
+  },
+  "graph_hud": {
+    "prev_concept": "Previous concept",
+    "next_concept": "Next concept",
+    "zoom_in": "Zoom in",
+    "zoom_out": "Zoom out",
+    "reset_view": "Reset view",
+    "shortcuts": "Keyboard shortcuts",
+    "nav_right": "Navigate right",
+    "nav_left": "Navigate left",
+    "debug_mode": "Toggle Debug mode"
+  },
+  "favorite_list": {
+    "not_logged_in": "User not logged in",
+    "no_favorites": "No favorites for this user.",
+    "type": "Type:"
+  },
+  "favorite_button": {
+    "remove": "Remove from favorites",
+    "add": "Add to favorites"
+  },
+  "user_contributions": {
+    "title": "Recent contributions",
+    "no_contributions": "This user has not contributed yet.",
+    "restored": "restored",
+    "modified": "modified"
+  },
+  "footer": {
+    "about": "About",
+    "contribute": "Contribute",
+    "support": "Support",
+    "rights": "All rights reserved.",
+    "tagline": "Interactive and collaborative visualization of mathematical concepts."
+  },
+  "app": {
+    "login": "Login",
+    "register": "Register",
+    "hello": "Hello"
+  },
+  "menu": {
+    "configuration": "Configuration"
+  },
+  "search": {
+    "no_concept_found": "No concept found",
+    "concept": "Concept",
+    "mathematician": "Mathematician",
+    "category": "Category",
+    "placeholder": "Global search...",
+    "concept_placeholder": "Search a concept..."
+  },
+  "node_details": {
+    "description": "Description & Details",
+    "fallback_desc": "This concept is mathematically defined as a {{type}}. You can explore its full structure, associated proofs, and comments by opening its detailed profile.",
+    "linked_concepts": "Linked concepts ({{count}})",
+    "no_linked_concepts": "No linked concepts listed.",
+    "focus": "Focus",
+    "profile": "Profile"
+  },
+  "scene": {
+    "no_data": "No data for the scene."
+  },
+  "avatar_edit": {
+    "instruction": "Add a link to a profile picture (Make sure the link has the correct extension at the end)",
+    "url_label": "Avatar URL"
+  },
+  "diff": {
+    "no_change": "No changes"
+  },
+  "history": {
+    "title": "Modification history",
+    "no_records": "No records found.",
+    "entry_type": "Entry type",
+    "all_types": "All types",
+    "rollbacks": "Rollbacks",
+    "no_rollbacks": "Without rollbacks",
+    "category": "Category",
+    "version": "Version #",
+    "global": " (global ",
+    "modified_by": ") — Modified by #",
+    "on": " on ",
+    "modified_field": "Modified field:",
+    "note": "Note: ",
+    "rollback_loading": "Rollback...",
+    "rollback_category": "Rollback category",
+    "prev": "Previous",
+    "next": "Next",
+    "rollback_success": "Rollback successfully performed on category « {{category}} »",
+    "unauthenticated": "Unauthenticated user"
+  },
+  "comments": {
+    "title": "Comments",
+    "deleted_comment": "This comment has been deleted",
+    "user_label": "User: ",
+    "reply_to_label": "Reply to: ",
+    "no_comments_field": "No comments for this field",
+    "field": "Field",
+    "login_to_comment": "Log in to comment.",
+    "reply_to": "Reply to {{username}}",
+    "new_comment": "New comment",
+    "sending": "Sending…",
+    "send": "Send"
+  },
+  "edit_modal": {
+    "parent_category": "Parent category",
+    "none": "None",
+    "concept_verification": "Concept verification"
+  },
+  "common": {
+    "report_issue": "Report an issue",
+    "cancel": "Cancel",
+    "validate": "Validate",
+    "unexpected_error": "An unexpected error occurred.",
+    "close": "Close"
   }
 }

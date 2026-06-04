@@ -9,6 +9,7 @@ import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
 import MathMarkdown from "./MathMarkdown";
+import { useTranslation } from "react-i18next";
 
 import "../styles/NodeDetails.css";
 
@@ -22,6 +23,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   const currentView = useUIStore((s) => s.currentView);
   const { setSelectedNodeId, setTargetPosition } = useGraphStore();
   const { graphData } = useGraphData();
+  const { t } = useTranslation();
 
   // Trouver le concept sélectionné
   const concept = useMemo(() => {
@@ -135,7 +137,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               className="section-label"
               sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
             >
-              Description & Détails
+              {t("node_details.description")}
             </Typography>
             <Box
               sx={{
@@ -147,10 +149,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                 <MathMarkdown content={concept.enonce} />
               ) : (
                 <Typography variant="body2">
-                  Ce concept est défini mathématiquement comme un{" "}
-                  {concept.typeMath}. Vous pouvez explorer sa structure
-                  complète, ses démonstrations associées, ainsi que ses
-                  commentaires en ouvrant sa fiche détaillée.
+                  {t("node_details.fallback_desc", { type: concept.typeMath })}
                 </Typography>
               )}
             </Box>
@@ -164,7 +163,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               className="section-label"
               sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
             >
-              Concepts liés ({neighbors.length})
+              {t("node_details.linked_concepts", { count: neighbors.length })}
             </Typography>
             {neighbors.length > 0 ? (
               <Box className="neighbors-list">
@@ -208,7 +207,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                 variant="body2"
                 sx={{ fontStyle: "italic", opacity: 0.7 }}
               >
-                Aucun concept lié répertorié.
+                {t("node_details.no_linked_concepts")}
               </Typography>
             )}
           </Box>
@@ -234,7 +233,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               },
             }}
           >
-            Centrer
+            {t("node_details.focus")}
           </Button>
           <Button
             variant="contained"
@@ -253,7 +252,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               },
             }}
           >
-            Fiche
+            {t("node_details.profile")}
           </Button>
         </Box>
       </Box>
