@@ -29,6 +29,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi, SearchFilters } from "../services/api";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 // Icônes
 import SearchIcon from "@mui/icons-material/Search";
@@ -49,6 +50,7 @@ interface SearchResult {
 export const SearchPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const queryTerm = searchParams.get("q") || "";
@@ -168,7 +170,7 @@ export const SearchPage = () => {
             letterSpacing: "0.05em",
           }}
         >
-          Type de contenu
+          {t("search.content_type")}
         </Typography>
         <FormGroup>
           <FormControlLabel
@@ -180,7 +182,7 @@ export const SearchPage = () => {
                 color="primary"
               />
             }
-            label="Concepts & Théorèmes"
+            label={t("search.concepts")}
             sx={{
               "& .MuiFormControlLabel-label": {
                 fontWeight: 600,
@@ -197,7 +199,7 @@ export const SearchPage = () => {
                 color="primary"
               />
             }
-            label="Mathématiciens"
+            label={t("search.mathematicians")}
             sx={{
               "& .MuiFormControlLabel-label": {
                 fontWeight: 600,

@@ -28,11 +28,13 @@ import { nodeApi } from "../services/api";
 import { RecentChange } from "../types/ApiTypes/concept";
 import { VisualDiff } from "../components/VisualDiff";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 dayjs.locale("fr");
 
 export const RecentChangesPage: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
 
   const {
@@ -69,7 +71,7 @@ export const RecentChangesPage: React.FC = () => {
           }}
         >
           <Typography variant="h6">
-            Erreur lors de la récupération de l'historique.
+            {t("recent_changes.error_loading")}
           </Typography>
         </Paper>
       </Container>
@@ -97,11 +99,10 @@ export const RecentChangesPage: React.FC = () => {
             WebkitTextFillColor: "transparent",
           }}
         >
-          Historique des Modifications
+          {t("recent_changes.title")}
         </Typography>
         <Typography variant="h6" color="text.secondary">
-          Découvrez l'évolution de la base de connaissances mathématiques, en
-          toute transparence.
+          {t("recent_changes.description")}
         </Typography>
       </Box>
 
@@ -216,7 +217,7 @@ export const RecentChangesPage: React.FC = () => {
                         color="text.secondary"
                         sx={{ display: "block", mb: 0.5, lineHeight: 1 }}
                       >
-                        Concept Modifié
+                        {t("recent_changes.concept_modified")}
                       </Typography>
                       <Link
                         to={`/concept/${change.concept_id}`}
@@ -259,7 +260,7 @@ export const RecentChangesPage: React.FC = () => {
                       fontWeight={600}
                       mb={2}
                     >
-                      ⚠️ Restauration d'une version précédente
+                      {t("recent_changes.rollback_warning")}
                     </Typography>
                   )}
 

@@ -20,6 +20,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 import ConstructionIcon from "@mui/icons-material/Construction";
 import AutoGraphIcon from "@mui/icons-material/AutoGraph";
 import { nodeApi } from "../services/api";
+import { useTranslation } from "react-i18next";
 
 interface Settings {
   siteName: string;
@@ -29,6 +30,7 @@ interface Settings {
 
 const SettingsPage: React.FC = () => {
   const theme = useTheme();
+  const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
 
   const [settings, setSettings] = useState<Settings>({
@@ -59,7 +61,7 @@ const SettingsPage: React.FC = () => {
     // Simulation d'une sauvegarde API
     setTimeout(() => {
       setIsSaving(false);
-      setSnackbarMessage("Les paramètres ont été sauvegardés avec succès !");
+      setSnackbarMessage(t("settings.save_success"));
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
     }, 1200);
@@ -69,12 +71,12 @@ const SettingsPage: React.FC = () => {
     setIsRecalculating(true);
     try {
       await nodeApi.recalculateGraph();
-      setSnackbarMessage("Le graphe a été recalculé avec succès !");
+      setSnackbarMessage(t("settings.recalculate_success"));
       setSnackbarSeverity("success");
     } catch (e) {
       const err = e as Error;
       console.error(err);
-      setSnackbarMessage(err.message || "Erreur lors du recalcul du graphe");
+      setSnackbarMessage(err.message || t("settings.recalculate_error"));
       setSnackbarSeverity("error");
     } finally {
       setIsRecalculating(false);
@@ -88,7 +90,7 @@ const SettingsPage: React.FC = () => {
         variant="h4"
         sx={{ fontWeight: 800, mb: 3, letterSpacing: "-0.01em" }}
       >
-        Paramètres du Site
+        {t("settings.title")}
       </Typography>
 
       <Stack spacing={3}>
@@ -110,13 +112,13 @@ const SettingsPage: React.FC = () => {
           >
             <SettingsIcon color="primary" />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Configuration Générale
+              {t("settings.general_config")}
             </Typography>
           </Stack>
 
           <Stack spacing={3.5}>
             <TextField
-              label="Nom du site"
+              label={t("settings.site_name")}
               value={settings.siteName}
               onChange={handleChange("siteName")}
               fullWidth
@@ -125,7 +127,7 @@ const SettingsPage: React.FC = () => {
 
             <TextField
               select
-              label="Langue par défaut"
+              label={t("settings.default_lang")}
               value={settings.defaultLanguage}
               onChange={handleChange("defaultLanguage")}
               fullWidth
@@ -134,9 +136,9 @@ const SettingsPage: React.FC = () => {
                 startAdornment: <LanguageIcon color="action" sx={{ mr: 1 }} />,
               }}
             >
-              <MenuItem value="fr">Français (FR)</MenuItem>
-              <MenuItem value="en">Anglais (EN)</MenuItem>
-              <MenuItem value="es">Espagnol (ES)</MenuItem>
+              <MenuItem value="fr">{t("settings.lang_fr")}</MenuItem>
+              <MenuItem value="en">{t("settings.lang_en")}</MenuItem>
+              <MenuItem value="es">{t("settings.lang_es")}</MenuItem>
             </TextField>
           </Stack>
         </Paper>
@@ -159,7 +161,7 @@ const SettingsPage: React.FC = () => {
           >
             <ConstructionIcon color="warning" />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Maintenance & Sécurité
+              {t("settings.maintenance_security")}
             </Typography>
           </Stack>
 
@@ -168,8 +170,7 @@ const SettingsPage: React.FC = () => {
             color="text.secondary"
             sx={{ mb: 2.5, lineHeight: 1.5 }}
           >
-            Activer le mode maintenance redirige temporairement tous les
-            visiteurs non administratifs vers une page d'information hors-ligne.
+            {t("settings.maintenance_desc")}
           </Typography>
 
           <FormControlLabel
@@ -182,8 +183,8 @@ const SettingsPage: React.FC = () => {
             }
             label={
               settings.maintenanceMode
-                ? "Mode maintenance activé"
-                : "Mode maintenance désactivé"
+                ? t("settings.maintenance_on")
+                : t("settings.maintenance_off")
             }
             sx={{ m: 0, fontWeight: 600 }}
           />
@@ -207,7 +208,7 @@ const SettingsPage: React.FC = () => {
           >
             <AutoGraphIcon color="info" />
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              Recalcul du Graphe 3D
+              {t("settings.recalculate_graph")}
             </Typography>
           </Stack>
 
@@ -216,9 +217,7 @@ const SettingsPage: React.FC = () => {
             color="text.secondary"
             sx={{ mb: 2.5, lineHeight: 1.5 }}
           >
-            Force le moteur physique du backend (ForceAtlas2) à recalculer les
-            positions de tous les nœuds du graphe. Cette opération peut prendre
-            quelques secondes.
+            {t("settings.recalculate_desc")}
           </Typography>
 
           <Button
@@ -235,7 +234,9 @@ const SettingsPage: React.FC = () => {
             }
             sx={{ fontWeight: 600, borderRadius: 2 }}
           >
-            {isRecalculating ? "Recalcul en cours..." : "Recalculer le graphe"}
+            {isRecalculating
+              ? t("settings.recalculating")
+              : t("settings.recalculate_btn")}
           </Button>
         </Paper>
 
@@ -262,7 +263,7 @@ const SettingsPage: React.FC = () => {
               boxShadow: "0 4px 12px rgba(14, 165, 233, 0.25)",
             }}
           >
-            {isSaving ? "Enregistrement..." : "Sauvegarder les modifications"}
+            {isSaving ? t("settings.saving") : t("settings.save_btn")}
           </Button>
         </Box>
       </Stack>
