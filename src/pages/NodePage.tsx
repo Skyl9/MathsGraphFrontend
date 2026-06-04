@@ -2,18 +2,13 @@ import { useEffect, useState } from "react";
 import { HistoryModal } from "../components/HistoryModal";
 
 import { Navigate, useParams } from "react-router-dom";
-import { AllNodeData, NomEtranger, Tag } from "../types/types";
+import { AllNodeData } from "../types/types";
 import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
-import { useNodeEdit } from "../hooks/node/useNodeEdit";
+import { useEntityEdit } from "../hooks/useEntityEdit";
 import { EditModal } from "../components/EditModal";
-import { NomsEtrangersCollapse } from "../components/NodeFields/NomsEtrangers";
-import HtmlField from "../components/NodeFields/HtmlField";
-import VerifField from "../components/NodeFields/VerifField";
-import DateField from "../components/NodeFields/DateField";
-import AliasesField from "../components/NodeFields/AliasesField";
-import SourcesField from "../components/NodeFields/SourcesField";
-import RelationsField from "../components/NodeFields/RelationsField";
+
+import { NodeFieldRenderer } from "../components/NodeFields/NodeFieldRenderer";
 import CommentIcon from "@mui/icons-material/Comment";
 import { CommentsModal, FieldOption } from "../components/CommentsModal";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -21,7 +16,6 @@ import EditIcon from "@mui/icons-material/Edit";
 import HistoryIcon from "@mui/icons-material/History";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import DOMPurify from "dompurify";
 import {
   Button,
   Tooltip,
@@ -32,12 +26,10 @@ import {
   IconButton,
 } from "@mui/material";
 import Token from "../services/token";
-import TagsField from "../components/NodeFields/TagsField";
 import { logger } from "../utils/logger";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
-import { Source } from "../types/ApiTypes/source";
-import { Relations } from "../types/ApiTypes/Relations";
+
 import { nodeApi } from "../services/api";
 import MathMarkdown from "../components/MathMarkdown";
 import { useTranslation } from "react-i18next";
@@ -58,14 +50,14 @@ const NodePage = () => {
     isModalOpen,
     currentEditField,
     newContent,
-    handleChange: setNewContent,
+    setNewContent,
     handleEdit: rawHandleEdit,
     saveChanges: rawSaveChanges,
     cancelChanges: rawCancelChanges,
     setData,
     createField: rawCreateField,
     refetchData: rawRefetchData,
-  } = useNodeEdit(id || "");
+  } = useEntityEdit<AllNodeData>("concept", id || "");
 
   const handleEdit = (field: keyof AllNodeData) => {
     logger.info("Édition démarrée", { field });
@@ -123,118 +115,6 @@ const NodePage = () => {
       });
     }
   }, [id]);
-
-  const renderCellContent = (field: keyof AllNodeData) => {
-    const value = data?.[field];
-    switch (field) {
-      case "nom":
-        return <HtmlField title={"Nom"} content={value as string}></HtmlField>;
-      case "demonstration":
-        return (
-          <HtmlField
-            title={"Démonstration"}
-            content={value as string}
-          ></HtmlField>
-        );
-      case "enonce":
-        return (
-          <HtmlField title={"Enoncé"} content={value as string}></HtmlField>
-        );
-
-      case "aliases":
-        return <AliasesField aliases={value as string[]}></AliasesField>;
-
-      case "sources":
-        return <SourcesField sources={value as Source[]}></SourcesField>;
-
-      case "noms_etrangers":
-        return (
-          <NomsEtrangersCollapse
-            noms={Array.isArray(value) ? (value as NomEtranger[]) : []}
-          />
-        );
-
-      case "relations":
-        return (
-          <RelationsField
-            relations={Array.isArray(value) ? (value as Relations[]) : []}
-          ></RelationsField>
-        );
-
-      case "id":
-        return <HtmlField title={"Id"} content={value as string}></HtmlField>;
-      case "categorie":
-        return (
-          <div className={"node-wrapper"}>
-            <div className="field-title">{t("concept.category")}</div>
-            <div className="field-content">
-              {typeof value === "object" &&
-              value !== null &&
-              "category" in value ? (
-                <Link href={("/category/redirect/" + value.category) as string}>
-                  {" "}
-                  {value.category}
-                </Link>
-              ) : (
-                t("concept.no_category")
-              )}
-            </div>
-          </div>
-        );
-      case "date_ajout":
-        return <DateField date={value as string}></DateField>;
-      case "mathematicien":
-        return (
-          <div className={"node-wrapper"}>
-            <div className="field-title">{t("concept.mathematician")}</div>
-            <div className="field-content">
-              {typeof value === "object" &&
-              value !== null &&
-              "mathematicien" in value ? (
-                <Link
-                  href={
-                    ("/mathematicien/redirect/" + value.mathematicien) as string
-                  }
-                >
-                  {" "}
-                  {value.mathematicien}
-                </Link>
-              ) : (
-                t("concept.no_mathematician")
-              )}
-            </div>
-          </div>
-        );
-
-      case "verification":
-        return (
-          <VerifField
-            title={"Vérification"}
-            value={value as string}
-          ></VerifField>
-        );
-      case "type":
-        return (
-          <div className={"node-wrapper"}>
-            <div className="field-title">{t("concept.type")}</div>
-            <Link href={("/type/redirect/" + value) as string}>
-              <div
-                className="field-content"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(String(value)),
-                }}
-              />
-            </Link>
-          </div>
-        );
-      case "tags":
-        return <TagsField tags={value as Tag[] | null}></TagsField>;
-      default:
-        return (
-          <HtmlField title={"Défaut"} content={value as string}></HtmlField>
-        );
-    }
-  };
 
   useEffect(() => {
     if (loading) {
@@ -368,7 +248,7 @@ const NodePage = () => {
                 )}
               </div>
               <div className="math-card-body">
-                {renderCellContent("relations")}
+                <NodeFieldRenderer field="relations" value={data?.relations} />
               </div>
             </div>
           )}
@@ -393,7 +273,7 @@ const NodePage = () => {
                 )}
               </div>
               <div className="math-card-body">
-                {renderCellContent("sources")}
+                <NodeFieldRenderer field="sources" value={data?.sources} />
               </div>
             </div>
           )}
@@ -418,7 +298,7 @@ const NodePage = () => {
                 )}
               </div>
               <div className="math-card-body">
-                {renderCellContent("aliases")}
+                <NodeFieldRenderer field="aliases" value={data?.aliases} />
               </div>
             </div>
           )}
@@ -551,7 +431,12 @@ const NodePage = () => {
                 <div className="metadata-item">
                   <span className="metadata-label">Date d'ajout</span>
                   <div className="metadata-value">
-                    <span>{renderCellContent("date_ajout")}</span>
+                    <span>
+                      <NodeFieldRenderer
+                        field="date_ajout"
+                        value={data?.date_ajout}
+                      />
+                    </span>
                     {editModeActive && (
                       <IconButton
                         size="small"
@@ -569,7 +454,12 @@ const NodePage = () => {
                 <div className="metadata-item">
                   <span className="metadata-label">Noms étrangers</span>
                   <div className="metadata-value">
-                    <span>{renderCellContent("noms_etrangers")}</span>
+                    <span>
+                      <NodeFieldRenderer
+                        field="noms_etrangers"
+                        value={data?.noms_etrangers}
+                      />
+                    </span>
                     {editModeActive && (
                       <IconButton
                         size="small"
@@ -587,7 +477,9 @@ const NodePage = () => {
                 <div className="metadata-item">
                   <span className="metadata-label">Tags</span>
                   <div className="metadata-value">
-                    <span>{renderCellContent("tags")}</span>
+                    <span>
+                      <NodeFieldRenderer field="tags" value={data?.tags} />
+                    </span>
                     {editModeActive && (
                       <IconButton
                         size="small"

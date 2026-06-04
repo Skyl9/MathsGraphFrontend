@@ -1,3 +1,8 @@
+import { Source } from "./source";
+import { Alias } from "./alias";
+import { Relations } from "./Relations";
+import { Tag } from "./tag";
+
 export interface GetConcept {
   nom: string;
   enonce: string;
@@ -7,12 +12,12 @@ export interface GetConcept {
   id: number;
   mathematicien: { id: number; mathematicien: string };
   categorie: { id: number; category: string };
-  sources: Array<any>;
-  aliases: Array<any>;
-  relations: Array<any>;
-  noms_etrangers: Array<any>;
+  sources: Source[];
+  aliases: Alias[];
+  relations: Relations[];
+  noms_etrangers: Record<string, unknown>[];
   date_modification: string;
-  tags: Array<any>;
+  tags: Tag[];
 }
 
 export interface History {
@@ -21,8 +26,8 @@ export interface History {
   modified_by: number;
   modified_at: string;
   field_modified: string;
-  old_value: any;
-  new_value: any;
+  old_value: unknown;
+  new_value: unknown;
   version_number: number;
   global_version: number;
   is_rollback: boolean;
@@ -41,6 +46,6 @@ export interface RecentChange {
   modified_at: string;
   field_modified: string;
   is_rollback: boolean;
-  old_value?: any;
-  new_value?: any;
+  old_value?: unknown;
+  new_value?: unknown;
 }

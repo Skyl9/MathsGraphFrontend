@@ -1,13 +1,10 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Box,
   Grid,
   Typography,
   Paper,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
   Divider,
   Chip,
   CircularProgress,
@@ -16,28 +13,20 @@ import {
   Drawer,
   IconButton,
   Stack,
-  Card,
-  CardContent,
-  CardActions,
   useTheme,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { nodeApi, SearchFilters } from "../services/api";
+import { nodeApi } from "../services/api";
+import { SearchFilters } from "../components/SearchFilters";
+import { SearchResults } from "../components/SearchResults";
+import { SearchFilters as SearchFiltersType } from "../services/api";
 import { motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
 
 // Icônes
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
-import FunctionsIcon from "@mui/icons-material/Functions";
-import PeopleIcon from "@mui/icons-material/People";
-import CategoryIcon from "@mui/icons-material/Category";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 
 interface SearchResult {
@@ -50,7 +39,6 @@ interface SearchResult {
 export const SearchPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const { t } = useTranslation();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const queryTerm = searchParams.get("q") || "";
@@ -70,7 +58,7 @@ export const SearchPage = () => {
   };
 
   // État de nos filtres (Tier gauche)
-  const [filters, setFilters] = useState<SearchFilters>({
+  const [filters, setFilters] = useState<SearchFiltersType>({
     concept: true,
     mathematicien: true,
     category: true,
@@ -155,237 +143,6 @@ export const SearchPage = () => {
     },
     enabled: queryTerm.length > 0,
   });
-
-  const renderFilters = () => (
-    <Stack spacing={3.5}>
-      <Box>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          sx={{
-            fontWeight: 700,
-            mb: 2,
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.05em",
-          }}
-        >
-          {t("search.content_type")}
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.concept}
-                onChange={handleFilterChange}
-                name="concept"
-                color="primary"
-              />
-            }
-            label={t("search.concepts")}
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontWeight: 600,
-                fontSize: "0.9rem",
-              },
-            }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.mathematicien}
-                onChange={handleFilterChange}
-                name="mathematicien"
-                color="primary"
-              />
-            }
-            label={t("search.mathematicians")}
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontWeight: 600,
-                fontSize: "0.9rem",
-              },
-            }}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.category}
-                onChange={handleFilterChange}
-                name="category"
-                color="primary"
-              />
-            }
-            label="Catégories"
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontWeight: 600,
-                fontSize: "0.9rem",
-              },
-            }}
-          />
-        </FormGroup>
-      </Box>
-
-      <Divider />
-
-      <Box>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          sx={{
-            fontWeight: 700,
-            mb: 2,
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Statut / Qualité
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={filters.verifiedOnly}
-                onChange={handleFilterChange}
-                name="verifiedOnly"
-                color="primary"
-              />
-            }
-            label="Concepts vérifiés uniquement"
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontWeight: 600,
-                fontSize: "0.9rem",
-              },
-            }}
-          />
-        </FormGroup>
-      </Box>
-
-      <Divider />
-
-      <Box>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          sx={{
-            fontWeight: 700,
-            mb: 2,
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Spécificités
-        </Typography>
-        <Stack spacing={2}>
-          <FormControl fullWidth size="small">
-            <InputLabel>Catégorie</InputLabel>
-            <Select
-              name="categorie_id"
-              value={filters.categorie_id === null ? "" : filters.categorie_id}
-              onChange={handleSelectChange}
-              label="Catégorie"
-              disabled={!categories}
-            >
-              <MenuItem value="">
-                <em>Toutes</em>
-              </MenuItem>
-              {categories?.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.nom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth size="small">
-            <InputLabel>Type</InputLabel>
-            <Select
-              name="type_id"
-              value={filters.type_id === null ? "" : filters.type_id}
-              onChange={handleSelectChange}
-              label="Type"
-              disabled={!types}
-            >
-              <MenuItem value="">
-                <em>Tous</em>
-              </MenuItem>
-              {types?.map((type) => (
-                <MenuItem key={type.id} value={type.id}>
-                  {type.nom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <FormControl fullWidth size="small">
-            <InputLabel>Mathématicien</InputLabel>
-            <Select
-              name="mathematicien_id"
-              value={
-                filters.mathematicien_id === null
-                  ? ""
-                  : filters.mathematicien_id
-              }
-              onChange={handleSelectChange}
-              label="Mathématicien"
-              disabled={!mathematiciens}
-            >
-              <MenuItem value="">
-                <em>Tous</em>
-              </MenuItem>
-              {mathematiciens?.map((math) => (
-                <MenuItem key={math.id} value={math.id}>
-                  {math.nom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Stack>
-      </Box>
-
-      <Divider />
-
-      <Box>
-        <Typography
-          variant="subtitle2"
-          color="text.secondary"
-          sx={{
-            fontWeight: 700,
-            mb: 2,
-            textTransform: "uppercase",
-            fontSize: "0.75rem",
-            letterSpacing: "0.05em",
-          }}
-        >
-          Période (Années)
-        </Typography>
-        <Stack direction="row" spacing={1.5}>
-          <TextField
-            name="date_start"
-            label="De (ex: -300)"
-            variant="outlined"
-            size="small"
-            placeholder="-300"
-            onChange={handleDateChange}
-            sx={{ flex: 1 }}
-          />
-          <TextField
-            name="date_end"
-            label="À (ex: 1800)"
-            variant="outlined"
-            size="small"
-            placeholder="1800"
-            onChange={handleDateChange}
-            sx={{ flex: 1 }}
-          />
-        </Stack>
-      </Box>
-    </Stack>
-  );
 
   return (
     <Box
@@ -480,7 +237,15 @@ export const SearchPage = () => {
             <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>
               Filtres
             </Typography>
-            {renderFilters()}
+            <SearchFilters
+              filters={filters}
+              handleFilterChange={handleFilterChange}
+              handleSelectChange={handleSelectChange}
+              handleDateChange={handleDateChange}
+              categories={categories}
+              types={types}
+              mathematiciens={mathematiciens}
+            />
           </Paper>
         </Grid>
 
@@ -513,7 +278,15 @@ export const SearchPage = () => {
             </IconButton>
           </Box>
           <Divider sx={{ mb: 3 }} />
-          {renderFilters()}
+          <SearchFilters
+            filters={filters}
+            handleFilterChange={handleFilterChange}
+            handleSelectChange={handleSelectChange}
+            handleDateChange={handleDateChange}
+            categories={categories}
+            types={types}
+            mathematiciens={mathematiciens}
+          />
         </Drawer>
 
         {/* 3. Section des résultats */}
@@ -768,180 +541,7 @@ export const SearchPage = () => {
 
           {/* Grille des résultats */}
           {!isLoading && results && results.length > 0 && (
-            <Grid container spacing={3}>
-              {results.map((item, index) => {
-                const isConcept = item.entity_type === "concept";
-                const isMath = item.entity_type === "mathematicien";
-
-                return (
-                  <Grid
-                    size={{ xs: 12, sm: 6 }}
-                    key={item.id}
-                    sx={{ display: "flex" }}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.3,
-                        delay: Math.min(index * 0.05, 0.3),
-                      }}
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Card
-                        elevation={0}
-                        sx={{
-                          height: "100%",
-                          minHeight: 200,
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                          borderRadius: 4,
-                          border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                          background: isDark
-                            ? "rgba(15, 20, 40, 0.4)"
-                            : "#ffffff",
-                          transition:
-                            "transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
-                          "&:hover": {
-                            transform: "translateY(-3px)",
-                            borderColor: "primary.main",
-                            boxShadow: isDark
-                              ? "0 12px 30px rgba(0,0,0,0.25)"
-                              : "0 12px 30px rgba(0,0,0,0.04)",
-                          },
-                        }}
-                      >
-                        <CardContent
-                          sx={{
-                            p: 3,
-                            pb: 1,
-                            flexGrow: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <Box
-                            display="flex"
-                            justifyContent="space-between"
-                            alignItems="flex-start"
-                            mb={2}
-                          >
-                            <Box
-                              sx={{
-                                p: 1,
-                                borderRadius: 2,
-                                bgcolor: isConcept
-                                  ? "rgba(14, 165, 233, 0.15)"
-                                  : isMath
-                                    ? "rgba(139, 92, 246, 0.15)"
-                                    : "rgba(249, 115, 22, 0.15)",
-                                color: isConcept
-                                  ? "#0ea5e9"
-                                  : isMath
-                                    ? "#8b5cf6"
-                                    : "#f97316",
-                                display: "inline-flex",
-                              }}
-                            >
-                              {isConcept ? (
-                                <FunctionsIcon />
-                              ) : isMath ? (
-                                <PeopleIcon />
-                              ) : (
-                                <CategoryIcon />
-                              )}
-                            </Box>
-                            <Chip
-                              size="small"
-                              label={
-                                isConcept
-                                  ? "Concept"
-                                  : isMath
-                                    ? "Mathématicien"
-                                    : "Catégorie"
-                              }
-                              color={
-                                isConcept
-                                  ? "info"
-                                  : isMath
-                                    ? "secondary"
-                                    : "warning"
-                              }
-                              sx={{
-                                fontWeight: 700,
-                                fontSize: "0.65rem",
-                                height: 20,
-                                borderRadius: 1.5,
-                              }}
-                            />
-                          </Box>
-
-                          <Link
-                            to={`/${item.entity_type}/${item.id}`}
-                            style={{ textDecoration: "none" }}
-                          >
-                            <Typography
-                              variant="h6"
-                              component="h3"
-                              sx={{
-                                fontWeight: 700,
-                                color: "text.primary",
-                                mb: 1.5,
-                                lineHeight: 1.3,
-                                "&:hover": {
-                                  color: "primary.main",
-                                  textDecoration: "underline",
-                                },
-                              }}
-                            >
-                              {item.nom}
-                            </Typography>
-                          </Link>
-
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{
-                              lineHeight: 1.5,
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              display: "-webkit-box",
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: "vertical",
-                              flexGrow: 1,
-                            }}
-                          >
-                            {item.extrait || "Aucune description disponible..."}
-                          </Typography>
-                        </CardContent>
-                        <CardActions sx={{ p: 3, pt: 0 }}>
-                          <Button
-                            variant="text"
-                            size="small"
-                            color="primary"
-                            href={`/${item.entity_type}/${item.id}`}
-                            sx={{
-                              fontWeight: 700,
-                              textTransform: "none",
-                              p: 0,
-                              "&:hover": { bgcolor: "transparent" },
-                            }}
-                          >
-                            Consulter la fiche →
-                          </Button>
-                        </CardActions>
-                      </Card>
-                    </motion.div>
-                  </Grid>
-                );
-              })}
-            </Grid>
+            <SearchResults results={results as any} isDark={isDark} />
           )}
         </Grid>
       </Grid>

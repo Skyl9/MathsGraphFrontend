@@ -17,7 +17,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { nodeApi } from "../services/api";
 import dayjs from "dayjs";
 import "react-diff-view/style/index.css";
-import { WordDiff } from "./WordDiff";
+import { VisualDiff } from "./VisualDiff";
 import Token from "../services/token";
 import { useTranslation } from "react-i18next";
 
@@ -27,8 +27,8 @@ export interface HistoryEntry {
   modified_by: number;
   modified_at: string;
   field_modified: string;
-  old_value: string;
-  new_value: string;
+  old_value: unknown;
+  new_value: unknown;
   version_number: number;
   global_version: number;
   is_rollback: boolean;
@@ -264,9 +264,9 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
                       {t("history.modified_field")}{" "}
                       <strong>{entry.field_modified}</strong>
                     </Typography>
-                    <WordDiff
-                      oldText={entry.old_value || ""}
-                      newText={entry.new_value || ""}
+                    <VisualDiff
+                      oldValue={entry.old_value || ""}
+                      newValue={entry.new_value || ""}
                     />
                     {entry.note && (
                       <Typography variant="caption">
