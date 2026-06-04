@@ -19,6 +19,7 @@ import FavoriteButton from "../components/FavoriteButton";
 import { nodeApi } from "../services/api";
 import { Category } from "../types/ApiTypes/category";
 import MathMarkdown from "../components/MathMarkdown";
+import { useTranslation } from "react-i18next";
 
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,6 +47,7 @@ const CategoryPage = () => {
   >(undefined);
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (data) {
@@ -65,7 +67,7 @@ const CategoryPage = () => {
     }
   }
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t("profile.loading")}</p>;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
@@ -99,7 +101,9 @@ const CategoryPage = () => {
           {/* Description Card */}
           <div className="math-card enonce-card">
             <div className="math-card-header">
-              <Typography className="math-card-title">Description</Typography>
+              <Typography className="math-card-title">
+                {t("entities.description_title")}
+              </Typography>
               {editModeActive &&
                 isUserConnected &&
                 editableFields["description"] &&
@@ -115,7 +119,7 @@ const CategoryPage = () => {
             </div>
             <div className="math-card-body">
               <MathMarkdown
-                content={data?.description || "Aucune description disponible."}
+                content={data?.description || t("entities.no_description")}
               />
             </div>
           </div>
@@ -134,7 +138,7 @@ const CategoryPage = () => {
                     color="primary"
                   />
                 }
-                label="Mode Édition"
+                label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
             </div>
@@ -143,12 +147,12 @@ const CategoryPage = () => {
           {/* Carte Métadonnées */}
           <div className="sidebar-card">
             <Typography variant="h6" className="sidebar-card-title">
-              Détails de la Catégorie
+              {t("entities.category_details")}
             </Typography>
             <div className="metadata-list">
               {/* ID */}
               <div className="metadata-item">
-                <span className="metadata-label">Identifiant</span>
+                <span className="metadata-label">{t("entities.id_label")}</span>
                 <div className="metadata-value">
                   <span>{data?.id}</span>
                 </div>
@@ -157,7 +161,9 @@ const CategoryPage = () => {
               {/* Catégorie Parente */}
               {editableFields["parent_id"] && (
                 <div className="metadata-item">
-                  <span className="metadata-label">Catégorie Parente</span>
+                  <span className="metadata-label">
+                    {t("entities.parent_category_label")}
+                  </span>
                   <div className="metadata-value">
                     <span>
                       {parentCategory ? (
@@ -176,7 +182,7 @@ const CategoryPage = () => {
                           {parentCategory.nom}
                         </a>
                       ) : (
-                        "Aucune"
+                        t("entities.none")
                       )}
                     </span>
                     {editModeActive &&
@@ -198,7 +204,7 @@ const CategoryPage = () => {
           {/* Carte Actions */}
           <div className="sidebar-card">
             <Typography variant="h6" className="sidebar-card-title">
-              Actions
+              {t("entities.actions_title")}
             </Typography>
             <div className="sidebar-actions">
               <Button
@@ -208,7 +214,7 @@ const CategoryPage = () => {
                 onClick={() => window.history.back()}
                 sx={{ borderRadius: 2 }}
               >
-                Retour
+                {t("entities.back")}
               </Button>
             </div>
           </div>

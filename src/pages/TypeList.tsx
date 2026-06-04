@@ -15,6 +15,7 @@ import { motion, Variants } from "framer-motion";
 import LayersIcon from "@mui/icons-material/Layers";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { FixedSizeList as List } from "react-window";
+import { useTranslation } from "react-i18next";
 
 const TypeList = () => {
   const {
@@ -25,6 +26,7 @@ const TypeList = () => {
     queryKey: ["type"],
     queryFn: () => nodeApi.getAllTypeNames(),
   });
+  const { t } = useTranslation();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,7 +50,7 @@ const TypeList = () => {
           textAlign="center"
           sx={{ fontWeight: 800, mb: 2 }}
         >
-          Types Mathématiques
+          {t("entities.types_title")}
         </Typography>
 
         {loading && (
@@ -59,7 +61,9 @@ const TypeList = () => {
 
         {error && (
           <Alert severity="error">
-            {error instanceof Error ? error.message : "Une erreur est survenue"}
+            {error instanceof Error
+              ? error.message
+              : t("entities.error_occurred")}
           </Alert>
         )}
 
@@ -71,7 +75,7 @@ const TypeList = () => {
                 color="textSecondary"
                 textAlign="center"
               >
-                Aucun Type trouvé.
+                {t("entities.no_type_found")}
               </Typography>
             ) : (
               <motion.div
@@ -89,7 +93,7 @@ const TypeList = () => {
                     width={"100%"}
                   >
                     {({ index, style }) => {
-                      const t = types[index];
+                      const typeItem = types[index];
                       return (
                         <div style={{ ...style, paddingBottom: "16px" }}>
                           <motion.div
@@ -149,13 +153,13 @@ const TypeList = () => {
                                     textTransform: "capitalize",
                                   }}
                                 >
-                                  {t.nom}
+                                  {typeItem.nom}
                                 </Typography>
                               </Box>
                               <Button
                                 variant="outlined"
                                 color="secondary"
-                                href={`/type/${t.id}`}
+                                href={`/type/${typeItem.id}`}
                                 endIcon={<ArrowForwardIcon fontSize="small" />}
                                 sx={{
                                   borderRadius: 2,
@@ -163,7 +167,7 @@ const TypeList = () => {
                                   fontWeight: 600,
                                 }}
                               >
-                                Consulter
+                                {t("entities.view")}
                               </Button>
                             </Card>
                           </motion.div>

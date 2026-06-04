@@ -17,6 +17,7 @@ import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Category } from "../types/ApiTypes/category";
 import { FixedSizeList as List } from "react-window";
+import { useTranslation } from "react-i18next";
 
 interface CategoryTree extends Category {
   children: CategoryTree[];
@@ -47,6 +48,7 @@ const CategoryList = () => {
     queryKey: ["categories"],
     queryFn: () => nodeApi.getAllCategories(),
   });
+  const { t } = useTranslation();
 
   const categoryTree = buildCategoryTree(categories);
 
@@ -72,7 +74,7 @@ const CategoryList = () => {
           textAlign="center"
           sx={{ fontWeight: 800, mb: 2 }}
         >
-          Catégories de Concepts
+          {t("entities.categories_title")}
         </Typography>
 
         {loading && (
@@ -83,7 +85,9 @@ const CategoryList = () => {
 
         {error && (
           <Alert severity="error">
-            {error instanceof Error ? error.message : "Une erreur est survenue"}
+            {error instanceof Error
+              ? error.message
+              : t("entities.error_occurred")}
           </Alert>
         )}
 
@@ -95,7 +99,7 @@ const CategoryList = () => {
                 color="textSecondary"
                 textAlign="center"
               >
-                Aucune catégorie trouvée.
+                {t("entities.no_category_found")}
               </Typography>
             ) : (
               <motion.div
@@ -234,7 +238,7 @@ const CategoryList = () => {
                                     height: "fit-content",
                                   }}
                                 >
-                                  Parcourir
+                                  {t("entities.browse")}
                                 </Button>
                               </Box>
                             </Card>

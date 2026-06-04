@@ -15,6 +15,7 @@ import { motion, Variants } from "framer-motion";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { FixedSizeList as List } from "react-window";
+import { useTranslation } from "react-i18next";
 
 const ConceptList = () => {
   const {
@@ -25,6 +26,7 @@ const ConceptList = () => {
     queryKey: ["concept"],
     queryFn: () => nodeApi.getAllConceptNames(),
   });
+  const { t } = useTranslation();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,7 +50,7 @@ const ConceptList = () => {
           textAlign="center"
           sx={{ fontWeight: 800, mb: 2 }}
         >
-          Concepts Mathématiques
+          {t("entities.concepts_title")}
         </Typography>
 
         {loading && (
@@ -59,7 +61,9 @@ const ConceptList = () => {
 
         {error && (
           <Alert severity="error">
-            {error instanceof Error ? error.message : "Une erreur est survenue"}
+            {error instanceof Error
+              ? error.message
+              : t("entities.error_occurred")}
           </Alert>
         )}
 
@@ -71,7 +75,7 @@ const ConceptList = () => {
                 color="textSecondary"
                 textAlign="center"
               >
-                Aucun concept trouvé.
+                {t("entities.no_concept_found")}
               </Typography>
             ) : (
               <motion.div
@@ -162,7 +166,7 @@ const ConceptList = () => {
                                   fontWeight: 600,
                                 }}
                               >
-                                Consulter
+                                {t("entities.view")}
                               </Button>
                             </Card>
                           </motion.div>

@@ -19,10 +19,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import { useParams, Navigate } from "react-router-dom";
 import { AvatarEditModal } from "../components/AvatarEditModal";
-import { ReportIssueButton } from "../components/Issue";
 import FavoriteList from "../components/FavoriteList";
 import UserContributions from "../components/UserContributions.tsx";
 import { User } from "../types/ApiTypes/user";
+import { useTranslation } from "react-i18next";
+import i18n from "../i18n";
+import { ReportIssueButton } from "../components/Issue";
 
 // Icônes
 import EditIcon from "@mui/icons-material/Edit";
@@ -39,6 +41,7 @@ const UserProfilePage: React.FC = () => {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t } = useTranslation();
 
   const {
     data: queryUser,
@@ -111,7 +114,7 @@ const UserProfilePage: React.FC = () => {
           color="text.secondary"
           sx={{ fontWeight: 600 }}
         >
-          Chargement du profil...
+          {t("profile.loading")}
         </Typography>
       </Box>
     );
@@ -155,7 +158,7 @@ const UserProfilePage: React.FC = () => {
                     boxShadow: "0 8px 24px rgba(14, 165, 233, 0.15)",
                   }}
                 />
-                <Tooltip title="Modifier la photo de profil" placement="top">
+                <Tooltip title={t("profile.edit_avatar")} placement="top">
                   <IconButton
                     onClick={() => setEditField("avatar")}
                     color="primary"
@@ -199,7 +202,9 @@ const UserProfilePage: React.FC = () => {
                   sx={{ fontWeight: 700, textTransform: "capitalize" }}
                 />
                 <Chip
-                  label={user.is_active ? "Actif" : "Inactif"}
+                  label={
+                    user.is_active ? t("profile.active") : t("profile.inactive")
+                  }
                   color={user.is_active ? "success" : "default"}
                   sx={{ fontWeight: 700 }}
                 />
@@ -211,7 +216,7 @@ const UserProfilePage: React.FC = () => {
                 onClick={() => setEditField("avatar")}
                 sx={{ borderRadius: 2, textTransform: "none", fontWeight: 600 }}
               >
-                Gérer l'avatar
+                {t("profile.manage_avatar")}
               </Button>
             </Paper>
           </Grid>
@@ -229,7 +234,7 @@ const UserProfilePage: React.FC = () => {
               }}
             >
               <Typography variant="h5" sx={{ fontWeight: 800, mb: 4 }}>
-                Informations Personnelles
+                {t("profile.personal_info")}
               </Typography>
 
               <Stack spacing={4}>
@@ -249,7 +254,7 @@ const UserProfilePage: React.FC = () => {
                     >
                       <EmailIcon sx={{ fontSize: 20 }} />
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        Email
+                        {t("profile.email")}
                       </Typography>
                     </Stack>
                     {editField !== "email" && (
@@ -259,7 +264,7 @@ const UserProfilePage: React.FC = () => {
                         onClick={() => setEditField("email")}
                         sx={{ textTransform: "none", fontWeight: 600 }}
                       >
-                        Modifier
+                        {t("profile.edit")}
                       </Button>
                     )}
                   </Stack>
@@ -320,7 +325,7 @@ const UserProfilePage: React.FC = () => {
                     >
                       <LanguageIcon sx={{ fontSize: 20 }} />
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        Langue Préférée
+                        {t("profile.preferred_language")}
                       </Typography>
                     </Stack>
                     {editField !== "preferred_language" && (
@@ -350,9 +355,9 @@ const UserProfilePage: React.FC = () => {
                         size="small"
                         sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
                       >
-                        <MenuItem value="fr">Français</MenuItem>
-                        <MenuItem value="en">Anglais</MenuItem>
-                        <MenuItem value="es">Espagnol</MenuItem>
+                        <MenuItem value="fr">{t("profile.french")}</MenuItem>
+                        <MenuItem value="en">{t("profile.english")}</MenuItem>
+                        <MenuItem value="es">{t("profile.spanish")}</MenuItem>
                       </TextField>
                       <IconButton
                         onClick={() => handleFieldSave("preferred_language")}
@@ -380,10 +385,10 @@ const UserProfilePage: React.FC = () => {
                       }}
                     >
                       {user.preferred_language === "fr"
-                        ? "Français"
+                        ? t("profile.french")
                         : user.preferred_language === "en"
-                          ? "Anglais"
-                          : "Espagnol"}
+                          ? t("profile.english")
+                          : t("profile.spanish")}
                     </Typography>
                   )}
                 </Box>
@@ -404,7 +409,7 @@ const UserProfilePage: React.FC = () => {
                     >
                       <EditIcon sx={{ fontSize: 20 }} />
                       <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        Biographie
+                        {t("profile.bio")}
                       </Typography>
                     </Stack>
                     {editField !== "bio" && (
@@ -414,7 +419,7 @@ const UserProfilePage: React.FC = () => {
                         onClick={() => setEditField("bio")}
                         sx={{ textTransform: "none", fontWeight: 600 }}
                       >
-                        Modifier
+                        {t("profile.edit")}
                       </Button>
                     )}
                   </Stack>
@@ -441,7 +446,7 @@ const UserProfilePage: React.FC = () => {
                           startIcon={<SaveIcon />}
                           sx={{ borderRadius: 1.5 }}
                         >
-                          Enregistrer
+                          {t("profile.save")}
                         </Button>
                         <Button
                           onClick={() => {
@@ -453,7 +458,7 @@ const UserProfilePage: React.FC = () => {
                           startIcon={<CancelIcon />}
                           sx={{ borderRadius: 1.5 }}
                         >
-                          Annuler
+                          {t("profile.cancel")}
                         </Button>
                       </Stack>
                     </Stack>
@@ -467,7 +472,7 @@ const UserProfilePage: React.FC = () => {
                         color: user.bio ? "text.primary" : "text.secondary",
                       }}
                     >
-                      {user.bio || "Aucune biographie rédigée."}
+                      {user.bio || t("profile.no_bio")}
                     </Typography>
                   )}
                 </Box>
@@ -486,9 +491,11 @@ const UserProfilePage: React.FC = () => {
                       sx={{ fontSize: 18, color: "text.secondary" }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      Inscrit le :{" "}
+                      {t("profile.registered_on")}{" "}
                       <strong>
-                        {new Date(user.created_at).toLocaleDateString("fr-FR")}
+                        {new Date(user.created_at).toLocaleDateString(
+                          i18n.language === "en" ? "en-US" : "fr-FR",
+                        )}
                       </strong>
                     </Typography>
                   </Stack>
@@ -497,13 +504,13 @@ const UserProfilePage: React.FC = () => {
                       sx={{ fontSize: 18, color: "text.secondary" }}
                     />
                     <Typography variant="body2" color="text.secondary">
-                      Dernière connexion :{" "}
+                      {t("profile.last_login")}{" "}
                       <strong>
                         {user.updated_at
                           ? new Date(user.updated_at).toLocaleDateString(
-                              "fr-FR",
+                              i18n.language === "en" ? "en-US" : "fr-FR",
                             )
-                          : "Jamais"}
+                          : t("profile.never")}
                       </strong>
                     </Typography>
                   </Stack>
@@ -519,7 +526,7 @@ const UserProfilePage: React.FC = () => {
             {/* Colonne de gauche : Favoris */}
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
-                Mes Favoris
+                {t("profile.my_favorites")}
               </Typography>
               <Paper
                 elevation={0}
@@ -538,7 +545,7 @@ const UserProfilePage: React.FC = () => {
             {/* Colonne de droite : Historique des contributions */}
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
-                Mes Contributions
+                {t("profile.my_contributions")}
               </Typography>
               <Box sx={{ minHeight: "260px" }}>
                 {id && <UserContributions userId={id} />}

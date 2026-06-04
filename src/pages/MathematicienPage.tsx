@@ -18,6 +18,7 @@ import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import { Mathematicien } from "../types/ApiTypes/mathematicien";
 import MathMarkdown from "../components/MathMarkdown";
+import { useTranslation } from "react-i18next";
 
 const MathematicienPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,6 +41,7 @@ const MathematicienPage = () => {
 
   const [isUserConnected] = useState<boolean>(() => Token.isUserConnected());
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (data) {
@@ -47,7 +49,7 @@ const MathematicienPage = () => {
     }
   }, [data, setData]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t("profile.loading")}</p>;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
@@ -84,7 +86,9 @@ const MathematicienPage = () => {
           {/* Biographie Card */}
           <div className="math-card enonce-card">
             <div className="math-card-header">
-              <Typography className="math-card-title">Biographie</Typography>
+              <Typography className="math-card-title">
+                {t("entities.biography_title")}
+              </Typography>
               {editModeActive &&
                 isUserConnected &&
                 editableFields["biographie"] &&
@@ -100,7 +104,7 @@ const MathematicienPage = () => {
             </div>
             <div className="math-card-body">
               <MathMarkdown
-                content={data?.biographie || "Aucune biographie disponible."}
+                content={data?.biographie || t("entities.no_biography")}
               />
             </div>
           </div>
@@ -119,7 +123,7 @@ const MathematicienPage = () => {
                     color="primary"
                   />
                 }
-                label="Mode Édition"
+                label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
             </div>
@@ -128,12 +132,12 @@ const MathematicienPage = () => {
           {/* Carte Métadonnées */}
           <div className="sidebar-card">
             <Typography variant="h6" className="sidebar-card-title">
-              Informations Personnelles
+              {t("entities.personal_info_title")}
             </Typography>
             <div className="metadata-list">
               {/* ID */}
               <div className="metadata-item">
-                <span className="metadata-label">Identifiant</span>
+                <span className="metadata-label">{t("entities.id_label")}</span>
                 <div className="metadata-value">
                   <span>{data?.id}</span>
                 </div>
@@ -142,9 +146,11 @@ const MathematicienPage = () => {
               {/* Date de naissance */}
               {editableFields["date_naissance"] && (
                 <div className="metadata-item">
-                  <span className="metadata-label">Date de naissance</span>
+                  <span className="metadata-label">
+                    {t("entities.birth_date")}
+                  </span>
                   <div className="metadata-value">
-                    <span>{data?.date_naissance || "Inconnue"}</span>
+                    <span>{data?.date_naissance || t("entities.unknown")}</span>
                     {editModeActive &&
                       editableFields["date_naissance"].type !== "none" && (
                         <IconButton
@@ -162,9 +168,13 @@ const MathematicienPage = () => {
               {/* Date de décès */}
               {editableFields["date_deces"] && (
                 <div className="metadata-item">
-                  <span className="metadata-label">Date de décès</span>
+                  <span className="metadata-label">
+                    {t("entities.death_date")}
+                  </span>
                   <div className="metadata-value">
-                    <span>{data?.date_deces || "Inconnue (ou en vie)"}</span>
+                    <span>
+                      {data?.date_deces || t("entities.unknown_or_alive")}
+                    </span>
                     {editModeActive &&
                       editableFields["date_deces"].type !== "none" && (
                         <IconButton
@@ -182,9 +192,11 @@ const MathematicienPage = () => {
               {/* Nationalité */}
               {editableFields["nationalite"] && (
                 <div className="metadata-item">
-                  <span className="metadata-label">Nationalité</span>
+                  <span className="metadata-label">
+                    {t("entities.nationality")}
+                  </span>
                   <div className="metadata-value">
-                    <span>{data?.nationalite || "Inconnue"}</span>
+                    <span>{data?.nationalite || t("entities.unknown")}</span>
                     {editModeActive &&
                       editableFields["nationalite"].type !== "none" && (
                         <IconButton

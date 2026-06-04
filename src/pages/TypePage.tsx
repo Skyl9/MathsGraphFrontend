@@ -17,6 +17,7 @@ import { useEntityEdit } from "../hooks/useEntityEdit.ts";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import { Type } from "../types/ApiTypes/type";
+import { useTranslation } from "react-i18next";
 
 const TypePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -39,6 +40,7 @@ const TypePage = () => {
 
   const [isUserConnected] = useState<boolean>(() => Token.isUserConnected());
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (data) {
@@ -46,7 +48,7 @@ const TypePage = () => {
     }
   }, [data, setData]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t("profile.loading")}</p>;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
@@ -81,14 +83,13 @@ const TypePage = () => {
           <div className="math-card enonce-card">
             <div className="math-card-header">
               <Typography className="math-card-title">
-                Présentation du Type
+                {t("entities.type_presentation")}
               </Typography>
             </div>
             <div className="math-card-body">
               <Typography variant="body1">
-                Ce type regroupe l'ensemble des concepts mathématiques classés
-                comme <strong>{data?.nom}</strong> dans la base de données de
-                MathGraph.
+                {t("entities.type_desc_1")} <strong>{data?.nom}</strong>{" "}
+                {t("entities.type_desc_2")}
               </Typography>
             </div>
           </div>
@@ -107,7 +108,7 @@ const TypePage = () => {
                     color="primary"
                   />
                 }
-                label="Mode Édition"
+                label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
             </div>
@@ -116,12 +117,12 @@ const TypePage = () => {
           {/* Carte Métadonnées */}
           <div className="sidebar-card">
             <Typography variant="h6" className="sidebar-card-title">
-              Détails du Type
+              {t("entities.type_details")}
             </Typography>
             <div className="metadata-list">
               {/* ID */}
               <div className="metadata-item">
-                <span className="metadata-label">Identifiant</span>
+                <span className="metadata-label">{t("entities.id_label")}</span>
                 <div className="metadata-value">
                   <span>{data?.id}</span>
                 </div>
@@ -132,7 +133,7 @@ const TypePage = () => {
           {/* Carte Actions */}
           <div className="sidebar-card">
             <Typography variant="h6" className="sidebar-card-title">
-              Actions
+              {t("entities.actions_title")}
             </Typography>
             <div className="sidebar-actions">
               <Button
@@ -142,7 +143,7 @@ const TypePage = () => {
                 onClick={() => window.history.back()}
                 sx={{ borderRadius: 2 }}
               >
-                Retour
+                {t("entities.back")}
               </Button>
             </div>
           </div>
