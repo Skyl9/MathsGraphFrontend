@@ -16,7 +16,6 @@ import { AdminStats, ContentAdmin } from "../types/ApiTypes/admin";
 import { NodeData, EdgeData } from "../types/ApiTypes/graph";
 import { RecentChange } from "../types/ApiTypes/concept";
 import { RecentComment } from "../types/ApiTypes/comments";
-import { TimelineItem } from "react-chrono/dist/react-chrono";
 
 declare global {
   interface Window {
@@ -33,6 +32,7 @@ export interface GraphData {
 }
 
 export interface MathTimelineData {
+  id: number;
   nom: string;
   date_naissance: string;
   date_deces?: string;
@@ -108,6 +108,7 @@ const request = async <T>(
   options?: RequestInit,
   _authRequired: boolean = true,
 ): Promise<T> => {
+  void _authRequired; // Désactive proprement le linter no-unused-vars
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
   const headers = new Headers({
@@ -221,7 +222,7 @@ export const nodeApi = {
       false,
     ),
   getMathematiciensTimeline: () =>
-    request<TimelineItem[]>("/mathematicien/timeline/all"),
+    request<MathTimelineData[]>("/mathematicien/timeline/all"),
   quickSearch: (inputValue: string) =>
     request<SearchResult[]>(
       `/search/quick?q=${encodeURIComponent(inputValue)}`,
