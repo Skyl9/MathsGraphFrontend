@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "MathGraph",
+    "search": "Search for a concept...",
+    "login": "Login",
+    "register": "Sign up"
+  },
+  "nav": {
+    "home": "Home",
+    "graph": "The Graph",
+    "mathematicians": "Mathematicians",
+    "categories": "Categories",
+    "types": "Types"
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode"
+  },
+  "topbar": {
+    "login": "Login",
+    "register": "Sign up",
+    "profile": "Profile",
+    "dashboard": "Dashboard",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "home": {
+    "hero_title": "Explore the Mathematical Universe",
+    "hero_subtitle": "Visualize the subtle links connecting theorems, concepts, and proofs. Deepen your knowledge and participate in this collaborative mapping.",
+    "explore_graph": "Explore the Interactive Graph",
+    "explore_button": "Explore",
+    "cards": {
+      "concepts": {
+        "title": "Mathematical Concepts",
+        "desc": "Explore the complete list of available mathematical concepts, theorems, and definitions."
+      },
+      "categories": {
+        "title": "Categories",
+        "desc": "Discover the structural organization of the different fields and branches of mathematics."
+      },
+      "mathematicians": {
+        "title": "Mathematicians",
+        "desc": "Browse the biographies and timelines of the illustrious minds who forged the field."
+      },
+      "types": {
+        "title": "Mathematical Types",
+        "desc": "Consult classifications according to the nature of propositions (theorem, lemma, axiom...)."
+      }
+    },
+    "contribution": {
+      "title": "A passion for mathematics?",
+      "desc": "Contribute by correcting a typo, enriching a statement, or adding new concepts. Every contribution makes the project grow!",
+      "link": "See how to contribute →"
+    },
+    "recent_changes": {
+      "title": "Recent Changes",
+      "no_changes": "No recent changes",
+      "view_all": "View full history"
+    },
+    "footer": {
+      "description": "An open-source platform to explore and understand mathematics through their connections.",
+      "navigation": "Navigation",
+      "legal": "Legal Notice",
+      "terms": "Terms of Use",
+      "privacy": "Privacy Policy",
+      "rights": "All rights reserved."
+    }
+  },
+  "menu": {
+    "backToPortal": "Back to portal",
+    "displayMode": "Display Mode",
+    "layout": "Layout",
+    "grid": "3D Grid",
+    "physics": "Physics",
+    "tree": "Hierarchical Tree",
+    "timeline": "Timeline",
+    "engine": "3D Engine",
+    "quality": "Quality (Physical Mesh)",
+    "performance": "Performance (Instancing)",
+    "visualTheme": "Visual Theme",
+    "themeClassic": "Classic",
+    "themeNeon": "Neon (Luminescent)",
+    "themeFocus": "Focus (Isolation)",
+    "visibleCategories": "Visible Categories",
+    "exportJson": "Export (JSON)"
+  },
+  "categories": {
+    "axioms": "Axioms",
+    "theorems": "Theorems",
+    "lemmas": "Lemmas",
+    "corollaries": "Corollaries",
+    "formulas": "Formulas",
+    "reciprocals": "Reciprocals",
+    "conjectures": "Conjectures"
+  },
+  "search": {
+    "concept": "Concept",
+    "mathematician": "Mathematician",
+    "category": "Category",
+    "placeholder": "Search..."
+  },
+  "concept": {
+    "category": "Category:",
+    "no_category": "No Category",
+    "mathematician": "Mathematician:",
+    "no_mathematician": "No mathematician",
+    "type": "Type:",
+    "loading": "Loading...",
+    "verified": "Concept verified and approved by moderation",
+    "enonce": "Statement",
+    "demonstration": "Proof",
+    "no_demonstration": "No proof available."
+  }
+}

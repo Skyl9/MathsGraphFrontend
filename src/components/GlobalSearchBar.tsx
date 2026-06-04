@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { nodeApi } from "../services/api";
 
 interface SearchResult {
@@ -25,6 +26,7 @@ export const GlobalSearchBar: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const theme = useTheme();
 
   // L'effet qui déclenche la recherche quand on tape
@@ -149,10 +151,10 @@ export const GlobalSearchBar: React.FC = () => {
                 size="small"
                 label={
                   option.entity_type === "concept"
-                    ? "Concept"
+                    ? t("search.concept")
                     : option.entity_type === "mathematicien"
-                      ? "Mathématicien"
-                      : "Catégorie"
+                      ? t("search.mathematician")
+                      : t("search.category")
                 }
                 color={
                   option.entity_type === "concept"
@@ -175,7 +177,7 @@ export const GlobalSearchBar: React.FC = () => {
       renderInput={(params) => (
         <TextField
           {...params}
-          placeholder="Rechercher..."
+          placeholder={t("search.placeholder")}
           onKeyDown={handleKeyDown} // 🌟 Capture la touche Entrée
           InputProps={{
             ...params.InputProps,

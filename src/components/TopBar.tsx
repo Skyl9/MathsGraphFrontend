@@ -25,7 +25,7 @@ export const TopBar: React.FC = () => {
   const theme = useTheme();
   const toggleDarkMode = useUIStore((state) => state.toggleDarkMode);
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const toggleLanguage = () => {
     const newLang = i18n.language === "fr" ? "en" : "fr";
     i18n.changeLanguage(newLang);
@@ -75,17 +75,18 @@ export const TopBar: React.FC = () => {
           {username ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <Typography variant="body1">
-                Bonjour, <Link href={"/username/" + username}>{username}</Link>
+                {i18n.language === "en" ? "Hello" : "Bonjour"},{" "}
+                <Link href={"/username/" + username}>{username}</Link>
               </Typography>
               <LogoutButton onLogout={() => setUsername(null)} />
             </Box>
           ) : (
             <Box sx={{ display: "flex", gap: 2 }}>
               <Button variant="outlined" href="/login">
-                Connexion
+                {t("app.login")}
               </Button>
               <Button variant="contained" href="/register">
-                Inscription
+                {t("app.register")}
               </Button>
             </Box>
           )}

@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "MathGraph",
+    "search": "Rechercher un concept...",
+    "login": "Connexion",
+    "register": "S'inscrire"
+  },
+  "nav": {
+    "home": "Accueil",
+    "graph": "Le Graphe",
+    "mathematicians": "Mathématiciens",
+    "categories": "Catégories",
+    "types": "Types"
+  },
+  "theme": {
+    "light": "Mode Clair",
+    "dark": "Mode Sombre"
+  },
+  "topbar": {
+    "login": "Se connecter",
+    "register": "S'inscrire",
+    "profile": "Profil",
+    "dashboard": "Tableau de bord",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "hero_title": "Explorez l'Univers Mathématique",
+    "hero_subtitle": "Visualisez les liens subtils reliant les théorèmes, concepts et démonstrations. Approfondissez vos connaissances et participez à cette cartographie collaborative.",
+    "explore_graph": "Explorer le Graphe Interactif",
+    "explore_button": "Explorer",
+    "cards": {
+      "concepts": {
+        "title": "Concepts Mathématiques",
+        "desc": "Explorez la liste complète des concepts, théorèmes et définitions mathématiques disponibles."
+      },
+      "categories": {
+        "title": "Catégories",
+        "desc": "Découvrez l'organisation structurelle des différents domaines et branches des mathématiques."
+      },
+      "mathematicians": {
+        "title": "Mathématiciens",
+        "desc": "Parcourez les biographies et chronologies des esprits illustres ayant forgé le domaine."
+      },
+      "types": {
+        "title": "Types Mathématiques",
+        "desc": "Consultez les classifications selon la nature des propositions (théorème, lemme, axiome...)."
+      }
+    },
+    "contribution": {
+      "title": "Une passion pour les mathématiques ?",
+      "desc": "Contribuez en corrigeant une coquille, en enrichissant un énoncé ou en ajoutant de nouvelles fiches. Chaque contribution fait grandir le projet !",
+      "link": "Consulter le mode d'emploi pour contribuer →"
+    },
+    "recent_changes": {
+      "title": "Modifications Récentes",
+      "no_changes": "Aucune modification récente",
+      "view_all": "Voir l'historique complet"
+    },
+    "footer": {
+      "description": "Une plateforme open-source pour explorer et comprendre les mathématiques à travers leurs connexions.",
+      "navigation": "Navigation",
+      "legal": "Mentions Légales",
+      "terms": "CGU",
+      "privacy": "Confidentialité",
+      "rights": "Tous droits réservés."
+    }
+  },
+  "menu": {
+    "backToPortal": "Retour au portail",
+    "displayMode": "Mode d'affichage",
+    "layout": "Disposition",
+    "grid": "Grille 3D",
+    "physics": "Physique",
+    "tree": "Arbre Hiérarchique",
+    "timeline": "Chronologique",
+    "engine": "Moteur 3D",
+    "quality": "Qualité (Mesh physique)",
+    "performance": "Performances (Instancing)",
+    "visualTheme": "Thème Visuel",
+    "themeClassic": "Classique",
+    "themeNeon": "Néon (Luminescent)",
+    "themeFocus": "Focus (Isolation)",
+    "visibleCategories": "Catégories visibles",
+    "exportJson": "Exporter (JSON)"
+  },
+  "categories": {
+    "axioms": "Axiomes",
+    "theorems": "Théorèmes",
+    "lemmas": "Lemmes",
+    "corollaries": "Corollaires",
+    "formulas": "Formules",
+    "reciprocals": "Réciproques",
+    "conjectures": "Conjectures"
+  },
+  "search": {
+    "concept": "Concept",
+    "mathematician": "Mathématicien",
+    "category": "Catégorie",
+    "placeholder": "Rechercher..."
+  },
+  "concept": {
+    "category": "Catégorie :",
+    "no_category": "Aucune Catégorie",
+    "mathematician": "Mathématicien :",
+    "no_mathematician": "Aucun mathématicien",
+    "type": "Type :",
+    "loading": "Chargement...",
+    "verified": "Concept vérifié et approuvé par la modération",
+    "enonce": "Énoncé",
+    "demonstration": "Démonstration",
+    "no_demonstration": "Aucune démonstration disponible."
+  }
+}

@@ -40,8 +40,10 @@ import { Source } from "../types/ApiTypes/source";
 import { Relations } from "../types/ApiTypes/Relations";
 import { nodeApi } from "../services/api";
 import MathMarkdown from "../components/MathMarkdown";
+import { useTranslation } from "react-i18next";
 
 const NodePage = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -164,7 +166,7 @@ const NodePage = () => {
       case "categorie":
         return (
           <div className={"node-wrapper"}>
-            <div className="field-title">Catégorie :</div>
+            <div className="field-title">{t("concept.category")}</div>
             <div className="field-content">
               {typeof value === "object" &&
               value !== null &&
@@ -174,7 +176,7 @@ const NodePage = () => {
                   {value.category}
                 </Link>
               ) : (
-                "Aucune Catégorie"
+                t("concept.no_category")
               )}
             </div>
           </div>
@@ -184,7 +186,7 @@ const NodePage = () => {
       case "mathematicien":
         return (
           <div className={"node-wrapper"}>
-            <div className="field-title">Mathématicien :</div>
+            <div className="field-title">{t("concept.mathematician")}</div>
             <div className="field-content">
               {typeof value === "object" &&
               value !== null &&
@@ -198,7 +200,7 @@ const NodePage = () => {
                   {value.mathematicien}
                 </Link>
               ) : (
-                "Aucun mathématicien"
+                t("concept.no_mathematician")
               )}
             </div>
           </div>
@@ -214,7 +216,7 @@ const NodePage = () => {
       case "type":
         return (
           <div className={"node-wrapper"}>
-            <div className="field-title">Type :</div>
+            <div className="field-title">{t("concept.type")}</div>
             <Link href={("/type/redirect/" + value) as string}>
               <div
                 className="field-content"
@@ -245,7 +247,7 @@ const NodePage = () => {
     }
   }, [error]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t("concept.loading")}</p>;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
@@ -287,10 +289,7 @@ const NodePage = () => {
                 {data?.nom}
               </Typography>
               {data?.verification && (
-                <Tooltip
-                  title="Concept vérifié et approuvé par la modération"
-                  arrow
-                >
+                <Tooltip title={t("concept.verified")} arrow>
                   <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
                 </Tooltip>
               )}
@@ -307,7 +306,9 @@ const NodePage = () => {
           {editableFields["enonce"] && (
             <div className="math-card enonce-card">
               <div className="math-card-header">
-                <Typography className="math-card-title">Énoncé</Typography>
+                <Typography className="math-card-title">
+                  {t("concept.enonce")}
+                </Typography>
                 {editModeActive && isUserConnected && (
                   <IconButton size="small" onClick={() => handleEdit("enonce")}>
                     <EditIcon fontSize="small" />
@@ -328,7 +329,7 @@ const NodePage = () => {
                   className="math-card-title"
                   sx={{ color: "secondary.main" }}
                 >
-                  Démonstration
+                  {t("concept.demonstration")}
                 </Typography>
                 {editModeActive && isUserConnected && (
                   <IconButton
@@ -341,9 +342,7 @@ const NodePage = () => {
               </div>
               <div className="math-card-body">
                 <MathMarkdown
-                  content={
-                    data?.demonstration || "Aucune démonstration disponible."
-                  }
+                  content={data?.demonstration || t("concept.no_demonstration")}
                 />
               </div>
             </div>
