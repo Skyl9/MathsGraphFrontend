@@ -12,7 +12,12 @@ import { Type } from "../types/ApiTypes/type";
 import { Favorite, User } from "../types/ApiTypes/user";
 import { Tag } from "../types/ApiTypes/tag";
 import { Comment } from "../types/ApiTypes/comments";
-import { AdminStats, ContentAdmin } from "../types/ApiTypes/admin";
+import {
+  AdminStats,
+  ContentAdmin,
+  ApiAnalytics,
+  RecentActivityItem,
+} from "../types/ApiTypes/admin";
 import { NodeData, EdgeData } from "../types/ApiTypes/graph";
 import { RecentChange } from "../types/ApiTypes/concept";
 import { RecentComment } from "../types/ApiTypes/comments";
@@ -57,18 +62,6 @@ export interface SearchFilters {
   mathematicien_id?: number | null;
   date_start?: string | null;
   date_end?: string | null;
-}
-
-export interface ApiRouteMetric {
-  method: string;
-  endpoint: string;
-  total_hits: number;
-  avg_duration: number;
-}
-
-export interface ApiAnalytics {
-  daily_hits: number;
-  top_routes: ApiRouteMetric[];
 }
 
 const runtimeEnv = window.__RUNTIME_CONFIG__?.VITE_BACKEND_LINK;
@@ -237,6 +230,8 @@ export const nodeApi = {
       false,
     ),
   getApiAnalytics: () => request<ApiAnalytics>(`/admin/analytics`),
+  getRecentActivity: (limit: number = 10) =>
+    request<RecentActivityItem[]>(`/admin/recent-activity?limit=${limit}`),
   // POST/PATCH/DELETE requests
   updateConcept: (
     id: string,
