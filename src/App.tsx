@@ -36,6 +36,7 @@ import UsersPage from "./pages/admin/UsersPage";
 import ContentsPage from "./pages/admin/ContentsPage";
 import SettingsPage from "./pages/SettingsManagement";
 import ContributionPage from "./pages/ContributionPage";
+import { RecentChangesPage } from "./pages/RecentChangesPage";
 import { getTheme } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useGraphData } from "./hooks/useGraphData";
@@ -100,6 +101,10 @@ const App = () => {
 
                 <Route element={<MainLayout />}>
                   <Route path="/" element={<HomePage />} />
+                  <Route
+                    path="/recent-changes"
+                    element={<RecentChangesPage />}
+                  />
                   <Route path="/concept/:id" element={<ConceptPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/support" element={<SupportPage />} />
