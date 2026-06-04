@@ -38,6 +38,7 @@ import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import { Source } from "../types/ApiTypes/source";
 import { Relations } from "../types/ApiTypes/Relations";
+import { nodeApi } from "../services/api";
 import MathMarkdown from "../components/MathMarkdown";
 
 const NodePage = () => {
@@ -112,6 +113,14 @@ const NodePage = () => {
       setData(data);
     }
   }, [data, setData]);
+
+  useEffect(() => {
+    if (id) {
+      nodeApi.recordConceptView(id).catch((err: unknown) => {
+        logger.warn("Impossible d'enregistrer la vue pour le concept", err);
+      });
+    }
+  }, [id]);
 
   const renderCellContent = (field: keyof AllNodeData) => {
     const value = data?.[field];

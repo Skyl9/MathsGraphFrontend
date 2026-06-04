@@ -232,6 +232,8 @@ export const nodeApi = {
   getApiAnalytics: () => request<ApiAnalytics>(`/admin/analytics`),
   getRecentActivity: (limit: number = 10) =>
     request<RecentActivityItem[]>(`/admin/recent-activity?limit=${limit}`),
+  recordConceptView: (id: string) =>
+    request<null>(`/statistics/concepts/${id}`, { method: "POST" }, false),
   // POST/PATCH/DELETE requests
   updateConcept: (
     id: string,
