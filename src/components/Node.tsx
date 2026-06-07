@@ -21,12 +21,12 @@ interface NodeProps {
   color: string;
   nom: string;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (id: number) => void;
   debug: boolean;
   isNeighbor?: boolean;
   scale?: number;
   isFiltered?: boolean;
-  onHoverStart?: () => void;
+  onHoverStart?: (id: number) => void;
   onHoverEnd?: () => void;
   id: number;
   registerNode?: (id: number, data: CustomNodeData) => void;
@@ -116,13 +116,13 @@ const Node = memo(function Node({
       position={position}
       onClick={() => {
         if (!isInteractive) return;
-        onClick();
+        onClick(id);
       }}
       onPointerOver={(event: PointerEvent<HTMLCanvasElement>) => {
         if (!isInteractive) return;
         event.stopPropagation();
         setHovered(true);
-        if (onHoverStart) onHoverStart();
+        if (onHoverStart) onHoverStart(id);
       }}
       onPointerOut={(event: PointerEvent<HTMLCanvasElement>) => {
         if (!isInteractive) return;

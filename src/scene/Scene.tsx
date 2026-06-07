@@ -87,12 +87,12 @@ interface GraphNodeProps {
   currentView: string;
   color: string;
   isSelected: boolean;
-  onClick: () => void;
+  onClick: (id: number) => void;
   debug: boolean;
   shouldDim: boolean;
   scale: number;
   isFiltered: boolean;
-  onHoverStart?: () => void;
+  onHoverStart?: (id: number) => void;
   onHoverEnd?: () => void;
 }
 
@@ -171,13 +171,13 @@ const GraphNode = memo(
           onClick={(e) => {
             if (isFiltered) return;
             e.stopPropagation();
-            onClick();
+            onClick(node.id);
           }}
           onPointerOver={(e) => {
             if (isFiltered) return;
             e.stopPropagation();
             setHovered(true);
-            if (onHoverStart) onHoverStart();
+            if (onHoverStart) onHoverStart(node.id);
           }}
           onPointerOut={(e) => {
             if (isFiltered) return;
@@ -229,6 +229,17 @@ export default function Scene({ graphData }: SceneProps) {
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
   const [hoveredNodeId, setHoveredNodeId] = useState<number | null>(null);
+
+  const handleNodeClick = useCallback(
+    (id: number) => {
+      setSelectedNodeId(id);
+    },
+    [setSelectedNodeId],
+  );
+
+  const handleNodeHoverEnd = useCallback(() => {
+    setHoveredNodeId(null);
+  }, []);
 
   const customNodesMap = useRef(new Map<number, CustomNodeData>());
   const graphNodesMap = useRef(new Map<number, GraphNodeData>());
@@ -580,11 +591,9 @@ export default function Scene({ graphData }: SceneProps) {
                   debug={debugMode}
                   scale={getNodeScale(node.id)}
                   isFiltered={isFiltered}
-                  onHoverStart={() => setHoveredNodeId(node.id)}
-                  onHoverEnd={() => setHoveredNodeId(null)}
-                  onClick={() => {
-                    setSelectedNodeId(node.id);
-                  }}
+                  onHoverStart={setHoveredNodeId}
+                  onHoverEnd={handleNodeHoverEnd}
+                  onClick={handleNodeClick}
                   registerGraphNode={registerGraphNode}
                   unregisterGraphNode={unregisterGraphNode}
                 />
@@ -610,11 +619,9 @@ export default function Scene({ graphData }: SceneProps) {
                 isNeighbor={neighborIds.has(node.id)}
                 scale={getNodeScale(node.id)}
                 isFiltered={isFiltered}
-                onHoverStart={() => setHoveredNodeId(node.id)}
-                onHoverEnd={() => setHoveredNodeId(null)}
-                onClick={() => {
-                  setSelectedNodeId(node.id);
-                }}
+                onHoverStart={setHoveredNodeId}
+                onHoverEnd={handleNodeHoverEnd}
+                onClick={handleNodeClick}
                 debug={debugMode}
                 id={node.id}
                 registerNode={registerCustomNode}
