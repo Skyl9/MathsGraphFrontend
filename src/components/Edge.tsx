@@ -1,8 +1,7 @@
-import { useMemo, useState, useRef, memo } from "react";
+import { useMemo, useState, useRef, memo, useEffect } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { Line2 } from "three-stdlib";
-import { useFrame } from "@react-three/fiber";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import MathMarkdown from "./MathMarkdown";
@@ -10,6 +9,13 @@ import MathMarkdown from "./MathMarkdown";
 // Optimisation R3F: Instanciation unique de la géométrie pour éviter de cloner 1000+ ConeGeometry (Fuite VRAM)
 const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
 const hitboxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+
+export interface EdgeDataRef {
+  lineRef: React.MutableRefObject<any>;
+  isAnimatedDash: boolean;
+  type: string;
+  getMultiplier: () => number;
+}
 
 interface EdgeProps {
   start: [number, number, number];
@@ -24,6 +30,8 @@ interface EdgeProps {
   isEndFiltered?: boolean;
   startId: number;
   endId: number;
+  registerEdge?: (id: string, data: EdgeDataRef) => void;
+  unregisterEdge?: (id: string) => void;
 }
 
 const Edge = memo(function Edge({
@@ -39,6 +47,8 @@ const Edge = memo(function Edge({
   isEndFiltered = false,
   startId,
   endId,
+  registerEdge,
+  unregisterEdge,
 }: EdgeProps) {
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
@@ -116,16 +126,32 @@ const Edge = memo(function Edge({
   const dashSize = type === "equivalence" ? 0.6 : 0.3;
   const gapSize = type === "equivalence" ? 0.15 : 0.2;
 
-  useFrame((state) => {
-    if (isAnimatedDash && lineRef.current && lineRef.current.material) {
-      // Accélérer l'animation d'impulsion si survolé/highlighted
-      const baseSpeed = type === "equivalence" ? 1.0 : 2.0;
-      const multiplier =
-        hovered || (isAnyNodeHovered && isHighlighted) ? 2.5 : 1.0;
-      lineRef.current.material.dashOffset =
-        -state.clock.getElapsedTime() * baseSpeed * multiplier;
+  // Enregistrement pour la boucle useFrame centralisée dans Scene.tsx
+  useEffect(() => {
+    const edgeId = `${startId}-${endId}`;
+    if (registerEdge) {
+      registerEdge(edgeId, {
+        lineRef,
+        isAnimatedDash,
+        type: type || "",
+        getMultiplier: () =>
+          hovered || (isAnyNodeHovered && isHighlighted) ? 2.5 : 1.0,
+      });
     }
-  });
+    return () => {
+      if (unregisterEdge) unregisterEdge(edgeId);
+    };
+  }, [
+    startId,
+    endId,
+    isAnimatedDash,
+    type,
+    hovered,
+    isAnyNodeHovered,
+    isHighlighted,
+    registerEdge,
+    unregisterEdge,
+  ]);
 
   // Formule LaTeX selon la sémantique de relation
   const mathFormula = useMemo(() => {

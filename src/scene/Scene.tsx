@@ -2,7 +2,7 @@ import { useEffect, useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Billboard, Text, Instances, Instance } from "@react-three/drei";
 import { Vector3, Color, Mesh, Group, MathUtils, SphereGeometry } from "three";
-import Edge from "../components/Edge";
+import Edge, { EdgeDataRef } from "../components/Edge";
 import { NodeData, Graph } from "../types/ApiTypes/graph";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useUIStore } from "../stores/useUIStore";
@@ -238,6 +238,7 @@ export default function Scene({ graphData }: SceneProps) {
 
   const customNodesMap = useRef(new Map<number, CustomNodeData>());
   const graphNodesMap = useRef(new Map<number, GraphNodeData>());
+  const edgesMap = useRef(new Map<string, EdgeDataRef>());
 
   const registerCustomNode = useCallback((id: number, data: CustomNodeData) => {
     customNodesMap.current.set(id, data);
@@ -253,9 +254,16 @@ export default function Scene({ graphData }: SceneProps) {
     graphNodesMap.current.delete(id);
   }, []);
 
+  const registerEdge = useCallback((id: string, data: EdgeDataRef) => {
+    edgesMap.current.set(id, data);
+  }, []);
+  const unregisterEdge = useCallback((id: string) => {
+    edgesMap.current.delete(id);
+  }, []);
+
   const { camera, gl } = useThree();
 
-  useFrame(() => {
+  useFrame((state) => {
     // Handle GraphNodes (Performance)
     graphNodesMap.current.forEach((data) => {
       const dist = camera.position.distanceTo(data.pos);
@@ -278,12 +286,29 @@ export default function Scene({ graphData }: SceneProps) {
         data.currentScaleObj.value,
       );
 
+      // Billboard orientation
       const dist = camera.position.distanceTo(data.pos);
       const isFar = dist > 35;
       const isScaleTiny = data.currentScaleObj.value < 0.1;
 
       data.billboard.visible =
         !isScaleTiny && data.shouldShowBase && (data.isFarShow || !isFar);
+      data.billboard.quaternion.copy(camera.quaternion);
+    });
+
+    // Handle Edges
+    const time = state.clock.getElapsedTime();
+    edgesMap.current.forEach((data) => {
+      if (
+        data.isAnimatedDash &&
+        data.lineRef.current &&
+        data.lineRef.current.material
+      ) {
+        const baseSpeed = data.type === "equivalence" ? 1.0 : 2.0;
+        const multiplier = data.getMultiplier();
+        data.lineRef.current.material.dashOffset =
+          -time * baseSpeed * multiplier;
+      }
     });
   });
   const nodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
@@ -462,6 +487,8 @@ export default function Scene({ graphData }: SceneProps) {
                 endScale={getNodeScale(edge.end)}
                 isStartFiltered={isStartFiltered}
                 isEndFiltered={isEndFiltered}
+                registerEdge={registerEdge}
+                unregisterEdge={unregisterEdge}
               />
             </group>
           );
