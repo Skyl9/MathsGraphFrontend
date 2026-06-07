@@ -228,7 +228,7 @@ export default function Scene({ graphData }: SceneProps) {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
-  const [hoveredNodeId, setHoveredNodeId] = useState<number | null>(null);
+  const setHoveredNodeId = useGraphStore((s) => s.setHoveredNodeId);
 
   const handleNodeClick = useCallback(
     (id: number) => {
@@ -655,16 +655,13 @@ export default function Scene({ graphData }: SceneProps) {
           const startPos = getNodePos(startNode, currentView);
           const endPos = getNodePos(endNode, currentView);
 
-          // Vérification du highlight au survol
-          const isHighlighted =
-            hoveredNodeId !== null &&
-            (edge.start === hoveredNodeId || edge.end === hoveredNodeId);
-
           return (
             <group key={index}>
               <Edge
                 start={[startPos.x, startPos.y, startPos.z]}
                 end={[endPos.x, endPos.y, endPos.z]}
+                startId={edge.start}
+                endId={edge.end}
                 type={edge.type}
                 color={colorSides}
                 debug={debugMode}
@@ -673,8 +670,6 @@ export default function Scene({ graphData }: SceneProps) {
                 endScale={getNodeScale(edge.end)}
                 isStartFiltered={isStartFiltered}
                 isEndFiltered={isEndFiltered}
-                isHighlighted={isHighlighted}
-                isAnyNodeHovered={hoveredNodeId !== null}
               />
             </group>
           );
