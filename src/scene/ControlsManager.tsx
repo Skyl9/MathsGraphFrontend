@@ -4,7 +4,6 @@ import { useGraphStore } from "../stores/useGraphStore";
 import { useUIStore } from "../stores/useUIStore";
 import { NodeData } from "../types/ApiTypes/graph";
 import { useThree } from "@react-three/fiber";
-import { Vector3 } from "three";
 
 const getNodePos = (
   node: NodeData,
@@ -48,14 +47,14 @@ export default function ControlsManager({ nodes }: ControlsManagerProps) {
           const nextNode = nodes[(positionListe + 1) % nodes.length];
           setSelectedNodeId(nextNode.id);
           const pos = getNodePos(nextNode, currentView);
-          setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
+          setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
         }
         if (event.key === "q" || event.key === "ArrowLeft") {
           const prevNode =
             nodes[(positionListe - 1 + nodes.length) % nodes.length];
           setSelectedNodeId(prevNode.id);
           const pos = getNodePos(prevNode, currentView);
-          setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
+          setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
         }
       }
     };

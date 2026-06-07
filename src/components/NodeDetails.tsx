@@ -4,7 +4,6 @@ import { Typography, IconButton, Button, Box, Divider } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
 import LaunchIcon from "@mui/icons-material/Launch";
-import { Vector3 } from "three";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
@@ -58,7 +57,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
       const pos = concept.position[currentView] ||
         concept.position["grille"] ||
         concept.position["physique"] || { x: 0, y: 0, z: 0 };
-      setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
+      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
     }
   };
 
@@ -71,7 +70,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
       const pos = position[currentView] ||
         position["grille"] ||
         position["physique"] || { x: 0, y: 0, z: 0 };
-      setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
+      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
     }
   };
 

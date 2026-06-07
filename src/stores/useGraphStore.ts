@@ -1,9 +1,13 @@
 import { create } from "zustand";
-import { Vector3 } from "three";
+export interface Position3D {
+  x: number;
+  y: number;
+  z: number;
+}
 
 interface GraphState {
-  targetPosition: Vector3 | null;
-  initialPosition: Vector3 | null;
+  targetPosition: Position3D | null;
+  initialPosition: Position3D | null;
   isPosInitial: boolean;
   selectedNodeId: number | null;
   hoveredNodeId: number | null;
@@ -11,8 +15,8 @@ interface GraphState {
   currentIndex: number;
   isSearchActive: boolean; // Flag indiquant si l'utilisateur est en train de rechercher
 
-  setTargetPosition: (pos: Vector3 | null) => void;
-  setInitialPosition: (pos: Vector3 | null) => void;
+  setTargetPosition: (pos: Position3D | null) => void;
+  setInitialPosition: (pos: Position3D | null) => void;
   setIsPosInitial: (val: boolean) => void;
   setSelectedNodeId: (id: number | null) => void;
   setHoveredNodeId: (id: number | null) => void;

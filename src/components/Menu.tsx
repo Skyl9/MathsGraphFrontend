@@ -1,5 +1,4 @@
-import { useCallback, useState } from "react";
-import { Vector3 } from "three";
+import { useState, useCallback } from "react";
 import {
   IconButton,
   Typography,
@@ -89,7 +88,7 @@ export default function Menu({ graphData }: MenuProps) {
       const pos = node.position[currentView] ||
         node.position["grille"] ||
         node.position["physique"] || { x: 0, y: 0, z: 0 };
-      setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
+      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
       setSelectedNodeId(node.id);
       setIsSearchActive(false); // fermer la recherche après sélection
     } else {

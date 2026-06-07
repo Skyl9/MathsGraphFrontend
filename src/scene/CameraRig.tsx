@@ -56,7 +56,11 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
         }
       });
 
-      setTargetPosition(sumPosition.divideScalar(count));
+      setTargetPosition({
+        x: sumPosition.x / count,
+        y: sumPosition.y / count,
+        z: sumPosition.z / count,
+      });
     }
   }, [selectedNode, setTargetPosition, currentView, edges, nodesMap]);
 
@@ -138,7 +142,7 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
       }
     } else if (zoomAction.action === "reset") {
       setSelectedNodeId(null);
-      setTargetPosition(new Vector3(0, 0, 0));
+      setTargetPosition({ x: 0, y: 0, z: 0 });
       if (controls) {
         gsap.to((controls as any).target, {
           x: 0,
