@@ -33,6 +33,12 @@ export default function ControlsManager({ nodes }: ControlsManagerProps) {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (nodes.length === 0) return;
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
       if (selectedNodeId === null) {
         setSelectedNodeId(nodes[0].id);
         return;

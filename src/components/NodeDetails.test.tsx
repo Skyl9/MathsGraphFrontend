@@ -67,7 +67,9 @@ describe("NodeDetails Component", () => {
   it("renders neighbors correctly", () => {
     render(<NodeDetails id={1} onClose={mockOnClose} />);
 
-    expect(screen.getByText("Concepts liés (1)")).toBeInTheDocument();
+    expect(
+      screen.getByText("node_details.linked_concepts"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Triangle rectangle")).toBeInTheDocument();
   });
 

@@ -53,12 +53,19 @@ const Edge = memo(function Edge({
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
 
-  // NOUVEAU : Lecture directe de l'état de survol via Zustand pour éviter les re-renders globaux de Scene.tsx
+  // Lecture de l'état de survol et de sélection
   const hoveredNodeId = useGraphStore((s) => s.hoveredNodeId);
-  const isHighlighted =
+  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
+
+  const isHoverHighlighted =
     hoveredNodeId !== null &&
     (startId === hoveredNodeId || endId === hoveredNodeId);
+  const isSelectedHighlighted =
+    selectedNodeId !== null &&
+    (startId === selectedNodeId || endId === selectedNodeId);
+
   const isAnyNodeHovered = hoveredNodeId !== null;
+  const isHighlighted = isHoverHighlighted || isSelectedHighlighted;
 
   const [hovered, setHovered] = useState(false);
   const lineRef = useRef<Line2>(null);
@@ -93,32 +100,51 @@ const Edge = memo(function Edge({
 
   const isNeon = graphTheme === "neon";
 
-  // Couleur dynamique d'arête : highlight au survol
+  // Couleur dynamique d'arête : highlight au survol ou à la sélection
   const activeColor = useMemo(() => {
-    if (hovered) return "#38bdf8";
-    if (isAnyNodeHovered) {
-      return isHighlighted ? "#38bdf8" : darkMode ? "#1e293b" : "#e2e8f0";
-    }
+    if (hovered || isHoverHighlighted) return "#38bdf8";
+    if (isAnyNodeHovered) return darkMode ? "#1e293b" : "#e2e8f0";
+    if (isSelectedHighlighted) return "#38bdf8";
     return isNeon && color === "black" ? "#ffffff" : color;
-  }, [hovered, isAnyNodeHovered, isHighlighted, isNeon, color, darkMode]);
+  }, [
+    hovered,
+    isAnyNodeHovered,
+    isHoverHighlighted,
+    isSelectedHighlighted,
+    isNeon,
+    color,
+    darkMode,
+  ]);
 
   // Opacité dynamique au survol et filtrage
   const finalOpacity = useMemo(() => {
     if (isFiltered) return 0;
     if (isAnyNodeHovered) {
-      return isHighlighted ? 1.0 : 0.08;
+      return isHoverHighlighted ? 1.0 : 0.08;
     }
+    if (isSelectedHighlighted) return 1.0;
     return opacity;
-  }, [isFiltered, isAnyNodeHovered, isHighlighted, opacity]);
+  }, [
+    isFiltered,
+    isAnyNodeHovered,
+    isHoverHighlighted,
+    isSelectedHighlighted,
+    opacity,
+  ]);
 
   // Épaisseur de ligne dynamique
   const finalLineWidth = useMemo(() => {
-    const base = isNeon ? 2.0 : 1.5;
-    if (hovered || (isAnyNodeHovered && isHighlighted)) {
-      return base * 2.0;
-    }
-    return base;
-  }, [isNeon, hovered, isAnyNodeHovered, isHighlighted]);
+    if (hovered || isHoverHighlighted) return 3.5;
+    if (isAnyNodeHovered) return isNeon ? 2.0 : 1.5;
+    if (isSelectedHighlighted) return 3.5;
+    return isNeon ? 2.0 : 1.5;
+  }, [
+    hovered,
+    isAnyNodeHovered,
+    isHoverHighlighted,
+    isSelectedHighlighted,
+    isNeon,
+  ]);
 
   // Détermination du style de ligne (Solid vs Dashed animé pour les implications/équivalences)
   const isAnimatedDash =
@@ -134,8 +160,7 @@ const Edge = memo(function Edge({
         lineRef,
         isAnimatedDash,
         type: type || "",
-        getMultiplier: () =>
-          hovered || (isAnyNodeHovered && isHighlighted) ? 2.5 : 1.0,
+        getMultiplier: () => (hovered || isHighlighted ? 2.5 : 1.0),
       });
     }
     return () => {
