@@ -1,17 +1,8 @@
 import { useEffect, useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
-import {
-  OrbitControls,
-  Billboard,
-  Text,
-  Instances,
-  Instance,
-  Stars,
-  Grid,
-} from "@react-three/drei";
+import { Billboard, Text, Instances, Instance } from "@react-three/drei";
 import { Vector3, Color, Mesh, Group, MathUtils, SphereGeometry } from "three";
 import Edge from "../components/Edge";
-import gsap from "gsap";
 import { NodeData, Graph } from "../types/ApiTypes/graph";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useUIStore } from "../stores/useUIStore";
@@ -21,7 +12,9 @@ import CustomNode, { CustomNodeData } from "../components/Node";
 import { useTranslation } from "react-i18next";
 
 import { getNodeColor } from "../utils/nodeColors";
-import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+import EnvironmentLights from "./EnvironmentLights";
+import CameraRig from "./CameraRig";
+import ControlsManager from "./ControlsManager";
 
 // Optimisation R3F: Instanciation unique de la géométrie hitbox
 const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
@@ -222,14 +215,11 @@ export default function Scene({ graphData }: SceneProps) {
   const colorSides = useUIStore((s) => s.colorSides);
   const debugMode = useUIStore((s) => s.debugMode);
   const renderMode = useUIStore((s) => s.renderMode);
-  const zoomAction = useUIStore((s) => s.zoomAction);
-  const setDebugMode = useUIStore((s) => s.setDebugMode);
   const graphTheme = useUIStore((s) => s.graphTheme);
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
   const targetPosition = useGraphStore((s) => s.targetPosition);
-  const setTargetPosition = useGraphStore((s) => s.setTargetPosition);
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
@@ -303,8 +293,6 @@ export default function Scene({ graphData }: SceneProps) {
     return map;
   }, [nodes]);
   const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
-  const controlsRef = useRef<OrbitControlsImpl>(null);
-  const darkMode = useUIStore((s) => s.darkMode);
 
   const colors = useMemo(
     () => [colorLemme, colorAxiome, colorTheoreme],
@@ -344,176 +332,6 @@ export default function Scene({ graphData }: SceneProps) {
     return neighbors;
   }, [selectedNodeId, edges]);
 
-  // Animations GSAP : Cadrage intelligent
-  useEffect(() => {
-    if (selectedNode && targetPosition && controlsRef.current) {
-      const { x, y, z } = getNodePos(selectedNode, currentView);
-      let maxDistance = 3;
-
-      // Trouver la distance maximale avec les voisins pour ajuster le zoom
-      edges.forEach((edge) => {
-        let neighbor: NodeData | undefined;
-        if (edge.start === selectedNode.id) {
-          neighbor = nodesMap.get(edge.end);
-        } else if (edge.end === selectedNode.id) {
-          neighbor = nodesMap.get(edge.start);
-        }
-        if (neighbor) {
-          const pos = getNodePos(neighbor, currentView);
-          const d = new Vector3(pos.x, pos.y, pos.z).distanceTo(
-            new Vector3(x, y, z),
-          );
-          if (d > maxDistance) maxDistance = d;
-        }
-      });
-      const cameraOffset = Math.max(5, maxDistance * 1.5);
-
-      gsap.to(controlsRef.current.target, {
-        x: targetPosition.x,
-        y: targetPosition.y,
-        z: targetPosition.z,
-        duration: 1.2,
-        ease: "power3.inOut",
-        onUpdate: () => controlsRef.current?.update(),
-      });
-      gsap.to(camera.position, {
-        x: targetPosition.x + cameraOffset * 0.4,
-        y: targetPosition.y + cameraOffset * 0.3,
-        z: targetPosition.z + cameraOffset,
-        duration: 1.2,
-        ease: "power3.inOut",
-      });
-    }
-  }, [
-    selectedNode,
-    targetPosition,
-    camera,
-    currentView,
-    edges,
-    nodes,
-    nodesMap,
-  ]);
-
-  // Écouteurs d'événements pour le HUD de navigation (Zoom / Reset) via Zustand
-  useEffect(() => {
-    if (!zoomAction.action) return;
-
-    if (zoomAction.action === "in") {
-      if (controlsRef.current) {
-        const target = controlsRef.current.target;
-        gsap.to(camera.position, {
-          x: target.x + (camera.position.x - target.x) * 0.7,
-          y: target.y + (camera.position.y - target.y) * 0.7,
-          z: target.z + (camera.position.z - target.z) * 0.7,
-          duration: 0.4,
-          ease: "power2.out",
-        });
-      }
-    } else if (zoomAction.action === "out") {
-      if (controlsRef.current) {
-        const target = controlsRef.current.target;
-        gsap.to(camera.position, {
-          x: target.x + (camera.position.x - target.x) * 1.4,
-          y: target.y + (camera.position.y - target.y) * 1.4,
-          z: target.z + (camera.position.z - target.z) * 1.4,
-          duration: 0.4,
-          ease: "power2.out",
-        });
-      }
-    } else if (zoomAction.action === "reset") {
-      setSelectedNodeId(null);
-      setTargetPosition(new Vector3(0, 0, 0));
-      if (controlsRef.current) {
-        gsap.to(controlsRef.current.target, {
-          x: 0,
-          y: 0,
-          z: 0,
-          duration: 1.2,
-          ease: "power3.inOut",
-          onUpdate: () => controlsRef.current?.update(),
-        });
-      }
-      gsap.to(camera.position, {
-        x: 0,
-        y: 10,
-        z: 35,
-        duration: 1.2,
-        ease: "power3.inOut",
-      });
-    }
-  }, [zoomAction, camera, setSelectedNodeId, setTargetPosition]);
-
-  // Raccourcis clavier (D, Q, Arrow)
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (nodes.length === 0) return;
-      if (selectedNodeId === null) setSelectedNodeId(nodes[0].id);
-      if (!camera || !event) return;
-
-      const positionListe = nodes.findIndex(
-        (node: NodeData) => node.id === selectedNodeId,
-      );
-      if (positionListe !== -1) {
-        if (event.key === "d" || event.key === "ArrowRight") {
-          const nextNode = nodes[(positionListe + 1) % nodes.length];
-          setSelectedNodeId(nextNode.id);
-          const pos = getNodePos(nextNode, currentView);
-          setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
-        }
-        if (event.key === "q" || event.key === "ArrowLeft") {
-          const prevNode =
-            nodes[(positionListe - 1 + nodes.length) % nodes.length];
-          setSelectedNodeId(prevNode.id);
-          const pos = getNodePos(prevNode, currentView);
-          setTargetPosition(new Vector3(pos.x, pos.y, pos.z));
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    selectedNodeId,
-    nodes,
-    camera,
-    setTargetPosition,
-    setSelectedNodeId,
-    currentView,
-  ]);
-
-  // Mode debug
-  useEffect(() => {
-    const toggleDebug = (event: KeyboardEvent) => {
-      if (event.key.toLowerCase() === "m") setDebugMode(!debugMode);
-    };
-    window.addEventListener("keydown", toggleDebug);
-    return () => window.removeEventListener("keydown", toggleDebug);
-  }, [debugMode, setDebugMode]);
-
-  // Calcul du focus intelligent centré sur le nœud sélectionné et ses voisins
-  useEffect(() => {
-    if (selectedNode) {
-      const { x, y, z } = getNodePos(selectedNode, currentView);
-      const sumPosition = new Vector3(x, y, z);
-      let count = 1;
-
-      edges.forEach((edge) => {
-        let neighbor: NodeData | undefined;
-        if (edge.start === selectedNode.id) {
-          neighbor = nodesMap.get(edge.end);
-        } else if (edge.end === selectedNode.id) {
-          neighbor = nodesMap.get(edge.start);
-        }
-        if (neighbor) {
-          const pos = getNodePos(neighbor, currentView);
-          sumPosition.add(new Vector3(pos.x, pos.y, pos.z));
-          count++;
-        }
-      });
-
-      setTargetPosition(sumPosition.divideScalar(count));
-    }
-  }, [selectedNode, setTargetPosition, currentView, edges, nodes, nodesMap]);
-
   const handleCanvasClick = useCallback(
     (event: MouseEvent) => {
       if (event.target === gl.domElement) setSelectedNodeId(null);
@@ -525,40 +343,9 @@ export default function Scene({ graphData }: SceneProps) {
 
   return (
     <>
-      <ambientLight
-        intensity={graphTheme === "neon" ? 0.35 : darkMode ? 0.45 : 0.75}
-      />
-      <directionalLight
-        position={[10, 20, 10]}
-        intensity={graphTheme === "neon" ? 0.6 : 0.95}
-      />
-      <pointLight position={[-10, -20, -10]} intensity={0.2} />
-
-      {/* Arrière-plan d'étoiles immersif */}
-      <Stars
-        radius={120}
-        depth={50}
-        count={600}
-        factor={4}
-        saturation={0.5}
-        fade
-        speed={1}
-      />
-
-      {/* Grille moderne avec dégradé de distance */}
-      <Grid
-        position={[0, -12, 0]}
-        args={[150, 150]}
-        cellSize={1.5}
-        cellThickness={1.0}
-        cellColor={darkMode ? "#334155" : "#cbd5e1"}
-        sectionSize={4.5}
-        sectionThickness={1.5}
-        sectionColor={darkMode ? "#38bdf8" : "#0284c7"}
-        fadeDistance={100}
-        fadeStrength={1}
-        infiniteGrid
-      />
+      <EnvironmentLights />
+      <CameraRig nodesMap={nodesMap} edges={edges} />
+      <ControlsManager nodes={nodes} />
 
       <group onPointerMissed={handleCanvasClick}>
         {renderMode === "performance" ? (
@@ -681,14 +468,15 @@ export default function Scene({ graphData }: SceneProps) {
         })}
 
         {/* 🌟 Anneau de sélection holographique */}
-        {selectedNode && (
+        {selectedNodeId && renderMode === "quality" && (
           <SelectionRing
-            position={(() => {
-              const p = getNodePos(selectedNode, currentView);
-              return [p.x, p.y, p.z];
-            })()}
-            color={getNodeColor(selectedNode.typeMath, colors)}
-            scale={getNodeScale(selectedNode.id)}
+            position={[
+              targetPosition?.x ?? 0,
+              targetPosition?.y ?? 0,
+              targetPosition?.z ?? 0,
+            ]}
+            color={getNodeColor(selectedNode?.typeMath ?? "", colors)}
+            scale={getNodeScale(selectedNodeId) + 0.3}
           />
         )}
       </group>
@@ -703,13 +491,6 @@ export default function Scene({ graphData }: SceneProps) {
           />
         </EffectComposer>
       )}
-
-      <OrbitControls
-        ref={controlsRef}
-        enableZoom={true}
-        maxDistance={2000}
-        minDistance={5}
-      />
     </>
   );
 }
