@@ -1,10 +1,14 @@
 import { useState, useRef, useMemo, memo, useEffect } from "react";
 import { Billboard, Text } from "@react-three/drei";
-import { Mesh, Group, Vector3 } from "three";
+import { Mesh, Group, Vector3, SphereGeometry } from "three";
 import { PointerEvent } from "react";
 import { useTheme } from "@mui/material";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
+
+// Optimisation R3F: Instanciation unique des géométries pour éviter la duplication et les fuites VRAM
+const nodeGeometry = new SphereGeometry(0.3, 24, 24);
+const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
 
 export interface CustomNodeData {
   mesh: Mesh;
@@ -131,8 +135,7 @@ const Node = memo(function Node({
         if (onHoverEnd) onHoverEnd();
       }}
     >
-      <mesh ref={meshRef}>
-        <sphereGeometry args={[sphereSize, 24, 24]} />
+      <mesh ref={meshRef} geometry={nodeGeometry}>
         <meshPhysicalMaterial
           color={hovered ? "#99C2FF" : color}
           emissive={
@@ -164,8 +167,11 @@ const Node = memo(function Node({
       </Billboard>
 
       {debug && (
-        <mesh scale={[scale, scale, scale]}>
-          <sphereGeometry args={[sphereSize * 0.7, 16, 16]} />
+        <mesh
+          scale={[scale, scale, scale]}
+          geometry={hitboxGeometry}
+          visible={!isFiltered}
+        >
           <meshBasicMaterial color="red" wireframe />
         </mesh>
       )}

@@ -9,7 +9,7 @@ import {
   Stars,
   Grid,
 } from "@react-three/drei";
-import { Vector3, Color, Mesh, Group, MathUtils } from "three";
+import { Vector3, Color, Mesh, Group, MathUtils, SphereGeometry } from "three";
 import Edge from "../components/Edge";
 import gsap from "gsap";
 import { NodeData, Graph } from "../types/ApiTypes/graph";
@@ -22,6 +22,9 @@ import { useTranslation } from "react-i18next";
 
 import { getNodeColor } from "../utils/nodeColors";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
+
+// Optimisation R3F: Instanciation unique de la géométrie hitbox
+const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
 
 export interface GraphNodeData {
   billboard: Group;
@@ -199,8 +202,10 @@ const GraphNode = memo(
 
         {/* Hitbox debug optionnelle */}
         {debug && (
-          <mesh scale={[targetScale, targetScale, targetScale]}>
-            <sphereGeometry args={[sphereSize * 0.7, 16, 16]} />
+          <mesh
+            scale={[targetScale, targetScale, targetScale]}
+            geometry={hitboxGeometry}
+          >
             <meshBasicMaterial color="red" wireframe />
           </mesh>
         )}

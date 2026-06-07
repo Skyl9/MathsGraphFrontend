@@ -306,12 +306,7 @@ export default function Menu({ graphData }: MenuProps) {
                     <Checkbox
                       size="small"
                       checked={filters.axiome}
-                      onChange={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          axiome: !prev.axiome,
-                        }))
-                      }
+                      onChange={(e) => setFilters({ axiome: e.target.checked })}
                     />
                   }
                   label={
@@ -325,11 +320,8 @@ export default function Menu({ graphData }: MenuProps) {
                     <Checkbox
                       size="small"
                       checked={filters.théorème}
-                      onChange={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          théorème: !prev.théorème,
-                        }))
+                      onChange={(e) =>
+                        setFilters({ théorème: e.target.checked })
                       }
                     />
                   }
@@ -344,9 +336,7 @@ export default function Menu({ graphData }: MenuProps) {
                     <Checkbox
                       size="small"
                       checked={filters.lemme}
-                      onChange={() =>
-                        setFilters((prev) => ({ ...prev, lemme: !prev.lemme }))
-                      }
+                      onChange={(e) => setFilters({ lemme: e.target.checked })}
                     />
                   }
                   label={
@@ -360,11 +350,8 @@ export default function Menu({ graphData }: MenuProps) {
                     <Checkbox
                       size="small"
                       checked={filters.réciproque}
-                      onChange={() =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          réciproque: !prev.réciproque,
-                        }))
+                      onChange={(e) =>
+                        setFilters({ réciproque: e.target.checked })
                       }
                     />
                   }
