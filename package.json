@@ -82,7 +82,7 @@
     "@types/diff": "^7.0.2",
     "@types/dompurify": "^3.0.5",
     "@types/mathjax": "^0.0.40",
-    "@types/node": "^20.19.40",
+    "@types/node": "^25.9.2",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.0.4",
     "@types/react-window": "^1.8.8",
