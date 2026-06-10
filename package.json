@@ -13,7 +13,7 @@
     "@mui/lab": "^7.0.0",
     "@mui/material": "^7.3.11",
     "@mui/x-charts": "^9.4.0",
-    "@mui/x-data-grid": "^7.28.3",
+    "@mui/x-data-grid": "^9.4.0",
     "@mui/x-date-pickers": "^8.1.0",
     "@react-three/drei": "^10.0.6",
     "@react-three/fiber": "^9.1.2",
