@@ -12,6 +12,7 @@ import CustomNode, { CustomNodeData } from "../components/Node";
 import { useTranslation } from "react-i18next";
 
 import { getNodeColor } from "../utils/nodeColors";
+import { getNodeSize } from "../constants/graphTokens";
 import EnvironmentLights from "./EnvironmentLights";
 import CameraRig from "./CameraRig";
 import ControlsManager from "./ControlsManager";
@@ -342,7 +343,7 @@ export default function Scene({ graphData }: SceneProps) {
   const getNodeScale = useCallback(
     (nodeId: number) => {
       const deg = nodeDegrees[nodeId] || 0;
-      return 1.0 + Math.min(deg * 0.15, 1.2); // Échelle allant de 1.0 à 2.2 maximum
+      return getNodeSize(deg);
     },
     [nodeDegrees],
   );
@@ -393,9 +394,11 @@ export default function Scene({ graphData }: SceneProps) {
                 selectedNodeId !== null &&
                 !isSelected &&
                 !isNeighbor;
-              const isFiltered = !(
-                filters[node.typeMath as keyof typeof filters] ?? false
-              );
+              const typeKey = (node.typeMath ?? "").toLowerCase();
+              const isFiltered =
+                typeKey in filters
+                  ? !(filters[typeKey as keyof typeof filters] ?? false)
+                  : false;
 
               return (
                 <GraphNode
@@ -423,9 +426,11 @@ export default function Scene({ graphData }: SceneProps) {
                     ========================================== */
           nodes.map((node) => {
             const pos = getNodePos(node, currentView);
-            const isFiltered = !(
-              filters[(node.typeMath ?? "") as keyof typeof filters] ?? false
-            );
+            const typeKey = (node.typeMath ?? "").toLowerCase();
+            const isFiltered =
+              typeKey in filters
+                ? !(filters[typeKey as keyof typeof filters] ?? false)
+                : false;
             return (
               <CustomNode
                 key={`node-${node.id}`}
@@ -454,12 +459,16 @@ export default function Scene({ graphData }: SceneProps) {
           const endNode = nodesMap.get(edge.end)!;
           if (!startNode || !endNode) return null;
 
-          const isStartFiltered = !(
-            filters[startNode.typeMath as keyof typeof filters] ?? false
-          );
-          const isEndFiltered = !(
-            filters[endNode.typeMath as keyof typeof filters] ?? false
-          );
+          const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
+          const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
+          const isStartFiltered =
+            startTypeKey in filters
+              ? !(filters[startTypeKey as keyof typeof filters] ?? false)
+              : false;
+          const isEndFiltered =
+            endTypeKey in filters
+              ? !(filters[endTypeKey as keyof typeof filters] ?? false)
+              : false;
 
           const isFocus = graphTheme === "focus";
           const isLineConnectedToSelected =
