@@ -12,8 +12,7 @@ const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
 const hitboxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
 
 export interface EdgeDataRef {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lineRef: React.MutableRefObject<any>;
+  lineRef: React.MutableRefObject<Line2 | null>;
   isAnimatedDash: boolean;
   type: string;
   getMultiplier: () => number;

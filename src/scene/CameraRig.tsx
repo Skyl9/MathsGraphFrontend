@@ -5,6 +5,7 @@ import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { NodeData, EdgeData } from "../types/ApiTypes/graph";
 import { Vector3 } from "three";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 const getNodePos = (
   node: NodeData,
@@ -20,10 +21,15 @@ const getNodePos = (
 interface CameraRigProps {
   nodesMap: Map<number, NodeData>;
   edges: EdgeData[];
+  controlsRef: React.RefObject<OrbitControlsImpl | null>;
 }
 
-export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
-  const { camera, controls } = useThree();
+export default function CameraRig({
+  nodesMap,
+  edges,
+  controlsRef,
+}: CameraRigProps) {
+  const { camera } = useThree();
   const currentView = useUIStore((s) => s.currentView);
   const zoomAction = useUIStore((s) => s.zoomAction);
 
@@ -66,7 +72,7 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
 
   // Animations GSAP : Cadrage intelligent
   useEffect(() => {
-    if (selectedNode && targetPosition && controls) {
+    if (selectedNode && targetPosition && controlsRef.current) {
       const { x, y, z } = getNodePos(selectedNode, currentView);
       let maxDistance = 3;
 
@@ -88,13 +94,13 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
       });
       const cameraOffset = Math.max(5, maxDistance * 1.5);
 
-      gsap.to((controls as any).target, {
+      gsap.to(controlsRef.current.target, {
         x: targetPosition.x,
         y: targetPosition.y,
         z: targetPosition.z,
         duration: 1.2,
         ease: "power3.inOut",
-        onUpdate: () => (controls as any).update(),
+        onUpdate: () => controlsRef.current?.update(),
       });
       gsap.to(camera.position, {
         x: targetPosition.x + cameraOffset * 0.4,
@@ -108,7 +114,7 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
     selectedNode,
     targetPosition,
     camera,
-    controls,
+    controlsRef,
     currentView,
     edges,
     nodesMap,
@@ -119,8 +125,8 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
     if (!zoomAction.action) return;
 
     if (zoomAction.action === "in") {
-      if (controls) {
-        const target = (controls as any).target;
+      if (controlsRef.current) {
+        const target = controlsRef.current.target;
         gsap.to(camera.position, {
           x: target.x + (camera.position.x - target.x) * 0.7,
           y: target.y + (camera.position.y - target.y) * 0.7,
@@ -130,8 +136,8 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
         });
       }
     } else if (zoomAction.action === "out") {
-      if (controls) {
-        const target = (controls as any).target;
+      if (controlsRef.current) {
+        const target = controlsRef.current.target;
         gsap.to(camera.position, {
           x: target.x + (camera.position.x - target.x) * 1.4,
           y: target.y + (camera.position.y - target.y) * 1.4,
@@ -143,14 +149,14 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
     } else if (zoomAction.action === "reset") {
       setSelectedNodeId(null);
       setTargetPosition({ x: 0, y: 0, z: 0 });
-      if (controls) {
-        gsap.to((controls as any).target, {
+      if (controlsRef.current) {
+        gsap.to(controlsRef.current.target, {
           x: 0,
           y: 0,
           z: 0,
           duration: 1.2,
           ease: "power3.inOut",
-          onUpdate: () => (controls as any).update(),
+          onUpdate: () => controlsRef.current?.update(),
         });
       }
       gsap.to(camera.position, {
@@ -161,7 +167,7 @@ export default function CameraRig({ nodesMap, edges }: CameraRigProps) {
         ease: "power3.inOut",
       });
     }
-  }, [zoomAction, camera, controls, setSelectedNodeId, setTargetPosition]);
+  }, [zoomAction, camera, controlsRef, setSelectedNodeId, setTargetPosition]);
 
   return null;
 }

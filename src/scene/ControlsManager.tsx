@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { OrbitControls } from "@react-three/drei";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useUIStore } from "../stores/useUIStore";
 import { NodeData } from "../types/ApiTypes/graph";
@@ -18,9 +19,13 @@ const getNodePos = (
 
 interface ControlsManagerProps {
   nodes: NodeData[];
+  controlsRef: React.RefObject<OrbitControlsImpl | null>;
 }
 
-export default function ControlsManager({ nodes }: ControlsManagerProps) {
+export default function ControlsManager({
+  nodes,
+  controlsRef,
+}: ControlsManagerProps) {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
   const setTargetPosition = useGraphStore((s) => s.setTargetPosition);
@@ -86,6 +91,7 @@ export default function ControlsManager({ nodes }: ControlsManagerProps) {
 
   return (
     <OrbitControls
+      ref={controlsRef}
       makeDefault
       enableDamping
       dampingFactor={0.05}

@@ -17,6 +17,7 @@ import { getNodeSize } from "../constants/graphTokens";
 import EnvironmentLights from "./EnvironmentLights";
 import CameraRig from "./CameraRig";
 import ControlsManager from "./ControlsManager";
+import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 // Optimisation R3F: Instanciation unique de la géométrie hitbox
 const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
@@ -233,6 +234,7 @@ const GraphNode = memo(
 );
 
 export default function Scene({ graphData }: SceneProps) {
+  const controlsRef = useRef<OrbitControlsImpl>(null);
   const currentView = useUIStore((s) => s.currentView);
   const colorLemme = useUIStore((s) => s.colorLemme);
   const colorAxiome = useUIStore((s) => s.colorAxiome);
@@ -395,8 +397,8 @@ export default function Scene({ graphData }: SceneProps) {
   return (
     <>
       <EnvironmentLights />
-      <CameraRig nodesMap={nodesMap} edges={edges} />
-      <ControlsManager nodes={nodes} />
+      <CameraRig nodesMap={nodesMap} edges={edges} controlsRef={controlsRef} />
+      <ControlsManager nodes={nodes} controlsRef={controlsRef} />
 
       <group onPointerMissed={handleCanvasClick}>
         {renderMode === "performance" ? (
