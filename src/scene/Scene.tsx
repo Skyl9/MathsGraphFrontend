@@ -3,6 +3,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { Billboard, Text, Instances, Instance } from "@react-three/drei";
 import { Vector3, Color, Mesh, Group, MathUtils, SphereGeometry } from "three";
 import Edge, { EdgeDataRef } from "../components/Edge";
+import InstancedEdges from "../components/InstancedEdges";
 import { NodeData, Graph } from "../types/ApiTypes/graph";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useUIStore } from "../stores/useUIStore";
@@ -217,6 +218,7 @@ export default function Scene({ graphData }: SceneProps) {
   const debugMode = useUIStore((s) => s.debugMode);
   const renderMode = useUIStore((s) => s.renderMode);
   const graphTheme = useUIStore((s) => s.graphTheme);
+  const useInstancedEdges = useUIStore((s) => s.useInstancedEdges);
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
@@ -454,54 +456,64 @@ export default function Scene({ graphData }: SceneProps) {
         )}
 
         {/* 🌟 Les Arêtes */}
-        {edges.map((edge, index) => {
-          const startNode = nodesMap.get(edge.start)!;
-          const endNode = nodesMap.get(edge.end)!;
-          if (!startNode || !endNode) return null;
+        {useInstancedEdges ? (
+          <InstancedEdges
+            edges={edges}
+            nodesMap={nodesMap}
+            currentView={currentView}
+            colorSides={colorSides}
+            filters={filters}
+          />
+        ) : (
+          edges.map((edge, index) => {
+            const startNode = nodesMap.get(edge.start)!;
+            const endNode = nodesMap.get(edge.end)!;
+            if (!startNode || !endNode) return null;
 
-          const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
-          const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
-          const isStartFiltered =
-            startTypeKey in filters
-              ? !(filters[startTypeKey as keyof typeof filters] ?? false)
-              : false;
-          const isEndFiltered =
-            endTypeKey in filters
-              ? !(filters[endTypeKey as keyof typeof filters] ?? false)
-              : false;
+            const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
+            const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
+            const isStartFiltered =
+              startTypeKey in filters
+                ? !(filters[startTypeKey as keyof typeof filters] ?? false)
+                : false;
+            const isEndFiltered =
+              endTypeKey in filters
+                ? !(filters[endTypeKey as keyof typeof filters] ?? false)
+                : false;
 
-          const isFocus = graphTheme === "focus";
-          const isLineConnectedToSelected =
-            edge.start === selectedNodeId || edge.end === selectedNodeId;
-          const lineOpacity =
-            isFocus && selectedNodeId !== null && !isLineConnectedToSelected
-              ? 0.1
-              : 1;
+            const isFocus = graphTheme === "focus";
+            const isLineConnectedToSelected =
+              edge.start === selectedNodeId || edge.end === selectedNodeId;
+            const lineOpacity =
+              isFocus && selectedNodeId !== null && !isLineConnectedToSelected
+                ? 0.1
+                : 1;
 
-          const startPos = getNodePos(startNode, currentView);
-          const endPos = getNodePos(endNode, currentView);
+            const startPos = getNodePos(startNode, currentView);
+            const endPos = getNodePos(endNode, currentView);
 
-          return (
-            <group key={index}>
-              <Edge
-                start={[startPos.x, startPos.y, startPos.z]}
-                end={[endPos.x, endPos.y, endPos.z]}
-                startId={edge.start}
-                endId={edge.end}
-                type={edge.type}
-                color={colorSides}
-                debug={debugMode}
-                opacity={lineOpacity}
-                startScale={getNodeScale(edge.start)}
-                endScale={getNodeScale(edge.end)}
-                isStartFiltered={isStartFiltered}
-                isEndFiltered={isEndFiltered}
-                registerEdge={registerEdge}
-                unregisterEdge={unregisterEdge}
-              />
-            </group>
-          );
-        })}
+            return (
+              <group key={index}>
+                <Edge
+                  start={[startPos.x, startPos.y, startPos.z]}
+                  end={[endPos.x, endPos.y, endPos.z]}
+                  startId={edge.start}
+                  endId={edge.end}
+                  type={edge.type}
+                  color={colorSides}
+                  debug={debugMode}
+                  opacity={lineOpacity}
+                  startScale={getNodeScale(edge.start)}
+                  endScale={getNodeScale(edge.end)}
+                  isStartFiltered={isStartFiltered}
+                  isEndFiltered={isEndFiltered}
+                  registerEdge={registerEdge}
+                  unregisterEdge={unregisterEdge}
+                />
+              </group>
+            );
+          })
+        )}
 
         {/* 🌟 Anneau de sélection holographique */}
         {selectedNodeId && renderMode === "quality" && (

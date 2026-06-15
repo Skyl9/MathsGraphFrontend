@@ -36,6 +36,8 @@ export default function Menu({ graphData }: MenuProps) {
   const setDarkMode = useUIStore((s) => s.setDarkMode);
   const currentView = useUIStore((s) => s.currentView);
   const setCurrentView = useUIStore((s) => s.setCurrentView);
+  const useInstancedEdges = useUIStore((s) => s.useInstancedEdges);
+  const setUseInstancedEdges = useUIStore((s) => s.setUseInstancedEdges);
   const graphTheme = useUIStore((s) => s.graphTheme);
   const setGraphTheme = useUIStore((s) => s.setGraphTheme);
 
@@ -98,7 +100,6 @@ export default function Menu({ graphData }: MenuProps) {
 
   const renderMode = useUIStore((s) => s.renderMode);
   const setRenderMode = useUIStore((s) => s.setRenderMode);
-
   return (
     <>
       <div className="menu-container">
@@ -257,6 +258,24 @@ export default function Menu({ graphData }: MenuProps) {
                   <MenuItem value="quality">{t("menu.quality")}</MenuItem>
                   <MenuItem value="performance">
                     {t("menu.performance")}
+                  </MenuItem>
+                </Select>
+              </FormControl>
+
+              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                <InputLabel id="edges-mode-label">Moteur des arêtes</InputLabel>
+                <Select
+                  labelId="edges-mode-label"
+                  value={useInstancedEdges ? "instanced" : "standard"}
+                  label="Moteur des arêtes"
+                  onChange={(e) =>
+                    setUseInstancedEdges(e.target.value === "instanced")
+                  }
+                  sx={{ borderRadius: "10px" }}
+                >
+                  <MenuItem value="standard">Standard (Beauté)</MenuItem>
+                  <MenuItem value="instanced">
+                    Instancié (Performance +)
                   </MenuItem>
                 </Select>
               </FormControl>
