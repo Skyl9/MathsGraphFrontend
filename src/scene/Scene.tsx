@@ -94,6 +94,28 @@ interface GraphNodeProps {
   onHoverEnd?: () => void;
 }
 
+const areGraphNodesEqual = (
+  prev: GraphNodeProps & {
+    registerGraphNode?: (id: number, data: GraphNodeData) => void;
+    unregisterGraphNode?: (id: number) => void;
+  },
+  next: GraphNodeProps & {
+    registerGraphNode?: (id: number, data: GraphNodeData) => void;
+    unregisterGraphNode?: (id: number) => void;
+  },
+) => {
+  return (
+    prev.node.id === next.node.id &&
+    prev.currentView === next.currentView &&
+    prev.color === next.color &&
+    prev.isSelected === next.isSelected &&
+    prev.debug === next.debug &&
+    prev.shouldDim === next.shouldDim &&
+    prev.scale === next.scale &&
+    prev.isFiltered === next.isFiltered
+  );
+};
+
 // 🌟 NOUVEAU : Sous-composant qui lie 1 Instance (GPU) à 1 Texte (CPU) avec LOD
 const GraphNode = memo(
   ({
@@ -207,6 +229,7 @@ const GraphNode = memo(
       </group>
     );
   },
+  areGraphNodesEqual,
 );
 
 export default function Scene({ graphData }: SceneProps) {

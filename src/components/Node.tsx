@@ -38,6 +38,22 @@ interface NodeProps {
   unregisterNode?: (id: number) => void;
 }
 
+const areNodesEqual = (prev: NodeProps, next: NodeProps) => {
+  return (
+    prev.id === next.id &&
+    prev.color === next.color &&
+    prev.isSelected === next.isSelected &&
+    prev.isNeighbor === next.isNeighbor &&
+    prev.scale === next.scale &&
+    prev.isFiltered === next.isFiltered &&
+    prev.debug === next.debug &&
+    prev.nom === next.nom &&
+    prev.position[0] === next.position[0] &&
+    prev.position[1] === next.position[1] &&
+    prev.position[2] === next.position[2]
+  );
+};
+
 const Node = memo(function Node({
   position,
   color,
@@ -171,6 +187,6 @@ const Node = memo(function Node({
       )}
     </group>
   );
-});
+}, areNodesEqual);
 
 export default Node;

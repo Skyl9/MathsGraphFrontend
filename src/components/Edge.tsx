@@ -36,6 +36,27 @@ interface EdgeProps {
   unregisterEdge?: (id: string) => void;
 }
 
+const areEdgesEqual = (prev: EdgeProps, next: EdgeProps) => {
+  return (
+    prev.startId === next.startId &&
+    prev.endId === next.endId &&
+    prev.color === next.color &&
+    prev.type === next.type &&
+    prev.opacity === next.opacity &&
+    prev.debug === next.debug &&
+    prev.startScale === next.startScale &&
+    prev.endScale === next.endScale &&
+    prev.isStartFiltered === next.isStartFiltered &&
+    prev.isEndFiltered === next.isEndFiltered &&
+    prev.start[0] === next.start[0] &&
+    prev.start[1] === next.start[1] &&
+    prev.start[2] === next.start[2] &&
+    prev.end[0] === next.end[0] &&
+    prev.end[1] === next.end[1] &&
+    prev.end[2] === next.end[2]
+  );
+};
+
 const Edge = memo(function Edge({
   start,
   end,
@@ -291,6 +312,6 @@ const Edge = memo(function Edge({
       )}
     </group>
   );
-});
+}, areEdgesEqual);
 
 export default Edge;
