@@ -80,7 +80,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
         setLoading(false);
       }
     })();
-  }, [open, conceptId]);
+  }, [open, conceptId, t]);
 
   const handlePost = async () => {
     if (!newComment.trim()) return;

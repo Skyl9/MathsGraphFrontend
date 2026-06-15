@@ -237,7 +237,7 @@ export default function Scene({ graphData }: SceneProps) {
 
   const handleNodeHoverEnd = useCallback(() => {
     setHoveredNodeId(null);
-  }, []);
+  }, [setHoveredNodeId]);
 
   const customNodesMap = useRef(new Map<number, CustomNodeData>());
   const graphNodesMap = useRef(new Map<number, GraphNodeData>());

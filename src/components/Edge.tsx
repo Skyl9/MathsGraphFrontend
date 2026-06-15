@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { Line2 } from "three-stdlib";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
+import { getEdgeMaterial } from "../utils/materialCache";
 import MathMarkdown from "./MathMarkdown";
 
 // Optimisation R3F: Instanciation unique de la géométrie pour éviter de cloner 1000+ ConeGeometry (Fuite VRAM)
@@ -11,6 +12,7 @@ const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
 const hitboxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
 
 export interface EdgeDataRef {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   lineRef: React.MutableRefObject<any>;
   isAnimatedDash: boolean;
   type: string;
@@ -187,6 +189,10 @@ const Edge = memo(function Edge({
     return `$A \\text{ ${type} } B$`;
   }, [type]);
 
+  const arrowMaterial = useMemo(() => {
+    return getEdgeMaterial(activeColor, isNeon, finalOpacity);
+  }, [activeColor, isNeon, finalOpacity]);
+
   // Sécurité : Si les noeuds sont trop proches ou superposés, on ne dessine rien
   if (length < 0.6) return null;
 
@@ -233,17 +239,9 @@ const Edge = memo(function Edge({
         position={endOffset}
         quaternion={arrowQuaternion}
         geometry={arrowGeometry}
+        material={arrowMaterial}
         visible={finalOpacity > 0.1}
-      >
-        <meshStandardMaterial
-          color={activeColor}
-          emissive={isNeon ? activeColor : "black"}
-          emissiveIntensity={isNeon ? 2 : 0}
-          transparent={true}
-          opacity={finalOpacity}
-          depthWrite={false} // Evite les bugs de transparence avec la sphère
-        />
-      </mesh>
+      />
 
       {/* Optionnel : Flèche retour si équivalence ou reciproque */}
       {(type === "equivalence" || type === "reciproque") && (
@@ -251,17 +249,9 @@ const Edge = memo(function Edge({
           position={startOffset}
           quaternion={reverseArrowQuaternion}
           geometry={arrowGeometry}
+          material={arrowMaterial}
           visible={finalOpacity > 0.1}
-        >
-          <meshStandardMaterial
-            color={activeColor}
-            emissive={isNeon ? activeColor : "black"}
-            emissiveIntensity={isNeon ? 2 : 0}
-            transparent={true}
-            opacity={finalOpacity}
-            depthWrite={false}
-          />
-        </mesh>
+        />
       )}
 
       {/* 3. Infobulle LaTeX au survol (MathJax) */}

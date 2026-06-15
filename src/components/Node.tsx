@@ -5,6 +5,7 @@ import { PointerEvent } from "react";
 import { useTheme } from "@mui/material";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
+import { getNodeMaterial } from "../utils/materialCache";
 
 // Optimisation R3F: Instanciation unique des géométries pour éviter la duplication et les fuites VRAM
 const nodeGeometry = new SphereGeometry(0.3, 24, 24);
@@ -115,6 +116,17 @@ const Node = memo(function Node({
 
   const isInteractive = !isFiltered && currentScaleObj.current.value > 0.1;
 
+  const material = useMemo(() => {
+    return getNodeMaterial(
+      color,
+      hovered,
+      isSelected,
+      isNeon,
+      isFiltered,
+      opacity,
+    );
+  }, [color, hovered, isSelected, isNeon, isFiltered, opacity]);
+
   return (
     <group
       position={position}
@@ -135,25 +147,7 @@ const Node = memo(function Node({
         if (onHoverEnd) onHoverEnd();
       }}
     >
-      <mesh ref={meshRef} geometry={nodeGeometry}>
-        <meshPhysicalMaterial
-          color={hovered ? "#99C2FF" : color}
-          emissive={
-            isNeon || isSelected ? (hovered ? "#99C2FF" : color) : "black"
-          }
-          emissiveIntensity={
-            isNeon ? (isSelected ? 3 : 1.5) : isSelected ? 1.5 : 0
-          }
-          transparent={true}
-          opacity={isFiltered ? 0 : opacity}
-          roughness={0.15}
-          metalness={0.2}
-          clearcoat={1.0}
-          clearcoatRoughness={0.1}
-          transmission={0.3} // Aspect vitreux/dépoli
-          ior={1.5}
-        />
-      </mesh>
+      <mesh ref={meshRef} geometry={nodeGeometry} material={material} />
 
       <Billboard ref={billboardRef} position={[0, sphereSize * scale + 0.3, 0]}>
         <Text

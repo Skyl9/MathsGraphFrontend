@@ -134,7 +134,7 @@ export const GlobalSearchBar: React.FC = () => {
       onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
       onChange={handleSelect}
       renderOption={(props, option) => {
-        const { key, ...restProps } = props;
+        const { key: _key, ...restProps } = props;
         return (
           <li {...restProps} key={`${option.entity_type}-${option.id}`}>
             <Box
