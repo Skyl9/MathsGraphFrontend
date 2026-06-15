@@ -51,45 +51,13 @@ const NodePage = () => {
     currentEditField,
     newContent,
     setNewContent,
-    handleEdit: rawHandleEdit,
-    saveChanges: rawSaveChanges,
-    cancelChanges: rawCancelChanges,
+    handleEdit,
+    saveChanges,
+    cancelChanges,
     setData,
-    createField: rawCreateField,
-    refetchData: rawRefetchData,
+    createField,
+    refetchData,
   } = useEntityEdit<AllNodeData>("concept", id || "");
-
-  const handleEdit = (field: keyof AllNodeData) => {
-    logger.info("Édition démarrée", { field });
-    rawHandleEdit(field);
-  };
-  const saveChanges = () => {
-    logger.info("Sauvegarde des changements", {
-      field: currentEditField,
-      newContent,
-    });
-    rawSaveChanges();
-  };
-
-  const cancelChanges = () => {
-    logger.info("Annulation des changements", { field: currentEditField });
-    rawCancelChanges();
-  };
-
-  const createField = (...args: Parameters<typeof rawCreateField>) => {
-    logger.debug("createField appelé", { args });
-    return rawCreateField(...args);
-  };
-
-  const refetchData = async () => {
-    logger.debug("RefetchData start", { id });
-    try {
-      await rawRefetchData();
-      logger.debug("RefetchData success", { id });
-    } catch (e) {
-      logger.error("RefetchData error", e);
-    }
-  };
 
   const [isUserConnected] = useState<boolean>(() => {
     const connected = Token.isUserConnected();
