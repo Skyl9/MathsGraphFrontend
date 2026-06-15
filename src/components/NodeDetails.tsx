@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { useUIStore } from "../stores/useUIStore";
+import { getNodeColor } from "../utils/nodeColors";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
 import MathMarkdown from "./MathMarkdown";
@@ -22,6 +23,15 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   const currentView = useUIStore((s) => s.currentView);
   const { setSelectedNodeId, setTargetPosition } = useGraphStore();
   const { graphData, nodesMap } = useGraphData();
+  const colorAxiome = useUIStore((s) => s.colorAxiome);
+  const colorLemme = useUIStore((s) => s.colorLemme);
+  const colorTheoreme = useUIStore((s) => s.colorTheoreme);
+  const colorReciproque = useUIStore((s) => s.colorReciproque);
+  const colorDefinition = useUIStore((s) => s.colorDefinition);
+  const colorCorollaire = useUIStore((s) => s.colorCorollaire);
+  const colorProposition = useUIStore((s) => s.colorProposition);
+  const colorPropriete = useUIStore((s) => s.colorPropriete);
+
   const { t } = useTranslation();
 
   // Trouver le concept sélectionné
@@ -46,11 +56,17 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   if (!concept) return null;
 
   // Déterminer la couleur du type de concept
-  let typeColor = "#7DD3FC";
   const typeLabel = concept.typeMath;
-  if (concept.typeMath === "axiome") typeColor = "#52C575";
-  else if (concept.typeMath === "théorème") typeColor = "#F99D1C";
-  else if (concept.typeMath === "lemme") typeColor = "#AE66CC";
+  const typeColor = getNodeColor(concept.typeMath, [
+    colorLemme,
+    colorAxiome,
+    colorTheoreme,
+    colorReciproque,
+    colorDefinition,
+    colorCorollaire,
+    colorProposition,
+    colorPropriete,
+  ]);
 
   const handleFocusNode = () => {
     if (concept.position) {
@@ -167,10 +183,16 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
             {neighbors.length > 0 ? (
               <Box className="neighbors-list">
                 {neighbors.map((n) => {
-                  let nColor = "#7DD3FC";
-                  if (n.typeMath === "axiome") nColor = "#52C575";
-                  else if (n.typeMath === "théorème") nColor = "#F99D1C";
-                  else if (n.typeMath === "lemme") nColor = "#AE66CC";
+                  const nColor = getNodeColor(n.typeMath, [
+                    colorLemme,
+                    colorAxiome,
+                    colorTheoreme,
+                    colorReciproque,
+                    colorDefinition,
+                    colorCorollaire,
+                    colorProposition,
+                    colorPropriete,
+                  ]);
 
                   return (
                     <Box

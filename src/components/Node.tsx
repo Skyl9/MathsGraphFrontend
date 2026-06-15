@@ -6,6 +6,7 @@ import { useTheme } from "@mui/material";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
 import { getNodeMaterial } from "../utils/materialCache";
+import { getLabelColor } from "../utils/nodeColors";
 
 // Optimisation R3F: Instanciation unique des géométries pour éviter la duplication et les fuites VRAM
 const nodeGeometry = new SphereGeometry(0.3, 24, 24);
@@ -81,15 +82,8 @@ const Node = memo(function Node({
 
   // Détermine la couleur de label contrastée en fonction du thème (clair/sombre)
   const labelColor = useMemo(() => {
-    if (theme.palette.mode === "dark") {
-      return color === "black" ? "#ffffff" : color;
-    }
-    // Assombrir les couleurs pour une meilleure lisibilité en mode clair
-    if (color === "#52C575") return "#166534"; // Vert forêt
-    if (color === "#AE66CC") return "#6b21a8"; // Violet royal
-    if (color === "#F99D1C") return "#c2410c"; // Orange rouille
-    return color === "black" ? "#0f172a" : color;
-  }, [color, theme]);
+    return getLabelColor(color, theme.palette.mode);
+  }, [color, theme.palette.mode]);
 
   const isNeon = graphTheme === "neon";
   const isFocus = graphTheme === "focus";

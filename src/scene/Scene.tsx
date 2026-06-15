@@ -239,6 +239,11 @@ export default function Scene({ graphData }: SceneProps) {
   const colorLemme = useUIStore((s) => s.colorLemme);
   const colorAxiome = useUIStore((s) => s.colorAxiome);
   const colorTheoreme = useUIStore((s) => s.colorTheoreme);
+  const colorReciproque = useUIStore((s) => s.colorReciproque);
+  const colorDefinition = useUIStore((s) => s.colorDefinition);
+  const colorCorollaire = useUIStore((s) => s.colorCorollaire);
+  const colorProposition = useUIStore((s) => s.colorProposition);
+  const colorPropriete = useUIStore((s) => s.colorPropriete);
   const colorSides = useUIStore((s) => s.colorSides);
   const debugMode = useUIStore((s) => s.debugMode);
   const renderMode = useUIStore((s) => s.renderMode);
@@ -348,8 +353,26 @@ export default function Scene({ graphData }: SceneProps) {
   const edges = useMemo(() => graphData?.edges ?? [], [graphData]);
 
   const colors = useMemo(
-    () => [colorLemme, colorAxiome, colorTheoreme],
-    [colorLemme, colorAxiome, colorTheoreme],
+    () => [
+      colorLemme,
+      colorAxiome,
+      colorTheoreme,
+      colorReciproque,
+      colorDefinition,
+      colorCorollaire,
+      colorProposition,
+      colorPropriete,
+    ],
+    [
+      colorLemme,
+      colorAxiome,
+      colorTheoreme,
+      colorReciproque,
+      colorDefinition,
+      colorCorollaire,
+      colorProposition,
+      colorPropriete,
+    ],
   );
   const selectedNode = useMemo(
     () =>

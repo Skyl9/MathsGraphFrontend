@@ -24,6 +24,7 @@ import { AutoGraph, GridOn, AccountTree, Timeline } from "@mui/icons-material";
 import { useUIStore } from "../stores/useUIStore";
 import { useFilterStore } from "../stores/useFilterStore";
 import { useGraphStore } from "../stores/useGraphStore";
+import { getNodeColor } from "../utils/nodeColors";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 
@@ -40,6 +41,24 @@ export default function Menu({ graphData }: MenuProps) {
   const setUseInstancedEdges = useUIStore((s) => s.setUseInstancedEdges);
   const graphTheme = useUIStore((s) => s.graphTheme);
   const setGraphTheme = useUIStore((s) => s.setGraphTheme);
+
+  const colorAxiome = useUIStore((s) => s.colorAxiome);
+  const colorLemme = useUIStore((s) => s.colorLemme);
+  const colorTheoreme = useUIStore((s) => s.colorTheoreme);
+  const colorReciproque = useUIStore((s) => s.colorReciproque);
+  const colorDefinition = useUIStore((s) => s.colorDefinition);
+  const colorCorollaire = useUIStore((s) => s.colorCorollaire);
+  const colorProposition = useUIStore((s) => s.colorProposition);
+  const colorPropriete = useUIStore((s) => s.colorPropriete);
+
+  const setColorAxiome = useUIStore((s) => s.setColorAxiome);
+  const setColorLemme = useUIStore((s) => s.setColorLemme);
+  const setColorTheoreme = useUIStore((s) => s.setColorTheoreme);
+  const setColorReciproque = useUIStore((s) => s.setColorReciproque);
+  const setColorDefinition = useUIStore((s) => s.setColorDefinition);
+  const setColorCorollaire = useUIStore((s) => s.setColorCorollaire);
+  const setColorProposition = useUIStore((s) => s.setColorProposition);
+  const setColorPropriete = useUIStore((s) => s.setColorPropriete);
 
   const filters = useFilterStore((s) => s.filters);
   const setFilters = useFilterStore((s) => s.setFilters);
@@ -383,6 +402,208 @@ export default function Menu({ graphData }: MenuProps) {
 
               <Divider sx={{ my: 1.5, opacity: 0.4 }} />
 
+              <Typography
+                variant="subtitle2"
+                sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}
+              >
+                Couleurs des Nœuds
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  mb: 1.5,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">
+                    {t("categories.axioms")}
+                  </Typography>
+                  <input
+                    type="color"
+                    value={colorAxiome}
+                    onChange={(e) => setColorAxiome(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">
+                    {t("categories.theorems")}
+                  </Typography>
+                  <input
+                    type="color"
+                    value={colorTheoreme}
+                    onChange={(e) => setColorTheoreme(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">
+                    {t("categories.lemmas")}
+                  </Typography>
+                  <input
+                    type="color"
+                    value={colorLemme}
+                    onChange={(e) => setColorLemme(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">
+                    {t("categories.reciprocals")}
+                  </Typography>
+                  <input
+                    type="color"
+                    value={colorReciproque}
+                    onChange={(e) => setColorReciproque(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">Définitions</Typography>
+                  <input
+                    type="color"
+                    value={colorDefinition}
+                    onChange={(e) => setColorDefinition(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">Corollaires</Typography>
+                  <input
+                    type="color"
+                    value={colorCorollaire}
+                    onChange={(e) => setColorCorollaire(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">Propositions</Typography>
+                  <input
+                    type="color"
+                    value={colorProposition}
+                    onChange={(e) => setColorProposition(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Typography variant="body2">Propriétés</Typography>
+                  <input
+                    type="color"
+                    value={colorPropriete}
+                    onChange={(e) => setColorPropriete(e.target.value)}
+                    style={{
+                      border: "none",
+                      width: 30,
+                      height: 30,
+                      cursor: "pointer",
+                      background: "transparent",
+                      padding: 0,
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 <FormControlLabel
                   control={
@@ -444,10 +665,16 @@ export default function Menu({ graphData }: MenuProps) {
             }}
           >
             {searchResults.map((result) => {
-              let badgeColor = "#7DD3FC";
-              if (result.typeMath === "axiome") badgeColor = "#52C575";
-              else if (result.typeMath === "théorème") badgeColor = "#F99D1C";
-              else if (result.typeMath === "lemme") badgeColor = "#AE66CC";
+              const badgeColor = getNodeColor(result.typeMath, [
+                colorLemme,
+                colorAxiome,
+                colorTheoreme,
+                colorReciproque,
+                colorDefinition,
+                colorCorollaire,
+                colorProposition,
+                colorPropriete,
+              ]);
 
               return (
                 <div
