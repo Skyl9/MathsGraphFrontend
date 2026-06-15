@@ -13,16 +13,33 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
+import SkipNextIcon from "@mui/icons-material/SkipNext";
+import SkipPreviousIcon from "@mui/icons-material/SkipPrevious";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useUIStore } from "../stores/useUIStore";
 import { useTranslation } from "react-i18next";
+import { Graph, NodeData } from "../types/ApiTypes/graph";
 import "../styles/GraphHUD.css";
 
-export const GraphHUD: React.FC = () => {
+interface GraphHUDProps {
+  graphData: Graph | null;
+}
+
+export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
   const darkMode = useUIStore((s) => s.darkMode);
   const { t } = useTranslation();
   const triggerZoomAction = useUIStore((s) => s.triggerZoomAction);
-  const { history, currentIndex, goBack, goForward } = useGraphStore();
+  const currentView = useUIStore((s) => s.currentView);
+
+  const {
+    history,
+    currentIndex,
+    goBack,
+    goForward,
+    setTargetPosition,
+    selectedNodeId,
+    setSelectedNodeId,
+  } = useGraphStore();
 
   // Shortcuts popover state
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -52,6 +69,47 @@ export const GraphHUD: React.FC = () => {
 
   const canGoBack = currentIndex > 0;
   const canGoForward = currentIndex < history.length - 1;
+
+  const handlePrevConcept = () => {
+    if (!graphData?.nodes || graphData.nodes.length === 0) return;
+    if (selectedNodeId === null) {
+      setSelectedNodeId(graphData.nodes[0].id);
+      return;
+    }
+    const idx = graphData.nodes.findIndex(
+      (n: NodeData) => n.id === selectedNodeId,
+    );
+    if (idx !== -1) {
+      const prevNode =
+        graphData.nodes[
+          (idx - 1 + graphData.nodes.length) % graphData.nodes.length
+        ];
+      setSelectedNodeId(prevNode.id);
+      const pos = prevNode.position[currentView] ||
+        prevNode.position["grille"] ||
+        prevNode.position["physique"] || { x: 0, y: 0, z: 0 };
+      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
+    }
+  };
+
+  const handleNextConcept = () => {
+    if (!graphData?.nodes || graphData.nodes.length === 0) return;
+    if (selectedNodeId === null) {
+      setSelectedNodeId(graphData.nodes[0].id);
+      return;
+    }
+    const idx = graphData.nodes.findIndex(
+      (n: NodeData) => n.id === selectedNodeId,
+    );
+    if (idx !== -1) {
+      const nextNode = graphData.nodes[(idx + 1) % graphData.nodes.length];
+      setSelectedNodeId(nextNode.id);
+      const pos = nextNode.position[currentView] ||
+        nextNode.position["grille"] ||
+        nextNode.position["physique"] || { x: 0, y: 0, z: 0 };
+      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
+    }
+  };
 
   return (
     <Box className="graph-hud-container">
@@ -93,6 +151,35 @@ export const GraphHUD: React.FC = () => {
               <ArrowForwardIcon fontSize="small" />
             </IconButton>
           </span>
+        </Tooltip>
+
+        <Divider
+          orientation="vertical"
+          variant="middle"
+          flexItem
+          sx={{ opacity: 0.3, mx: 0.5 }}
+        />
+
+        {/* Concept Précédent */}
+        <Tooltip title={t("graph_hud.prev_concept")}>
+          <IconButton
+            size="small"
+            onClick={handlePrevConcept}
+            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+          >
+            <SkipPreviousIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+
+        {/* Concept Suivant */}
+        <Tooltip title={t("graph_hud.next_concept")}>
+          <IconButton
+            size="small"
+            onClick={handleNextConcept}
+            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+          >
+            <SkipNextIcon fontSize="small" />
+          </IconButton>
         </Tooltip>
 
         <Divider

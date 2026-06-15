@@ -529,16 +529,18 @@ export default function Scene({ graphData }: SceneProps) {
         )}
       </group>
 
-      {graphTheme === "neon" && renderMode === "quality" && (
-        <EffectComposer enableNormalPass={false}>
-          <Bloom
-            luminanceThreshold={0.2}
-            mipmapBlur
-            intensity={1.5}
-            radius={0.8}
-          />
-        </EffectComposer>
-      )}
+      {graphTheme === "neon" &&
+        renderMode === "quality" &&
+        selectedNodeId !== null && (
+          <EffectComposer enableNormalPass={false}>
+            <Bloom
+              luminanceThreshold={0.2}
+              mipmapBlur
+              intensity={1.5}
+              radius={0.8}
+            />
+          </EffectComposer>
+        )}
     </>
   );
 }

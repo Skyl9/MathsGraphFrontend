@@ -247,7 +247,7 @@ const AppContent = () => {
         <Scene graphData={graphData} />
       </Canvas>
       <Menu graphData={graphData} />
-      <GraphHUD />
+      <GraphHUD graphData={graphData} />
 
       <AnimatePresence>
         {selectedNodeId !== null && !isSearchActive && (
