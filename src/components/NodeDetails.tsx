@@ -21,14 +21,14 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   const darkMode = useUIStore((s) => s.darkMode);
   const currentView = useUIStore((s) => s.currentView);
   const { setSelectedNodeId, setTargetPosition } = useGraphStore();
-  const { graphData } = useGraphData();
+  const { graphData, nodesMap } = useGraphData();
   const { t } = useTranslation();
 
   // Trouver le concept sélectionné
   const concept = useMemo(() => {
     if (!graphData || !id) return null;
-    return graphData.nodes.find((node) => node.id === id) || null;
-  }, [graphData, id]);
+    return nodesMap.get(id) || null;
+  }, [graphData, nodesMap, id]);
 
   // Trouver les voisins reliés
   const neighbors = useMemo(() => {
@@ -37,11 +37,11 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
       .filter((edge) => edge.start === id || edge.end === id)
       .map((edge) => {
         const neighborId = edge.start === id ? edge.end : edge.start;
-        const neighborNode = graphData.nodes.find((n) => n.id === neighborId);
+        const neighborNode = nodesMap.get(neighborId);
         return neighborNode ? { ...neighborNode, relType: edge.type } : null;
       })
       .filter((n): n is NonNullable<typeof n> => n !== null);
-  }, [graphData, id]);
+  }, [graphData, nodesMap, id]);
 
   if (!concept) return null;
 
