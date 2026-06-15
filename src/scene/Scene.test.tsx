@@ -22,20 +22,24 @@ vi.mock("@react-three/fiber", () => ({
 
 vi.mock("@react-three/drei", () => ({
   OrbitControls: () => <div data-testid="orbit-controls" />,
-  Instances: ({ children }: any) => (
+  Instances: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="instances">{children}</div>
   ),
-  Instance: (props: any) => (
+  Instance: (props: Record<string, unknown>) => (
     <div data-testid="instance" data-pos={JSON.stringify(props.position)} />
   ),
-  Billboard: ({ children }: any) => <div>{children}</div>,
-  Text: ({ children }: any) => <div>{children}</div>,
+  Billboard: ({ children }: { children?: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  Text: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   Stars: () => <div />,
   Grid: () => <div />,
 }));
 
 vi.mock("@react-three/postprocessing", () => ({
-  EffectComposer: ({ children }: any) => <div>{children}</div>,
+  EffectComposer: ({ children }: { children?: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
   Bloom: () => <div />,
 }));
 
@@ -64,7 +68,7 @@ describe("Scene Layouts Integration", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useGraphStore as any).mockReturnValue({
+    (useGraphStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       selectedNodeId: null,
       targetPosition: null,
       hoveredNodeId: null,
@@ -75,20 +79,22 @@ describe("Scene Layouts Integration", () => {
   });
 
   const renderSceneWithView = (view: string) => {
-    (useUIStore as any).mockImplementation((selector: any) => {
-      const state = {
-        darkMode: true,
-        currentView: view,
-        showEdges: true,
-        performanceMode: false,
-        showLabels: true,
-        zoomAction: { action: null },
-        setZoomAction: vi.fn(),
-      };
-      return selector(state);
-    });
+    (useUIStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: Record<string, unknown>) => unknown) => {
+        const state = {
+          darkMode: true,
+          currentView: view,
+          showEdges: true,
+          performanceMode: false,
+          showLabels: true,
+          zoomAction: { action: null },
+          setZoomAction: vi.fn(),
+        };
+        return selector(state);
+      },
+    );
 
-    return render(<Scene graphData={mockGraphData as any} />);
+    return render(<Scene graphData={mockGraphData} />);
   };
 
   it("should calculate correct positions for 'grille' layout", () => {
@@ -104,20 +110,19 @@ describe("Scene Layouts Integration", () => {
       edges: [],
     };
 
-    (useUIStore as any).mockImplementation((selector: any) =>
-      selector({
-        darkMode: true,
-        currentView: "timeline",
-        showEdges: true,
-        performanceMode: false,
-        showLabels: true,
-        zoomAction: { action: null },
-        setZoomAction: vi.fn(),
-      }),
+    (useUIStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: Record<string, unknown>) => unknown) =>
+        selector({
+          darkMode: true,
+          currentView: "timeline",
+          showEdges: true,
+          performanceMode: false,
+          showLabels: true,
+          zoomAction: { action: null },
+          setZoomAction: vi.fn(),
+        }),
     );
-    const { container } = render(
-      <Scene graphData={missingLayoutData as any} />,
-    );
+    const { container } = render(<Scene graphData={missingLayoutData} />);
     expect(container).toBeInTheDocument();
   });
 });

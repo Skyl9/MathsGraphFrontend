@@ -17,14 +17,19 @@ import {
 import { useTranslation } from "react-i18next";
 import { SearchFilters as SearchFiltersType } from "../services/api";
 
+interface FilterOption {
+  id: number | string;
+  nom: string;
+}
+
 interface Props {
   filters: SearchFiltersType;
   handleFilterChange: (event: ChangeEvent<HTMLInputElement>) => void;
   handleSelectChange: (event: SelectChangeEvent<number | "">) => void;
   handleDateChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  categories?: any[];
-  types?: any[];
-  mathematiciens?: any[];
+  categories?: FilterOption[];
+  types?: FilterOption[];
+  mathematiciens?: FilterOption[];
 }
 
 export const SearchFilters = ({
@@ -175,7 +180,7 @@ export const SearchFilters = ({
               <MenuItem value="">
                 <em>Toutes</em>
               </MenuItem>
-              {categories?.map((cat: any) => (
+              {categories?.map((cat) => (
                 <MenuItem key={cat.id} value={cat.id}>
                   {cat.nom}
                 </MenuItem>
@@ -195,7 +200,7 @@ export const SearchFilters = ({
               <MenuItem value="">
                 <em>Tous</em>
               </MenuItem>
-              {types?.map((type: any) => (
+              {types?.map((type) => (
                 <MenuItem key={type.id} value={type.id}>
                   {type.nom}
                 </MenuItem>
@@ -219,7 +224,7 @@ export const SearchFilters = ({
               <MenuItem value="">
                 <em>Tous</em>
               </MenuItem>
-              {mathematiciens?.map((math: any) => (
+              {mathematiciens?.map((math) => (
                 <MenuItem key={math.id} value={math.id}>
                   {math.nom}
                 </MenuItem>

@@ -541,7 +541,7 @@ export const SearchPage = () => {
 
           {/* Grille des résultats */}
           {!isLoading && results && results.length > 0 && (
-            <SearchResults results={results as any} isDark={isDark} />
+            <SearchResults results={results} isDark={isDark} />
           )}
         </Grid>
       </Grid>

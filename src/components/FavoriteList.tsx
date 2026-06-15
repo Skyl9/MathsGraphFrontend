@@ -45,7 +45,7 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
     return <CircularProgress />;
   }
   if (error) {
-    return <Alert severity="error">{(error as any).message}</Alert>;
+    return <Alert severity="error">{(error as Error).message}</Alert>;
   }
   if (favs.length === 0) {
     return <Alert severity="info">{t("favorite_list.no_favorites")}</Alert>;

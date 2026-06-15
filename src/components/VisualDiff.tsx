@@ -4,8 +4,8 @@ import { diffWordsWithSpace, diffChars } from "diff";
 import { useTranslation } from "react-i18next";
 
 interface VisualDiffProps {
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   type?: "words" | "chars";
 }
 

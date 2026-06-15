@@ -21,17 +21,19 @@ describe("NodeDetails Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useUIStore as any).mockImplementation((selector: any) => {
-      const state = { darkMode: false, currentView: "grille" };
-      return selector(state);
-    });
+    (useUIStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      (selector: (state: Record<string, unknown>) => unknown) => {
+        const state = { darkMode: false, currentView: "grille" };
+        return selector(state);
+      },
+    );
 
-    (useGraphStore as any).mockReturnValue({
+    (useGraphStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       setSelectedNodeId: vi.fn(),
       setTargetPosition: vi.fn(),
     });
 
-    (useGraphData as any).mockReturnValue({
+    (useGraphData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       graphData: {
         nodes: [
           {

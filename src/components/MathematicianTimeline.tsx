@@ -24,7 +24,10 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import TimelineOppositeContent from "@mui/lab/TimelineOppositeContent";
 import { useTranslation } from "react-i18next";
 
-const formatYear = (dateString: string | undefined, t: any): string => {
+const formatYear = (
+  dateString: string | undefined,
+  t: (key: string) => string,
+): string => {
   if (!dateString) return t("timeline.today");
   // Les dates avant JC commencent par un -, ex: "-0300-01-01"
   const match = dateString.match(/^(-?)(\d+)-/);
