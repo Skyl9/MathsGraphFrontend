@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Box,
   IconButton,
@@ -43,6 +43,16 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
 
   // Shortcuts popover state
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const shortcutsButtonRef = useRef<HTMLButtonElement>(null);
+  const hasSeenShortcuts = useUIStore((s) => s.hasSeenShortcuts);
+  const setHasSeenShortcuts = useUIStore((s) => s.setHasSeenShortcuts);
+
+  useEffect(() => {
+    if (!hasSeenShortcuts && shortcutsButtonRef.current) {
+      setAnchorEl(shortcutsButtonRef.current);
+      setHasSeenShortcuts(true);
+    }
+  }, [hasSeenShortcuts, setHasSeenShortcuts]);
 
   const handleOpenShortcuts = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -232,6 +242,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Aide raccourcis */}
         <Tooltip title={t("graph_hud.shortcuts")}>
           <IconButton
+            ref={shortcutsButtonRef}
             aria-describedby={id}
             size="small"
             onClick={handleOpenShortcuts}

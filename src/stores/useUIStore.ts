@@ -27,6 +27,9 @@ interface UIState {
 
   zoomAction: { action: "in" | "out" | "reset" | null; timestamp: number };
   triggerZoomAction: (action: "in" | "out" | "reset") => void;
+
+  hasSeenShortcuts: boolean;
+  setHasSeenShortcuts: (value: boolean) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -39,7 +42,7 @@ export const useUIStore = create<UIState>()(
       colorAxiome: "#52C575",
       colorLemme: "#AE66CC",
       colorTheoreme: "#F99D1C",
-      colorSides: "#ffffff",
+      colorSides: "#888888",
 
       debugMode: false,
       setDebugMode: (value) =>
@@ -62,6 +65,9 @@ export const useUIStore = create<UIState>()(
       zoomAction: { action: null, timestamp: 0 },
       triggerZoomAction: (action) =>
         set({ zoomAction: { action, timestamp: Date.now() } }),
+
+      hasSeenShortcuts: false,
+      setHasSeenShortcuts: (value) => set({ hasSeenShortcuts: value }),
     }),
     {
       name: "mathgraph-ui-storage", // Nom dans le localStorage
@@ -70,6 +76,7 @@ export const useUIStore = create<UIState>()(
         graphTheme: state.graphTheme,
         renderMode: state.renderMode,
         useInstancedEdges: state.useInstancedEdges,
+        hasSeenShortcuts: state.hasSeenShortcuts,
       }), // On sauvegarde uniquement ces valeurs !
     },
   ),

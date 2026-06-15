@@ -127,7 +127,10 @@ const Edge = memo(function Edge({
     if (hovered || isHoverHighlighted) return "#38bdf8";
     if (isAnyNodeHovered) return darkMode ? "#1e293b" : "#e2e8f0";
     if (isSelectedHighlighted) return "#38bdf8";
-    return isNeon && color === "black" ? "#ffffff" : color;
+    return isNeon &&
+      (color === "black" || color === "#888888" || color === "#ffffff")
+      ? "#ffffff"
+      : color;
   }, [
     hovered,
     isAnyNodeHovered,
