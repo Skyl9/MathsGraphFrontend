@@ -246,6 +246,36 @@ const CategoryList = () => {
                 </Box>
               </motion.div>
             )}
+
+            {/* Fallback statique caché pour l'indexation SEO */}
+            <Box
+              sx={{
+                position: "absolute",
+                width: 1,
+                height: 1,
+                overflow: "hidden",
+                clip: "rect(0 0 0 0)",
+                clipPath: "inset(50%)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              <ul>
+                {categoryTree.map((rootCat) => (
+                  <li key={`seo-${rootCat.id}`}>
+                    <a href={`/category/${rootCat.id}`}>{rootCat.nom}</a>
+                    {rootCat.children && rootCat.children.length > 0 && (
+                      <ul>
+                        {rootCat.children.map((child) => (
+                          <li key={`seo-child-${child.id}`}>
+                            <a href={`/category/${child.id}`}>{child.nom}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </Box>
           </>
         )}
       </Stack>

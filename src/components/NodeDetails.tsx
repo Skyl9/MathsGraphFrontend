@@ -234,10 +234,16 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
 
                     return (
                       <Box
+                        component="a"
+                        href={`/concept/${n.id}`}
                         key={n.id}
                         className="neighbor-chip"
-                        onClick={() => handleSelectNeighbor(n.id, n.position)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleSelectNeighbor(n.id, n.position);
+                        }}
                         sx={{
+                          textDecoration: "none",
                           background: darkMode
                             ? "rgba(255, 255, 255, 0.05)"
                             : "rgba(0, 0, 0, 0.03)",

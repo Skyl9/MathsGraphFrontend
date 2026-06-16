@@ -12,7 +12,7 @@ import {
   Grid,
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { MathTimelineData, nodeApi } from "../services/api";
 
 import Timeline from "@mui/lab/Timeline";
@@ -53,7 +53,6 @@ const getYearFromDate = (dateString?: string): number | null => {
 
 export const MathematicianTimeline: React.FC = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const {
@@ -275,7 +274,8 @@ export const MathematicianTimeline: React.FC = () => {
                       variant="contained"
                       color="primary"
                       size="small"
-                      onClick={() => navigate(`/mathematicien/${math.id}`)}
+                      component={Link}
+                      to={`/mathematicien/${math.id}`}
                       endIcon={<ArrowForwardIcon fontSize="small" />}
                       sx={{
                         borderRadius: 2,
