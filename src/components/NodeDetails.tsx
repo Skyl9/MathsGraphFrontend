@@ -1,6 +1,14 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Typography, IconButton, Button, Box, Divider } from "@mui/material";
+import {
+  Typography,
+  IconButton,
+  Button,
+  Box,
+  Divider,
+  useTheme,
+  useMediaQuery,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -19,6 +27,8 @@ interface NodeDetailsProps {
 }
 
 export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const darkMode = useUIStore((s) => s.darkMode);
   const currentView = useUIStore((s) => s.currentView);
   const { setSelectedNodeId, setTargetPosition } = useGraphStore();
@@ -92,9 +102,13 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 100 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 100 }}
+      initial={{
+        opacity: 0,
+        x: isMobile ? 0 : "100%",
+        y: isMobile ? "100%" : 0,
+      }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      exit={{ opacity: 0, x: isMobile ? 0 : "100%", y: isMobile ? "100%" : 0 }}
       transition={{ type: "spring", stiffness: 280, damping: 26 }}
       className="node-details-sidebar"
     >

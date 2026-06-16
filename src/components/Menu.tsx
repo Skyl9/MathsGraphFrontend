@@ -4,13 +4,8 @@ import {
   Box,
   Button,
   FormControlLabel,
-  Checkbox,
   Divider,
   Switch,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
   useTheme,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -19,10 +14,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchBar from "./SearchBar";
+import MenuLayoutSettings from "./MenuSettings/MenuLayoutSettings";
+import MenuColorsSettings from "./MenuSettings/MenuColorsSettings";
+import MenuSearchResults from "./MenuSettings/MenuSearchResults";
 import "../styles/Menu.css";
 import { Graph } from "../types/ApiTypes/graph";
-import { AutoGraph, GridOn, AccountTree, Timeline } from "@mui/icons-material";
-import { getNodeColor } from "../utils/nodeColors";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useMenuLogic } from "../hooks/useMenuLogic";
@@ -180,230 +176,38 @@ export default function Menu({ graphData }: MenuProps) {
 
               <Divider sx={{ my: 1.5, opacity: 0.4 }} />
 
-              <Typography
-                variant="subtitle2"
-                sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}
-              >
-                {t("menu.displayMode")}
-              </Typography>
-              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                <InputLabel id="current-view-label">
-                  {t("menu.layout")}
-                </InputLabel>
-                <Select
-                  labelId="current-view-label"
-                  value={currentView}
-                  label={t("menu.layout")}
-                  onChange={(e) => setCurrentView(e.target.value)}
-                  sx={{ borderRadius: "10px" }}
-                >
-                  <MenuItem value="grille">
-                    <GridOn sx={{ mr: 1, fontSize: 18 }} /> {t("menu.grid")}
-                  </MenuItem>
-                  <MenuItem value="physique">
-                    <AutoGraph sx={{ mr: 1, fontSize: 18 }} />{" "}
-                    {t("menu.physics")}
-                  </MenuItem>
-                  <MenuItem value="arbre">
-                    <AccountTree sx={{ mr: 1, fontSize: 18 }} />{" "}
-                    {t("menu.tree")}
-                  </MenuItem>
-                  <MenuItem value="timeline">
-                    <Timeline sx={{ mr: 1, fontSize: 18 }} />{" "}
-                    {t("menu.timeline")}
-                  </MenuItem>
-                </Select>
-              </FormControl>
+              <MenuLayoutSettings
+                currentView={currentView}
+                setCurrentView={setCurrentView}
+                renderMode={renderMode}
+                setRenderMode={setRenderMode}
+                useInstancedEdges={useInstancedEdges}
+                setUseInstancedEdges={setUseInstancedEdges}
+                graphTheme={graphTheme}
+                setGraphTheme={setGraphTheme}
+              />
 
-              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                <InputLabel id="render-mode-label">
-                  {t("menu.engine")}
-                </InputLabel>
-                <Select
-                  labelId="render-mode-label"
-                  value={renderMode}
-                  label={t("menu.engine")}
-                  onChange={(e) =>
-                    setRenderMode(e.target.value as "quality" | "performance")
-                  }
-                  sx={{ borderRadius: "10px" }}
-                >
-                  <MenuItem value="quality">{t("menu.quality")}</MenuItem>
-                  <MenuItem value="performance">
-                    {t("menu.performance")}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                <InputLabel id="edges-mode-label">Moteur des arêtes</InputLabel>
-                <Select
-                  labelId="edges-mode-label"
-                  value={useInstancedEdges ? "instanced" : "standard"}
-                  label="Moteur des arêtes"
-                  onChange={(e) =>
-                    setUseInstancedEdges(e.target.value === "instanced")
-                  }
-                  sx={{ borderRadius: "10px" }}
-                >
-                  <MenuItem value="standard">Standard (Beauté)</MenuItem>
-                  <MenuItem value="instanced">
-                    Instancié (Performance +)
-                  </MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-                <InputLabel id="theme-select-label">
-                  {t("menu.visualTheme")}
-                </InputLabel>
-                <Select
-                  labelId="theme-select-label"
-                  value={graphTheme}
-                  label={t("menu.visualTheme")}
-                  onChange={(e) =>
-                    setGraphTheme(
-                      e.target.value as "classique" | "neon" | "focus",
-                    )
-                  }
-                  sx={{ borderRadius: "10px" }}
-                >
-                  <MenuItem value="classique">
-                    {t("menu.themeClassic")}
-                  </MenuItem>
-                  <MenuItem value="neon">{t("menu.themeNeon")}</MenuItem>
-                  <MenuItem value="focus">{t("menu.themeFocus")}</MenuItem>
-                </Select>
-              </FormControl>
-
-              <Divider sx={{ my: 1.5, opacity: 0.4 }} />
-
-              <Typography
-                variant="subtitle2"
-                sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}
-              >
-                {t("menu.visibleCategories")} & Couleurs
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 1,
-                  mb: 1.5,
-                }}
-              >
-                {[
-                  {
-                    key: "axiome",
-                    label: t("categories.axioms"),
-                    filter: filters.axiome,
-                    color: colorAxiome,
-                    setColor: setColorAxiome,
-                  },
-                  {
-                    key: "théorème",
-                    label: t("categories.theorems"),
-                    filter: filters.théorème,
-                    color: colorTheoreme,
-                    setColor: setColorTheoreme,
-                  },
-                  {
-                    key: "lemme",
-                    label: t("categories.lemmas"),
-                    filter: filters.lemme,
-                    color: colorLemme,
-                    setColor: setColorLemme,
-                  },
-                  {
-                    key: "réciproque",
-                    label: t("categories.reciprocals"),
-                    filter: filters.réciproque,
-                    color: colorReciproque,
-                    setColor: setColorReciproque,
-                  },
-                  {
-                    key: "définition",
-                    label: "Définitions",
-                    filter: filters.définition,
-                    color: colorDefinition,
-                    setColor: setColorDefinition,
-                  },
-                  {
-                    key: "corollaire",
-                    label: "Corollaires",
-                    filter: filters.corollaire,
-                    color: colorCorollaire,
-                    setColor: setColorCorollaire,
-                  },
-                  {
-                    key: "proposition",
-                    label: "Propositions",
-                    filter: filters.proposition,
-                    color: colorProposition,
-                    setColor: setColorProposition,
-                  },
-                  {
-                    key: "propriété",
-                    label: "Propriétés",
-                    filter: filters.propriété,
-                    color: colorPropriete,
-                    setColor: setColorPropriete,
-                  },
-                ].map((item) => (
-                  <Box
-                    key={item.key}
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: 1,
-                      background: darkMode
-                        ? alpha(theme.palette.text.primary, 0.03)
-                        : alpha(theme.palette.text.primary, 0.03),
-                      padding: "4px 8px",
-                      borderRadius: "8px",
-                      "& .MuiOutlinedInput-root": {
-                        "& fieldset": {
-                          borderColor: darkMode
-                            ? alpha(theme.palette.divider, 0.1)
-                            : alpha(theme.palette.divider, 0.1),
-                        },
-                        "&:hover fieldset": {
-                          borderColor: "primary.main",
-                        },
-                      },
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Checkbox
-                        size="small"
-                        checked={item.filter}
-                        onChange={(e) =>
-                          setFilters({ [item.key]: e.target.checked })
-                        }
-                        sx={{ padding: 0 }}
-                      />
-                      <Typography variant="body2">{item.label}</Typography>
-                    </Box>
-                    <input
-                      type="color"
-                      value={item.color}
-                      onChange={(e) => item.setColor(e.target.value)}
-                      style={{
-                        border: "none",
-                        width: 24,
-                        height: 24,
-                        cursor: "pointer",
-                        background: "transparent",
-                        padding: 0,
-                        borderRadius: "4px",
-                      }}
-                    />
-                  </Box>
-                ))}
-              </Box>
-
-              <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+              <MenuColorsSettings
+                darkMode={darkMode}
+                colorAxiome={colorAxiome}
+                colorLemme={colorLemme}
+                colorTheoreme={colorTheoreme}
+                colorReciproque={colorReciproque}
+                colorDefinition={colorDefinition}
+                colorCorollaire={colorCorollaire}
+                colorProposition={colorProposition}
+                colorPropriete={colorPropriete}
+                setColorAxiome={setColorAxiome}
+                setColorLemme={setColorLemme}
+                setColorTheoreme={setColorTheoreme}
+                setColorReciproque={setColorReciproque}
+                setColorDefinition={setColorDefinition}
+                setColorCorollaire={setColorCorollaire}
+                setColorProposition={setColorProposition}
+                setColorPropriete={setColorPropriete}
+                filters={filters}
+                setFilters={setFilters}
+              />
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 <FormControlLabel
@@ -453,80 +257,20 @@ export default function Menu({ graphData }: MenuProps) {
 
       <div className="search-bar-container">
         <SearchBar onSearch={handleSearch} setIsSearch={setIsSearchActive} />
-        {searchResults.length > 0 && isSearchActive && (
-          <div
-            className="search-results"
-            style={{
-              background: darkMode
-                ? alpha(theme.palette.background.paper, 0.85)
-                : alpha(theme.palette.background.paper, 0.85),
-              backdropFilter: "blur(16px)",
-              border: darkMode
-                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
-                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-              color: darkMode ? "#F1F5F9" : "#0F172A",
-            }}
-          >
-            {searchResults.map((result) => {
-              const badgeColor = getNodeColor(result.typeMath, [
-                colorLemme,
-                colorAxiome,
-                colorTheoreme,
-                colorReciproque,
-                colorDefinition,
-                colorCorollaire,
-                colorProposition,
-                colorPropriete,
-              ]);
-
-              return (
-                <div
-                  key={result.id}
-                  className="search-result-item"
-                  onClick={() => handleResultsSearch(result)}
-                  style={{
-                    borderLeft: `3px solid ${badgeColor}`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = darkMode
-                      ? alpha(theme.palette.divider, 0.06)
-                      : alpha(theme.palette.divider, 0.04);
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                  }}
-                >
-                  <span className="search-result-title">{result.nom}</span>
-                  <span
-                    className="search-result-meta"
-                    style={{ color: badgeColor }}
-                  >
-                    {result.typeMath}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-        {searchResults.length === 0 && isSearchActive && (
-          <div
-            className="search-results"
-            style={{
-              background: darkMode
-                ? alpha(theme.palette.background.paper, 0.85)
-                : alpha(theme.palette.background.paper, 0.85),
-              backdropFilter: "blur(16px)",
-              border: darkMode
-                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
-                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-              color: darkMode ? "#F1F5F9" : "#0F172A",
-            }}
-          >
-            <div className="search-no-results">
-              {t("search.no_concept_found")}
-            </div>
-          </div>
-        )}
+        <MenuSearchResults
+          searchResults={searchResults}
+          isSearchActive={isSearchActive}
+          handleResultsSearch={handleResultsSearch}
+          darkMode={darkMode}
+          colorAxiome={colorAxiome}
+          colorLemme={colorLemme}
+          colorTheoreme={colorTheoreme}
+          colorReciproque={colorReciproque}
+          colorDefinition={colorDefinition}
+          colorCorollaire={colorCorollaire}
+          colorProposition={colorProposition}
+          colorPropriete={colorPropriete}
+        />
       </div>
     </>
   );
