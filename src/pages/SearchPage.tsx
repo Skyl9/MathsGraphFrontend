@@ -6,27 +6,23 @@ import {
   Typography,
   Paper,
   Divider,
-  Chip,
-  TextField,
-  Button,
   Drawer,
   IconButton,
-  Stack,
   useTheme,
   SelectChangeEvent,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { nodeApi } from "../services/api";
+import { SearchBar } from "../components/Search/SearchBar";
+import { SearchEmptyState } from "../components/Search/SearchEmptyState";
 import { SearchFilters } from "../components/SearchFilters";
-import { SearchResults } from "../components/SearchResults";
 import { SearchFilters as SearchFiltersType } from "../services/api";
-import { motion } from "framer-motion";
+import { SearchResults } from "../components/SearchResults";
+import { nodeApi } from "../services/api";
 
 // Icônes
-import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
+
 import CloseIcon from "@mui/icons-material/Close";
-import SearchOffIcon from "@mui/icons-material/SearchOff";
+
 import { ListSkeleton } from "../components/Skeletons";
 
 interface SearchResult {
@@ -88,7 +84,7 @@ export const SearchPage = () => {
     });
   };
 
-  // Gestion des champs dates (TextField)
+  // Gestion des champs dates ()
   const handleDateChange = (event: ChangeEvent<HTMLInputElement>) => {
     const name = event.target.name;
     const value = event.target.value;
@@ -149,72 +145,13 @@ export const SearchPage = () => {
       sx={{ p: 1, maxWidth: 1200, margin: "0 auto", minHeight: "85vh", py: 6 }}
     >
       {/* Header / Champ de recherche */}
-      <Box sx={{ mb: 5 }}>
-        <Typography
-          variant="h3"
-          sx={{ fontWeight: 900, mb: 3, letterSpacing: "-0.02em" }}
-        >
-          {queryTerm ? `Résultats pour "${queryTerm}"` : "Recherche Avancée"}
-        </Typography>
-
-        <Box
-          component="form"
-          onSubmit={handleSearchSubmit}
-          sx={{ display: "flex", gap: 1.5 }}
-        >
-          <TextField
-            fullWidth
-            variant="outlined"
-            value={localQuery}
-            onChange={(e) => setLocalQuery(e.target.value)}
-            placeholder="Modifier ou lancer une recherche..."
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                borderRadius: 3,
-                bgcolor: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
-              },
-              "& .MuiOutlinedInput-notchedOutline": { border: "none" },
-            }}
-            InputProps={{
-              startAdornment: (
-                <IconButton type="submit" color="primary" sx={{ mr: 0.5 }}>
-                  <SearchIcon />
-                </IconButton>
-              ),
-            }}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{
-              px: 4,
-              borderRadius: 3,
-              fontWeight: 700,
-              textTransform: "none",
-            }}
-          >
-            Rechercher
-          </Button>
-        </Box>
-
-        {/* Filtres bouton pour version mobile uniquement */}
-        <Button
-          variant="outlined"
-          startIcon={<FilterListIcon />}
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            mt: 2,
-            display: { xs: "flex", md: "none" },
-            borderRadius: 2,
-            textTransform: "none",
-            fontWeight: 600,
-          }}
-        >
-          Filtrer les résultats
-        </Button>
-      </Box>
+      <SearchBar
+        queryTerm={queryTerm}
+        localQuery={localQuery}
+        setLocalQuery={setLocalQuery}
+        onSubmit={handleSearchSubmit}
+        onOpenFilters={() => setDrawerOpen(true)}
+      />
 
       {/* Layout principal */}
       <Grid container spacing={4}>
@@ -314,224 +251,22 @@ export const SearchPage = () => {
 
           {/* Page d'accueil de la recherche / Aucun terme saisi */}
           {!queryTerm && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 5,
-                  textAlign: "center",
-                  borderRadius: 4,
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                  background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2.5,
-                }}
-              >
-                <SearchIcon
-                  sx={{ fontSize: 48, color: "primary.main", opacity: 0.8 }}
-                />
-                <Box>
-                  <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
-                    Que recherchez-vous aujourd'hui ?
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ maxWidth: 450, mx: "auto", lineHeight: 1.5 }}
-                  >
-                    Saisissez un mot-clé ou un nom dans la barre de recherche
-                    ci-dessus pour explorer les théorèmes, les mathématiciens ou
-                    les catégories.
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    mt: 1,
-                    p: 2.5,
-                    borderRadius: 3,
-                    bgcolor: isDark
-                      ? "rgba(255,255,255,0.02)"
-                      : "rgba(0,0,0,0.02)",
-                    width: "100%",
-                    maxWidth: 450,
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, mb: 1.5, color: "text.secondary" }}
-                  >
-                    Suggestions rapides de recherche :
-                  </Typography>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    flexWrap="wrap"
-                    gap={1}
-                  >
-                    {[
-                      "Algèbre",
-                      "Géométrie",
-                      "Analyse",
-                      "Probabilités",
-                      "Théorème",
-                    ].map((word) => (
-                      <Chip
-                        key={word}
-                        label={word}
-                        clickable
-                        onClick={() => {
-                          setLocalQuery(word);
-                          setSearchParams({ q: word });
-                        }}
-                        size="small"
-                        sx={{ fontWeight: 650 }}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              </Paper>
-            </motion.div>
+            <SearchEmptyState
+              queryTerm={queryTerm}
+              isDark={isDark}
+              setLocalQuery={setLocalQuery}
+              setSearchParams={setSearchParams}
+            />
           )}
 
           {/* État vide (Empty State) */}
           {!isLoading && !error && results?.length === 0 && queryTerm && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <Paper
-                elevation={0}
-                sx={{
-                  p: 6,
-                  textAlign: "center",
-                  borderRadius: 4,
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                  background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2.5,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "inline-flex",
-                    p: 2,
-                    borderRadius: "50%",
-                    bgcolor: isDark
-                      ? "rgba(244, 63, 94, 0.12)"
-                      : "rgba(244, 63, 94, 0.06)",
-                    color: "error.main",
-                  }}
-                >
-                  <SearchOffIcon sx={{ fontSize: 48 }} />
-                </Box>
-                <Box>
-                  <Typography variant="h5" sx={{ fontWeight: 800, mb: 1 }}>
-                    Aucun résultat pour "{queryTerm}"
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ maxWidth: 450, mx: "auto", lineHeight: 1.5 }}
-                  >
-                    Désolé, nous n'avons trouvé aucune fiche correspondante.
-                    Vérifiez l'orthographe ou essayez l'un des termes
-                    ci-dessous.
-                  </Typography>
-                </Box>
-
-                <Box
-                  sx={{
-                    p: 2.5,
-                    borderRadius: 3,
-                    bgcolor: isDark
-                      ? "rgba(255,255,255,0.02)"
-                      : "rgba(0,0,0,0.02)",
-                    width: "100%",
-                    maxWidth: 450,
-                  }}
-                >
-                  <Typography
-                    variant="subtitle2"
-                    sx={{ fontWeight: 700, mb: 1.5, color: "primary.main" }}
-                  >
-                    Suggestions populaires :
-                  </Typography>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    flexWrap="wrap"
-                    gap={1}
-                  >
-                    {[
-                      "Pythagore",
-                      "Thalès",
-                      "Axiome",
-                      "Géométrie",
-                      "Algèbre",
-                    ].map((word) => (
-                      <Chip
-                        key={word}
-                        label={word}
-                        clickable
-                        onClick={() => {
-                          setLocalQuery(word);
-                          setSearchParams({ q: word });
-                        }}
-                        size="small"
-                        sx={{ fontWeight: 650 }}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={2}
-                  sx={{ mt: 1 }}
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    href="/contribution"
-                    sx={{
-                      borderRadius: 2,
-                      fontWeight: 700,
-                      px: 3.5,
-                      py: 1,
-                      textTransform: "none",
-                    }}
-                  >
-                    Contribuer au site
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    onClick={() => {
-                      setLocalQuery("");
-                      setSearchParams({});
-                    }}
-                    sx={{
-                      borderRadius: 2,
-                      fontWeight: 700,
-                      px: 3.5,
-                      py: 1,
-                      textTransform: "none",
-                    }}
-                  >
-                    Réinitialiser
-                  </Button>
-                </Stack>
-              </Paper>
-            </motion.div>
+            <SearchEmptyState
+              queryTerm={queryTerm}
+              isDark={isDark}
+              setLocalQuery={setLocalQuery}
+              setSearchParams={setSearchParams}
+            />
           )}
 
           {/* Grille des résultats */}

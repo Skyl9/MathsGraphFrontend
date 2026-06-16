@@ -1,19 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Avatar,
-  Typography,
-  Paper,
-  Grid,
-  Button,
-  Chip,
-  TextField,
-  MenuItem,
-  Stack,
-  useTheme,
-  IconButton,
-  Tooltip,
-} from "@mui/material";
+import { Box, Typography, Paper, Grid, useTheme } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import { useParams, Navigate } from "react-router-dom";
@@ -23,18 +9,10 @@ import UserContributions from "../components/UserContributions.tsx";
 import { User } from "../types/ApiTypes/user";
 import { useTranslation } from "react-i18next";
 import { ProfileSkeleton } from "../components/Skeletons";
-import i18n from "../i18n";
-import { ReportIssueButton } from "../components/Issue";
+import { ProfileAvatarCard } from "../components/Profile/ProfileAvatarCard";
+import { ProfileInfoForm } from "../components/Profile/ProfileInfoForm";
 
-// Icônes
-import EditIcon from "@mui/icons-material/Edit";
-import EmailIcon from "@mui/icons-material/Email";
-import LanguageIcon from "@mui/icons-material/Language";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
+import { ReportIssueButton } from "../components/Issue";
 
 const UserProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -53,7 +31,6 @@ const UserProfilePage: React.FC = () => {
     enabled: !!id,
   });
 
-  // Champs individuels (état local pour l'édition)
   const [editField, setEditField] = useState<
     null | "email" | "preferred_language" | "bio" | "avatar"
   >(null);
@@ -61,7 +38,6 @@ const UserProfilePage: React.FC = () => {
   const [lang, setLang] = useState("");
   const [bio, setBio] = useState("");
 
-  // Synchroniser l'état local avec les données reçues pour l'édition (React 18 Best Practice)
   const [prevQueryUser, setPrevQueryUser] = useState<User | null>(null);
 
   if (queryUser && queryUser !== prevQueryUser) {
@@ -114,391 +90,30 @@ const UserProfilePage: React.FC = () => {
 
       <Box sx={{ p: 1, maxWidth: 1200, margin: "0 auto", py: 4 }}>
         <Grid container spacing={4}>
-          {/* Colonne Gauche : Identité de l'utilisateur */}
+          {/* Colonne Gauche :  et Info basique */}
           <Grid size={{ xs: 12, md: 4 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 4,
-                textAlign: "center",
-                borderRadius: 4,
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
-                position: "relative",
-              }}
-            >
-              <Box
-                sx={{ position: "relative", display: "inline-block", mb: 3 }}
-              >
-                <Avatar
-                  src={user.avatar_url || "/default-avatar.png"}
-                  sx={{
-                    width: 150,
-                    height: 150,
-                    margin: "0 auto",
-                    border: `4px solid ${theme.palette.primary.main}`,
-                    boxShadow: "0 8px 24px rgba(14, 165, 233, 0.15)",
-                  }}
-                />
-                <Tooltip title={t("profile.edit_avatar")} placement="top">
-                  <IconButton
-                    onClick={() => setEditField("avatar")}
-                    color="primary"
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      right: 4,
-                      bgcolor: "background.paper",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-                      "&:hover": { bgcolor: "primary.main", color: "#ffffff" },
-                    }}
-                    size="small"
-                  >
-                    <PhotoCameraIcon sx={{ fontSize: 18 }} />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-
-              <Typography
-                variant="h4"
-                sx={{ fontWeight: 800, mb: 1, letterSpacing: "-0.01em" }}
-              >
-                {user.username}
-              </Typography>
-
-              <Stack
-                direction="row"
-                spacing={1.5}
-                justifyContent="center"
-                sx={{ mb: 3 }}
-              >
-                <Chip
-                  label={user.role}
-                  color={
-                    user.role === "admin"
-                      ? "error"
-                      : user.role === "moderator"
-                        ? "warning"
-                        : "primary"
-                  }
-                  sx={{ fontWeight: 700, textTransform: "capitalize" }}
-                />
-                <Chip
-                  label={
-                    user.is_active ? t("profile.active") : t("profile.inactive")
-                  }
-                  color={user.is_active ? "success" : "default"}
-                  sx={{ fontWeight: 700 }}
-                />
-              </Stack>
-
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => setEditField("avatar")}
-                sx={{ borderRadius: 2, textTransform: "none", fontWeight: 600 }}
-              >
-                {t("profile.manage_avatar")}
-              </Button>
-            </Paper>
+            <ProfileAvatarCard
+              user={user}
+              isDark={isDark}
+              onEditAvatar={() => setEditField("avatar")}
+            />
           </Grid>
 
           {/* Colonne Droite : Formulaires / Infos éditables */}
           <Grid size={{ xs: 12, md: 8 }}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 4,
-                borderRadius: 4,
-                border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
-                height: "100%",
-              }}
-            >
-              <Typography variant="h5" sx={{ fontWeight: 800, mb: 4 }}>
-                {t("profile.personal_info")}
-              </Typography>
-
-              <Stack spacing={4}>
-                {/* Champ Email */}
-                <Box>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{ mb: 1 }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      <EmailIcon sx={{ fontSize: 20 }} />
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        {t("profile.email")}
-                      </Typography>
-                    </Stack>
-                    {editField !== "email" && (
-                      <Button
-                        size="small"
-                        startIcon={<EditIcon />}
-                        onClick={() => setEditField("email")}
-                        sx={{ textTransform: "none", fontWeight: 600 }}
-                      >
-                        {t("profile.edit")}
-                      </Button>
-                    )}
-                  </Stack>
-
-                  {editField === "email" ? (
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ mt: 1 }}
-                    >
-                      <TextField
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
-                        size="small"
-                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
-                      />
-                      <IconButton
-                        onClick={() => handleFieldSave("email")}
-                        color="success"
-                      >
-                        <SaveIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => {
-                          setEditField(null);
-                          setEmail(user.email);
-                        }}
-                        color="error"
-                      >
-                        <CancelIcon />
-                      </IconButton>
-                    </Stack>
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      sx={{ pl: 3.5, fontWeight: 500, color: "text.primary" }}
-                    >
-                      {user.email}
-                    </Typography>
-                  )}
-                </Box>
-
-                {/* Champ Langue */}
-                <Box>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{ mb: 1 }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      <LanguageIcon sx={{ fontSize: 20 }} />
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        {t("profile.preferred_language")}
-                      </Typography>
-                    </Stack>
-                    {editField !== "preferred_language" && (
-                      <Button
-                        size="small"
-                        startIcon={<EditIcon />}
-                        onClick={() => setEditField("preferred_language")}
-                        sx={{ textTransform: "none", fontWeight: 600 }}
-                      >
-                        Modifier
-                      </Button>
-                    )}
-                  </Stack>
-
-                  {editField === "preferred_language" ? (
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ mt: 1 }}
-                    >
-                      <TextField
-                        value={lang}
-                        onChange={(e) => setLang(e.target.value)}
-                        select
-                        fullWidth
-                        size="small"
-                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
-                      >
-                        <MenuItem value="fr">{t("profile.french")}</MenuItem>
-                        <MenuItem value="en">{t("profile.english")}</MenuItem>
-                        <MenuItem value="es">{t("profile.spanish")}</MenuItem>
-                      </TextField>
-                      <IconButton
-                        onClick={() => handleFieldSave("preferred_language")}
-                        color="success"
-                      >
-                        <SaveIcon />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => {
-                          setEditField(null);
-                          setLang(user.preferred_language);
-                        }}
-                        color="error"
-                      >
-                        <CancelIcon />
-                      </IconButton>
-                    </Stack>
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        pl: 3.5,
-                        fontWeight: 500,
-                        textTransform: "capitalize",
-                      }}
-                    >
-                      {user.preferred_language === "fr"
-                        ? t("profile.french")
-                        : user.preferred_language === "en"
-                          ? t("profile.english")
-                          : t("profile.spanish")}
-                    </Typography>
-                  )}
-                </Box>
-
-                {/* Champ Biographie */}
-                <Box>
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    sx={{ mb: 1 }}
-                  >
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      alignItems="center"
-                      sx={{ color: "text.secondary" }}
-                    >
-                      <EditIcon sx={{ fontSize: 20 }} />
-                      <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
-                        {t("profile.bio")}
-                      </Typography>
-                    </Stack>
-                    {editField !== "bio" && (
-                      <Button
-                        size="small"
-                        startIcon={<EditIcon />}
-                        onClick={() => setEditField("bio")}
-                        sx={{ textTransform: "none", fontWeight: 600 }}
-                      >
-                        {t("profile.edit")}
-                      </Button>
-                    )}
-                  </Stack>
-
-                  {editField === "bio" ? (
-                    <Stack spacing={1} sx={{ mt: 1 }}>
-                      <TextField
-                        multiline
-                        rows={3}
-                        fullWidth
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
-                      />
-                      <Stack
-                        direction="row"
-                        spacing={1}
-                        justifyContent="flex-end"
-                      >
-                        <Button
-                          onClick={() => handleFieldSave("bio")}
-                          variant="contained"
-                          size="small"
-                          startIcon={<SaveIcon />}
-                          sx={{ borderRadius: 1.5 }}
-                        >
-                          {t("profile.save")}
-                        </Button>
-                        <Button
-                          onClick={() => {
-                            setEditField(null);
-                            setBio(user.bio);
-                          }}
-                          variant="outlined"
-                          size="small"
-                          startIcon={<CancelIcon />}
-                          sx={{ borderRadius: 1.5 }}
-                        >
-                          {t("profile.cancel")}
-                        </Button>
-                      </Stack>
-                    </Stack>
-                  ) : (
-                    <Typography
-                      variant="body1"
-                      sx={{
-                        pl: 3.5,
-                        fontWeight: 500,
-                        fontStyle: user.bio ? "normal" : "italic",
-                        color: user.bio ? "text.primary" : "text.secondary",
-                      }}
-                    >
-                      {user.bio || t("profile.no_bio")}
-                    </Typography>
-                  )}
-                </Box>
-
-                {/* Dates Système */}
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={4}
-                  sx={{
-                    pt: 2,
-                    borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                  }}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <CalendarMonthIcon
-                      sx={{ fontSize: 18, color: "text.secondary" }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {t("profile.registered_on")}{" "}
-                      <strong>
-                        {new Date(user.created_at).toLocaleDateString(
-                          i18n.language === "en" ? "en-US" : "fr-FR",
-                        )}
-                      </strong>
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <AccessTimeIcon
-                      sx={{ fontSize: 18, color: "text.secondary" }}
-                    />
-                    <Typography variant="body2" color="text.secondary">
-                      {t("profile.last_login")}{" "}
-                      <strong>
-                        {user.updated_at
-                          ? new Date(user.updated_at).toLocaleDateString(
-                              i18n.language === "en" ? "en-US" : "fr-FR",
-                            )
-                          : t("profile.never")}
-                      </strong>
-                    </Typography>
-                  </Stack>
-                </Stack>
-              </Stack>
-            </Paper>
+            <ProfileInfoForm
+              user={user}
+              isDark={isDark}
+              email={email}
+              setEmail={setEmail}
+              lang={lang}
+              setLang={setLang}
+              bio={bio}
+              setBio={setBio}
+              editField={editField}
+              setEditField={setEditField}
+              onSaveField={handleFieldSave}
+            />
           </Grid>
         </Grid>
 

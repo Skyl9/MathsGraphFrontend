@@ -9,24 +9,16 @@ import { useEntityEdit } from "../hooks/useEntityEdit";
 import { EditModal } from "../components/EditModal";
 
 import { NodeFieldRenderer } from "../components/NodeFields/NodeFieldRenderer";
-import CommentIcon from "@mui/icons-material/Comment";
+import { NodeSidebar } from "../components/NodeFields/NodeSidebar";
+
 import { CommentsModal, FieldOption } from "../components/CommentsModal";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import EditIcon from "@mui/icons-material/Edit";
-import HistoryIcon from "@mui/icons-material/History";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-import {
-  Button,
-  Tooltip,
-  Link,
-  Switch,
-  FormControlLabel,
-  IconButton,
-} from "@mui/material";
+import { Tooltip, IconButton } from "@mui/material";
 import Token from "../services/token";
 import { logger } from "../utils/logger";
-import { ReportIssueButton } from "../components/Issue";
+
 import FavoriteButton from "../components/FavoriteButton";
 
 import { nodeApi } from "../services/api";
@@ -36,21 +28,13 @@ import { useTranslation } from "react-i18next";
 import {
   DetailsGrid,
   MainContentColumn,
-  SidebarColumn,
   MathCard,
   MathCardHeader,
   MathCardTitle,
   MathCardBody,
-  SidebarCard,
-  SidebarCardTitle,
-  MetadataList,
-  MetadataItem,
-  MetadataLabel,
-  MetadataValue,
   ConceptHeader,
   ConceptTitleRow,
   ConceptTitle,
-  SidebarActions,
 } from "./NodePage.styles";
 
 const NodePage = () => {
@@ -272,231 +256,16 @@ const NodePage = () => {
         </MainContentColumn>
 
         {/* Colonne Latérale (Droite) */}
-        <SidebarColumn>
-          {/* Switch Mode Édition (si connecté) */}
-          {isUserConnected && (
-            <SidebarCard>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={editModeActive}
-                    onChange={(e) => setEditModeActive(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label="Mode Édition"
-                sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
-              />
-            </SidebarCard>
-          )}
-
-          {/* Carte Métadonnées */}
-          <SidebarCard>
-            <SidebarCardTitle variant="h6">Détails du Concept</SidebarCardTitle>
-            <MetadataList>
-              {/* Catégorie */}
-              {editableFields["categorie"] && (
-                <MetadataItem>
-                  <MetadataLabel>Catégorie</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      {data?.categorie &&
-                      typeof data.categorie === "object" &&
-                      "category" in data.categorie ? (
-                        <Link
-                          href={
-                            ("/category/redirect/" +
-                              data.categorie.category) as string
-                          }
-                          underline="hover"
-                        >
-                          {data.categorie.category}
-                        </Link>
-                      ) : (
-                        "Aucune"
-                      )}
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("categorie")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-
-              {/* Mathématicien */}
-              {editableFields["mathematicien"] && (
-                <MetadataItem>
-                  <MetadataLabel>Mathématicien</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      {data?.mathematicien &&
-                      typeof data.mathematicien === "object" &&
-                      "mathematicien" in data.mathematicien ? (
-                        <Link
-                          href={
-                            ("/mathematicien/redirect/" +
-                              data.mathematicien.mathematicien) as string
-                          }
-                          underline="hover"
-                        >
-                          {data.mathematicien.mathematicien}
-                        </Link>
-                      ) : (
-                        "Aucun"
-                      )}
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("mathematicien")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-
-              {/* Type */}
-              {editableFields["type"] && (
-                <MetadataItem>
-                  <MetadataLabel>Type</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      {data?.type ? (
-                        <Link
-                          href={("/type/redirect/" + data.type) as string}
-                          underline="hover"
-                        >
-                          {data.type}
-                        </Link>
-                      ) : (
-                        "Non classifié"
-                      )}
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("type")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-
-              {/* Date d'ajout */}
-              {editableFields["date_ajout"] && (
-                <MetadataItem>
-                  <MetadataLabel>Date d'ajout</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      <NodeFieldRenderer
-                        field="date_ajout"
-                        value={data?.date_ajout}
-                      />
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("date_ajout")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-
-              {/* Noms étrangers */}
-              {editableFields["noms_etrangers"] && (
-                <MetadataItem>
-                  <MetadataLabel>Noms étrangers</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      <NodeFieldRenderer
-                        field="noms_etrangers"
-                        value={data?.noms_etrangers}
-                      />
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("noms_etrangers")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-
-              {/* Tags */}
-              {editableFields["tags"] && (
-                <MetadataItem>
-                  <MetadataLabel>Tags</MetadataLabel>
-                  <MetadataValue>
-                    <span>
-                      <NodeFieldRenderer field="tags" value={data?.tags} />
-                    </span>
-                    {editModeActive && (
-                      <IconButton
-                        size="small"
-                        onClick={() => handleEdit("tags")}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </MetadataValue>
-                </MetadataItem>
-              )}
-            </MetadataList>
-          </SidebarCard>
-
-          {/* Carte Actions */}
-          <SidebarCard>
-            <SidebarCardTitle variant="h6">Actions</SidebarCardTitle>
-            <SidebarActions>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<CommentIcon />}
-                onClick={() => setIsCommentsOpen(true)}
-                sx={{ borderRadius: 2 }}
-              >
-                Commentaires
-              </Button>
-
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<HistoryIcon />}
-                onClick={() => setIsHistoryOpen(true)}
-                sx={{ borderRadius: 2 }}
-              >
-                Historique
-              </Button>
-
-              <Button
-                fullWidth
-                variant="text"
-                startIcon={<ArrowBackIcon />}
-                onClick={() => window.history.back()}
-                sx={{ borderRadius: 2, mt: 1 }}
-              >
-                Retour
-              </Button>
-            </SidebarActions>
-          </SidebarCard>
-
-          <ReportIssueButton />
-        </SidebarColumn>
+        <NodeSidebar
+          data={data || {}}
+          editModeActive={editModeActive}
+          setEditModeActive={setEditModeActive}
+          isUserConnected={isUserConnected}
+          editableFields={editableFields}
+          handleEdit={handleEdit}
+          setIsCommentsOpen={setIsCommentsOpen}
+          setIsHistoryOpen={setIsHistoryOpen}
+        />
       </DetailsGrid>
 
       {isModalOpen && currentEditField && data && (
