@@ -422,6 +422,7 @@ export const nodeApi = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+  getMe: () => request<import("./token").UserPayload>(`/me`, undefined, false),
   getToken: async (formData: URLSearchParams): Promise<accessTokens> => {
     const response = await fetch(`${BASE_URL}/token`, {
       method: "POST",
