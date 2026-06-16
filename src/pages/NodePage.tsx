@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { NodePageSkeleton } from "../components/Skeletons";
 import { HistoryModal } from "../components/HistoryModal";
 
@@ -119,6 +120,46 @@ const NodePage = () => {
 
   return (
     <>
+      <Helmet>
+        <title>
+          {data?.nom ? `${data.nom} | MathGraph` : "Concept | MathGraph"}
+        </title>
+        <meta
+          name="description"
+          content={
+            data?.enonce
+              ? data.enonce.replace(/\$/g, "").substring(0, 160)
+              : `Découvrez le concept mathématique de ${data?.nom || "ce graphe"} sur MathGraph.`
+          }
+        />
+        <meta
+          property="og:title"
+          content={data?.nom ? `${data.nom} | MathGraph` : "Concept"}
+        />
+        <meta
+          property="og:description"
+          content={
+            data?.enonce
+              ? data.enonce.replace(/\$/g, "").substring(0, 160)
+              : `Explorez le concept ${data?.nom || "mathématique"}.`
+          }
+        />
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary" />
+        <meta
+          name="twitter:title"
+          content={data?.nom ? `${data.nom} | MathGraph` : "Concept"}
+        />
+        <meta
+          name="twitter:description"
+          content={
+            data?.enonce
+              ? data.enonce.replace(/\$/g, "").substring(0, 160)
+              : `Explorez le concept ${data?.nom || "mathématique"}.`
+          }
+        />
+      </Helmet>
+
       <HistoryModal
         conceptId={id || ""}
         open={isHistoryOpen}
@@ -154,7 +195,6 @@ const NodePage = () => {
               )}
             </ConceptTitleRow>
           </ConceptHeader>
-
           {/* Énoncé Card */}
           {editableFields["enonce"] && (
             <MathCard cardtype="enonce">

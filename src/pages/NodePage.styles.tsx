@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
-export const DetailsGrid = styled(Box)(({ theme }) => ({
+export const DetailsGrid = styled("main")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr",
   gap: "24px",
@@ -13,19 +13,19 @@ export const DetailsGrid = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const MainContentColumn = styled(Box)({
+export const MainContentColumn = styled("article")({
   display: "flex",
   flexDirection: "column",
   gap: "24px",
 });
 
-export const SidebarColumn = styled(Box)({
+export const SidebarColumn = styled("aside")({
   display: "flex",
   flexDirection: "column",
   gap: "20px",
 });
 
-export const MathCard = styled(Box)<{
+export const MathCard = styled("section")<{
   cardtype?: "enonce" | "proof" | "default";
 }>(({ theme, cardtype }) => {
   const isDark = theme.palette.mode === "dark";
@@ -52,7 +52,7 @@ export const MathCard = styled(Box)<{
   };
 });
 
-export const MathCardHeader = styled(Box)(({ theme }) => {
+export const MathCardHeader = styled("header")(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     padding: "16px 24px",
@@ -151,7 +151,7 @@ export const MetadataValue = styled("div")(({ theme }) => ({
   justifyContent: "space-between",
 }));
 
-export const ConceptHeader = styled(Box)({
+export const ConceptHeader = styled("header")({
   display: "flex",
   flexDirection: "column",
   gap: "8px",
