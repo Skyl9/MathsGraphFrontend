@@ -56,6 +56,7 @@ export const ProfileAvatarCard = ({
         />
         <Tooltip title={t("profile.edit_avatar")} placement="top">
           <IconButton
+            aria-label={t("profile.edit_avatar")}
             onClick={onEditAvatar}
             color="primary"
             sx={{

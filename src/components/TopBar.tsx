@@ -53,7 +53,12 @@ export const TopBar: React.FC = () => {
           <Button onClick={toggleLanguage} color="inherit" sx={{ ml: 2 }}>
             {i18n.language === "fr" ? "🇬🇧 EN" : "🇫🇷 FR"}
           </Button>
-          <IconButton sx={{ ml: 1 }} onClick={toggleDarkMode} color="inherit">
+          <IconButton
+            aria-label="Basculer le thème"
+            sx={{ ml: 1 }}
+            onClick={toggleDarkMode}
+            color="inherit"
+          >
             {theme.palette.mode === "dark" ? (
               <Brightness7Icon />
             ) : (

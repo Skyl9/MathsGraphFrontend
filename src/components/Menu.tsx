@@ -140,7 +140,11 @@ export default function Menu({ graphData }: MenuProps) {
                 >
                   {t("menu.configuration")}
                 </Typography>
-                <IconButton size="small" onClick={() => setOpen(false)}>
+                <IconButton
+                  aria-label="Bouton d'action"
+                  size="small"
+                  onClick={() => setOpen(false)}
+                >
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </Box>

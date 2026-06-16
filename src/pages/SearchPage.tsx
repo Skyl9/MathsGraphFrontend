@@ -210,7 +210,11 @@ export const SearchPage = () => {
             <Typography variant="h6" sx={{ fontWeight: 800 }}>
               Filtres
             </Typography>
-            <IconButton onClick={() => setDrawerOpen(false)} size="small">
+            <IconButton
+              aria-label="Bouton d'action"
+              onClick={() => setDrawerOpen(false)}
+              size="small"
+            >
               <CloseIcon />
             </IconButton>
           </Box>

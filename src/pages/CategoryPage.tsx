@@ -99,6 +99,7 @@ const CategoryPage = () => {
                 editableFields["nom"] &&
                 editableFields["nom"].type !== "none" && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     color="primary"
                     onClick={() => handleEdit("nom")}
@@ -118,6 +119,7 @@ const CategoryPage = () => {
                 editableFields["description"] &&
                 editableFields["description"].type !== "none" && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     color="primary"
                     onClick={() => handleEdit("description")}
@@ -197,6 +199,7 @@ const CategoryPage = () => {
                     {editModeActive &&
                       editableFields["parent_id"].type !== "none" && (
                         <IconButton
+                          aria-label="Bouton d'action"
                           size="small"
                           color="primary"
                           onClick={() => handleEdit("parent_id")}

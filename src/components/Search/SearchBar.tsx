@@ -58,7 +58,12 @@ export const SearchBar = ({
           }}
           InputProps={{
             startAdornment: (
-              <IconButton type="submit" color="primary" sx={{ mr: 0.5 }}>
+              <IconButton
+                aria-label="Bouton d'action"
+                type="submit"
+                color="primary"
+                sx={{ mr: 0.5 }}
+              >
                 <SearchIcon />
               </IconButton>
             ),

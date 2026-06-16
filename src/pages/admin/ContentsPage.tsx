@@ -120,6 +120,7 @@ const ContentsPage = () => {
       width: 100,
       renderCell: (params) => (
         <IconButton
+          aria-label="Bouton d'action"
           color="primary"
           onClick={() => handleEditRow(params.row)}
           title="Modifier cet élément"

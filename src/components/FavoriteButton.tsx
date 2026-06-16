@@ -69,6 +69,9 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
     >
       <span>
         <IconButton
+          aria-label={
+            isFav ? t("favorite_button.remove") : t("favorite_button.add")
+          }
           onClick={handleClick}
           disabled={submitting}
           color={isFav ? "error" : "default"}

@@ -181,6 +181,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                       {/* Seuls les utilisateurs connectés peuvent répondre */}
                       {currentUserId && (
                         <IconButton
+                          aria-label="Bouton d'action"
                           edge="end"
                           onClick={() => setReplyTo(c)}
                           size="small"
@@ -192,6 +193,7 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
                       {!c.is_deleted &&
                         (isPrivileged || c.user_id === currentUserId) && (
                           <IconButton
+                            aria-label="Bouton d'action"
                             edge="end"
                             onClick={() => handleDelete(String(c.id))}
                           >

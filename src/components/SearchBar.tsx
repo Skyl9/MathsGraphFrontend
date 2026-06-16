@@ -49,7 +49,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, setIsSearch }) => {
           ),
           endAdornment: query && (
             <InputAdornment position="end">
-              <IconButton size="small" onClick={handleClear} edge="end">
+              <IconButton
+                aria-label="Bouton d'action"
+                size="small"
+                onClick={handleClear}
+                edge="end"
+              >
                 <ClearIcon sx={{ fontSize: 16 }} />
               </IconButton>
             </InputAdornment>

@@ -142,6 +142,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         <Tooltip title={t("graph_hud.prev_concept")}>
           <span>
             <IconButton
+              aria-label={t("graph_hud.prev_concept")}
               size="small"
               onClick={goBack}
               disabled={!canGoBack}
@@ -156,6 +157,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         <Tooltip title={t("graph_hud.next_concept")}>
           <span>
             <IconButton
+              aria-label={t("graph_hud.next_concept")}
               size="small"
               onClick={goForward}
               disabled={!canGoForward}
@@ -176,6 +178,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Concept Précédent */}
         <Tooltip title={t("graph_hud.prev_concept")}>
           <IconButton
+            aria-label={t("graph_hud.prev_concept")}
             size="small"
             onClick={handlePrevConcept}
             sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
@@ -187,6 +190,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Concept Suivant */}
         <Tooltip title={t("graph_hud.next_concept")}>
           <IconButton
+            aria-label={t("graph_hud.next_concept")}
             size="small"
             onClick={handleNextConcept}
             sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
@@ -205,6 +209,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Zoom + */}
         <Tooltip title={t("graph_hud.zoom_in")}>
           <IconButton
+            aria-label={t("graph_hud.zoom_in")}
             size="small"
             onClick={triggerZoomIn}
             sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
@@ -216,6 +221,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Zoom - */}
         <Tooltip title={t("graph_hud.zoom_out")}>
           <IconButton
+            aria-label={t("graph_hud.zoom_out")}
             size="small"
             onClick={triggerZoomOut}
             sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
@@ -227,6 +233,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Reset caméra */}
         <Tooltip title={t("graph_hud.reset_view")}>
           <IconButton
+            aria-label={t("graph_hud.reset_view")}
             size="small"
             onClick={triggerReset}
             sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
@@ -245,6 +252,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         {/* Aide raccourcis */}
         <Tooltip title={t("graph_hud.shortcuts")}>
           <IconButton
+            aria-label={t("graph_hud.shortcuts")}
             ref={shortcutsButtonRef}
             aria-describedby={id}
             size="small"

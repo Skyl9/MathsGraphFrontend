@@ -144,7 +144,11 @@ const NodePage = () => {
               )}
               <FavoriteButton itemId={id as string} itemType={"concept"} />
               {editModeActive && isUserConnected && editableFields["nom"] && (
-                <IconButton size="small" onClick={() => handleEdit("nom")}>
+                <IconButton
+                  aria-label="Bouton d'action"
+                  size="small"
+                  onClick={() => handleEdit("nom")}
+                >
                   <EditIcon fontSize="small" />
                 </IconButton>
               )}
@@ -159,7 +163,11 @@ const NodePage = () => {
                   {t("concept.enonce")}
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
-                  <IconButton size="small" onClick={() => handleEdit("enonce")}>
+                  <IconButton
+                    aria-label="Bouton d'action"
+                    size="small"
+                    onClick={() => handleEdit("enonce")}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
@@ -179,6 +187,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("demonstration")}
                   >
@@ -201,6 +210,7 @@ const NodePage = () => {
                 <MathCardTitle variantcolor="default">Relations</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("relations")}
                   >
@@ -221,6 +231,7 @@ const NodePage = () => {
                 <MathCardTitle variantcolor="default">Sources</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("sources")}
                   >
@@ -241,6 +252,7 @@ const NodePage = () => {
                 <MathCardTitle variantcolor="default">Alias</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("aliases")}
                   >

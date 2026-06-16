@@ -107,6 +107,7 @@ const AdminLayout = () => {
 
           <Stack direction="row" spacing={1.5} alignItems="center">
             <IconButton
+              aria-label="Bouton d'action"
               color="inherit"
               onClick={() => navigate("/")}
               title="Retour à l'accueil"

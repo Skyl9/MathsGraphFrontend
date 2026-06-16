@@ -91,6 +91,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("categorie")}
                   >
@@ -114,7 +115,11 @@ export const NodeSidebar = ({
                   )}
                 </span>
                 {editModeActive && (
-                  <IconButton size="small" onClick={() => handleEdit("type")}>
+                  <IconButton
+                    aria-label="Bouton d'action"
+                    size="small"
+                    onClick={() => handleEdit("type")}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
@@ -135,6 +140,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("date_ajout")}
                   >
@@ -158,6 +164,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     onClick={() => handleEdit("noms_etrangers")}
                   >
@@ -177,7 +184,11 @@ export const NodeSidebar = ({
                   <NodeFieldRenderer field="tags" value={data?.tags} />
                 </span>
                 {editModeActive && (
-                  <IconButton size="small" onClick={() => handleEdit("tags")}>
+                  <IconButton
+                    aria-label="Bouton d'action"
+                    size="small"
+                    onClick={() => handleEdit("tags")}
+                  >
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}

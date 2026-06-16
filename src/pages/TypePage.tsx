@@ -86,6 +86,7 @@ const TypePage = () => {
                 editableFields["nom"] &&
                 editableFields["nom"].type !== "none" && (
                   <IconButton
+                    aria-label="Bouton d'action"
                     size="small"
                     color="primary"
                     onClick={() => handleEdit("nom")}
