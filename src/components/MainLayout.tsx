@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material/styles";
 import React from "react";
 import { Outlet } from "react-router-dom";
 import {
@@ -68,7 +69,7 @@ export const MainLayout: React.FC = () => {
           px: 2,
           mt: "auto",
           backgroundColor: isDark ? "#080c18" : "#f1f5f9",
-          borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+          borderTop: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
           transition: "background-color 0.3s ease, border-color 0.3s ease",
         }}
       >

@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material/styles";
 import React, { useState, useEffect } from "react";
 import {
   Autocomplete,
@@ -93,24 +94,24 @@ export const GlobalSearchBar: React.FC = () => {
         width: 300,
         bgcolor:
           theme.palette.mode === "dark"
-            ? "rgba(255, 255, 255, 0.05)"
-            : "rgba(0, 0, 0, 0.03)",
+            ? alpha(theme.palette.text.primary, 0.05)
+            : alpha(theme.palette.divider, 0.03),
         borderRadius: 2,
         transition:
           "background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-        border: `1px solid ${theme.palette.mode === "dark" ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+        border: `1px solid ${theme.palette.mode === "dark" ? alpha(theme.palette.divider, 0.08) : alpha(theme.palette.divider, 0.08)}`,
         "&:hover": {
           bgcolor:
             theme.palette.mode === "dark"
               ? "rgba(255, 255, 255, 0.08)"
-              : "rgba(0, 0, 0, 0.05)",
+              : alpha(theme.palette.divider, 0.05),
           borderColor: "primary.main",
         },
         "&.Mui-focused": {
           bgcolor:
             theme.palette.mode === "dark"
-              ? "rgba(255, 255, 255, 0.1)"
-              : "rgba(0, 0, 0, 0.01)",
+              ? alpha(theme.palette.divider, 0.1)
+              : alpha(theme.palette.divider, 0.01),
           boxShadow: `0 0 0 2px ${theme.palette.primary.main}33`,
           borderColor: "primary.main",
         },

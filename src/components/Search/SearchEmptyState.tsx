@@ -1,4 +1,13 @@
-import { Box, Typography, Paper, Chip, Button, Stack } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import {
+  useTheme,
+  Box,
+  Typography,
+  Paper,
+  Chip,
+  Button,
+  Stack,
+} from "@mui/material";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import SearchIcon from "@mui/icons-material/Search";
 import { motion } from "framer-motion";
@@ -16,6 +25,7 @@ export const SearchEmptyState = ({
   setLocalQuery,
   setSearchParams,
 }: SearchEmptyStateProps) => {
+  const theme = useTheme();
   if (!queryTerm) {
     return (
       <motion.div
@@ -29,8 +39,10 @@ export const SearchEmptyState = ({
             p: 5,
             textAlign: "center",
             borderRadius: 4,
-            border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-            background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+            border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+            background: isDark
+              ? alpha(theme.palette.background.paper, 0.4)
+              : "#ffffff",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -60,7 +72,9 @@ export const SearchEmptyState = ({
               mt: 1,
               p: 2.5,
               borderRadius: 3,
-              bgcolor: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
+              bgcolor: isDark
+                ? alpha(theme.palette.divider, 0.02)
+                : alpha(theme.palette.divider, 0.02),
               width: "100%",
               maxWidth: 450,
             }}
@@ -110,8 +124,10 @@ export const SearchEmptyState = ({
           p: 6,
           textAlign: "center",
           borderRadius: 4,
-          border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-          background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+          border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+          background: isDark
+            ? alpha(theme.palette.background.paper, 0.4)
+            : "#ffffff",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -124,8 +140,8 @@ export const SearchEmptyState = ({
             p: 2,
             borderRadius: "50%",
             bgcolor: isDark
-              ? "rgba(244, 63, 94, 0.12)"
-              : "rgba(244, 63, 94, 0.06)",
+              ? alpha(theme.palette.error.main, 0.12)
+              : alpha(theme.palette.error.main, 0.06),
             color: "error.main",
           }}
         >
@@ -149,7 +165,9 @@ export const SearchEmptyState = ({
           sx={{
             p: 2.5,
             borderRadius: 3,
-            bgcolor: isDark ? "rgba(255,255,255,0.02)" : "rgba(0,0,0,0.02)",
+            bgcolor: isDark
+              ? alpha(theme.palette.divider, 0.02)
+              : alpha(theme.palette.divider, 0.02),
             width: "100%",
             maxWidth: 450,
           }}

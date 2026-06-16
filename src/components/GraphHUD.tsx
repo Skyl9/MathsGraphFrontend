@@ -1,5 +1,7 @@
+import { alpha } from "@mui/material/styles";
 import React, { useState, useRef, useEffect } from "react";
 import {
+  useTheme,
   Box,
   IconButton,
   Tooltip,
@@ -28,6 +30,7 @@ interface GraphHUDProps {
 export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
   const darkMode = useUIStore((s) => s.darkMode);
   const { t } = useTranslation();
+  const theme = useTheme();
   const triggerZoomAction = useUIStore((s) => s.triggerZoomAction);
   const currentView = useUIStore((s) => s.currentView);
 
@@ -127,12 +130,12 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         className="hud-pill"
         sx={{
           background: darkMode
-            ? "rgba(15, 23, 42, 0.75)"
-            : "rgba(255, 255, 255, 0.75)",
+            ? alpha(theme.palette.background.paper, 0.75)
+            : alpha(theme.palette.background.paper, 0.75),
           backdropFilter: "blur(12px)",
           border: darkMode
-            ? "1px solid rgba(255, 255, 255, 0.08)"
-            : "1px solid rgba(15, 23, 42, 0.08)",
+            ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
+            : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
         }}
       >
         {/* Historique Précédent */}
@@ -273,13 +276,13 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             sx: {
               borderRadius: "12px",
               background: darkMode
-                ? "rgba(15, 23, 42, 0.9)"
-                : "rgba(255, 255, 255, 0.95)",
+                ? alpha(theme.palette.background.paper, 0.9)
+                : alpha(theme.palette.background.paper, 0.95),
               backdropFilter: "blur(8px)",
               border: darkMode
-                ? "1px solid rgba(255, 255, 255, 0.1)"
-                : "1px solid rgba(15, 23, 42, 0.08)",
-              boxShadow: "0 10px 20px rgba(0, 0, 0, 0.15)",
+                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+              boxShadow: `0 10px 20px ${alpha(theme.palette.common.black, 0.15)}`,
               color: darkMode ? "#E2E8F0" : "#0F172A",
             },
           },

@@ -1,4 +1,6 @@
+import { alpha } from "@mui/material/styles";
 import {
+  useTheme,
   Paper,
   Typography,
   Stack,
@@ -49,6 +51,7 @@ export const ProfileInfoForm = ({
   onSaveField,
 }: ProfileInfoFormProps) => {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   return (
     <Paper
@@ -56,8 +59,10 @@ export const ProfileInfoForm = ({
       sx={{
         p: 4,
         borderRadius: 4,
-        border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-        background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+        border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+        background: isDark
+          ? alpha(theme.palette.background.paper, 0.4)
+          : "#ffffff",
         height: "100%",
       }}
     >
@@ -298,7 +303,7 @@ export const ProfileInfoForm = ({
           spacing={4}
           sx={{
             pt: 2,
-            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            borderTop: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
           }}
         >
           <Stack direction="row" spacing={1} alignItems="center">

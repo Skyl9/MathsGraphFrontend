@@ -11,7 +11,9 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
@@ -31,6 +33,7 @@ interface MenuProps {
 
 export default function Menu({ graphData }: MenuProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
 
   const {
     open,
@@ -89,17 +92,17 @@ export default function Menu({ graphData }: MenuProps) {
                 sx={{
                   backdropFilter: "blur(12px)",
                   background: darkMode
-                    ? "rgba(15, 23, 42, 0.75)"
-                    : "rgba(255, 255, 255, 0.75)",
+                    ? alpha(theme.palette.background.paper, 0.75)
+                    : alpha(theme.palette.background.paper, 0.75),
                   border: darkMode
-                    ? "1px solid rgba(255, 255, 255, 0.08)"
-                    : "1px solid rgba(15, 23, 42, 0.08)",
-                  boxShadow: "0 4px 15px rgba(0, 0, 0, 0.15)",
+                    ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
+                    : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                  boxShadow: `0 4px 15px ${alpha(theme.palette.common.black, 0.15)}`,
                   p: 1.5,
                   "&:hover": {
                     background: darkMode
-                      ? "rgba(30, 41, 59, 0.85)"
-                      : "rgba(241, 245, 249, 0.85)",
+                      ? alpha(theme.palette.background.paper, 0.85)
+                      : alpha(theme.palette.background.paper, 0.85),
                   },
                 }}
               >
@@ -116,16 +119,15 @@ export default function Menu({ graphData }: MenuProps) {
               style={{
                 width: 280,
                 padding: 20,
+                backdropFilter: "blur(20px)",
                 background: darkMode
-                  ? "rgba(15, 23, 42, 0.75)"
-                  : "rgba(255, 255, 255, 0.75)",
-                backdropFilter: "blur(16px)",
-                border: darkMode
-                  ? "1px solid rgba(255, 255, 255, 0.08)"
-                  : "1px solid rgba(15, 23, 42, 0.08)",
-                borderRadius: 16,
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-                color: darkMode ? "#E2E8F0" : "#0F172A",
+                  ? alpha(theme.palette.background.paper, 0.75)
+                  : alpha(theme.palette.background.paper, 0.75),
+                borderRight: darkMode
+                  ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
+                  : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                boxShadow: `0 10px 30px ${alpha(theme.palette.common.black, 0.2)}`,
+                color: "text.primary",
                 maxHeight: "88vh",
                 overflowY: "auto",
               }}
@@ -157,19 +159,19 @@ export default function Menu({ graphData }: MenuProps) {
                   mb: 2,
                   justifyContent: "flex-start",
                   borderColor: darkMode
-                    ? "rgba(255, 255, 255, 0.15)"
-                    : "rgba(15, 23, 42, 0.15)",
+                    ? alpha(theme.palette.text.primary, 0.15)
+                    : alpha(theme.palette.text.primary, 0.15),
                   borderRadius: "10px",
                   fontWeight: 600,
                   fontSize: "0.875rem",
                   py: 1,
                   "&:hover": {
                     background: darkMode
-                      ? "rgba(255, 255, 255, 0.05)"
-                      : "rgba(15, 23, 42, 0.03)",
+                      ? alpha(theme.palette.text.primary, 0.05)
+                      : alpha(theme.palette.text.primary, 0.03),
                     borderColor: darkMode
-                      ? "rgba(255, 255, 255, 0.3)"
-                      : "rgba(15, 23, 42, 0.3)",
+                      ? alpha(theme.palette.text.primary, 0.3)
+                      : alpha(theme.palette.text.primary, 0.3),
                   },
                 }}
               >
@@ -356,10 +358,20 @@ export default function Menu({ graphData }: MenuProps) {
                       justifyContent: "space-between",
                       gap: 1,
                       background: darkMode
-                        ? "rgba(255, 255, 255, 0.03)"
-                        : "rgba(15, 23, 42, 0.03)",
+                        ? alpha(theme.palette.text.primary, 0.03)
+                        : alpha(theme.palette.text.primary, 0.03),
                       padding: "4px 8px",
                       borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: darkMode
+                            ? alpha(theme.palette.divider, 0.1)
+                            : alpha(theme.palette.divider, 0.1),
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "primary.main",
+                        },
+                      },
                     }}
                   >
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -418,14 +430,16 @@ export default function Menu({ graphData }: MenuProps) {
                     borderRadius: "10px",
                     fontWeight: 600,
                     py: 1,
-                    background: darkMode
-                      ? "rgba(255, 255, 255, 0.15)"
-                      : "rgba(15, 23, 42, 0.9)",
-                    color: darkMode ? "#ffffff" : "#ffffff",
+                    color: "text.primary",
                     "&:hover": {
                       background: darkMode
-                        ? "rgba(255, 255, 255, 0.25)"
-                        : "rgba(15, 23, 42, 1)",
+                        ? alpha(theme.palette.text.primary, 0.05)
+                        : alpha(theme.palette.text.primary, 0.03),
+                    },
+                    "&:active": {
+                      background: darkMode
+                        ? alpha(theme.palette.text.primary, 0.15)
+                        : alpha(theme.palette.text.primary, 0.1),
                     },
                   }}
                 >
@@ -444,12 +458,12 @@ export default function Menu({ graphData }: MenuProps) {
             className="search-results"
             style={{
               background: darkMode
-                ? "rgba(15, 23, 42, 0.85)"
-                : "rgba(255, 255, 255, 0.85)",
+                ? alpha(theme.palette.background.paper, 0.85)
+                : alpha(theme.palette.background.paper, 0.85),
               backdropFilter: "blur(16px)",
               border: darkMode
-                ? "1px solid rgba(255, 255, 255, 0.1)"
-                : "1px solid rgba(15, 23, 42, 0.08)",
+                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
               color: darkMode ? "#F1F5F9" : "#0F172A",
             }}
           >
@@ -475,8 +489,8 @@ export default function Menu({ graphData }: MenuProps) {
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.background = darkMode
-                      ? "rgba(255, 255, 255, 0.06)"
-                      : "rgba(0, 0, 0, 0.04)";
+                      ? alpha(theme.palette.divider, 0.06)
+                      : alpha(theme.palette.divider, 0.04);
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = "transparent";
@@ -499,12 +513,12 @@ export default function Menu({ graphData }: MenuProps) {
             className="search-results"
             style={{
               background: darkMode
-                ? "rgba(15, 23, 42, 0.85)"
-                : "rgba(255, 255, 255, 0.85)",
+                ? alpha(theme.palette.background.paper, 0.85)
+                : alpha(theme.palette.background.paper, 0.85),
               backdropFilter: "blur(16px)",
               border: darkMode
-                ? "1px solid rgba(255, 255, 255, 0.1)"
-                : "1px solid rgba(15, 23, 42, 0.08)",
+                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
+                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
               color: darkMode ? "#F1F5F9" : "#0F172A",
             }}
           >

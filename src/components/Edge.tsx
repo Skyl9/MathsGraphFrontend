@@ -1,3 +1,5 @@
+import { useTheme } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useMemo, useState, useRef, memo, useEffect } from "react";
 import { Line, Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -72,6 +74,7 @@ const Edge = memo(function Edge({
   registerEdge,
   unregisterEdge,
 }: EdgeProps) {
+  const theme = useTheme();
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
 
@@ -287,16 +290,16 @@ const Edge = memo(function Edge({
           <div
             style={{
               background: darkMode
-                ? "rgba(15, 23, 42, 0.9)"
-                : "rgba(255, 255, 255, 0.95)",
+                ? alpha(theme.palette.background.paper, 0.9)
+                : alpha(theme.palette.background.paper, 0.95),
               backdropFilter: "blur(8px)",
               color: darkMode ? "#E2E8F0" : "#0F172A",
               border: darkMode
-                ? "1px solid rgba(255, 255, 255, 0.15)"
-                : "1px solid rgba(15, 23, 42, 0.12)",
+                ? `1px solid ${alpha(theme.palette.divider, 0.15)}`
+                : `1px solid ${alpha(theme.palette.divider, 0.12)}`,
               padding: "4px 10px",
               borderRadius: "8px",
-              boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
+              boxShadow: `0 6px 20px ${alpha(theme.palette.common.black, 0.25)}`,
               whiteSpace: "nowrap",
               fontFamily: "Inter, Roboto, sans-serif",
             }}

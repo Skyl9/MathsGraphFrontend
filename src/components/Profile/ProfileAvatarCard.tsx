@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material/styles";
 import {
   Paper,
   Box,
@@ -35,8 +36,10 @@ export const ProfileAvatarCard = ({
         p: 4,
         textAlign: "center",
         borderRadius: 4,
-        border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-        background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+        border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+        background: isDark
+          ? alpha(theme.palette.background.paper, 0.4)
+          : "#ffffff",
         position: "relative",
       }}
     >
@@ -48,7 +51,7 @@ export const ProfileAvatarCard = ({
             height: 150,
             margin: "0 auto",
             border: `4px solid ${theme.palette.primary.main}`,
-            boxShadow: "0 8px 24px rgba(14, 165, 233, 0.15)",
+            boxShadow: `0 8px 24px ${alpha(theme.palette.primary.main, 0.15)}`,
           }}
         />
         <Tooltip title={t("profile.edit_avatar")} placement="top">
@@ -60,7 +63,7 @@ export const ProfileAvatarCard = ({
               bottom: 0,
               right: 4,
               bgcolor: "background.paper",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+              boxShadow: `0 4px 12px ${alpha(theme.palette.common.black, 0.1)}`,
               "&:hover": { bgcolor: "primary.main", color: "#ffffff" },
             }}
             size="small"

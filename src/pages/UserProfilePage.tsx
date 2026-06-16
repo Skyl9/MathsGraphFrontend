@@ -1,3 +1,4 @@
+import { alpha } from "@mui/material/styles";
 import React, { useState } from "react";
 import { Box, Typography, Paper, Grid, useTheme } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -131,8 +132,10 @@ const UserProfilePage: React.FC = () => {
                   p: 3,
                   minHeight: "260px",
                   borderRadius: 4,
-                  border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
-                  background: isDark ? "rgba(15, 20, 40, 0.4)" : "#ffffff",
+                  border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+                  background: isDark
+                    ? alpha(theme.palette.background.paper, 0.4)
+                    : "#ffffff",
                 }}
               >
                 <FavoriteList userId={id} />
@@ -156,7 +159,7 @@ const UserProfilePage: React.FC = () => {
           mt={6}
           sx={{
             pt: 3,
-            borderTop: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+            borderTop: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
           }}
         >
           <ReportIssueButton />
