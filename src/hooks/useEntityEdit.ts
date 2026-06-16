@@ -1,5 +1,6 @@
 // src/hooks/useEntityEdit.ts
 import { useState, useMemo } from "react";
+import { toast } from "react-toastify";
 import { useEntityData, EntityType } from "./useEntityData";
 import { EditableField } from "../types/types";
 import {
@@ -82,8 +83,10 @@ export const useEntityEdit = <T extends object>(
 
       cancelChanges();
       await refetchData();
+      toast.success("Modifications sauvegardées avec succès");
     } catch (err) {
       console.error("Erreur lors de la sauvegarde:", err);
+      toast.error("Erreur lors de la sauvegarde.");
     } finally {
       setIsSaving(false);
     }

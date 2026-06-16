@@ -48,6 +48,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SearchPage } from "./pages/SearchPage.tsx";
 import { useUIStore } from "./stores/useUIStore";
 import NewContentPage from "./pages/admin/NewContentPage.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { MainLayout } from "./components/MainLayout";
 
@@ -83,6 +85,11 @@ const App = () => {
       <AuthProvider>
         <ThemeProvider theme={theme}>
           <CssBaseline />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={3000}
+            theme={darkMode ? "dark" : "light"}
+          />
           <ErrorBoundary>
             {" "}
             <Router>
