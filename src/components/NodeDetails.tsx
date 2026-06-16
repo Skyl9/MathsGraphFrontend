@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
+import FocusTrap from "focus-trap-react";
 import { motion } from "framer-motion";
 import {
   Typography,
@@ -43,6 +44,16 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   const colorPropriete = useUIStore((s) => s.colorPropriete);
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   // Trouver le concept sélectionné
   const concept = useMemo(() => {
@@ -101,197 +112,210 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
   };
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        x: isMobile ? 0 : "100%",
-        y: isMobile ? "100%" : 0,
+    <FocusTrap
+      focusTrapOptions={{
+        escapeDeactivates: false,
+        clickOutsideDeactivates: true,
       }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      exit={{ opacity: 0, x: isMobile ? 0 : "100%", y: isMobile ? "100%" : 0 }}
-      transition={{ type: "spring", stiffness: 280, damping: 26 }}
-      className="node-details-sidebar"
     >
-      <Box
-        className="sidebar-container"
-        sx={{
-          background: darkMode
-            ? "rgba(15, 23, 42, 0.75)"
-            : "rgba(255, 255, 255, 0.75)",
-          backdropFilter: "blur(20px)",
-          border: darkMode
-            ? "1px solid rgba(255, 255, 255, 0.08)"
-            : "1px solid rgba(15, 23, 42, 0.08)",
+      <motion.div
+        initial={{
+          opacity: 0,
+          x: isMobile ? 0 : 40,
+          y: isMobile ? 100 : 0,
         }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        exit={{
+          opacity: 0,
+          x: isMobile ? 0 : "100%",
+          y: isMobile ? "100%" : 0,
+        }}
+        transition={{ type: "spring", stiffness: 280, damping: 26 }}
+        className="node-details-sidebar"
       >
-        {/* Header */}
         <Box
-          className="sidebar-header"
-          style={{ borderLeft: `4px solid ${typeColor}` }}
+          className="sidebar-container"
+          sx={{
+            background: darkMode
+              ? "rgba(15, 23, 42, 0.75)"
+              : "rgba(255, 255, 255, 0.75)",
+            backdropFilter: "blur(20px)",
+            border: darkMode
+              ? "1px solid rgba(255, 255, 255, 0.08)"
+              : "1px solid rgba(15, 23, 42, 0.08)",
+          }}
         >
-          <IconButton
-            aria-label="Fermer"
-            size="small"
-            onClick={onClose}
-            className="sidebar-close-btn"
-            sx={{ color: darkMode ? "#94A3B8" : "#475569" }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-
-          <Typography
-            variant="h5"
-            className="sidebar-title"
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
-          >
-            {concept.nom}
-          </Typography>
-
+          {/* Header */}
           <Box
-            className="math-type-badge"
-            style={{
-              background: `${typeColor}20`,
-              color: typeColor,
-              border: `1px solid ${typeColor}40`,
-            }}
+            className="sidebar-header"
+            style={{ borderLeft: `4px solid ${typeColor}` }}
           >
-            {typeLabel}
-          </Box>
-        </Box>
-
-        {/* Body */}
-        <Box className="sidebar-body">
-          {/* Section Description / Type */}
-          <Box>
-            <Typography
-              className="section-label"
-              sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
+            <IconButton
+              aria-label="Fermer"
+              size="small"
+              onClick={onClose}
+              className="sidebar-close-btn"
+              sx={{ color: darkMode ? "#94A3B8" : "#475569" }}
             >
-              {t("node_details.description")}
+              <CloseIcon fontSize="small" />
+            </IconButton>
+
+            <Typography
+              variant="h5"
+              className="sidebar-title"
+              sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            >
+              {concept.nom}
             </Typography>
+
             <Box
-              sx={{
-                color: darkMode ? "#CBD5E1" : "#334155",
-                fontSize: "0.875rem",
+              className="math-type-badge"
+              style={{
+                background: `${typeColor}20`,
+                color: typeColor,
+                border: `1px solid ${typeColor}40`,
               }}
             >
-              {concept.enonce ? (
-                <MathMarkdown content={concept.enonce} />
+              {typeLabel}
+            </Box>
+          </Box>
+
+          {/* Body */}
+          <Box className="sidebar-body">
+            {/* Section Description / Type */}
+            <Box>
+              <Typography
+                className="section-label"
+                sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
+              >
+                {t("node_details.description")}
+              </Typography>
+              <Box
+                sx={{
+                  color: darkMode ? "#CBD5E1" : "#334155",
+                  fontSize: "0.875rem",
+                }}
+              >
+                {concept.enonce ? (
+                  <MathMarkdown content={concept.enonce} />
+                ) : (
+                  <Typography variant="body2">
+                    {t("node_details.fallback_desc", {
+                      type: concept.typeMath,
+                    })}
+                  </Typography>
+                )}
+              </Box>
+            </Box>
+
+            <Divider sx={{ opacity: 0.4 }} />
+
+            {/* Section Relations */}
+            <Box>
+              <Typography
+                className="section-label"
+                sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
+              >
+                {t("node_details.linked_concepts", { count: neighbors.length })}
+              </Typography>
+              {neighbors.length > 0 ? (
+                <Box className="neighbors-list">
+                  {neighbors.map((n) => {
+                    const nColor = getNodeColor(n.typeMath, [
+                      colorLemme,
+                      colorAxiome,
+                      colorTheoreme,
+                      colorReciproque,
+                      colorDefinition,
+                      colorCorollaire,
+                      colorProposition,
+                      colorPropriete,
+                    ]);
+
+                    return (
+                      <Box
+                        key={n.id}
+                        className="neighbor-chip"
+                        onClick={() => handleSelectNeighbor(n.id, n.position)}
+                        sx={{
+                          background: darkMode
+                            ? "rgba(255, 255, 255, 0.05)"
+                            : "rgba(0, 0, 0, 0.03)",
+                          color: darkMode ? "#E2E8F0" : "#0F172A",
+                          borderLeft: `3px solid ${nColor}`,
+                          "&:hover": {
+                            background: darkMode
+                              ? "rgba(255, 255, 255, 0.1)"
+                              : "rgba(0, 0, 0, 0.07)",
+                            borderColor: nColor,
+                          },
+                        }}
+                      >
+                        <span style={{ marginRight: 4 }}>{n.nom}</span>
+                        {n.relType && (
+                          <span style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                            ({n.relType})
+                          </span>
+                        )}
+                      </Box>
+                    );
+                  })}
+                </Box>
               ) : (
-                <Typography variant="body2">
-                  {t("node_details.fallback_desc", { type: concept.typeMath })}
+                <Typography
+                  variant="body2"
+                  sx={{ fontStyle: "italic", opacity: 0.7 }}
+                >
+                  {t("node_details.no_linked_concepts")}
                 </Typography>
               )}
             </Box>
           </Box>
 
-          <Divider sx={{ opacity: 0.4 }} />
-
-          {/* Section Relations */}
-          <Box>
-            <Typography
-              className="section-label"
-              sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
+          {/* Footer Actions */}
+          <Box className="sidebar-footer">
+            <Button
+              variant="outlined"
+              color="inherit"
+              className="sidebar-footer-btn"
+              startIcon={<CenterFocusStrongIcon />}
+              onClick={handleFocusNode}
+              sx={{
+                borderColor: darkMode
+                  ? "rgba(255, 255, 255, 0.15)"
+                  : "rgba(0, 0, 0, 0.12)",
+                color: darkMode ? "#CBD5E1" : "#334155",
+                "&:hover": {
+                  background: darkMode
+                    ? "rgba(255, 255, 255, 0.05)"
+                    : "rgba(0, 0, 0, 0.03)",
+                },
+              }}
             >
-              {t("node_details.linked_concepts", { count: neighbors.length })}
-            </Typography>
-            {neighbors.length > 0 ? (
-              <Box className="neighbors-list">
-                {neighbors.map((n) => {
-                  const nColor = getNodeColor(n.typeMath, [
-                    colorLemme,
-                    colorAxiome,
-                    colorTheoreme,
-                    colorReciproque,
-                    colorDefinition,
-                    colorCorollaire,
-                    colorProposition,
-                    colorPropriete,
-                  ]);
-
-                  return (
-                    <Box
-                      key={n.id}
-                      className="neighbor-chip"
-                      onClick={() => handleSelectNeighbor(n.id, n.position)}
-                      sx={{
-                        background: darkMode
-                          ? "rgba(255, 255, 255, 0.05)"
-                          : "rgba(0, 0, 0, 0.03)",
-                        color: darkMode ? "#E2E8F0" : "#0F172A",
-                        borderLeft: `3px solid ${nColor}`,
-                        "&:hover": {
-                          background: darkMode
-                            ? "rgba(255, 255, 255, 0.1)"
-                            : "rgba(0, 0, 0, 0.07)",
-                          borderColor: nColor,
-                        },
-                      }}
-                    >
-                      <span style={{ marginRight: 4 }}>{n.nom}</span>
-                      {n.relType && (
-                        <span style={{ fontSize: "0.7rem", opacity: 0.6 }}>
-                          ({n.relType})
-                        </span>
-                      )}
-                    </Box>
-                  );
-                })}
-              </Box>
-            ) : (
-              <Typography
-                variant="body2"
-                sx={{ fontStyle: "italic", opacity: 0.7 }}
-              >
-                {t("node_details.no_linked_concepts")}
-              </Typography>
-            )}
+              {t("node_details.focus")}
+            </Button>
+            <Button
+              variant="contained"
+              className="sidebar-footer-btn"
+              href={`/concept/${concept.id}`}
+              startIcon={<LaunchIcon />}
+              sx={{
+                background: darkMode
+                  ? "rgba(255, 255, 255, 0.15)"
+                  : "primary.main",
+                color: "#ffffff",
+                "&:hover": {
+                  background: darkMode
+                    ? "rgba(255, 255, 255, 0.25)"
+                    : "primary.dark",
+                },
+              }}
+            >
+              {t("node_details.profile")}
+            </Button>
           </Box>
         </Box>
-
-        {/* Footer Actions */}
-        <Box className="sidebar-footer">
-          <Button
-            variant="outlined"
-            color="inherit"
-            className="sidebar-footer-btn"
-            startIcon={<CenterFocusStrongIcon />}
-            onClick={handleFocusNode}
-            sx={{
-              borderColor: darkMode
-                ? "rgba(255, 255, 255, 0.15)"
-                : "rgba(0, 0, 0, 0.12)",
-              color: darkMode ? "#CBD5E1" : "#334155",
-              "&:hover": {
-                background: darkMode
-                  ? "rgba(255, 255, 255, 0.05)"
-                  : "rgba(0, 0, 0, 0.03)",
-              },
-            }}
-          >
-            {t("node_details.focus")}
-          </Button>
-          <Button
-            variant="contained"
-            className="sidebar-footer-btn"
-            href={`/concept/${concept.id}`}
-            startIcon={<LaunchIcon />}
-            sx={{
-              background: darkMode
-                ? "rgba(255, 255, 255, 0.15)"
-                : "primary.main",
-              color: "#ffffff",
-              "&:hover": {
-                background: darkMode
-                  ? "rgba(255, 255, 255, 0.25)"
-                  : "primary.dark",
-              },
-            }}
-          >
-            {t("node_details.profile")}
-          </Button>
-        </Box>
-      </Box>
-    </motion.div>
+      </motion.div>
+    </FocusTrap>
   );
 }

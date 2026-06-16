@@ -22,7 +22,8 @@ import { Graph } from "../types/ApiTypes/graph";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { useMenuLogic } from "../hooks/useMenuLogic";
-
+import FocusTrap from "focus-trap-react";
+import { useEffect } from "react";
 interface MenuProps {
   graphData: Graph;
 }
@@ -70,6 +71,16 @@ export default function Menu({ graphData }: MenuProps) {
     exportGraph,
   } = useMenuLogic(graphData);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, setOpen]);
+
   return (
     <>
       <div className="menu-container">
@@ -106,155 +117,164 @@ export default function Menu({ graphData }: MenuProps) {
               </IconButton>
             </motion.div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ type: "spring", stiffness: 280, damping: 26 }}
-              className="floating-glass-menu"
-              style={{
-                width: 280,
-                padding: 20,
-                backdropFilter: "blur(20px)",
-                background: darkMode
-                  ? alpha(theme.palette.background.paper, 0.75)
-                  : alpha(theme.palette.background.paper, 0.75),
-                borderRight: darkMode
-                  ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
-                  : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-                boxShadow: `0 10px 30px ${alpha(theme.palette.common.black, 0.2)}`,
-                color: "text.primary",
-                maxHeight: "88vh",
-                overflowY: "auto",
+            <FocusTrap
+              focusTrapOptions={{
+                escapeDeactivates: false,
+                clickOutsideDeactivates: true,
               }}
             >
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ mb: 2 }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
-                >
-                  {t("menu.configuration")}
-                </Typography>
-                <IconButton
-                  aria-label="Bouton d'action"
-                  size="small"
-                  onClick={() => setOpen(false)}
-                >
-                  <CloseIcon fontSize="small" />
-                </IconButton>
-              </Box>
-
-              <Button
-                variant="outlined"
-                color="inherit"
-                fullWidth
-                href="/"
-                startIcon={<HomeIcon />}
-                sx={{
-                  mb: 2,
-                  justifyContent: "flex-start",
-                  borderColor: darkMode
-                    ? alpha(theme.palette.text.primary, 0.15)
-                    : alpha(theme.palette.text.primary, 0.15),
-                  borderRadius: "10px",
-                  fontWeight: 600,
-                  fontSize: "0.875rem",
-                  py: 1,
-                  "&:hover": {
-                    background: darkMode
-                      ? alpha(theme.palette.text.primary, 0.05)
-                      : alpha(theme.palette.text.primary, 0.03),
-                    borderColor: darkMode
-                      ? alpha(theme.palette.text.primary, 0.3)
-                      : alpha(theme.palette.text.primary, 0.3),
-                  },
+              <motion.div
+                initial={{ opacity: 0, x: -40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ type: "spring", stiffness: 280, damping: 26 }}
+                className="floating-glass-menu"
+                style={{
+                  width: 280,
+                  padding: 20,
+                  backdropFilter: "blur(20px)",
+                  background: darkMode
+                    ? alpha(theme.palette.background.paper, 0.75)
+                    : alpha(theme.palette.background.paper, 0.75),
+                  borderRight: darkMode
+                    ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
+                    : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+                  boxShadow: `0 10px 30px ${alpha(theme.palette.common.black, 0.2)}`,
+                  color: "text.primary",
+                  maxHeight: "88vh",
+                  overflowY: "auto",
                 }}
               >
-                {t("menu.backToPortal")}
-              </Button>
-
-              <Divider sx={{ my: 1.5, opacity: 0.4 }} />
-
-              <MenuLayoutSettings
-                currentView={currentView}
-                setCurrentView={setCurrentView}
-                renderMode={renderMode}
-                setRenderMode={setRenderMode}
-                useInstancedEdges={useInstancedEdges}
-                setUseInstancedEdges={setUseInstancedEdges}
-                graphTheme={graphTheme}
-                setGraphTheme={setGraphTheme}
-              />
-
-              <MenuColorsSettings
-                darkMode={darkMode}
-                colorAxiome={colorAxiome}
-                colorLemme={colorLemme}
-                colorTheoreme={colorTheoreme}
-                colorReciproque={colorReciproque}
-                colorDefinition={colorDefinition}
-                colorCorollaire={colorCorollaire}
-                colorProposition={colorProposition}
-                colorPropriete={colorPropriete}
-                setColorAxiome={setColorAxiome}
-                setColorLemme={setColorLemme}
-                setColorTheoreme={setColorTheoreme}
-                setColorReciproque={setColorReciproque}
-                setColorDefinition={setColorDefinition}
-                setColorCorollaire={setColorCorollaire}
-                setColorProposition={setColorProposition}
-                setColorPropriete={setColorPropriete}
-                filters={filters}
-                setFilters={setFilters}
-              />
-
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      size="small"
-                      checked={darkMode}
-                      onChange={() => setDarkMode(!darkMode)}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {darkMode ? t("theme.dark") : t("theme.light")}
-                    </Typography>
-                  }
-                />
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ mb: 2 }}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
+                  >
+                    {t("menu.configuration")}
+                  </Typography>
+                  <IconButton
+                    aria-label="Bouton d'action"
+                    size="small"
+                    onClick={() => setOpen(false)}
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                </Box>
 
                 <Button
-                  variant="contained"
-                  onClick={exportGraph}
-                  startIcon={<FileDownloadIcon />}
+                  variant="outlined"
+                  color="inherit"
                   fullWidth
+                  href="/"
+                  startIcon={<HomeIcon />}
                   sx={{
+                    mb: 2,
+                    justifyContent: "flex-start",
+                    borderColor: darkMode
+                      ? alpha(theme.palette.text.primary, 0.15)
+                      : alpha(theme.palette.text.primary, 0.15),
                     borderRadius: "10px",
                     fontWeight: 600,
+                    fontSize: "0.875rem",
                     py: 1,
-                    color: "text.primary",
                     "&:hover": {
                       background: darkMode
                         ? alpha(theme.palette.text.primary, 0.05)
                         : alpha(theme.palette.text.primary, 0.03),
-                    },
-                    "&:active": {
-                      background: darkMode
-                        ? alpha(theme.palette.text.primary, 0.15)
-                        : alpha(theme.palette.text.primary, 0.1),
+                      borderColor: darkMode
+                        ? alpha(theme.palette.text.primary, 0.3)
+                        : alpha(theme.palette.text.primary, 0.3),
                     },
                   }}
                 >
-                  {t("menu.exportJson")}
+                  {t("menu.backToPortal")}
                 </Button>
-              </Box>
-            </motion.div>
+
+                <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
+                <MenuLayoutSettings
+                  currentView={currentView}
+                  setCurrentView={setCurrentView}
+                  renderMode={renderMode}
+                  setRenderMode={setRenderMode}
+                  useInstancedEdges={useInstancedEdges}
+                  setUseInstancedEdges={setUseInstancedEdges}
+                  graphTheme={graphTheme}
+                  setGraphTheme={setGraphTheme}
+                />
+
+                <MenuColorsSettings
+                  darkMode={darkMode}
+                  colorAxiome={colorAxiome}
+                  colorLemme={colorLemme}
+                  colorTheoreme={colorTheoreme}
+                  colorReciproque={colorReciproque}
+                  colorDefinition={colorDefinition}
+                  colorCorollaire={colorCorollaire}
+                  colorProposition={colorProposition}
+                  colorPropriete={colorPropriete}
+                  setColorAxiome={setColorAxiome}
+                  setColorLemme={setColorLemme}
+                  setColorTheoreme={setColorTheoreme}
+                  setColorReciproque={setColorReciproque}
+                  setColorDefinition={setColorDefinition}
+                  setColorCorollaire={setColorCorollaire}
+                  setColorProposition={setColorProposition}
+                  setColorPropriete={setColorPropriete}
+                  filters={filters}
+                  setFilters={setFilters}
+                />
+
+                <Box
+                  sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}
+                >
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        size="small"
+                        checked={darkMode}
+                        onChange={() => setDarkMode(!darkMode)}
+                      />
+                    }
+                    label={
+                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        {darkMode ? t("theme.dark") : t("theme.light")}
+                      </Typography>
+                    }
+                  />
+
+                  <Button
+                    variant="contained"
+                    onClick={exportGraph}
+                    startIcon={<FileDownloadIcon />}
+                    fullWidth
+                    sx={{
+                      borderRadius: "10px",
+                      fontWeight: 600,
+                      py: 1,
+                      color: "text.primary",
+                      "&:hover": {
+                        background: darkMode
+                          ? alpha(theme.palette.text.primary, 0.05)
+                          : alpha(theme.palette.text.primary, 0.03),
+                      },
+                      "&:active": {
+                        background: darkMode
+                          ? alpha(theme.palette.text.primary, 0.15)
+                          : alpha(theme.palette.text.primary, 0.1),
+                      },
+                    }}
+                  >
+                    {t("menu.exportJson")}
+                  </Button>
+                </Box>
+              </motion.div>
+            </FocusTrap>
           )}
         </AnimatePresence>
       </div>
