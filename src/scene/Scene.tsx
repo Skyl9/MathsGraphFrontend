@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Billboard, Text, Instances, Instance } from "@react-three/drei";
-import { Vector3, Color, Mesh, Group, MathUtils, SphereGeometry } from "three";
+import {
+  Vector3,
+  Color,
+  Mesh,
+  Group,
+  MathUtils,
+  SphereGeometry,
+  TorusGeometry,
+} from "three";
 import Edge, { EdgeDataRef } from "../components/Edge";
 import InstancedEdges from "../components/InstancedEdges";
 import { NodeData, Graph } from "../types/ApiTypes/graph";
@@ -19,8 +27,8 @@ import CameraRig from "./CameraRig";
 import ControlsManager from "./ControlsManager";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
-// Optimisation R3F: Instanciation unique de la géométrie hitbox
 const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
+const ringGeometry = new TorusGeometry(0.55, 0.015, 8, 48);
 
 export interface GraphNodeData {
   billboard: Group;
@@ -64,8 +72,12 @@ const SelectionRing = ({
     }
   });
   return (
-    <mesh ref={ringRef} position={position} rotation={[Math.PI / 2, 0, 0]}>
-      <torusGeometry args={[0.55, 0.015, 8, 48]} />
+    <mesh
+      ref={ringRef}
+      position={position}
+      rotation={[Math.PI / 2, 0, 0]}
+      geometry={ringGeometry}
+    >
       <meshStandardMaterial
         color={color}
         emissive={color}
