@@ -280,85 +280,7 @@ export default function Menu({ graphData }: MenuProps) {
                 variant="subtitle2"
                 sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}
               >
-                {t("menu.visibleCategories")}
-              </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 0.5,
-                  mb: 1.5,
-                }}
-              >
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={filters.axiome}
-                      onChange={(e) => setFilters({ axiome: e.target.checked })}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      {t("categories.axioms")}
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={filters.théorème}
-                      onChange={(e) =>
-                        setFilters({ théorème: e.target.checked })
-                      }
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      {t("categories.theorems")}
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={filters.lemme}
-                      onChange={(e) => setFilters({ lemme: e.target.checked })}
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      {t("categories.lemmas")}
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      checked={filters.réciproque}
-                      onChange={(e) =>
-                        setFilters({ réciproque: e.target.checked })
-                      }
-                    />
-                  }
-                  label={
-                    <Typography variant="body2">
-                      {t("categories.reciprocals")}
-                    </Typography>
-                  }
-                />
-              </Box>
-
-              <Divider sx={{ my: 1.5, opacity: 0.4 }} />
-
-              <Typography
-                variant="subtitle2"
-                sx={{ mb: 1, fontWeight: 700, opacity: 0.8 }}
-              >
-                Couleurs des Nœuds
+                {t("menu.visibleCategories")} & Couleurs
               </Typography>
               <Box
                 sx={{
@@ -368,190 +290,105 @@ export default function Menu({ graphData }: MenuProps) {
                   mb: 1.5,
                 }}
               >
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">
-                    {t("categories.axioms")}
-                  </Typography>
-                  <input
-                    type="color"
-                    value={colorAxiome}
-                    onChange={(e) => setColorAxiome(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
+                {[
+                  {
+                    key: "axiome",
+                    label: t("categories.axioms"),
+                    filter: filters.axiome,
+                    color: colorAxiome,
+                    setColor: setColorAxiome,
+                  },
+                  {
+                    key: "théorème",
+                    label: t("categories.theorems"),
+                    filter: filters.théorème,
+                    color: colorTheoreme,
+                    setColor: setColorTheoreme,
+                  },
+                  {
+                    key: "lemme",
+                    label: t("categories.lemmas"),
+                    filter: filters.lemme,
+                    color: colorLemme,
+                    setColor: setColorLemme,
+                  },
+                  {
+                    key: "réciproque",
+                    label: t("categories.reciprocals"),
+                    filter: filters.réciproque,
+                    color: colorReciproque,
+                    setColor: setColorReciproque,
+                  },
+                  {
+                    key: "définition",
+                    label: "Définitions",
+                    filter: filters.définition,
+                    color: colorDefinition,
+                    setColor: setColorDefinition,
+                  },
+                  {
+                    key: "corollaire",
+                    label: "Corollaires",
+                    filter: filters.corollaire,
+                    color: colorCorollaire,
+                    setColor: setColorCorollaire,
+                  },
+                  {
+                    key: "proposition",
+                    label: "Propositions",
+                    filter: filters.proposition,
+                    color: colorProposition,
+                    setColor: setColorProposition,
+                  },
+                  {
+                    key: "propriété",
+                    label: "Propriétés",
+                    filter: filters.propriété,
+                    color: colorPropriete,
+                    setColor: setColorPropriete,
+                  },
+                ].map((item) => (
+                  <Box
+                    key={item.key}
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 1,
+                      background: darkMode
+                        ? "rgba(255, 255, 255, 0.03)"
+                        : "rgba(15, 23, 42, 0.03)",
+                      padding: "4px 8px",
+                      borderRadius: "8px",
                     }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">
-                    {t("categories.theorems")}
-                  </Typography>
-                  <input
-                    type="color"
-                    value={colorTheoreme}
-                    onChange={(e) => setColorTheoreme(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">
-                    {t("categories.lemmas")}
-                  </Typography>
-                  <input
-                    type="color"
-                    value={colorLemme}
-                    onChange={(e) => setColorLemme(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">
-                    {t("categories.reciprocals")}
-                  </Typography>
-                  <input
-                    type="color"
-                    value={colorReciproque}
-                    onChange={(e) => setColorReciproque(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">Définitions</Typography>
-                  <input
-                    type="color"
-                    value={colorDefinition}
-                    onChange={(e) => setColorDefinition(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">Corollaires</Typography>
-                  <input
-                    type="color"
-                    value={colorCorollaire}
-                    onChange={(e) => setColorCorollaire(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">Propositions</Typography>
-                  <input
-                    type="color"
-                    value={colorProposition}
-                    onChange={(e) => setColorProposition(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Typography variant="body2">Propriétés</Typography>
-                  <input
-                    type="color"
-                    value={colorPropriete}
-                    onChange={(e) => setColorPropriete(e.target.value)}
-                    style={{
-                      border: "none",
-                      width: 30,
-                      height: 30,
-                      cursor: "pointer",
-                      background: "transparent",
-                      padding: 0,
-                    }}
-                  />
-                </Box>
+                  >
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Checkbox
+                        size="small"
+                        checked={item.filter}
+                        onChange={(e) =>
+                          setFilters({ [item.key]: e.target.checked })
+                        }
+                        sx={{ padding: 0 }}
+                      />
+                      <Typography variant="body2">{item.label}</Typography>
+                    </Box>
+                    <input
+                      type="color"
+                      value={item.color}
+                      onChange={(e) => item.setColor(e.target.value)}
+                      style={{
+                        border: "none",
+                        width: 24,
+                        height: 24,
+                        cursor: "pointer",
+                        background: "transparent",
+                        padding: 0,
+                        borderRadius: "4px",
+                      }}
+                    />
+                  </Box>
+                ))}
               </Box>
 
               <Divider sx={{ my: 1.5, opacity: 0.4 }} />
