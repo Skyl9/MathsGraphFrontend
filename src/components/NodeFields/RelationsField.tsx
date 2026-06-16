@@ -1,6 +1,7 @@
-import React from 'react';
-import { RELATION_SYMBOLS } from '../../constants/editableFields';
-import {Relations} from "../../types/ApiTypes/Relations";
+import React from "react";
+import { RELATION_SYMBOLS } from "../../constants/editableFields";
+import { Relations } from "../../types/ApiTypes/Relations";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
 interface RelationsFieldProps {
   relations: Relations[];
@@ -8,26 +9,27 @@ interface RelationsFieldProps {
   editable?: boolean;
 }
 
-const RelationsField: React.FC<RelationsFieldProps> = ({ relations}) => {
+const RelationsField: React.FC<RelationsFieldProps> = ({ relations }) => {
   const renderRelationSymbol = (type: string) => {
     return RELATION_SYMBOLS[type as keyof typeof RELATION_SYMBOLS] || type;
   };
 
   return (
-    <div className="node-wrapper">
-      <div className="field-title">Relations :</div>
-      <div className="field-content">
+    <FieldWrapper>
+      <FieldTitle>Relations :</FieldTitle>
+      <FieldContent>
         {relations.length > 0
           ? relations.map((relation, index) => (
               <div key={index}>
-                {relation.concept_source.nom} {renderRelationSymbol(relation.type_relation)} {relation.concept_cible.nom}
+                {relation.concept_source.nom}{" "}
+                {renderRelationSymbol(relation.type_relation)}{" "}
+                {relation.concept_cible.nom}
                 {relation.description && `, ${relation.description}`}
               </div>
             ))
           : "Aucune relation"}
-      </div>
-
-    </div>
+      </FieldContent>
+    </FieldWrapper>
   );
 };
 

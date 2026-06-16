@@ -46,7 +46,7 @@ export function SupportPage() {
       color: "#f43f5e",
       bgColor: isDark ? "rgba(244, 63, 94, 0.15)" : "rgba(244, 63, 94, 0.08)",
       actionText: t("support.tier1_action"),
-      actionLink: "https://www.patreon.com/",
+      actionLink: "https://ko-fi.com/tristan92",
       external: true,
     },
     {

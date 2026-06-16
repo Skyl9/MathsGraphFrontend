@@ -2,7 +2,6 @@ import {
   Container,
   Typography,
   Stack,
-  CircularProgress,
   Box,
   Alert,
   Card,
@@ -18,6 +17,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Category } from "../types/ApiTypes/category";
 import { FixedSizeList as List } from "react-window";
 import { useTranslation } from "react-i18next";
+import { ListSkeleton } from "../components/Skeletons";
 
 interface CategoryTree extends Category {
   children: CategoryTree[];
@@ -77,11 +77,7 @@ const CategoryList = () => {
           {t("entities.categories_title")}
         </Typography>
 
-        {loading && (
-          <Box display="flex" justifyContent="center" py={6}>
-            <CircularProgress />
-          </Box>
-        )}
+        {loading && <ListSkeleton count={6} />}
 
         {error && (
           <Alert severity="error">

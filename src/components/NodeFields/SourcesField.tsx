@@ -1,5 +1,7 @@
-import React from 'react';
-import {Source} from '../../types/ApiTypes/source';
+import React from "react";
+import { Source } from "../../types/ApiTypes/source";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
+
 interface SourcesFieldProps {
   sources: Source[];
   onEdit?: () => void;
@@ -8,9 +10,9 @@ interface SourcesFieldProps {
 
 const SourcesField: React.FC<SourcesFieldProps> = ({ sources }) => {
   return (
-    <div className="node-wrapper">
-      <div className="field-title">Sources :</div>
-      <div className="field-content">
+    <FieldWrapper>
+      <FieldTitle>Sources :</FieldTitle>
+      <FieldContent>
         {sources.length > 0
           ? sources.map((source, index) => (
               <div key={index}>
@@ -18,8 +20,8 @@ const SourcesField: React.FC<SourcesFieldProps> = ({ sources }) => {
               </div>
             ))
           : "Aucune source"}
-      </div>
-    </div>
+      </FieldContent>
+    </FieldWrapper>
   );
 };
 

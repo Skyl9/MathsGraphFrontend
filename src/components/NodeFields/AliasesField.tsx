@@ -1,21 +1,20 @@
-import React from 'react';
+import React from "react";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
 interface AliasesFieldProps {
   aliases: string[];
 }
 
-const AliasesField: React.FC<AliasesFieldProps> = ({ aliases}) => {
+const AliasesField: React.FC<AliasesFieldProps> = ({ aliases }) => {
   return (
-    <div className="node-wrapper">
-      <div className="field-title">Alias :</div>
-      <div className="field-content">
+    <FieldWrapper>
+      <FieldTitle>Alias :</FieldTitle>
+      <FieldContent>
         {aliases.length > 0
-          ? aliases.map((alias, index) => (
-              <div key={index}>{alias}</div>
-            ))
+          ? aliases.map((alias, index) => <div key={index}>{alias}</div>)
           : "Aucun alias"}
-      </div>
-    </div>
+      </FieldContent>
+    </FieldWrapper>
   );
 };
 

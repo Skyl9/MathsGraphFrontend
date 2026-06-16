@@ -2,7 +2,6 @@ import {
   Container,
   Typography,
   Stack,
-  CircularProgress,
   Box,
   Alert,
   Card,
@@ -16,6 +15,7 @@ import FunctionsIcon from "@mui/icons-material/Functions";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { FixedSizeList as List } from "react-window";
 import { useTranslation } from "react-i18next";
+import { ListSkeleton } from "../components/Skeletons";
 
 const ConceptList = () => {
   const {
@@ -53,11 +53,7 @@ const ConceptList = () => {
           {t("entities.concepts_title")}
         </Typography>
 
-        {loading && (
-          <Box display="flex" justifyContent="center" py={6}>
-            <CircularProgress />
-          </Box>
-        )}
+        {loading && <ListSkeleton count={6} />}
 
         {error && (
           <Alert severity="error">

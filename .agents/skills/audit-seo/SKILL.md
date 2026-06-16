@@ -17,5 +17,8 @@ Suis strictement les étapes suivantes de manière séquentielle :
    * **Sémantique HTML5 :** Le code utilise-t-il les bonnes balises (`<main>`, `<article>`, `<nav>`, `<aside>`, etc.) plutôt que de simples `<div>` ?
    * **Optimisation des liens et médias :** Les attributs `alt` des images sont-ils présents ? Les liens (`<a>` ou composants équivalents de React Router) sont-ils configurés correctement pour le crawl ?
 4. **Génération de recommandations :** En te basant sur tes observations, formule des recommandations d'amélioration techniques précises, concrètes et applicables dans le contexte d'une SPA React (par ex., mise en place de rendu côté serveur si nécessaire, ou l'ajout d'une librairie de gestion de la balise head).
-5. **Création du rapport :** Rédige tes conclusions sous la forme d'un document Markdown clair et structuré. Utilise l'outil de création d'artefacts pour enregistrer ce rapport (par exemple sous le nom `audit_seo_report.md`).
+5. **Génération du fichier d'artefact :**
+   * Inspecte le dossier `artifact/SEO/` à la racine du projet (crée-le s'il n'existe pas).
+   * Détermine le prochain numéro de fichier disponible (par exemple, si `recommendation_01.md` existe, le tien sera `recommendation_02.md`). S'il n'y a aucun fichier, commence à `recommendation_01.md`.
+   * Rédige et sauvegarde ton rapport détaillé au format Markdown dans ce nouveau fichier.
 6. **Communication :** Réponds à l'utilisateur dans le chat en lui présentant un résumé exécutif très concis de ton audit (les 2-3 points les plus critiques) et indique-lui que le rapport complet est disponible sous forme d'artefact.

@@ -17,5 +17,8 @@ Suis strictement les étapes suivantes de manière séquentielle :
    * **Instanciation des géométries :** Vérifie si de très nombreux objets identiques sont dessinés séparément. Si oui, propose l'utilisation de `InstancedMesh` ou de `Instances`/`Instance` de la librairie Drei.
    * **Prévention des re-rendus :** Le composant 3D est-il réactif à des props qui changent trop souvent ? Propose des solutions pour découpler l'état (ex: en s'abonnant directement aux valeurs Zustand de manière transitoire si nécessaire).
 4. **Rédaction des recommandations :** Formule un plan d'action d'optimisation. Fournis des extraits de code Avant/Après pour illustrer tes corrections sur les points critiques.
-5. **Génération de l'artefact :** Génère ce rapport d'audit sous la forme d'un document Markdown complet et sauvegarde-le en utilisant la création d'artefact (par ex: `audit_r3f_perf.md`).
+5. **Génération du fichier d'artefact :**
+   * Inspecte le dossier `artifact/Perf/` à la racine du projet (crée-le s'il n'existe pas).
+   * Détermine le prochain numéro de fichier disponible (par exemple, si `recommendation_01.md` existe, le tien sera `recommendation_02.md`). S'il n'y a aucun fichier, commence à `recommendation_01.md`.
+   * Rédige et sauvegarde ton rapport détaillé au format Markdown dans ce nouveau fichier.
 6. **Communication :** Retourne dans le chat avec l'utilisateur, indique-lui que l'audit a été complété dans l'artefact, et donne-lui rapidement le point noir de performance majeur que tu as pu relever (s'il y en a un).

@@ -1,25 +1,26 @@
-import { Link } from '@mui/material';
-import React from 'react';
-import {Tag} from "../../types/types";
+import { Link } from "@mui/material";
+import React from "react";
+import { Tag } from "../../types/types";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
 interface TagProps {
-  tags: Tag[]|null;
+  tags: Tag[] | null;
 }
 
-const TagField: React.FC<TagProps> = ({ tags}) => {
-    return (
-    <div className="node-wrapper">
-      <div className="field-title">Tags :</div>
-      <div className="field-content">
+const TagField: React.FC<TagProps> = ({ tags }) => {
+  return (
+    <FieldWrapper>
+      <FieldTitle>Tags :</FieldTitle>
+      <FieldContent>
         {tags && tags.length > 0
           ? tags.map((tag) => (
-              <Link key={tag.id} href={"/tag/"+tag.id}>
-              <div >{tag.tag}</div>
+              <Link key={tag.id} href={"/tag/" + tag.id}>
+                <div>{tag.tag}</div>
               </Link>
             ))
           : "Aucun Tag"}
-      </div>
-    </div>
+      </FieldContent>
+    </FieldWrapper>
   );
 };
 

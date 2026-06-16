@@ -7,7 +7,6 @@ import {
   Paper,
   Divider,
   Chip,
-  CircularProgress,
   TextField,
   Button,
   Drawer,
@@ -28,6 +27,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
+import { ListSkeleton } from "../components/Skeletons";
 
 interface SearchResult {
   id: number | string;
@@ -292,13 +292,8 @@ export const SearchPage = () => {
         {/* 3. Section des résultats */}
         <Grid size={{ xs: 12, md: 8.5 }}>
           {isLoading && (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              p={8}
-            >
-              <CircularProgress />
+            <Box py={4}>
+              <ListSkeleton count={4} />
             </Box>
           )}
 

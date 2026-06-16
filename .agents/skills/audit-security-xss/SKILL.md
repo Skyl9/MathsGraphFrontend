@@ -19,5 +19,8 @@ Suis strictement les étapes suivantes de manière séquentielle :
    * La donnée est-elle rigoureusement passée dans la fonction `DOMPurify.sanitize()` *avant* l'injection dans le DOM ?
    * Identifie s'il y a un risque que l'assainissement soit contourné.
 4. **Compilation du rapport :** Rédige un rapport technique complet. Liste chaque occurrence en précisant le nom du fichier, le numéro de ligne, l'extrait de code, et évalue son niveau de risque (Sécurisé / Risque Faible / Critique). S'il y a des vulnérabilités, propose des corrections de code concrètes.
-5. **Création de l'artefact :** Génère ton rapport final sous la forme d'un fichier Markdown et enregistre-le via l'outil d'artefact (nomme-le par exemple `audit_xss_report.md`).
+5. **Génération du fichier d'artefact :**
+   * Inspecte le dossier `artifact/Security/` à la racine du projet (crée-le s'il n'existe pas).
+   * Détermine le prochain numéro de fichier disponible (par exemple, si `recommendation_01.md` existe, le tien sera `recommendation_02.md`). S'il n'y a aucun fichier, commence à `recommendation_01.md`.
+   * Rédige et sauvegarde ton rapport détaillé au format Markdown dans ce nouveau fichier.
 6. **Communication finale :** Interviens dans le chat avec l'utilisateur pour lui fournir un résumé très bref de ton analyse (le nombre de failles trouvées et leur criticité globale), et confirme-lui que le rapport d'audit détaillé a été généré sous forme d'artefact.

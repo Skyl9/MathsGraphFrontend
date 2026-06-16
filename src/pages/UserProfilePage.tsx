@@ -11,7 +11,6 @@ import {
   MenuItem,
   Stack,
   useTheme,
-  CircularProgress,
   IconButton,
   Tooltip,
 } from "@mui/material";
@@ -23,6 +22,7 @@ import FavoriteList from "../components/FavoriteList";
 import UserContributions from "../components/UserContributions.tsx";
 import { User } from "../types/ApiTypes/user";
 import { useTranslation } from "react-i18next";
+import { ProfileSkeleton } from "../components/Skeletons";
 import i18n from "../i18n";
 import { ReportIssueButton } from "../components/Issue";
 
@@ -99,25 +99,7 @@ const UserProfilePage: React.FC = () => {
   }
 
   if (isLoading || !queryUser) {
-    return (
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        height="60vh"
-        gap={2}
-      >
-        <CircularProgress />
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ fontWeight: 600 }}
-        >
-          {t("profile.loading")}
-        </Typography>
-      </Box>
-    );
+    return <ProfileSkeleton />;
   }
 
   const user = queryUser;

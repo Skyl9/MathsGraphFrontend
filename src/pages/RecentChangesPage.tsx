@@ -3,7 +3,6 @@ import {
   Box,
   Typography,
   Paper,
-  CircularProgress,
   useTheme,
   Container,
   Chip,
@@ -29,6 +28,7 @@ import { RecentChange } from "../types/ApiTypes/concept";
 import { VisualDiff } from "../components/VisualDiff";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import { ListSkeleton } from "../components/Skeletons";
 
 dayjs.locale("fr");
 
@@ -48,13 +48,8 @@ export const RecentChangesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="60vh"
-      >
-        <CircularProgress size={60} thickness={4} />
+      <Box py={4}>
+        <ListSkeleton count={8} />
       </Box>
     );
   }

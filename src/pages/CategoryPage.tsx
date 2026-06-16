@@ -1,25 +1,38 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Navigate } from "react-router-dom";
+import { NodePageSkeleton } from "../components/Skeletons";
+import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { useEntityEdit } from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
-import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  IconButton,
-  Button,
-  Switch,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { IconButton, Button, Switch, FormControlLabel } from "@mui/material";
 import { EditModal } from "../components/EditModal";
-import { useEntityEdit } from "../hooks/useEntityEdit";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
-import { nodeApi } from "../services/api";
 import { Category } from "../types/ApiTypes/category";
 import MathMarkdown from "../components/MathMarkdown";
 import { useTranslation } from "react-i18next";
+import { nodeApi } from "../services/api";
+import {
+  DetailsGrid,
+  MainContentColumn,
+  ConceptHeader,
+  ConceptTitleRow,
+  ConceptTitle,
+  MathCard,
+  MathCardHeader,
+  MathCardTitle,
+  MathCardBody,
+  SidebarColumn,
+  SidebarCard,
+  SidebarCardTitle,
+  MetadataList,
+  MetadataItem,
+  MetadataLabel,
+  MetadataValue,
+  SidebarActions,
+} from "./NodePage.styles";
 
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -59,7 +72,7 @@ const CategoryPage = () => {
     setPrevParentId(data?.parent_id);
     if (data?.parent_id) {
       nodeApi
-        .getOneCategory(data.parent_id)
+        .getOneCategory(data.parent_id as string)
         .then(setParentCategory)
         .catch(() => setParentCategory(null));
     } else {
@@ -67,21 +80,19 @@ const CategoryPage = () => {
     }
   }
 
-  if (loading) return <p>{t("profile.loading")}</p>;
+  if (loading) return <NodePageSkeleton />;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
 
   return (
     <>
-      <div className="details-grid">
+      <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
-        <div className="main-content-column">
-          <div className="concept-header">
-            <div className="concept-title-row">
-              <Typography className="concept-title" variant="h1">
-                {data?.nom}
-              </Typography>
+        <MainContentColumn>
+          <ConceptHeader>
+            <ConceptTitleRow>
+              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
               <FavoriteButton itemId={id as string} itemType={"category"} />
               {editModeActive &&
                 isUserConnected &&
@@ -95,15 +106,13 @@ const CategoryPage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-            </div>
-          </div>
+            </ConceptTitleRow>
+          </ConceptHeader>
 
           {/* Description Card */}
-          <div className="math-card enonce-card">
-            <div className="math-card-header">
-              <Typography className="math-card-title">
-                {t("entities.description_title")}
-              </Typography>
+          <MathCard cardtype="enonce">
+            <MathCardHeader>
+              <MathCardTitle>{t("entities.description_title")}</MathCardTitle>
               {editModeActive &&
                 isUserConnected &&
                 editableFields["description"] &&
@@ -116,20 +125,20 @@ const CategoryPage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-            </div>
-            <div className="math-card-body">
+            </MathCardHeader>
+            <MathCardBody>
               <MathMarkdown
                 content={data?.description || t("entities.no_description")}
               />
-            </div>
-          </div>
-        </div>
+            </MathCardBody>
+          </MathCard>
+        </MainContentColumn>
 
         {/* Colonne Latérale (Droite) */}
-        <div className="sidebar-column">
+        <SidebarColumn>
           {/* Switch Mode Édition (si connecté) */}
           {isUserConnected && (
-            <div className="sidebar-card">
+            <SidebarCard>
               <FormControlLabel
                 control={
                   <Switch
@@ -141,30 +150,30 @@ const CategoryPage = () => {
                 label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
-            </div>
+            </SidebarCard>
           )}
 
           {/* Carte Métadonnées */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">
               {t("entities.category_details")}
-            </Typography>
-            <div className="metadata-list">
+            </SidebarCardTitle>
+            <MetadataList>
               {/* ID */}
-              <div className="metadata-item">
-                <span className="metadata-label">{t("entities.id_label")}</span>
-                <div className="metadata-value">
+              <MetadataItem>
+                <MetadataLabel>{t("entities.id_label")}</MetadataLabel>
+                <MetadataValue>
                   <span>{data?.id}</span>
-                </div>
-              </div>
+                </MetadataValue>
+              </MetadataItem>
 
               {/* Catégorie Parente */}
               {editableFields["parent_id"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">
+                <MetadataItem>
+                  <MetadataLabel>
                     {t("entities.parent_category_label")}
-                  </span>
-                  <div className="metadata-value">
+                  </MetadataLabel>
+                  <MetadataValue>
                     <span>
                       {parentCategory ? (
                         <a
@@ -195,18 +204,18 @@ const CategoryPage = () => {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
-            </div>
-          </div>
+            </MetadataList>
+          </SidebarCard>
 
           {/* Carte Actions */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">
               {t("entities.actions_title")}
-            </Typography>
-            <div className="sidebar-actions">
+            </SidebarCardTitle>
+            <SidebarActions>
               <Button
                 fullWidth
                 variant="text"
@@ -216,12 +225,12 @@ const CategoryPage = () => {
               >
                 {t("entities.back")}
               </Button>
-            </div>
-          </div>
+            </SidebarActions>
+          </SidebarCard>
 
           <ReportIssueButton />
-        </div>
-      </div>
+        </SidebarColumn>
+      </DetailsGrid>
 
       {isModalOpen && currentEditField && data && (
         <EditModal<Category>

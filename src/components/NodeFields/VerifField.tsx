@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
 interface SpecialFieldProps {
   title: string;
@@ -9,19 +10,17 @@ interface SpecialFieldProps {
 
 const VerifField: React.FC<SpecialFieldProps> = ({ title, value }) => {
   const renderValue = () => {
-    if (typeof value === 'boolean') {
+    if (typeof value === "boolean") {
       return value ? "✅" : "❌";
     }
     return value;
   };
 
   return (
-    <div className="node-wrapper">
-      <div className="field-title">{title} :</div>
-      <div className="field-content">
-        {renderValue()}
-      </div>
-    </div>
+    <FieldWrapper>
+      <FieldTitle>{title} :</FieldTitle>
+      <FieldContent>{renderValue()}</FieldContent>
+    </FieldWrapper>
   );
 };
 

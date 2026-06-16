@@ -1,24 +1,37 @@
 import { useEffect, useState } from "react";
+import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams } from "react-router-dom";
 import { useEntityEdit } from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
-import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {
-  IconButton,
-  Button,
-  Switch,
-  FormControlLabel,
-  Typography,
-} from "@mui/material";
+import { IconButton, Button, Switch, FormControlLabel } from "@mui/material";
 import { EditModal } from "../components/EditModal";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import { Mathematicien } from "../types/ApiTypes/mathematicien";
 import MathMarkdown from "../components/MathMarkdown";
 import { useTranslation } from "react-i18next";
+import {
+  DetailsGrid,
+  MainContentColumn,
+  ConceptHeader,
+  ConceptTitleRow,
+  ConceptTitle,
+  MathCard,
+  MathCardHeader,
+  MathCardTitle,
+  MathCardBody,
+  SidebarColumn,
+  SidebarCard,
+  SidebarCardTitle,
+  MetadataList,
+  MetadataItem,
+  MetadataLabel,
+  MetadataValue,
+  SidebarActions,
+} from "./NodePage.styles";
 
 const MathematicienPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -49,21 +62,19 @@ const MathematicienPage = () => {
     }
   }, [data, setData]);
 
-  if (loading) return <p>{t("profile.loading")}</p>;
+  if (loading) return <NodePageSkeleton />;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
 
   return (
     <>
-      <div className="details-grid">
+      <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
-        <div className="main-content-column">
-          <div className="concept-header">
-            <div className="concept-title-row">
-              <Typography className="concept-title" variant="h1">
-                {data?.nom}
-              </Typography>
+        <MainContentColumn>
+          <ConceptHeader>
+            <ConceptTitleRow>
+              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
               <FavoriteButton
                 itemId={id as string}
                 itemType={"mathematicien"}
@@ -80,15 +91,13 @@ const MathematicienPage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-            </div>
-          </div>
+            </ConceptTitleRow>
+          </ConceptHeader>
 
           {/* Biographie Card */}
-          <div className="math-card enonce-card">
-            <div className="math-card-header">
-              <Typography className="math-card-title">
-                {t("entities.biography_title")}
-              </Typography>
+          <MathCard cardtype="enonce">
+            <MathCardHeader>
+              <MathCardTitle>{t("entities.biography_title")}</MathCardTitle>
               {editModeActive &&
                 isUserConnected &&
                 editableFields["biographie"] &&
@@ -101,20 +110,20 @@ const MathematicienPage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-            </div>
-            <div className="math-card-body">
+            </MathCardHeader>
+            <MathCardBody>
               <MathMarkdown
                 content={data?.biographie || t("entities.no_biography")}
               />
-            </div>
-          </div>
-        </div>
+            </MathCardBody>
+          </MathCard>
+        </MainContentColumn>
 
         {/* Colonne Latérale (Droite) */}
-        <div className="sidebar-column">
+        <SidebarColumn>
           {/* Switch Mode Édition (si connecté) */}
           {isUserConnected && (
-            <div className="sidebar-card">
+            <SidebarCard>
               <FormControlLabel
                 control={
                   <Switch
@@ -126,30 +135,28 @@ const MathematicienPage = () => {
                 label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
-            </div>
+            </SidebarCard>
           )}
 
           {/* Carte Métadonnées */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">
               {t("entities.personal_info_title")}
-            </Typography>
-            <div className="metadata-list">
+            </SidebarCardTitle>
+            <MetadataList>
               {/* ID */}
-              <div className="metadata-item">
-                <span className="metadata-label">{t("entities.id_label")}</span>
-                <div className="metadata-value">
+              <MetadataItem>
+                <MetadataLabel>{t("entities.id_label")}</MetadataLabel>
+                <MetadataValue>
                   <span>{data?.id}</span>
-                </div>
-              </div>
+                </MetadataValue>
+              </MetadataItem>
 
               {/* Date de naissance */}
               {editableFields["date_naissance"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">
-                    {t("entities.birth_date")}
-                  </span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>{t("entities.birth_date")}</MetadataLabel>
+                  <MetadataValue>
                     <span>{data?.date_naissance || t("entities.unknown")}</span>
                     {editModeActive &&
                       editableFields["date_naissance"].type !== "none" && (
@@ -161,17 +168,15 @@ const MathematicienPage = () => {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Date de décès */}
               {editableFields["date_deces"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">
-                    {t("entities.death_date")}
-                  </span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>{t("entities.death_date")}</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       {data?.date_deces || t("entities.unknown_or_alive")}
                     </span>
@@ -185,17 +190,15 @@ const MathematicienPage = () => {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Nationalité */}
               {editableFields["nationalite"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">
-                    {t("entities.nationality")}
-                  </span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>{t("entities.nationality")}</MetadataLabel>
+                  <MetadataValue>
                     <span>{data?.nationalite || t("entities.unknown")}</span>
                     {editModeActive &&
                       editableFields["nationalite"].type !== "none" && (
@@ -207,15 +210,15 @@ const MathematicienPage = () => {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Domaine */}
               {editableFields["domaine"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Domaine d'étude</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Domaine d'étude</MetadataLabel>
+                  <MetadataValue>
                     <span>{data?.domaine || "Non classifié"}</span>
                     {editModeActive &&
                       editableFields["domaine"].type !== "none" && (
@@ -227,18 +230,16 @@ const MathematicienPage = () => {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
-            </div>
-          </div>
+            </MetadataList>
+          </SidebarCard>
 
           {/* Carte Actions */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
-              Actions
-            </Typography>
-            <div className="sidebar-actions">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">Actions</SidebarCardTitle>
+            <SidebarActions>
               <Button
                 fullWidth
                 variant="text"
@@ -248,12 +249,12 @@ const MathematicienPage = () => {
               >
                 Retour
               </Button>
-            </div>
-          </div>
+            </SidebarActions>
+          </SidebarCard>
 
           <ReportIssueButton />
-        </div>
-      </div>
+        </SidebarColumn>
+      </DetailsGrid>
 
       {isModalOpen && currentEditField && data && (
         <EditModal<Mathematicien>

@@ -1,25 +1,33 @@
 // components/NodeFields/NomsEtrangers.tsx
-import React, { useState } from 'react';
-import { NomEtranger } from '../../types/types';
+import React, { useState } from "react";
+import { NomEtranger } from "../../types/types";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
-export const NomsEtrangersCollapse: React.FC<{ noms: NomEtranger[] }> = ({ noms }) => {
-    const [open, setOpen] = useState(false);
+export const NomsEtrangersCollapse: React.FC<{ noms: NomEtranger[] }> = ({
+  noms,
+}) => {
+  const [open, setOpen] = useState(false);
 
-    return (
-        <div className="node-wrapper">
-            <div className="field-title">Noms étrangers :</div>
-            <button onClick={() => setOpen(prev => !prev)} className="collapse-button">
-                {open ? "Masquer" : "Afficher"}
-            </button>
-            {open && (
-                <div className="field-content">
-                    {noms.length > 0
-                        ? noms.map((n, i) => (
-                            <div key={i}>{n.Nom_étranger} ({n.langue})</div>
-                        ))
-                        : "Aucun nom étranger"}
+  return (
+    <FieldWrapper>
+      <FieldTitle>Noms étrangers :</FieldTitle>
+      <button
+        onClick={() => setOpen((prev) => !prev)}
+        className="collapse-button"
+      >
+        {open ? "Masquer" : "Afficher"}
+      </button>
+      {open && (
+        <FieldContent>
+          {noms.length > 0
+            ? noms.map((n, i) => (
+                <div key={i}>
+                  {n.Nom_étranger} ({n.langue})
                 </div>
-            )}
-        </div>
-    );
+              ))
+            : "Aucun nom étranger"}
+        </FieldContent>
+      )}
+    </FieldWrapper>
+  );
 };

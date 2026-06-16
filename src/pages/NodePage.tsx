@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { NodePageSkeleton } from "../components/Skeletons";
 import { HistoryModal } from "../components/HistoryModal";
 
 import { Navigate, useParams } from "react-router-dom";
 import { AllNodeData } from "../types/types";
-import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import { useEntityEdit } from "../hooks/useEntityEdit";
 import { EditModal } from "../components/EditModal";
@@ -22,7 +22,6 @@ import {
   Link,
   Switch,
   FormControlLabel,
-  Typography,
   IconButton,
 } from "@mui/material";
 import Token from "../services/token";
@@ -33,6 +32,26 @@ import FavoriteButton from "../components/FavoriteButton";
 import { nodeApi } from "../services/api";
 import MathMarkdown from "../components/MathMarkdown";
 import { useTranslation } from "react-i18next";
+
+import {
+  DetailsGrid,
+  MainContentColumn,
+  SidebarColumn,
+  MathCard,
+  MathCardHeader,
+  MathCardTitle,
+  MathCardBody,
+  SidebarCard,
+  SidebarCardTitle,
+  MetadataList,
+  MetadataItem,
+  MetadataLabel,
+  MetadataValue,
+  ConceptHeader,
+  ConceptTitleRow,
+  ConceptTitle,
+  SidebarActions,
+} from "./NodePage.styles";
 
 const NodePage = () => {
   const { t } = useTranslation();
@@ -95,7 +114,7 @@ const NodePage = () => {
     }
   }, [error]);
 
-  if (loading) return <p>{t("concept.loading")}</p>;
+  if (loading) return <NodePageSkeleton />;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
@@ -128,14 +147,12 @@ const NodePage = () => {
         fields={commentFields}
       />
 
-      <div className="details-grid">
+      <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
-        <div className="main-content-column">
-          <div className="concept-header">
-            <div className="concept-title-row">
-              <Typography className="concept-title" variant="h1">
-                {data?.nom}
-              </Typography>
+        <MainContentColumn>
+          <ConceptHeader>
+            <ConceptTitleRow>
+              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
               {data?.verification && (
                 <Tooltip title={t("concept.verified")} arrow>
                   <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
@@ -147,38 +164,35 @@ const NodePage = () => {
                   <EditIcon fontSize="small" />
                 </IconButton>
               )}
-            </div>
-          </div>
+            </ConceptTitleRow>
+          </ConceptHeader>
 
           {/* Énoncé Card */}
           {editableFields["enonce"] && (
-            <div className="math-card enonce-card">
-              <div className="math-card-header">
-                <Typography className="math-card-title">
+            <MathCard cardtype="enonce">
+              <MathCardHeader>
+                <MathCardTitle variantcolor="primary">
                   {t("concept.enonce")}
-                </Typography>
+                </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton size="small" onClick={() => handleEdit("enonce")}>
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-              </div>
-              <div className="math-card-body">
+              </MathCardHeader>
+              <MathCardBody>
                 <MathMarkdown content={data?.enonce} />
-              </div>
-            </div>
+              </MathCardBody>
+            </MathCard>
           )}
 
           {/* Démonstration Card */}
           {editableFields["demonstration"] && (
-            <div className="math-card proof-card">
-              <div className="math-card-header">
-                <Typography
-                  className="math-card-title"
-                  sx={{ color: "secondary.main" }}
-                >
+            <MathCard cardtype="proof">
+              <MathCardHeader>
+                <MathCardTitle variantcolor="secondary">
                   {t("concept.demonstration")}
-                </Typography>
+                </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     size="small"
@@ -187,25 +201,20 @@ const NodePage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-              </div>
-              <div className="math-card-body">
+              </MathCardHeader>
+              <MathCardBody>
                 <MathMarkdown
                   content={data?.demonstration || t("concept.no_demonstration")}
                 />
-              </div>
-            </div>
+              </MathCardBody>
+            </MathCard>
           )}
 
           {/* Relations Card */}
           {editableFields["relations"] && (
-            <div className="math-card">
-              <div className="math-card-header">
-                <Typography
-                  className="math-card-title"
-                  sx={{ color: "text.primary" }}
-                >
-                  Relations
-                </Typography>
+            <MathCard>
+              <MathCardHeader>
+                <MathCardTitle variantcolor="default">Relations</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     size="small"
@@ -214,23 +223,18 @@ const NodePage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-              </div>
-              <div className="math-card-body">
+              </MathCardHeader>
+              <MathCardBody>
                 <NodeFieldRenderer field="relations" value={data?.relations} />
-              </div>
-            </div>
+              </MathCardBody>
+            </MathCard>
           )}
 
           {/* Sources Card */}
           {editableFields["sources"] && (
-            <div className="math-card">
-              <div className="math-card-header">
-                <Typography
-                  className="math-card-title"
-                  sx={{ color: "text.primary" }}
-                >
-                  Sources
-                </Typography>
+            <MathCard>
+              <MathCardHeader>
+                <MathCardTitle variantcolor="default">Sources</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     size="small"
@@ -239,23 +243,18 @@ const NodePage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-              </div>
-              <div className="math-card-body">
+              </MathCardHeader>
+              <MathCardBody>
                 <NodeFieldRenderer field="sources" value={data?.sources} />
-              </div>
-            </div>
+              </MathCardBody>
+            </MathCard>
           )}
 
           {/* Aliases Card */}
           {editableFields["aliases"] && (
-            <div className="math-card">
-              <div className="math-card-header">
-                <Typography
-                  className="math-card-title"
-                  sx={{ color: "text.primary" }}
-                >
-                  Alias
-                </Typography>
+            <MathCard>
+              <MathCardHeader>
+                <MathCardTitle variantcolor="default">Alias</MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     size="small"
@@ -264,19 +263,19 @@ const NodePage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-              </div>
-              <div className="math-card-body">
+              </MathCardHeader>
+              <MathCardBody>
                 <NodeFieldRenderer field="aliases" value={data?.aliases} />
-              </div>
-            </div>
+              </MathCardBody>
+            </MathCard>
           )}
-        </div>
+        </MainContentColumn>
 
         {/* Colonne Latérale (Droite) */}
-        <div className="sidebar-column">
+        <SidebarColumn>
           {/* Switch Mode Édition (si connecté) */}
           {isUserConnected && (
-            <div className="sidebar-card">
+            <SidebarCard>
               <FormControlLabel
                 control={
                   <Switch
@@ -288,20 +287,18 @@ const NodePage = () => {
                 label="Mode Édition"
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
-            </div>
+            </SidebarCard>
           )}
 
           {/* Carte Métadonnées */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
-              Détails du Concept
-            </Typography>
-            <div className="metadata-list">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">Détails du Concept</SidebarCardTitle>
+            <MetadataList>
               {/* Catégorie */}
               {editableFields["categorie"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Catégorie</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Catégorie</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       {data?.categorie &&
                       typeof data.categorie === "object" &&
@@ -327,15 +324,15 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Mathématicien */}
               {editableFields["mathematicien"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Mathématicien</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Mathématicien</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       {data?.mathematicien &&
                       typeof data.mathematicien === "object" &&
@@ -361,15 +358,15 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Type */}
               {editableFields["type"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Type</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Type</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       {data?.type ? (
                         <Link
@@ -390,15 +387,15 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Date d'ajout */}
               {editableFields["date_ajout"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Date d'ajout</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Date d'ajout</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       <NodeFieldRenderer
                         field="date_ajout"
@@ -413,15 +410,15 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Noms étrangers */}
               {editableFields["noms_etrangers"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Noms étrangers</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Noms étrangers</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       <NodeFieldRenderer
                         field="noms_etrangers"
@@ -436,15 +433,15 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
 
               {/* Tags */}
               {editableFields["tags"] && (
-                <div className="metadata-item">
-                  <span className="metadata-label">Tags</span>
-                  <div className="metadata-value">
+                <MetadataItem>
+                  <MetadataLabel>Tags</MetadataLabel>
+                  <MetadataValue>
                     <span>
                       <NodeFieldRenderer field="tags" value={data?.tags} />
                     </span>
@@ -456,18 +453,16 @@ const NodePage = () => {
                         <EditIcon fontSize="small" />
                       </IconButton>
                     )}
-                  </div>
-                </div>
+                  </MetadataValue>
+                </MetadataItem>
               )}
-            </div>
-          </div>
+            </MetadataList>
+          </SidebarCard>
 
           {/* Carte Actions */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
-              Actions
-            </Typography>
-            <div className="sidebar-actions">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">Actions</SidebarCardTitle>
+            <SidebarActions>
               <Button
                 fullWidth
                 variant="outlined"
@@ -497,12 +492,12 @@ const NodePage = () => {
               >
                 Retour
               </Button>
-            </div>
-          </div>
+            </SidebarActions>
+          </SidebarCard>
 
           <ReportIssueButton />
-        </div>
-      </div>
+        </SidebarColumn>
+      </DetailsGrid>
 
       {isModalOpen && currentEditField && data && (
         <EditModal<AllNodeData>

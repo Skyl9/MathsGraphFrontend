@@ -12,6 +12,7 @@ import TagsField from "./TagsField";
 import { Link } from "@mui/material";
 import DOMPurify from "dompurify";
 import { useTranslation } from "react-i18next";
+import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
 interface Props {
   field: keyof AllNodeData;
@@ -48,9 +49,9 @@ export const NodeFieldRenderer = ({ field, value }: Props) => {
       return <HtmlField title={"Id"} content={value as string} />;
     case "categorie":
       return (
-        <div className="node-wrapper">
-          <div className="field-title">{t("concept.category")}</div>
-          <div className="field-content">
+        <FieldWrapper>
+          <FieldTitle>{t("concept.category")}</FieldTitle>
+          <FieldContent>
             {typeof value === "object" &&
             value !== null &&
             "category" in value ? (
@@ -66,16 +67,16 @@ export const NodeFieldRenderer = ({ field, value }: Props) => {
             ) : (
               t("concept.no_category")
             )}
-          </div>
-        </div>
+          </FieldContent>
+        </FieldWrapper>
       );
     case "date_ajout":
       return <DateField date={value as string} />;
     case "mathematicien":
       return (
-        <div className="node-wrapper">
-          <div className="field-title">{t("concept.mathematician")}</div>
-          <div className="field-content">
+        <FieldWrapper>
+          <FieldTitle>{t("concept.mathematician")}</FieldTitle>
+          <FieldContent>
             {typeof value === "object" &&
             value !== null &&
             "mathematicien" in value ? (
@@ -91,24 +92,23 @@ export const NodeFieldRenderer = ({ field, value }: Props) => {
             ) : (
               t("concept.no_mathematician")
             )}
-          </div>
-        </div>
+          </FieldContent>
+        </FieldWrapper>
       );
     case "verification":
       return <VerifField title={"Vérification"} value={value as string} />;
     case "type":
       return (
-        <div className="node-wrapper">
-          <div className="field-title">{t("concept.type")}</div>
+        <FieldWrapper>
+          <FieldTitle>{t("concept.type")}</FieldTitle>
           <Link href={"/type/redirect/" + value}>
-            <div
-              className="field-content"
+            <FieldContent
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(String(value)),
               }}
             />
           </Link>
-        </div>
+        </FieldWrapper>
       );
     case "tags":
       return <TagsField tags={value as Tag[] | null} />;

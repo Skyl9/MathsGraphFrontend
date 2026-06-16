@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams } from "react-router-dom";
 import Token from "../services/token";
-import "../styles/NodePage.css";
 import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -18,6 +18,25 @@ import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
 import { Type } from "../types/ApiTypes/type";
 import { useTranslation } from "react-i18next";
+import {
+  DetailsGrid,
+  MainContentColumn,
+  ConceptHeader,
+  ConceptTitleRow,
+  ConceptTitle,
+  MathCard,
+  MathCardHeader,
+  MathCardTitle,
+  MathCardBody,
+  SidebarColumn,
+  SidebarCard,
+  SidebarCardTitle,
+  MetadataList,
+  MetadataItem,
+  MetadataLabel,
+  MetadataValue,
+  SidebarActions,
+} from "./NodePage.styles";
 
 const TypePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,21 +67,19 @@ const TypePage = () => {
     }
   }, [data, setData]);
 
-  if (loading) return <p>{t("profile.loading")}</p>;
+  if (loading) return <NodePageSkeleton />;
   if (!loading && (error || !data || !data.id)) {
     return <Navigate to="/404" replace />;
   }
 
   return (
     <>
-      <div className="details-grid">
+      <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
-        <div className="main-content-column">
-          <div className="concept-header">
-            <div className="concept-title-row">
-              <Typography className="concept-title" variant="h1">
-                {data?.nom}
-              </Typography>
+        <MainContentColumn>
+          <ConceptHeader>
+            <ConceptTitleRow>
+              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
               <FavoriteButton itemId={id as string} itemType={"type"} />
               {editModeActive &&
                 isUserConnected &&
@@ -76,30 +93,28 @@ const TypePage = () => {
                     <EditIcon fontSize="small" />
                   </IconButton>
                 )}
-            </div>
-          </div>
+            </ConceptTitleRow>
+          </ConceptHeader>
 
           {/* Information Card */}
-          <div className="math-card enonce-card">
-            <div className="math-card-header">
-              <Typography className="math-card-title">
-                {t("entities.type_presentation")}
-              </Typography>
-            </div>
-            <div className="math-card-body">
+          <MathCard cardtype="enonce">
+            <MathCardHeader>
+              <MathCardTitle>{t("entities.type_presentation")}</MathCardTitle>
+            </MathCardHeader>
+            <MathCardBody>
               <Typography variant="body1">
                 {t("entities.type_desc_1")} <strong>{data?.nom}</strong>{" "}
                 {t("entities.type_desc_2")}
               </Typography>
-            </div>
-          </div>
-        </div>
+            </MathCardBody>
+          </MathCard>
+        </MainContentColumn>
 
         {/* Colonne Latérale (Droite) */}
-        <div className="sidebar-column">
+        <SidebarColumn>
           {/* Switch Mode Édition (si connecté) */}
           {isUserConnected && (
-            <div className="sidebar-card">
+            <SidebarCard>
               <FormControlLabel
                 control={
                   <Switch
@@ -111,31 +126,31 @@ const TypePage = () => {
                 label={t("node.edit_mode")}
                 sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
               />
-            </div>
+            </SidebarCard>
           )}
 
           {/* Carte Métadonnées */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">
               {t("entities.type_details")}
-            </Typography>
-            <div className="metadata-list">
+            </SidebarCardTitle>
+            <MetadataList>
               {/* ID */}
-              <div className="metadata-item">
-                <span className="metadata-label">{t("entities.id_label")}</span>
-                <div className="metadata-value">
+              <MetadataItem>
+                <MetadataLabel>{t("entities.id_label")}</MetadataLabel>
+                <MetadataValue>
                   <span>{data?.id}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+                </MetadataValue>
+              </MetadataItem>
+            </MetadataList>
+          </SidebarCard>
 
           {/* Carte Actions */}
-          <div className="sidebar-card">
-            <Typography variant="h6" className="sidebar-card-title">
+          <SidebarCard>
+            <SidebarCardTitle variant="h6">
               {t("entities.actions_title")}
-            </Typography>
-            <div className="sidebar-actions">
+            </SidebarCardTitle>
+            <SidebarActions>
               <Button
                 fullWidth
                 variant="text"
@@ -145,12 +160,12 @@ const TypePage = () => {
               >
                 {t("entities.back")}
               </Button>
-            </div>
-          </div>
+            </SidebarActions>
+          </SidebarCard>
 
           <ReportIssueButton />
-        </div>
-      </div>
+        </SidebarColumn>
+      </DetailsGrid>
 
       {isModalOpen && currentEditField && data && (
         <EditModal<Type>
