@@ -6,6 +6,7 @@ import {
   Alert,
   Card,
   Button,
+  useTheme,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
@@ -18,6 +19,8 @@ import { useTranslation } from "react-i18next";
 import { ListSkeleton } from "../components/Skeletons";
 
 const ConceptList = () => {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const {
     data: concepts = [],
     isLoading: loading,
@@ -105,9 +108,13 @@ const ConceptList = () => {
                                 flexDirection: "row",
                                 alignItems: "center",
                                 justifyContent: "space-between",
-                                background: "rgba(255, 255, 255, 0.7)",
+                                background: isDark
+                                  ? "rgba(15, 20, 40, 0.7)"
+                                  : "rgba(255, 255, 255, 0.7)",
                                 backdropFilter: "blur(8px)",
-                                border: "1px solid rgba(0, 0, 0, 0.06)",
+                                border: isDark
+                                  ? "1px solid rgba(255, 255, 255, 0.05)"
+                                  : "1px solid rgba(0, 0, 0, 0.06)",
                                 borderRadius: 4,
                                 p: 2,
                                 transition: "all 0.3s ease",

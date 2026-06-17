@@ -1,9 +1,8 @@
 {
   "app": {
-    "title": "MathGraph",
-    "search": "Search for a concept...",
     "login": "Login",
-    "register": "Sign up"
+    "register": "Register",
+    "hello": "Hello"
   },
   "nav": {
     "home": "Home",
@@ -67,22 +66,7 @@
     }
   },
   "menu": {
-    "backToPortal": "Back to portal",
-    "displayMode": "Display Mode",
-    "layout": "Layout",
-    "grid": "3D Grid",
-    "physics": "Physics",
-    "tree": "Hierarchical Tree",
-    "timeline": "Timeline",
-    "engine": "3D Engine",
-    "quality": "Quality (Physical Mesh)",
-    "performance": "Performance (Instancing)",
-    "visualTheme": "Visual Theme",
-    "themeClassic": "Classic",
-    "themeNeon": "Neon (Luminescent)",
-    "themeFocus": "Focus (Isolation)",
-    "visibleCategories": "Visible Categories",
-    "exportJson": "Export (JSON)"
+    "configuration": "Configuration"
   },
   "categories": {
     "axioms": "Axioms",
@@ -94,10 +78,12 @@
     "conjectures": "Conjectures"
   },
   "search": {
+    "no_concept_found": "No concept found",
     "concept": "Concept",
     "mathematician": "Mathematician",
     "category": "Category",
-    "placeholder": "Search..."
+    "placeholder": "Global search...",
+    "concept_placeholder": "Search a concept..."
   },
   "concept": {
     "category": "Category:",
@@ -112,47 +98,48 @@
     "no_demonstration": "No proof available."
   },
   "auth": {
-    "login_title": "Login",
-    "login_subtitle": "Enter your credentials to access your account.",
-    "login_desc": "Log in to explore interactive proofs, add favorites, and contribute to building the collaborative mapping of mathematical knowledge.",
-    "username": "Username",
-    "password": "Password",
+    "logout": "Logout",
     "username_req": "Username is required",
     "password_req": "Password is required",
-    "login_btn": "Log in",
+    "error_default": "An error occurred",
+    "login_desc": "Log in to access all graph features",
+    "login_title": "Login",
+    "login_subtitle": "Welcome back!",
+    "username": "Username",
+    "password": "Password",
     "logging_in": "Logging in...",
-    "no_account": "Don't have an account yet?",
-    "login": "Login",
-    "forgot_password": "Forgot Password?",
-    "forgot_password_title": "Forgot Password?",
-    "forgot_password_desc": "Enter your email address to receive reset instructions.",
-    "forgot_password_success": "If an account exists with this email address, you will soon receive an email with instructions to reset your password.",
-    "reset_password_btn": "Reset Password",
-    "back_to_login": "Back to Login",
-    "invalid_reset_link": "Invalid reset link",
-    "passwords_do_not_match": "Passwords do not match",
-    "new_password_title": "New Password",
-    "new_password_desc": "Enter your new password below.",
-    "new_password_success": "Your password has been successfully changed. You will be redirected to the login page.",
-    "confirm_password_label": "Confirm Password",
-    "error_default": "An error occurred. Please try again.",
-    "username_min_length": "Username must contain at least 3 characters",
+    "login_btn": "Log in",
+    "no_account": "No account yet?",
+    "register": "Sign up",
+    "forgot_pwd": "Forgot password?",
+    "forgot_password_title": "Reset password",
+    "forgot_password_desc": "Enter your email to receive a reset link.",
+    "forgot_password_success": "If an account exists with this email, a link has been sent.",
+    "email": "Email address",
+    "reset_password_btn": "Send link",
+    "back_to_login": "Back to login",
+    "invalid_reset_link": "Invalid or expired reset link.",
+    "passwords_do_not_match": "Passwords do not match.",
+    "new_password_title": "New password",
+    "new_password_desc": "Choose a secure new password.",
+    "new_password_success": "Your password has been successfully changed.",
+    "confirm_password_label": "Confirm password",
+    "username_min_length": "Username must be at least 3 characters long",
     "username_max_length": "Username cannot exceed 20 characters",
-    "username_regex": "Only letters, numbers, and underscores are allowed",
+    "username_regex": "Username can only contain letters, numbers, and underscores",
     "email_invalid": "Invalid email address",
-    "password_min_length": "Password must contain at least 8 characters",
+    "password_min_length": "Password must be at least 8 characters long",
     "password_uppercase": "Password must contain at least one uppercase letter",
     "password_number": "Password must contain at least one number",
-    "register_success": "Account created successfully! Redirecting...",
+    "register_success": "Registration successful! You can now log in.",
     "register_error": "Error during registration.",
-    "register_title": "Join MathGraph",
-    "register_desc": "Create an account to start submitting corrections, proposing proofs, and actively participating in the community.",
+    "register_title": "Create an account",
+    "register_desc": "Join the MathGraph community to contribute and explore.",
     "register_form_title": "Sign up",
-    "register_subtitle": "Create your credentials to join the project.",
-    "email": "Email",
-    "registering": "Creating account...",
+    "register_subtitle": "Let's create your account",
+    "registering": "Registering...",
     "register_btn": "Sign up",
-    "already_account": "Already signed up?",
+    "already_account": "Already have an account?",
     "login_link": "Log in"
   },
   "profile": {
@@ -274,11 +261,6 @@
     "concept_modified": "Modified Concept",
     "rollback_warning": "⚠️ Restoration of a previous version"
   },
-  "search": {
-    "content_type": "Content Type",
-    "concepts": "Concepts & Theorems",
-    "mathematicians": "Mathematicians"
-  },
   "settings": {
     "title": "Site Settings",
     "general_config": "General Configuration",
@@ -361,22 +343,6 @@
     "support": "Support",
     "rights": "All rights reserved.",
     "tagline": "Interactive and collaborative visualization of mathematical concepts."
-  },
-  "app": {
-    "login": "Login",
-    "register": "Register",
-    "hello": "Hello"
-  },
-  "menu": {
-    "configuration": "Configuration"
-  },
-  "search": {
-    "no_concept_found": "No concept found",
-    "concept": "Concept",
-    "mathematician": "Mathematician",
-    "category": "Category",
-    "placeholder": "Global search...",
-    "concept_placeholder": "Search a concept..."
   },
   "node_details": {
     "description": "Description & Details",

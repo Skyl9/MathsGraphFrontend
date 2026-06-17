@@ -1,9 +1,8 @@
 {
   "app": {
-    "title": "MathGraph",
-    "search": "Rechercher un concept...",
     "login": "Connexion",
-    "register": "S'inscrire"
+    "register": "Inscription",
+    "hello": "Bonjour"
   },
   "nav": {
     "home": "Accueil",
@@ -67,22 +66,7 @@
     }
   },
   "menu": {
-    "backToPortal": "Retour au portail",
-    "displayMode": "Mode d'affichage",
-    "layout": "Disposition",
-    "grid": "Grille 3D",
-    "physics": "Physique",
-    "tree": "Arbre Hiérarchique",
-    "timeline": "Chronologique",
-    "engine": "Moteur 3D",
-    "quality": "Qualité (Mesh physique)",
-    "performance": "Performances (Instancing)",
-    "visualTheme": "Thème Visuel",
-    "themeClassic": "Classique",
-    "themeNeon": "Néon (Luminescent)",
-    "themeFocus": "Focus (Isolation)",
-    "visibleCategories": "Catégories visibles",
-    "exportJson": "Exporter (JSON)"
+    "configuration": "Configuration"
   },
   "categories": {
     "axioms": "Axiomes",
@@ -94,10 +78,12 @@
     "conjectures": "Conjectures"
   },
   "search": {
+    "no_concept_found": "Aucun concept trouvé",
     "concept": "Concept",
     "mathematician": "Mathématicien",
     "category": "Catégorie",
-    "placeholder": "Rechercher..."
+    "placeholder": "Recherche globale...",
+    "concept_placeholder": "Rechercher un concept..."
   },
   "concept": {
     "category": "Catégorie :",
@@ -112,47 +98,48 @@
     "no_demonstration": "Aucune démonstration disponible."
   },
   "auth": {
-    "login_title": "Connexion",
-    "login_subtitle": "Entrez vos identifiants pour accéder à votre espace.",
-    "login_desc": "Connectez-vous pour explorer les démonstrations interactives, ajouter des favoris et contribuer à l'édification de la cartographie collaborative du savoir mathématique.",
-    "username": "Nom d'utilisateur",
-    "password": "Mot de passe",
+    "logout": "Déconnexion",
     "username_req": "Le nom d'utilisateur est requis",
     "password_req": "Le mot de passe est requis",
-    "login_btn": "Se connecter",
+    "error_default": "Une erreur est survenue",
+    "login_desc": "Connectez-vous pour accéder à toutes les fonctionnalités du graphe",
+    "login_title": "Connexion",
+    "login_subtitle": "Heureux de vous revoir !",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
     "logging_in": "Connexion en cours...",
+    "login_btn": "Se connecter",
     "no_account": "Pas encore de compte ?",
-    "login": "Connexion",
-    "forgot_password": "Mot de passe oublié ?",
-    "forgot_password_title": "Mot de passe oublié ?",
-    "forgot_password_desc": "Entrez votre adresse e-mail pour recevoir les instructions de réinitialisation.",
-    "forgot_password_success": "Si un compte existe avec cette adresse email, vous recevrez bientôt un email avec les instructions pour réinitialiser votre mot de passe.",
-    "reset_password_btn": "Réinitialiser le mot de passe",
+    "register": "S'inscrire",
+    "forgot_pwd": "Mot de passe oublié ?",
+    "forgot_password_title": "Réinitialiser le mot de passe",
+    "forgot_password_desc": "Entrez votre email pour recevoir un lien de réinitialisation.",
+    "forgot_password_success": "Si un compte existe avec cet email, un lien a été envoyé.",
+    "email": "Adresse email",
+    "reset_password_btn": "Envoyer le lien",
     "back_to_login": "Retour à la connexion",
-    "invalid_reset_link": "Lien de réinitialisation invalide",
-    "passwords_do_not_match": "Les mots de passe ne correspondent pas",
+    "invalid_reset_link": "Lien de réinitialisation invalide ou expiré.",
+    "passwords_do_not_match": "Les mots de passe ne correspondent pas.",
     "new_password_title": "Nouveau mot de passe",
-    "new_password_desc": "Saisissez votre nouveau mot de passe ci-dessous.",
-    "new_password_success": "Votre mot de passe a été modifié avec succès. Vous allez être redirigé vers la page de connexion.",
+    "new_password_desc": "Choisissez un nouveau mot de passe sécurisé.",
+    "new_password_success": "Votre mot de passe a été modifié avec succès.",
     "confirm_password_label": "Confirmer le mot de passe",
-    "error_default": "Une erreur est survenue. Veuillez réessayer.",
-    "username_min_length": "Le pseudo doit contenir au moins 3 caractères",
-    "username_max_length": "Le pseudo ne peut pas dépasser 20 caractères",
-    "username_regex": "Seuls les lettres, chiffres et underscores sont autorisés",
+    "username_min_length": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+    "username_max_length": "Le nom d'utilisateur ne peut pas dépasser 20 caractères",
+    "username_regex": "Le nom d'utilisateur ne peut contenir que des lettres, des chiffres et des underscores",
     "email_invalid": "Adresse email invalide",
     "password_min_length": "Le mot de passe doit contenir au moins 8 caractères",
     "password_uppercase": "Le mot de passe doit contenir au moins une majuscule",
     "password_number": "Le mot de passe doit contenir au moins un chiffre",
-    "register_success": "Compte créé avec succès ! Redirection...",
+    "register_success": "Inscription réussie ! Vous pouvez maintenant vous connecter.",
     "register_error": "Erreur lors de l'inscription.",
-    "register_title": "Rejoignez MathGraph",
-    "register_desc": "Créez un compte pour commencer à soumettre des corrections, proposer des démonstrations et participer activement à la communauté.",
+    "register_title": "Créer un compte",
+    "register_desc": "Rejoignez la communauté MathGraph pour contribuer et explorer.",
     "register_form_title": "Inscription",
-    "register_subtitle": "Créez vos identifiants pour rejoindre le projet.",
-    "email": "Email",
-    "registering": "Création en cours...",
+    "register_subtitle": "Créons votre compte",
+    "registering": "Inscription...",
     "register_btn": "S'inscrire",
-    "already_account": "Déjà inscrit ?",
+    "already_account": "Déjà un compte ?",
     "login_link": "Se connecter"
   },
   "profile": {
@@ -274,11 +261,6 @@
     "concept_modified": "Concept Modifié",
     "rollback_warning": "⚠️ Restauration d'une version précédente"
   },
-  "search": {
-    "content_type": "Type de contenu",
-    "concepts": "Concepts & Théorèmes",
-    "mathematicians": "Mathématiciens"
-  },
   "settings": {
     "title": "Paramètres du Site",
     "general_config": "Configuration Générale",
@@ -361,22 +343,6 @@
     "support": "Soutenir",
     "rights": "Tous droits réservés.",
     "tagline": "Visualisation interactive et collaborative des concepts mathématiques."
-  },
-  "app": {
-    "login": "Connexion",
-    "register": "Inscription",
-    "hello": "Bonjour"
-  },
-  "menu": {
-    "configuration": "Configuration"
-  },
-  "search": {
-    "no_concept_found": "Aucun concept trouvé",
-    "concept": "Concept",
-    "mathematician": "Mathématicien",
-    "category": "Catégorie",
-    "placeholder": "Recherche globale...",
-    "concept_placeholder": "Rechercher un concept..."
   },
   "node_details": {
     "description": "Description & Détails",
