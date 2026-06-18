@@ -6,9 +6,8 @@ import {
   FormControlLabel,
   Divider,
   Switch,
-  useTheme,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import { alpha, styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
@@ -30,9 +29,57 @@ interface MenuProps {
   graphData: Graph;
 }
 
+const MenuButtonToggle = styled(IconButton)(({ theme }) => ({
+  backdropFilter: "blur(12px)",
+  background: alpha(theme.palette.background.paper, 0.75),
+  border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+  boxShadow: `0 4px 15px ${alpha(theme.palette.common.black, 0.15)}`,
+  padding: theme.spacing(1.5),
+  "&:hover": {
+    background: alpha(theme.palette.background.paper, 0.85),
+  },
+}));
+
+const NavigationButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  justifyContent: "flex-start",
+  borderColor: alpha(theme.palette.text.primary, 0.15),
+  borderRadius: "10px",
+  fontWeight: 600,
+  fontSize: "0.875rem",
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  "&:hover": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.05 : 0.03,
+    ),
+    borderColor: alpha(theme.palette.text.primary, 0.3),
+  },
+}));
+
+const ActionButton = styled(Button)(({ theme }) => ({
+  borderRadius: "10px",
+  fontWeight: 600,
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  color: theme.palette.text.primary,
+  "&:hover": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.05 : 0.03,
+    ),
+  },
+  "&:active": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.15 : 0.1,
+    ),
+  },
+}));
+
 export default function Menu({ graphData }: MenuProps) {
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const {
     open,
@@ -94,29 +141,13 @@ export default function Menu({ graphData }: MenuProps) {
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.2 }}
             >
-              <IconButton
+              <MenuButtonToggle
                 color="primary"
                 aria-label="menu"
                 onClick={() => setOpen(true)}
-                sx={{
-                  backdropFilter: "blur(12px)",
-                  background: darkMode
-                    ? alpha(theme.palette.background.paper, 0.75)
-                    : alpha(theme.palette.background.paper, 0.75),
-                  border: darkMode
-                    ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
-                    : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-                  boxShadow: `0 4px 15px ${alpha(theme.palette.common.black, 0.15)}`,
-                  p: 1.5,
-                  "&:hover": {
-                    background: darkMode
-                      ? alpha(theme.palette.background.paper, 0.85)
-                      : alpha(theme.palette.background.paper, 0.85),
-                  },
-                }}
               >
                 <MenuIcon />
-              </IconButton>
+              </MenuButtonToggle>
             </motion.div>
           ) : (
             <FocusTrap
@@ -167,34 +198,15 @@ export default function Menu({ graphData }: MenuProps) {
                     </IconButton>
                   </Box>
 
-                  <Button
+                  <NavigationButton
                     variant="outlined"
                     color="inherit"
                     fullWidth
                     href="/"
                     startIcon={<HomeIcon />}
-                    sx={{
-                      mb: 2,
-                      justifyContent: "flex-start",
-                      borderColor: darkMode
-                        ? alpha(theme.palette.text.primary, 0.15)
-                        : alpha(theme.palette.text.primary, 0.15),
-                      borderRadius: "10px",
-                      fontWeight: 600,
-                      fontSize: "0.875rem",
-                      py: 1,
-                      "&:hover": {
-                        background: darkMode
-                          ? alpha(theme.palette.text.primary, 0.05)
-                          : alpha(theme.palette.text.primary, 0.03),
-                        borderColor: darkMode
-                          ? alpha(theme.palette.text.primary, 0.3)
-                          : alpha(theme.palette.text.primary, 0.3),
-                      },
-                    }}
                   >
                     {t("menu.backToPortal")}
-                  </Button>
+                  </NavigationButton>
 
                   <Divider sx={{ my: 1.5, opacity: 0.4 }} />
 
@@ -249,30 +261,14 @@ export default function Menu({ graphData }: MenuProps) {
                       }
                     />
 
-                    <Button
+                    <ActionButton
                       variant="contained"
                       onClick={exportGraph}
                       startIcon={<FileDownloadIcon />}
                       fullWidth
-                      sx={{
-                        borderRadius: "10px",
-                        fontWeight: 600,
-                        py: 1,
-                        color: "text.primary",
-                        "&:hover": {
-                          background: darkMode
-                            ? alpha(theme.palette.text.primary, 0.05)
-                            : alpha(theme.palette.text.primary, 0.03),
-                        },
-                        "&:active": {
-                          background: darkMode
-                            ? alpha(theme.palette.text.primary, 0.15)
-                            : alpha(theme.palette.text.primary, 0.1),
-                        },
-                      }}
                     >
                       {t("menu.exportJson")}
-                    </Button>
+                    </ActionButton>
                   </Box>
                 </GlassPaper>
               </motion.div>

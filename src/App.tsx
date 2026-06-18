@@ -81,6 +81,29 @@ const queryClient = new QueryClient({
   },
 });
 
+const GlobalGraph = () => {
+  const location = useLocation();
+  const isGraph = location.pathname === "/graph";
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 0,
+        opacity: isGraph ? 1 : 0,
+        pointerEvents: isGraph ? "auto" : "none",
+        transition: "opacity 0.4s ease-in-out",
+      }}
+    >
+      <AppContent />
+    </div>
+  );
+};
+
 const AnimatedRoutes = () => {
   const location = useLocation();
 
@@ -89,7 +112,7 @@ const AnimatedRoutes = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/graph" element={<AppContent />} />
+        <Route path="/graph" element={<></>} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
@@ -153,7 +176,10 @@ const App = () => {
           />
           <ErrorBoundary>
             <Router>
-              <AnimatedRoutes />
+              <GlobalGraph />
+              <div style={{ position: "relative", zIndex: 1 }}>
+                <AnimatedRoutes />
+              </div>
             </Router>
           </ErrorBoundary>
         </ThemeProvider>
