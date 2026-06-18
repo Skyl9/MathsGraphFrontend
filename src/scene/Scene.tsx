@@ -272,7 +272,6 @@ export default function Scene({ graphData }: SceneProps) {
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
-  const targetPosition = useGraphStore((s) => s.targetPosition);
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
@@ -584,12 +583,12 @@ export default function Scene({ graphData }: SceneProps) {
         )}
 
         {/* 🌟 Anneau de sélection holographique */}
-        {selectedNodeId && renderMode === "quality" && (
+        {selectedNodeId && selectedNode && (
           <SelectionRing
             position={[
-              targetPosition?.x ?? 0,
-              targetPosition?.y ?? 0,
-              targetPosition?.z ?? 0,
+              getNodePos(selectedNode, currentView).x,
+              getNodePos(selectedNode, currentView).y,
+              getNodePos(selectedNode, currentView).z,
             ]}
             color={getNodeColor(selectedNode?.typeMath ?? "", colors)}
             scale={getNodeScale(selectedNodeId) + 0.3}
