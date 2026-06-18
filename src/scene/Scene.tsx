@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
-import { Billboard, Text, Instances, Instance } from "@react-three/drei";
+import {
+  Billboard,
+  Text,
+  Instances,
+  Instance,
+  GizmoHelper,
+  GizmoViewport,
+} from "@react-three/drei";
 import {
   Vector3,
   Color,
@@ -261,6 +268,7 @@ export default function Scene({ graphData }: SceneProps) {
   const renderMode = useUIStore((s) => s.renderMode);
   const graphTheme = useUIStore((s) => s.graphTheme);
   const useInstancedEdges = useUIStore((s) => s.useInstancedEdges);
+  const darkMode = useUIStore((s) => s.darkMode);
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
@@ -601,6 +609,14 @@ export default function Scene({ graphData }: SceneProps) {
             />
           </EffectComposer>
         )}
+
+      <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+        <GizmoViewport
+          axisColors={["#ff3b30", "#34c759", "#007aff"]}
+          labelColor={darkMode ? "white" : "black"}
+          hideNegativeAxes
+        />
+      </GizmoHelper>
     </>
   );
 }
