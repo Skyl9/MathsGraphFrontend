@@ -42,6 +42,7 @@
     "react-toastify": "^11.1.0",
     "react-window": "^1.8.11",
     "rehype-katex": "^7.0.1",
+    "rehype-sanitize": "^6.0.0",
     "remark-math": "^6.0.0",
     "three": "^0.173.0",
     "zod": "^4.4.3",
