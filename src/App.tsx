@@ -1,5 +1,10 @@
 import { useMemo } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import { Canvas } from "@react-three/fiber";
 import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
@@ -75,6 +80,61 @@ const queryClient = new QueryClient({
   },
 });
 
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/graph" element={<AppContent />} />
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<DashboardPage />} />
+          <Route path="users" element={<UsersPage />} />
+          <Route path="contents" element={<ContentsPage />} />
+          <Route path="contents/new" element={<NewContentPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+        </Route>
+
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/recent-changes" element={<RecentChangesPage />} />
+          <Route path="/concept/:id" element={<ConceptPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/mathematicien/:id" element={<MathematicienPage />} />
+          <Route path={"/category/:id"} element={<CategoryPage />} />
+          <Route path={"/type/:id"} element={<TypePage />} />
+          <Route path={"/category"} element={<CategoryList />} />
+          <Route path={"/type"} element={<TypeList />} />
+          <Route path={"/mathematicien"} element={<MathematicienList />} />
+          <Route path={"/concept"} element={<ConceptList />} />
+          <Route path={"/user/:id"} element={<UserProfilePage />} />
+          <Route path={"/reset-password"} element={<PasswordReset />} />
+          <Route
+            path={"/reset-password-verification/:token"}
+            element={<PasswordResetVerification />}
+          />
+          <Route path={"/username/:username"} element={<UserRedirect />} />
+          <Route
+            path={"/category/redirect/:categoryName"}
+            element={<CategoryRedirect />}
+          />
+          <Route path={"/type/redirect/:typeName"} element={<TypeRedirect />} />
+          <Route
+            path={"/mathematicien/redirect/:mathematicienName"}
+            element={<MathematicienRedirect />}
+          />
+          <Route path={"/contribution"} element={<ContributionPage />} />
+          <Route path={"/search"} element={<SearchPage />} />
+          <Route path="*" element={<LostPage />} />
+        </Route>
+      </Routes>
+    </AnimatePresence>
+  );
+};
+
 const App = () => {
   const darkMode = useUIStore((state) => state.darkMode);
 
@@ -91,73 +151,8 @@ const App = () => {
             theme={darkMode ? "dark" : "light"}
           />
           <ErrorBoundary>
-            {" "}
             <Router>
-              {" "}
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/graph" element={<AppContent />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<DashboardPage />} />
-                  <Route path="users" element={<UsersPage />} />
-                  <Route path="contents" element={<ContentsPage />} />
-                  <Route path="contents/new" element={<NewContentPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
-
-                <Route element={<MainLayout />}>
-                  <Route path="/" element={<HomePage />} />
-                  <Route
-                    path="/recent-changes"
-                    element={<RecentChangesPage />}
-                  />
-                  <Route path="/concept/:id" element={<ConceptPage />} />
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/support" element={<SupportPage />} />
-                  <Route
-                    path="/mathematicien/:id"
-                    element={<MathematicienPage />}
-                  />
-                  <Route path={"/category/:id"} element={<CategoryPage />} />
-                  <Route path={"/type/:id"} element={<TypePage />} />
-                  <Route path={"/category"} element={<CategoryList />} />
-                  <Route path={"/type"} element={<TypeList />} />
-                  <Route
-                    path={"/mathematicien"}
-                    element={<MathematicienList />}
-                  />
-                  <Route path={"/concept"} element={<ConceptList />} />
-                  <Route path={"/user/:id"} element={<UserProfilePage />} />
-                  <Route path={"/reset-password"} element={<PasswordReset />} />
-                  <Route
-                    path={"/reset-password-verification/:token"}
-                    element={<PasswordResetVerification />}
-                  />
-                  <Route
-                    path={"/username/:username"}
-                    element={<UserRedirect />}
-                  />
-                  <Route
-                    path={"/category/redirect/:categoryName"}
-                    element={<CategoryRedirect />}
-                  />
-                  <Route
-                    path={"/type/redirect/:typeName"}
-                    element={<TypeRedirect />}
-                  />
-                  <Route
-                    path={"/mathematicien/redirect/:mathematicienName"}
-                    element={<MathematicienRedirect />}
-                  />
-                  <Route
-                    path={"/contribution"}
-                    element={<ContributionPage />}
-                  />
-                  <Route path={"/search"} element={<SearchPage />} />
-                  <Route path="*" element={<LostPage />} />
-                </Route>
-              </Routes>
+              <AnimatedRoutes />
             </Router>
           </ErrorBoundary>
         </ThemeProvider>

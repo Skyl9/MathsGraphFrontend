@@ -9,7 +9,8 @@ import {
   useTheme,
   Button,
 } from "@mui/material";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { getStaggerContainer, fadeInUp } from "../utils/animations";
 import HubIcon from "@mui/icons-material/Hub";
 import PsychologyIcon from "@mui/icons-material/Psychology";
 import GroupsIcon from "@mui/icons-material/Groups";
@@ -21,20 +22,8 @@ export function AboutPage() {
   const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 80 } },
-  };
+  const containerVariants = getStaggerContainer(0.15);
+  const itemVariants = fadeInUp;
 
   const values = [
     {

@@ -12,7 +12,8 @@ import {
 } from "@mui/material";
 import { RecentChanges } from "../components/RecentChanges.tsx";
 import { RecentComments } from "../components/recentComment.tsx";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { getStaggerContainer, fadeInUp } from "../utils/animations";
 
 // Icônes
 import FunctionsIcon from "@mui/icons-material/Functions";
@@ -71,20 +72,8 @@ export function HomePage() {
   ];
 
   // Variantes d'animation pour Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.08,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } },
-  };
+  const containerVariants = getStaggerContainer(0.08);
+  const itemVariants = fadeInUp;
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>

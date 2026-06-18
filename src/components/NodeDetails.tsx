@@ -19,6 +19,7 @@ import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
 import MathMarkdown from "./MathMarkdown";
 import { useTranslation } from "react-i18next";
+import { GlassPaper } from "./GlassPaper";
 
 import "../styles/NodeDetails.css";
 
@@ -133,18 +134,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         transition={{ type: "spring", stiffness: 280, damping: 26 }}
         className="node-details-sidebar"
       >
-        <Box
-          className="sidebar-container"
-          sx={{
-            background: darkMode
-              ? "rgba(15, 23, 42, 0.75)"
-              : "rgba(255, 255, 255, 0.75)",
-            backdropFilter: "blur(20px)",
-            border: darkMode
-              ? "1px solid rgba(255, 255, 255, 0.08)"
-              : "1px solid rgba(15, 23, 42, 0.08)",
-          }}
-        >
+        <GlassPaper className="sidebar-container" blur={20} opacity={0.75}>
           {/* Header */}
           <Box
             className="sidebar-header"
@@ -320,7 +310,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               {t("node_details.profile")}
             </Button>
           </Box>
-        </Box>
+        </GlassPaper>
       </motion.div>
     </FocusTrap>
   );

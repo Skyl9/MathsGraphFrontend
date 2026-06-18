@@ -10,7 +10,8 @@ import {
   Box,
   useTheme,
 } from "@mui/material";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { getStaggerContainer, fadeInUp } from "../utils/animations";
 import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import GitHubIcon from "@mui/icons-material/GitHub";
@@ -22,20 +23,8 @@ export function SupportPage() {
   const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 90 } },
-  };
+  const containerVariants = getStaggerContainer(0.1);
+  const itemVariants = fadeInUp;
 
   const tiers = [
     {

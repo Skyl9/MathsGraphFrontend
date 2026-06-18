@@ -12,7 +12,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import { ReportIssueButton } from "../components/Issue";
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
+import { getStaggerContainer, fadeInUp } from "../utils/animations";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Category } from "../types/ApiTypes/category";
@@ -55,18 +56,8 @@ const CategoryList = () => {
 
   const categoryTree = buildCategoryTree(categories);
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05 },
-    },
-  };
-
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } },
-  };
+  const containerVariants = getStaggerContainer(0.05);
+  const itemVariants = fadeInUp;
 
   return (
     <Container maxWidth="lg" sx={{ py: 6 }}>
