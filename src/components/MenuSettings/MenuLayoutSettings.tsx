@@ -81,7 +81,9 @@ export default function MenuLayoutSettings({
       </FormControl>
 
       <FormControl fullWidth size="small" sx={{ mb: 2 }}>
-        <InputLabel id="edges-mode-label">Moteur des arêtes</InputLabel>
+        <InputLabel id="edges-mode-label">
+          {t("menu.settings.edge_engine")}
+        </InputLabel>
         <Select
           labelId="edges-mode-label"
           value={useInstancedEdges ? "instanced" : "standard"}

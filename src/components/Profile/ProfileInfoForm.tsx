@@ -117,14 +117,14 @@ export const ProfileInfoForm = ({
                 sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
               />
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 onClick={() => onSaveField("email")}
                 color="success"
               >
                 <SaveIcon />
               </IconButton>
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 onClick={() => {
                   setEditField(null);
                   setEmail(user.email);
@@ -195,14 +195,14 @@ export const ProfileInfoForm = ({
                 <MenuItem value="es">{t("profile.spanish")}</MenuItem>
               </TextField>
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 onClick={() => onSaveField("preferred_language")}
                 color="success"
               >
                 <SaveIcon />
               </IconButton>
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 onClick={() => {
                   setEditField(null);
                   setLang(user.preferred_language);
@@ -275,14 +275,14 @@ export const ProfileInfoForm = ({
               />
               <Stack>
                 <IconButton
-                  aria-label="Bouton d'action"
+                  aria-label={t("common.aria.action_button")}
                   onClick={() => onSaveField("bio")}
                   color="success"
                 >
                   <SaveIcon />
                 </IconButton>
                 <IconButton
-                  aria-label="Bouton d'action"
+                  aria-label={t("common.aria.action_button")}
                   onClick={() => {
                     setEditField(null);
                     setBio(user.bio || "");

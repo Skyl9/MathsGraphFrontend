@@ -190,7 +190,7 @@ export default function Menu({ graphData }: MenuProps) {
                       {t("menu.configuration")}
                     </Typography>
                     <IconButton
-                      aria-label="Bouton d'action"
+                      aria-label={t("common.aria.action_button")}
                       size="small"
                       onClick={() => setOpen(false)}
                     >

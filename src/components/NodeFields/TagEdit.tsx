@@ -13,6 +13,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import { nodeApi } from "../../services/api";
+import { useTranslation } from "react-i18next";
 
 interface TagEditProps {
   tags: Tag[] | undefined | null;
@@ -21,6 +22,7 @@ interface TagEditProps {
 }
 
 const TagEdit: React.FC<TagEditProps> = ({ tags, conceptId, refetchData }) => {
+  const { t } = useTranslation();
   const [allTags, setAllTags] = useState<Tag[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -155,7 +157,7 @@ const TagEdit: React.FC<TagEditProps> = ({ tags, conceptId, refetchData }) => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Nouveau tag ou existant"
+                    label={t("tag.fields.new_or_existing")}
                     size="small"
                     variant="outlined"
                   />

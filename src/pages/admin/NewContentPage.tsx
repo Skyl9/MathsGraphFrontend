@@ -17,8 +17,10 @@ import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../../services/api";
 import SaveIcon from "@mui/icons-material/Save";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useTranslation } from "react-i18next";
 
 const NewContentPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -128,10 +130,10 @@ const NewContentPage = () => {
               </Typography>
               <Stack spacing={3}>
                 <TextField
-                  label="Nom du concept"
+                  label={t("admin.new_content.fields.name")}
                   required
                   fullWidth
-                  placeholder="Ex: Théorème de Pythagore"
+                  placeholder={t("admin.new_content.placeholders.name")}
                   value={formData.nom}
                   onChange={(e) =>
                     setFormData({ ...formData, nom: e.target.value })
@@ -144,7 +146,7 @@ const NewContentPage = () => {
                 />
 
                 <TextField
-                  label="Énoncé"
+                  label={t("admin.new_content.fields.statement")}
                   required
                   multiline
                   rows={6}
@@ -163,11 +165,11 @@ const NewContentPage = () => {
                 />
 
                 <TextField
-                  label="Démonstration (Optionnelle)"
+                  label={t("admin.new_content.fields.proof")}
                   multiline
                   rows={8}
                   fullWidth
-                  placeholder="Écrivez la démonstration étape par étape si applicable."
+                  placeholder={t("admin.new_content.placeholders.proof")}
                   value={formData.demonstration}
                   onChange={(e) =>
                     setFormData({ ...formData, demonstration: e.target.value })
@@ -192,7 +194,7 @@ const NewContentPage = () => {
                 <Stack spacing={3}>
                   <TextField
                     select
-                    label="Type"
+                    label={t("admin.new_content.fields.type")}
                     required
                     fullWidth
                     value={formData.type}
@@ -214,7 +216,7 @@ const NewContentPage = () => {
 
                   <TextField
                     select
-                    label="Catégorie"
+                    label={t("admin.new_content.fields.category")}
                     fullWidth
                     value={formData.categorie_id}
                     onChange={(e) =>
@@ -242,7 +244,7 @@ const NewContentPage = () => {
 
                   <TextField
                     select
-                    label="Mathématicien associé"
+                    label={t("admin.new_content.fields.mathematician")}
                     fullWidth
                     value={formData.mathematicien_id}
                     onChange={(e) =>

@@ -84,7 +84,7 @@ const MathematicienPage = () => {
                 editableFields["nom"] &&
                 editableFields["nom"].type !== "none" && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     color="primary"
                     onClick={() => handleEdit("nom")}
@@ -104,7 +104,7 @@ const MathematicienPage = () => {
                 editableFields["biographie"] &&
                 editableFields["biographie"].type !== "none" && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     color="primary"
                     onClick={() => handleEdit("biographie")}
@@ -163,7 +163,7 @@ const MathematicienPage = () => {
                     {editModeActive &&
                       editableFields["date_naissance"].type !== "none" && (
                         <IconButton
-                          aria-label="Bouton d'action"
+                          aria-label={t("common.aria.action_button")}
                           size="small"
                           color="primary"
                           onClick={() => handleEdit("date_naissance")}
@@ -186,7 +186,7 @@ const MathematicienPage = () => {
                     {editModeActive &&
                       editableFields["date_deces"].type !== "none" && (
                         <IconButton
-                          aria-label="Bouton d'action"
+                          aria-label={t("common.aria.action_button")}
                           size="small"
                           color="primary"
                           onClick={() => handleEdit("date_deces")}
@@ -207,7 +207,7 @@ const MathematicienPage = () => {
                     {editModeActive &&
                       editableFields["nationalite"].type !== "none" && (
                         <IconButton
-                          aria-label="Bouton d'action"
+                          aria-label={t("common.aria.action_button")}
                           size="small"
                           color="primary"
                           onClick={() => handleEdit("nationalite")}
@@ -228,7 +228,7 @@ const MathematicienPage = () => {
                     {editModeActive &&
                       editableFields["domaine"].type !== "none" && (
                         <IconButton
-                          aria-label="Bouton d'action"
+                          aria-label={t("common.aria.action_button")}
                           size="small"
                           color="primary"
                           onClick={() => handleEdit("domaine")}

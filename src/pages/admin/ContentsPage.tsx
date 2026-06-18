@@ -24,8 +24,10 @@ import { nodeApi } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ContentAdmin } from "../../types/ApiTypes/admin";
+import { useTranslation } from "react-i18next";
 
 const ContentsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -120,7 +122,7 @@ const ContentsPage = () => {
       width: 100,
       renderCell: (params) => (
         <IconButton
-          aria-label="Bouton d'action"
+          aria-label={t("common.aria.action_button")}
           color="primary"
           onClick={() => handleEditRow(params.row)}
           title="Modifier cet élément"

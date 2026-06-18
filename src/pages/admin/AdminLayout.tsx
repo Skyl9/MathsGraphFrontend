@@ -27,6 +27,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import { nodeApi } from "../../services/api";
 import Token from "../../services/token";
 import { User } from "../../types/ApiTypes/user";
+import { useTranslation } from "react-i18next";
 
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: <DashboardIcon /> },
@@ -38,6 +39,7 @@ const navItems = [
 const drawerWidth = 240;
 
 const AdminLayout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useTheme();
@@ -107,7 +109,7 @@ const AdminLayout = () => {
 
           <Stack direction="row" spacing={1.5} alignItems="center">
             <IconButton
-              aria-label="Bouton d'action"
+              aria-label={t("common.aria.action_button")}
               color="inherit"
               onClick={() => navigate("/")}
               title="Retour à l'accueil"

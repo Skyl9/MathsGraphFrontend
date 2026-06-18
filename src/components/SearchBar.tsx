@@ -50,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, setIsSearch }) => {
           endAdornment: query && (
             <InputAdornment position="end">
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 size="small"
                 onClick={handleClear}
                 edge="end"

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { nodeApi } from "../../services/api";
+import { useTranslation } from "react-i18next";
 
 type FieldAddRelationProps = {
   nodeName: string;
@@ -25,6 +26,7 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({
   nodeName,
   createField,
 }) => {
+  const { t } = useTranslation();
   const [theorems, setTheorems] = useState<LabelValue[]>([]);
   const [theo2, setTheo2] = useState<{ label: string } | null>(null);
   const [relation, setRelation] = useState("");
@@ -93,14 +95,14 @@ const FieldAddRelation: React.FC<FieldAddRelationProps> = ({
             value={theo2}
             onChange={(_e, newValue) => setTheo2(newValue ?? null)}
             renderInput={(params) => (
-              <TextField {...params} label="Théorème 2" />
+              <TextField {...params} label={t("relation.fields.target_node")} />
             )}
             sx={{ minWidth: 200 }}
           />
 
           <TextField
             size="small"
-            label="Description"
+            label={t("relation.fields.description")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             sx={{ minWidth: 200 }}

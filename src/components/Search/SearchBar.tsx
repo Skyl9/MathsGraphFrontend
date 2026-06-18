@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
   queryTerm: string;
@@ -25,6 +26,8 @@ export const SearchBar = ({
   onSubmit,
   onOpenFilters,
 }: SearchBarProps) => {
+  const { t } = useTranslation();
+
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -47,7 +50,7 @@ export const SearchBar = ({
           variant="outlined"
           value={localQuery}
           onChange={(e) => setLocalQuery(e.target.value)}
-          placeholder="Modifier ou lancer une recherche..."
+          placeholder={t("search.bar.placeholder")}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: 3,
@@ -59,7 +62,7 @@ export const SearchBar = ({
           InputProps={{
             startAdornment: (
               <IconButton
-                aria-label="Bouton d'action"
+                aria-label={t("common.aria.action_button")}
                 type="submit"
                 color="primary"
                 sx={{ mr: 0.5 }}

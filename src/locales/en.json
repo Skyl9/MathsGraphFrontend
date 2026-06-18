@@ -16,6 +16,7 @@
     "dark": "Dark Mode"
   },
   "topbar": {
+    "toggle_theme": "Toggle theme",
     "login": "Login",
     "register": "Sign up",
     "profile": "Profile",
@@ -66,6 +67,9 @@
     }
   },
   "menu": {
+    "settings": {
+      "edge_engine": "Edges Engine"
+    },
     "configuration": "Configuration"
   },
   "categories": {
@@ -78,6 +82,18 @@
     "conjectures": "Conjectures"
   },
   "search": {
+    "filters": {
+      "categories": "Categories",
+      "verified_only": "Verified concepts only",
+      "category": "Category",
+      "type": "Type",
+      "mathematician": "Mathematician",
+      "from_year": "From (e.g., -300)",
+      "to_year": "To (e.g., 1800)"
+    },
+    "bar": {
+      "placeholder": "Modify or launch a search..."
+    },
     "no_concept_found": "No concept found",
     "concept": "Concept",
     "mathematician": "Mathematician",
@@ -397,15 +413,84 @@
     "send": "Send"
   },
   "edit_modal": {
+    "fields": {
+      "type": "Type",
+      "category": "Category",
+      "mathematician": "Mathematician"
+    },
+    "placeholder": {
+      "content": "Write here... Use **bold**, *italic*, and $x^2$ for maths."
+    },
     "parent_category": "Parent category",
     "none": "None",
     "concept_verification": "Concept verification"
   },
   "common": {
+    "close": "Close",
+    "submit": "Submit",
+    "aria": {
+      "action_button": "Action button"
+    },
     "report_issue": "Report an issue",
     "cancel": "Cancel",
     "validate": "Validate",
-    "unexpected_error": "An unexpected error occurred.",
-    "close": "Close"
+    "unexpected_error": "An unexpected error occurred."
+  },
+  "source": {
+    "fields": {
+      "title": "Source name",
+      "author": "Author",
+      "year": "Year",
+      "type": "Source type",
+      "url_placeholder": "Enter a URL"
+    },
+    "add_button": "Add a Source"
+  },
+  "alias": {
+    "add_button": "Add an Alias",
+    "placeholder": "Enter alias"
+  },
+  "relation": {
+    "fields": {
+      "target_node": "Theorem 2",
+      "description": "Description"
+    }
+  },
+  "foreign_name": {
+    "fields": {
+      "name": "Foreign name",
+      "language": "Language"
+    }
+  },
+  "tag": {
+    "fields": {
+      "new_or_existing": "New or existing tag"
+    }
+  },
+  "latex_editor": {
+    "label": "LaTeX / Markdown Editor",
+    "placeholder": "Enter your text... Use $...$ for inline formulas and $$...$$ for blocks."
+  },
+  "admin": {
+    "common": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "search_placeholder": "Search..."
+    },
+    "new_content": {
+      "fields": {
+        "name": "Concept name",
+        "statement": "Statement",
+        "proof": "Proof (Optional)",
+        "type": "Type",
+        "category": "Category",
+        "mathematician": "Associated mathematician"
+      },
+      "placeholders": {
+        "name": "Ex: Pythagorean theorem",
+        "statement": "Describe the statement",
+        "proof": "Write the step-by-step proof if applicable."
+      }
+    }
   }
 }

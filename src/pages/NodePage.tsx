@@ -186,7 +186,7 @@ const NodePage = () => {
               <FavoriteButton itemId={id as string} itemType={"concept"} />
               {editModeActive && isUserConnected && editableFields["nom"] && (
                 <IconButton
-                  aria-label="Bouton d'action"
+                  aria-label={t("common.aria.action_button")}
                   size="small"
                   onClick={() => handleEdit("nom")}
                 >
@@ -208,7 +208,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     onClick={() => handleEdit("enonce")}
                   >
@@ -235,7 +235,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     onClick={() => handleEdit("demonstration")}
                   >
@@ -264,7 +264,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     onClick={() => handleEdit("relations")}
                   >
@@ -291,7 +291,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     onClick={() => handleEdit("sources")}
                   >
@@ -318,7 +318,7 @@ const NodePage = () => {
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
-                    aria-label="Bouton d'action"
+                    aria-label={t("common.aria.action_button")}
                     size="small"
                     onClick={() => handleEdit("aliases")}
                   >

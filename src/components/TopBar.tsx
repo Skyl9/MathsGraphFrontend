@@ -54,7 +54,7 @@ export const TopBar: React.FC = () => {
             {i18n.language === "fr" ? "🇬🇧 EN" : "🇫🇷 FR"}
           </Button>
           <IconButton
-            aria-label="Basculer le thème"
+            aria-label={t("topbar.toggle_theme")}
             sx={{ ml: 1 }}
             onClick={toggleDarkMode}
             color="inherit"

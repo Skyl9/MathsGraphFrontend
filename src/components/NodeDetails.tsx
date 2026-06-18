@@ -141,7 +141,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
             style={{ borderLeft: `4px solid ${typeColor}` }}
           >
             <IconButton
-              aria-label="Fermer"
+              aria-label={t("common.close")}
               size="small"
               onClick={onClose}
               className="sidebar-close-btn"

@@ -97,21 +97,21 @@ export const EditModal = <T extends object>({
             </Select>
             {field === "type" && (
               <FieldAdd
-                label="Type"
+                label={t("edit_modal.fields.type")}
                 onChange={onChange}
                 createField={createField}
               />
             )}
             {field === "categorie" && (
               <FieldAdd
-                label="categorie"
+                label={t("edit_modal.fields.category")}
                 onChange={onChange}
                 createField={createField}
               />
             )}
             {field === "mathematicien" && (
               <FieldAdd
-                label="mathematicien"
+                label={t("edit_modal.fields.mathematician")}
                 onChange={onChange}
                 createField={createField}
               />
@@ -240,7 +240,7 @@ export const EditModal = <T extends object>({
           value={value || ""}
           onChange={(e) => onChange(e.target.value)}
           variant="outlined"
-          placeholder="Rédigez ici... Utilisez **gras**, *italique*, et $x^2$ pour les maths."
+          placeholder={t("edit_modal.placeholder.content")}
         />
       ),
     };

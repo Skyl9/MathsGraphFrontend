@@ -103,7 +103,7 @@ export const SearchFilters = ({
                 color="primary"
               />
             }
-            label="Catégories"
+            label={t("search.filters.categories")}
             sx={{
               "& .MuiFormControlLabel-label": {
                 fontWeight: 600,
@@ -140,7 +140,7 @@ export const SearchFilters = ({
                 color="primary"
               />
             }
-            label="Concepts vérifiés uniquement"
+            label={t("search.filters.verified_only")}
             sx={{
               "& .MuiFormControlLabel-label": {
                 fontWeight: 600,
@@ -169,12 +169,12 @@ export const SearchFilters = ({
         </Typography>
         <Stack spacing={2}>
           <FormControl fullWidth size="small">
-            <InputLabel>Catégorie</InputLabel>
+            <InputLabel>{t("search.filters.category")}</InputLabel>
             <Select
               name="categorie_id"
               value={filters.categorie_id === null ? "" : filters.categorie_id}
               onChange={handleSelectChange}
-              label="Catégorie"
+              label={t("search.filters.category")}
               disabled={!categories}
             >
               <MenuItem value="">
@@ -189,12 +189,12 @@ export const SearchFilters = ({
           </FormControl>
 
           <FormControl fullWidth size="small">
-            <InputLabel>Type</InputLabel>
+            <InputLabel>{t("search.filters.type")}</InputLabel>
             <Select
               name="type_id"
               value={filters.type_id === null ? "" : filters.type_id}
               onChange={handleSelectChange}
-              label="Type"
+              label={t("search.filters.type")}
               disabled={!types}
             >
               <MenuItem value="">
@@ -209,7 +209,7 @@ export const SearchFilters = ({
           </FormControl>
 
           <FormControl fullWidth size="small">
-            <InputLabel>Mathématicien</InputLabel>
+            <InputLabel>{t("search.filters.mathematician")}</InputLabel>
             <Select
               name="mathematicien_id"
               value={
@@ -218,7 +218,7 @@ export const SearchFilters = ({
                   : filters.mathematicien_id
               }
               onChange={handleSelectChange}
-              label="Mathématicien"
+              label={t("search.filters.mathematician")}
               disabled={!mathematiciens}
             >
               <MenuItem value="">
@@ -253,7 +253,7 @@ export const SearchFilters = ({
         <Stack direction="row" spacing={1.5}>
           <TextField
             name="date_start"
-            label="De (ex: -300)"
+            label={t("search.filters.from_year")}
             variant="outlined"
             size="small"
             placeholder="-300"
@@ -262,7 +262,7 @@ export const SearchFilters = ({
           />
           <TextField
             name="date_end"
-            label="À (ex: 1800)"
+            label={t("search.filters.to_year")}
             variant="outlined"
             size="small"
             placeholder="1800"

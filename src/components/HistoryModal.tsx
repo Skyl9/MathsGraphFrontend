@@ -181,7 +181,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
       <DialogTitle>
         {t("history.title")}
         <IconButton
-          aria-label="Fermer"
+          aria-label={t("common.close")}
           edge="end"
           onClick={onClose}
           style={{ position: "absolute", right: 8, top: 8 }}

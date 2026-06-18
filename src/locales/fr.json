@@ -16,6 +16,7 @@
     "dark": "Mode Sombre"
   },
   "topbar": {
+    "toggle_theme": "Basculer le thème",
     "login": "Se connecter",
     "register": "S'inscrire",
     "profile": "Profil",
@@ -66,6 +67,9 @@
     }
   },
   "menu": {
+    "settings": {
+      "edge_engine": "Moteur des arêtes"
+    },
     "configuration": "Configuration"
   },
   "categories": {
@@ -78,6 +82,18 @@
     "conjectures": "Conjectures"
   },
   "search": {
+    "filters": {
+      "categories": "Catégories",
+      "verified_only": "Concepts vérifiés uniquement",
+      "category": "Catégorie",
+      "type": "Type",
+      "mathematician": "Mathématicien",
+      "from_year": "De (ex: -300)",
+      "to_year": "À (ex: 1800)"
+    },
+    "bar": {
+      "placeholder": "Modifier ou lancer une recherche..."
+    },
     "no_concept_found": "Aucun concept trouvé",
     "concept": "Concept",
     "mathematician": "Mathématicien",
@@ -397,15 +413,84 @@
     "send": "Envoyer"
   },
   "edit_modal": {
+    "fields": {
+      "type": "Type",
+      "category": "Catégorie",
+      "mathematician": "Mathématicien"
+    },
+    "placeholder": {
+      "content": "Rédigez ici... Utilisez **gras**, *italique*, et $x^2$ pour les maths."
+    },
     "parent_category": "Catégorie parente",
     "none": "Aucune",
     "concept_verification": "Vérification du concept"
   },
   "common": {
+    "close": "Fermer",
+    "submit": "Valider",
+    "aria": {
+      "action_button": "Bouton d'action"
+    },
     "report_issue": "Signaler un problème",
     "cancel": "Annuler",
     "validate": "Valider",
-    "unexpected_error": "Une erreur inattendue est survenue.",
-    "close": "Fermer"
+    "unexpected_error": "Une erreur inattendue est survenue."
+  },
+  "source": {
+    "fields": {
+      "title": "Nom de source",
+      "author": "Auteur",
+      "year": "Année",
+      "type": "Type de source",
+      "url_placeholder": "Entrer une URL"
+    },
+    "add_button": "Ajouter une Source"
+  },
+  "alias": {
+    "add_button": "Ajouter un Alias",
+    "placeholder": "Entrer l'alias"
+  },
+  "relation": {
+    "fields": {
+      "target_node": "Théorème 2",
+      "description": "Description"
+    }
+  },
+  "foreign_name": {
+    "fields": {
+      "name": "Nom étranger",
+      "language": "Langue"
+    }
+  },
+  "tag": {
+    "fields": {
+      "new_or_existing": "Nouveau tag ou existant"
+    }
+  },
+  "latex_editor": {
+    "label": "Éditeur LaTeX / Markdown",
+    "placeholder": "Entrez votre texte... Utilisez $...$ pour les formules en ligne et $$...$$ pour les blocs."
+  },
+  "admin": {
+    "common": {
+      "edit": "Éditer",
+      "delete": "Supprimer",
+      "search_placeholder": "Rechercher..."
+    },
+    "new_content": {
+      "fields": {
+        "name": "Nom du concept",
+        "statement": "Énoncé",
+        "proof": "Démonstration (Optionnelle)",
+        "type": "Type",
+        "category": "Catégorie",
+        "mathematician": "Mathématicien associé"
+      },
+      "placeholders": {
+        "name": "Ex: Théorème de Pythagore",
+        "statement": "Décrivez l'énoncé",
+        "proof": "Écrivez la démonstration étape par étape si applicable."
+      }
+    }
   }
 }

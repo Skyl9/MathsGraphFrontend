@@ -24,6 +24,7 @@ import { nodeApi } from "../services/api";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { ListSkeleton } from "../components/Skeletons";
+import { useTranslation } from "react-i18next";
 
 interface SearchResult {
   id: number | string;
@@ -33,6 +34,8 @@ interface SearchResult {
 }
 
 export const SearchPage = () => {
+  const { t } = useTranslation();
+
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -211,7 +214,7 @@ export const SearchPage = () => {
               Filtres
             </Typography>
             <IconButton
-              aria-label="Bouton d'action"
+              aria-label={t("common.aria.action_button")}
               onClick={() => setDrawerOpen(false)}
               size="small"
             >
