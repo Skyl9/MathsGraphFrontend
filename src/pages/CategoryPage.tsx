@@ -6,7 +6,14 @@ import Token from "../services/token";
 import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { IconButton, Button, Switch, FormControlLabel } from "@mui/material";
+import {
+  IconButton,
+  Button,
+  Switch,
+  FormControlLabel,
+  Container,
+  Grid,
+} from "@mui/material";
 import { EditModal } from "../components/EditModal";
 import { ReportIssueButton } from "../components/Issue";
 import FavoriteButton from "../components/FavoriteButton";
@@ -33,6 +40,7 @@ import {
   MetadataValue,
   SidebarActions,
 } from "./NodePage.styles";
+import { SEOMeta } from "../components/SEOMeta";
 
 const CategoryPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -87,166 +95,179 @@ const CategoryPage = () => {
 
   return (
     <>
-      <DetailsGrid>
-        {/* Colonne Principale (Gauche) */}
-        <MainContentColumn>
-          <ConceptHeader>
-            <ConceptTitleRow>
-              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
-              <FavoriteButton itemId={id as string} itemType={"category"} />
-              {editModeActive &&
-                isUserConnected &&
-                editableFields["nom"] &&
-                editableFields["nom"].type !== "none" && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    color="primary"
-                    onClick={() => handleEdit("nom")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-            </ConceptTitleRow>
-          </ConceptHeader>
+      <SEOMeta
+        title={data?.nom || t("search.filters.category")}
+        description={`Découvrez la catégorie ${data?.nom} sur MathGraph`}
+      />
+      <Container
+        maxWidth="lg"
+        sx={{
+          mt: 4,
+        }}
+      >
+        <DetailsGrid>
+          {/* Colonne Principale (Gauche) */}
+          <MainContentColumn>
+            <ConceptHeader>
+              <ConceptTitleRow>
+                <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
+                <FavoriteButton itemId={id as string} itemType={"category"} />
+                {editModeActive &&
+                  isUserConnected &&
+                  editableFields["nom"] &&
+                  editableFields["nom"].type !== "none" && (
+                    <IconButton
+                      aria-label={t("common.aria.action_button")}
+                      size="small"
+                      color="primary"
+                      onClick={() => handleEdit("nom")}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  )}
+              </ConceptTitleRow>
+            </ConceptHeader>
 
-          {/* Description Card */}
-          <MathCard cardtype="enonce">
-            <MathCardHeader>
-              <MathCardTitle>{t("entities.description_title")}</MathCardTitle>
-              {editModeActive &&
-                isUserConnected &&
-                editableFields["description"] &&
-                editableFields["description"].type !== "none" && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    color="primary"
-                    onClick={() => handleEdit("description")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-            </MathCardHeader>
-            <MathCardBody>
-              <MathMarkdown
-                content={data?.description || t("entities.no_description")}
-              />
-            </MathCardBody>
-          </MathCard>
-        </MainContentColumn>
+            {/* Description Card */}
+            <MathCard cardtype="enonce">
+              <MathCardHeader>
+                <MathCardTitle>{t("entities.description_title")}</MathCardTitle>
+                {editModeActive &&
+                  isUserConnected &&
+                  editableFields["description"] &&
+                  editableFields["description"].type !== "none" && (
+                    <IconButton
+                      aria-label={t("common.aria.action_button")}
+                      size="small"
+                      color="primary"
+                      onClick={() => handleEdit("description")}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  )}
+              </MathCardHeader>
+              <MathCardBody>
+                <MathMarkdown
+                  content={data?.description || t("entities.no_description")}
+                />
+              </MathCardBody>
+            </MathCard>
+          </MainContentColumn>
 
-        {/* Colonne Latérale (Droite) */}
-        <SidebarColumn>
-          {/* Switch Mode Édition (si connecté) */}
-          {isUserConnected && (
+          {/* Colonne Latérale (Droite) */}
+          <SidebarColumn>
+            {/* Switch Mode Édition (si connecté) */}
+            {isUserConnected && (
+              <SidebarCard>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={editModeActive}
+                      onChange={(e) => setEditModeActive(e.target.checked)}
+                      color="primary"
+                    />
+                  }
+                  label={t("node.edit_mode")}
+                  sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
+                />
+              </SidebarCard>
+            )}
+
+            {/* Carte Métadonnées */}
             <SidebarCard>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={editModeActive}
-                    onChange={(e) => setEditModeActive(e.target.checked)}
-                    color="primary"
-                  />
-                }
-                label={t("node.edit_mode")}
-                sx={{ m: 0, width: "100%", justifyContent: "space-between" }}
-              />
-            </SidebarCard>
-          )}
-
-          {/* Carte Métadonnées */}
-          <SidebarCard>
-            <SidebarCardTitle variant="h6" component="h2">
-              {t("entities.category_details")}
-            </SidebarCardTitle>
-            <MetadataList>
-              {/* ID */}
-              <MetadataItem>
-                <MetadataLabel>{t("entities.id_label")}</MetadataLabel>
-                <MetadataValue>
-                  <span>{data?.id}</span>
-                </MetadataValue>
-              </MetadataItem>
-
-              {/* Catégorie Parente */}
-              {editableFields["parent_id"] && (
+              <SidebarCardTitle variant="h6" component="h2">
+                {t("entities.category_details")}
+              </SidebarCardTitle>
+              <MetadataList>
+                {/* ID */}
                 <MetadataItem>
-                  <MetadataLabel>
-                    {t("entities.parent_category_label")}
-                  </MetadataLabel>
+                  <MetadataLabel>{t("entities.id_label")}</MetadataLabel>
                   <MetadataValue>
-                    <span>
-                      {parentCategory ? (
-                        <Link
-                          to={`/category/${parentCategory.id}`}
-                          style={{
-                            color: "#0ea5e9",
-                            textDecoration: "underline",
-                            cursor: "pointer",
-                          }}
-                        >
-                          {parentCategory.nom}
-                        </Link>
-                      ) : (
-                        t("entities.none")
-                      )}
-                    </span>
-                    {editModeActive &&
-                      editableFields["parent_id"].type !== "none" && (
-                        <IconButton
-                          aria-label={t("common.aria.action_button")}
-                          size="small"
-                          color="primary"
-                          onClick={() => handleEdit("parent_id")}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                      )}
+                    <span>{data?.id}</span>
                   </MetadataValue>
                 </MetadataItem>
-              )}
-            </MetadataList>
-          </SidebarCard>
 
-          {/* Carte Actions */}
-          <SidebarCard>
-            <SidebarCardTitle variant="h6" component="h2">
-              {t("entities.actions_title")}
-            </SidebarCardTitle>
-            <SidebarActions>
-              <Button
-                fullWidth
-                variant="text"
-                startIcon={<ArrowBackIcon />}
-                onClick={() => window.history.back()}
-                sx={{ borderRadius: 2 }}
-              >
-                {t("entities.back")}
-              </Button>
-            </SidebarActions>
-          </SidebarCard>
+                {/* Catégorie Parente */}
+                {editableFields["parent_id"] && (
+                  <MetadataItem>
+                    <MetadataLabel>
+                      {t("entities.parent_category_label")}
+                    </MetadataLabel>
+                    <MetadataValue>
+                      <span>
+                        {parentCategory ? (
+                          <Link
+                            to={`/category/${parentCategory.id}`}
+                            style={{
+                              color: "#0ea5e9",
+                              textDecoration: "underline",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {parentCategory.nom}
+                          </Link>
+                        ) : (
+                          t("entities.none")
+                        )}
+                      </span>
+                      {editModeActive &&
+                        editableFields["parent_id"].type !== "none" && (
+                          <IconButton
+                            aria-label={t("common.aria.action_button")}
+                            size="small"
+                            color="primary"
+                            onClick={() => handleEdit("parent_id")}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                    </MetadataValue>
+                  </MetadataItem>
+                )}
+              </MetadataList>
+            </SidebarCard>
 
-          <ReportIssueButton />
-        </SidebarColumn>
-      </DetailsGrid>
+            {/* Carte Actions */}
+            <SidebarCard>
+              <SidebarCardTitle variant="h6" component="h2">
+                {t("entities.actions_title")}
+              </SidebarCardTitle>
+              <SidebarActions>
+                <Button
+                  fullWidth
+                  variant="text"
+                  startIcon={<ArrowBackIcon />}
+                  onClick={() => window.history.back()}
+                  sx={{ borderRadius: 2 }}
+                >
+                  {t("entities.back")}
+                </Button>
+              </SidebarActions>
+            </SidebarCard>
 
-      {isModalOpen && currentEditField && data && (
-        <EditModal<Category>
-          isOpen={isModalOpen}
-          onClose={cancelChanges}
-          onSave={saveChanges}
-          field={currentEditField}
-          value={newContent}
-          onChange={setNewContent}
-          fieldConfig={editableFields[currentEditField]}
-          data={data}
-          setData={setData}
-          createField={createField}
-          refetchData={refetchData}
-          isSaving={false}
-        />
-      )}
+            <ReportIssueButton />
+          </SidebarColumn>
+        </DetailsGrid>
+
+        {isModalOpen && currentEditField && data && (
+          <Grid>
+            <EditModal<Category>
+              isOpen={isModalOpen}
+              onClose={cancelChanges}
+              onSave={saveChanges}
+              field={currentEditField}
+              value={newContent}
+              onChange={setNewContent}
+              fieldConfig={editableFields[currentEditField]}
+              data={data}
+              setData={setData}
+              createField={createField}
+              refetchData={refetchData}
+              isSaving={false}
+            />
+          </Grid>
+        )}
+      </Container>
     </>
   );
 };

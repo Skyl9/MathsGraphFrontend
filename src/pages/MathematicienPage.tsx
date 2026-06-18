@@ -32,6 +32,7 @@ import {
   MetadataValue,
   SidebarActions,
 } from "./NodePage.styles";
+import { SEOMeta } from "../components/SEOMeta";
 
 const MathematicienPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +70,10 @@ const MathematicienPage = () => {
 
   return (
     <>
+      <SEOMeta
+        title={data?.nom || t("search.filters.mathematician")}
+        description={`Découvrez le mathématicien ${data?.nom} sur MathGraph`}
+      />
       <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
         <MainContentColumn>

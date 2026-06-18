@@ -37,6 +37,7 @@ import {
   MetadataValue,
   SidebarActions,
 } from "./NodePage.styles";
+import { SEOMeta } from "../components/SEOMeta";
 
 const TypePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -74,6 +75,10 @@ const TypePage = () => {
 
   return (
     <>
+      <SEOMeta
+        title={data?.nom || t("search.filters.type")}
+        description={`Découvrez le type ${data?.nom} sur MathGraph`}
+      />
       <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
         <MainContentColumn>
