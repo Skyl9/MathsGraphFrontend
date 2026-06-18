@@ -68,6 +68,7 @@ export const RecentComments: React.FC = () => {
 
   return (
     <Paper
+      component="section"
       elevation={0}
       sx={{
         p: 3,

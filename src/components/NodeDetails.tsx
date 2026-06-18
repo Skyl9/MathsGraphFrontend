@@ -119,7 +119,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         clickOutsideDeactivates: true,
       }}
     >
-      <motion.div
+      <motion.aside
         initial={{
           opacity: 0,
           x: isMobile ? 0 : 40,
@@ -137,6 +137,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         <GlassPaper className="sidebar-container" blur={20} opacity={0.75}>
           {/* Header */}
           <Box
+            component="header"
             className="sidebar-header"
             style={{ borderLeft: `4px solid ${typeColor}` }}
           >
@@ -275,7 +276,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
           </Box>
 
           {/* Footer Actions */}
-          <Box className="sidebar-footer">
+          <footer className="sidebar-footer">
             <Button
               variant="outlined"
               color="inherit"
@@ -315,9 +316,9 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
             >
               {t("node_details.profile")}
             </Button>
-          </Box>
+          </footer>
         </GlassPaper>
-      </motion.div>
+      </motion.aside>
     </FocusTrap>
   );
 }

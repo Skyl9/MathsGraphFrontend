@@ -2,7 +2,7 @@ import React from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
-export const DetailsGrid = styled("main")(({ theme }) => ({
+export const DetailsGrid = styled("div")(({ theme }) => ({
   display: "grid",
   gridTemplateColumns: "1fr",
   gap: "24px",
@@ -26,7 +26,7 @@ export const SidebarColumn = styled("aside")({
   gap: "20px",
 });
 
-export const MathCard = styled("section")<{
+export const MathCard = styled("article")<{
   cardtype?: "enonce" | "proof" | "default";
 }>(({ theme, cardtype }) => {
   const isDark = theme.palette.mode === "dark";
@@ -90,7 +90,7 @@ export const MathCardBody = styled(Box)({
   lineHeight: "1.7",
 });
 
-export const SidebarCard = styled(Box)(({ theme }) => {
+export const SidebarCard = styled("section")(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     background: isDark ? "#0f1428" : "white",
@@ -127,13 +127,16 @@ export const SidebarCardTitle = styled(Typography)<{
   };
 });
 
-export const MetadataList = styled(Box)({
+export const MetadataList = styled("ul")({
   display: "flex",
   flexDirection: "column",
   gap: "16px",
+  listStyle: "none",
+  padding: 0,
+  margin: 0,
 });
 
-export const MetadataItem = styled(Box)({
+export const MetadataItem = styled("li")({
   display: "flex",
   flexDirection: "column",
   gap: "4px",
@@ -175,7 +178,7 @@ export const ConceptTitle = styled(Typography)({
   lineHeight: "1.2 !important",
 });
 
-export const SidebarActions = styled(Box)({
+export const SidebarActions = styled("nav")({
   display: "flex",
   flexDirection: "column",
   gap: "12px",

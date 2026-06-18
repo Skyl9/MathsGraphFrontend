@@ -123,7 +123,11 @@ export function HomePage() {
                   whileHover={{ y: -6, scale: 1.015 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 >
-                  <GlassCard suffixcolor={card.suffix} elevation={0}>
+                  <GlassCard
+                    component="article"
+                    suffixcolor={card.suffix}
+                    elevation={0}
+                  >
                     <CardContent sx={{ p: 3.5, pb: 1.5 }}>
                       <CardIconWrapper suffixcolor={card.suffix}>
                         {card.icon}
@@ -180,7 +184,7 @@ export function HomePage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.35, duration: 0.5 }}
         >
-          <ContributionBanner elevation={0}>
+          <ContributionBanner component="aside" elevation={0}>
             <CardContent sx={{ p: 0 }}>
               <Stack spacing={2} alignItems="center">
                 <Box

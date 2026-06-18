@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import { Box, Card, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
 
-export const HeroSection = styled(motion.div)(({ theme }) => {
+export const HeroSection = styled(motion.section)(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     position: "relative",
@@ -38,7 +38,7 @@ export const HeroSection = styled(motion.div)(({ theme }) => {
   };
 });
 
-export const HeroContent = styled(Box)({
+export const HeroContent = styled("header")({
   position: "relative",
   zIndex: 1,
   display: "flex",
@@ -92,6 +92,7 @@ export const HeroButton = styled(Button)({
 
 export const GlassCard = styled(Card)<{
   suffixcolor?: "concept" | "category" | "mathematician" | "type";
+  component?: React.ElementType;
 }>(({ theme, suffixcolor }) => {
   const isDark = theme.palette.mode === "dark";
 
@@ -192,7 +193,9 @@ export const CardIconWrapper = styled(Box)<{
   };
 });
 
-export const ContributionBanner = styled(Card)(({ theme }) => {
+export const ContributionBanner = styled(Card)<{
+  component?: React.ElementType;
+}>(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     marginTop: "56px !important",
