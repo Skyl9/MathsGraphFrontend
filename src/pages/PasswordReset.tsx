@@ -12,7 +12,7 @@ import {
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { nodeApi, isApiError } from "../services/api";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ReportIssueButton } from "../components/Issue";
 
@@ -21,7 +21,6 @@ interface PasswordResetFormData {
 }
 
 const PasswordReset: React.FC = () => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const { t } = useTranslation();
   const isDark = theme.palette.mode === "dark";
@@ -199,7 +198,8 @@ const PasswordReset: React.FC = () => {
         <Button
           variant="text"
           startIcon={<ArrowBackIcon fontSize="small" />}
-          onClick={() => navigate("/login")}
+          component={Link}
+          to="/login"
           sx={{
             mt: 2,
             textTransform: "none",

@@ -9,7 +9,7 @@ import {
   useTheme,
   CircularProgress,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import VpnKeyOutlinedIcon from "@mui/icons-material/VpnKeyOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { nodeApi, isApiError } from "../services/api";
@@ -238,7 +238,8 @@ const PasswordResetVerification: React.FC = () => {
         <Button
           variant="text"
           startIcon={<ArrowBackIcon fontSize="small" />}
-          onClick={() => navigate("/login")}
+          component={Link}
+          to="/login"
           sx={{
             mt: 2,
             textTransform: "none",

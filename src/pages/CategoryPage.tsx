@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { NodePageSkeleton } from "../components/Skeletons";
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams, Link } from "react-router-dom";
 import { useEntityEdit } from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
 import "../styles/EditNodeModal.css";
@@ -59,7 +59,7 @@ const CategoryPage = () => {
     string | number | null | undefined
   >(undefined);
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
-  const navigate = useNavigate();
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -178,20 +178,16 @@ const CategoryPage = () => {
                   <MetadataValue>
                     <span>
                       {parentCategory ? (
-                        <a
-                          href={`/category/${parentCategory.id}`}
+                        <Link
+                          to={`/category/${parentCategory.id}`}
                           style={{
                             color: "#0ea5e9",
                             textDecoration: "underline",
                             cursor: "pointer",
                           }}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            navigate(`/category/${parentCategory.id}`);
-                          }}
                         >
                           {parentCategory.nom}
-                        </a>
+                        </Link>
                       ) : (
                         t("entities.none")
                       )}

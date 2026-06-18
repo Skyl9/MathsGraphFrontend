@@ -1,11 +1,10 @@
 import { Box, Typography, Button, Paper, useTheme } from "@mui/material";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 export function LostPage() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -105,7 +104,8 @@ export function LostPage() {
         <Button
           variant="contained"
           size="large"
-          onClick={() => navigate("/")}
+          component={Link}
+          to="/"
           startIcon={<ArrowBackIcon />}
           sx={{
             borderRadius: 3,
