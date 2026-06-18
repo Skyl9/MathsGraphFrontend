@@ -46,6 +46,7 @@ import { getTheme } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useGraphData } from "./hooks/useGraphData";
 import { useUrlSync } from "./hooks/useUrlSync";
+import { useGlobalShortcuts } from "./hooks/useGlobalShortcuts";
 
 import { CircularProgress, Box, Alert } from "@mui/material";
 import ErrorBoundary from "./ErrorBoundary";
@@ -164,6 +165,8 @@ const App = () => {
 const AppContent = () => {
   // Synchronisation de l'URL avec les stores
   useUrlSync();
+  // Gestion globale des raccourcis clavier
+  useGlobalShortcuts();
 
   const { loading, error, graphData } = useGraphData();
   const darkMode = useUIStore((s) => s.darkMode);

@@ -232,6 +232,12 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                           e.preventDefault();
                           handleSelectNeighbor(n.id, n.position);
                         }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            handleSelectNeighbor(n.id, n.position);
+                          }
+                        }}
                         sx={{
                           textDecoration: "none",
                           background: darkMode
