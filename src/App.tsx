@@ -48,8 +48,9 @@ import { useGraphData } from "./hooks/useGraphData";
 import { useUrlSync } from "./hooks/useUrlSync";
 import { useGlobalShortcuts } from "./hooks/useGlobalShortcuts";
 
-import { CircularProgress, Box, Alert } from "@mui/material";
+import { Box, Alert } from "@mui/material";
 import ErrorBoundary from "./ErrorBoundary";
+import { GraphSkeleton } from "./components/GraphSkeleton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SearchPage } from "./pages/SearchPage.tsx";
 import { useUIStore } from "./stores/useUIStore";
@@ -201,17 +202,28 @@ const AppContent = () => {
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
   const isSearchActive = useGraphStore((s) => s.isSearchActive);
 
+  const getBackground = () => {
+    if (graphTheme === "neon") {
+      return "radial-gradient(circle at center, #0B0B1E 0%, #03030A 100%)";
+    }
+    return darkMode
+      ? "radial-gradient(circle at center, #0F172A 0%, #020617 100%)"
+      : "radial-gradient(circle at center, #F8FAFC 0%, #E2E8F0 100%)";
+  };
+
   if (loading) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          position: "relative",
+          overflow: "hidden",
+          background: getBackground(),
+        }}
       >
-        <CircularProgress />
-        <Box ml={2}>Chargement des données du graphe en cours...</Box>
-      </Box>
+        <GraphSkeleton />
+      </div>
     );
   }
   if (error) {
@@ -245,15 +257,6 @@ const AppContent = () => {
     "GraphData reçu par AppContent (avant de passer à Scene/Menu):",
     graphData,
   );
-
-  const getBackground = () => {
-    if (graphTheme === "neon") {
-      return "radial-gradient(circle at center, #0B0B1E 0%, #03030A 100%)";
-    }
-    return darkMode
-      ? "radial-gradient(circle at center, #0F172A 0%, #020617 100%)"
-      : "radial-gradient(circle at center, #F8FAFC 0%, #E2E8F0 100%)";
-  };
 
   const handleCloseNodeDetails = () => {
     setSelectedNodeId(null);
