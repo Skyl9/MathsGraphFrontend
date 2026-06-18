@@ -76,7 +76,7 @@ export function HomePage() {
   const itemVariants = fadeInUp;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 6 }}>
+    <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
       {/* Section Hero Moderne */}
       <HeroSection
         initial={{ opacity: 0, y: -20 }}

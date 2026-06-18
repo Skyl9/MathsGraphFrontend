@@ -142,7 +142,7 @@ const MathematicienPage = () => {
 
           {/* Carte Métadonnées */}
           <SidebarCard>
-            <SidebarCardTitle variant="h6">
+            <SidebarCardTitle variant="h6" component="h2">
               {t("entities.personal_info_title")}
             </SidebarCardTitle>
             <MetadataList>
@@ -244,7 +244,9 @@ const MathematicienPage = () => {
 
           {/* Carte Actions */}
           <SidebarCard>
-            <SidebarCardTitle variant="h6">Actions</SidebarCardTitle>
+            <SidebarCardTitle variant="h6" component="h2">
+              Actions
+            </SidebarCardTitle>
             <SidebarActions>
               <Button
                 fullWidth

@@ -42,7 +42,7 @@ const ConceptList = () => {
         title={t("entities.concepts_title") || "Concepts"}
         description="Explorez tous les concepts mathématiques, théorèmes et définitions de MathGraph."
       />
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
         <Stack spacing={4}>
           <Typography
             variant="h3"

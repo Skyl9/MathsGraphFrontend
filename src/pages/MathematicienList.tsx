@@ -12,6 +12,7 @@ const MathematicienList = () => {
         description="Découvrez les grands mathématiciens de l'histoire et leurs contributions via une chronologie interactive."
       />
       <Box
+        component="main"
         sx={{
           display: "flex",
           flexDirection: "column",

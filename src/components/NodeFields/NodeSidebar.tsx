@@ -66,7 +66,9 @@ export const NodeSidebar = ({
 
       {/* Carte Métadonnées */}
       <SidebarCard>
-        <SidebarCardTitle variant="h6">Métadonnées</SidebarCardTitle>
+        <SidebarCardTitle variant="h6" component="h2">
+          Métadonnées
+        </SidebarCardTitle>
         <MetadataList>
           {/* Identifiant */}
           <MetadataItem>
@@ -200,7 +202,9 @@ export const NodeSidebar = ({
 
       {/* Carte Actions */}
       <SidebarCard>
-        <SidebarCardTitle variant="h6">Actions</SidebarCardTitle>
+        <SidebarCardTitle variant="h6" component="h2">
+          Actions
+        </SidebarCardTitle>
         <SidebarActions>
           <Button
             fullWidth

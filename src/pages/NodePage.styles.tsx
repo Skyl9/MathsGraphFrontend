@@ -1,3 +1,4 @@
+import React from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
@@ -13,7 +14,7 @@ export const DetailsGrid = styled("main")(({ theme }) => ({
   },
 }));
 
-export const MainContentColumn = styled("article")({
+export const MainContentColumn = styled("main")({
   display: "flex",
   flexDirection: "column",
   gap: "24px",
@@ -68,6 +69,7 @@ export const MathCardHeader = styled("header")(({ theme }) => {
 
 export const MathCardTitle = styled(Typography)<{
   variantcolor?: "primary" | "secondary" | "default";
+  component?: React.ElementType;
 }>(({ theme, variantcolor }) => {
   const isDark = theme.palette.mode === "dark";
 
@@ -103,7 +105,9 @@ export const SidebarCard = styled(Box)(({ theme }) => {
   };
 });
 
-export const SidebarCardTitle = styled(Typography)(({ theme }) => {
+export const SidebarCardTitle = styled(Typography)<{
+  component?: React.ElementType;
+}>(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     fontWeight: "700 !important",

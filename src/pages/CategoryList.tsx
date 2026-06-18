@@ -66,7 +66,7 @@ const CategoryList = () => {
         title={t("categories.title") || "Catégories"}
         description="Parcourez la liste de toutes les catégories mathématiques répertoriées dans MathGraph."
       />
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
         <Stack spacing={4}>
           <Typography
             variant="h3"

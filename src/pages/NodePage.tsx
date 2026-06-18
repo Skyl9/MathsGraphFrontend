@@ -199,7 +199,11 @@ const NodePage = () => {
           {editableFields["enonce"] && (
             <MathCard cardtype="enonce">
               <MathCardHeader>
-                <MathCardTitle variantcolor="primary">
+                <MathCardTitle
+                  variantcolor="primary"
+                  variant="h6"
+                  component="h2"
+                >
                   {t("concept.enonce")}
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
@@ -222,7 +226,11 @@ const NodePage = () => {
           {editableFields["demonstration"] && (
             <MathCard cardtype="proof">
               <MathCardHeader>
-                <MathCardTitle variantcolor="secondary">
+                <MathCardTitle
+                  variantcolor="secondary"
+                  variant="h6"
+                  component="h2"
+                >
                   {t("concept.demonstration")}
                 </MathCardTitle>
                 {editModeActive && isUserConnected && (
@@ -247,7 +255,13 @@ const NodePage = () => {
           {editableFields["relations"] && (
             <MathCard>
               <MathCardHeader>
-                <MathCardTitle variantcolor="default">Relations</MathCardTitle>
+                <MathCardTitle
+                  variantcolor="default"
+                  variant="h6"
+                  component="h2"
+                >
+                  Relations
+                </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     aria-label="Bouton d'action"
@@ -268,7 +282,13 @@ const NodePage = () => {
           {editableFields["sources"] && (
             <MathCard>
               <MathCardHeader>
-                <MathCardTitle variantcolor="default">Sources</MathCardTitle>
+                <MathCardTitle
+                  variantcolor="default"
+                  variant="h6"
+                  component="h2"
+                >
+                  Sources
+                </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     aria-label="Bouton d'action"
@@ -289,7 +309,13 @@ const NodePage = () => {
           {editableFields["aliases"] && (
             <MathCard>
               <MathCardHeader>
-                <MathCardTitle variantcolor="default">Alias</MathCardTitle>
+                <MathCardTitle
+                  variantcolor="default"
+                  variant="h6"
+                  component="h2"
+                >
+                  Alias
+                </MathCardTitle>
                 {editModeActive && isUserConnected && (
                   <IconButton
                     aria-label="Bouton d'action"

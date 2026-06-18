@@ -157,7 +157,7 @@ const CategoryPage = () => {
 
           {/* Carte Métadonnées */}
           <SidebarCard>
-            <SidebarCardTitle variant="h6">
+            <SidebarCardTitle variant="h6" component="h2">
               {t("entities.category_details")}
             </SidebarCardTitle>
             <MetadataList>
@@ -215,7 +215,7 @@ const CategoryPage = () => {
 
           {/* Carte Actions */}
           <SidebarCard>
-            <SidebarCardTitle variant="h6">
+            <SidebarCardTitle variant="h6" component="h2">
               {t("entities.actions_title")}
             </SidebarCardTitle>
             <SidebarActions>

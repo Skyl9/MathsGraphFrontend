@@ -42,7 +42,7 @@ const TypeList = () => {
         title={t("entities.types_title") || "Types"}
         description="Découvrez les différents types de concepts mathématiques présents dans MathGraph."
       />
-      <Container maxWidth="lg" sx={{ py: 6 }}>
+      <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
         <Stack spacing={4}>
           <Typography
             variant="h3"
