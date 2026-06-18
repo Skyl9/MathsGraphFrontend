@@ -12,6 +12,7 @@ import MathMarkdown from "./MathMarkdown";
 // Optimisation R3F: Instanciation unique de la géométrie pour éviter de cloner 1000+ ConeGeometry (Fuite VRAM)
 const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
 const hitboxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+const UP_Y = new THREE.Vector3(0, 1, 0);
 
 export interface EdgeDataRef {
   lineRef: React.MutableRefObject<Line2 | null>;
@@ -98,30 +99,44 @@ const Edge = memo(function Edge({
   const isFiltered = isStartFiltered || isEndFiltered;
 
   // Calculs géométriques pour éviter que la ligne ne rentre à l'intérieur de la sphère
-  const { startOffset, endOffset, direction, midPoint, length } =
-    useMemo(() => {
-      const s = new THREE.Vector3(...start);
-      const e = new THREE.Vector3(...end);
-      const dir = e.clone().sub(s).normalize();
-      const len = s.distanceTo(e);
+  const {
+    startOffset,
+    endOffset,
+    midPoint,
+    length,
+    arrowQuaternion,
+    reverseArrowQuaternion,
+  } = useMemo(() => {
+    const s = new THREE.Vector3(...start);
+    const e = new THREE.Vector3(...end);
+    const dir = e.clone().sub(s).normalize();
+    const len = s.distanceTo(e);
 
-      // Rayon dynamique basé sur l'échelle des nœuds connectés
-      const startRadius = 0.3 * startScale;
-      const endRadius = 0.3 * endScale;
+    // Rayon dynamique basé sur l'échelle des nœuds connectés
+    const startRadius = 0.3 * startScale;
+    const endRadius = 0.3 * endScale;
 
-      // On décale le début et la fin
-      const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
-      const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15)); // -0.15 laisse la place à la pointe de la flèche
-      const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
+    // On décale le début et la fin
+    const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
+    const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15)); // -0.15 laisse la place à la pointe de la flèche
+    const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
 
-      return {
-        startOffset: sOff,
-        endOffset: eOff,
-        direction: dir,
-        midPoint: mid,
-        length: len,
-      };
-    }, [start, end, startScale, endScale]);
+    const arrowQuat = new THREE.Quaternion().setFromUnitVectors(UP_Y, dir);
+    const reverseArrowQuat = new THREE.Quaternion().setFromUnitVectors(
+      UP_Y,
+      dir.clone().negate(),
+    );
+
+    return {
+      startOffset: sOff,
+      endOffset: eOff,
+      direction: dir,
+      midPoint: mid,
+      length: len,
+      arrowQuaternion: arrowQuat,
+      reverseArrowQuaternion: reverseArrowQuat,
+    };
+  }, [start, end, startScale, endScale]);
 
   const isNeon = graphTheme === "neon";
 
@@ -221,16 +236,6 @@ const Edge = memo(function Edge({
 
   // Sécurité : Si les noeuds sont trop proches ou superposés, on ne dessine rien
   if (length < 0.6) return null;
-
-  // Orientation de la pointe de la flèche (Le cône 3D regarde vers +Y par défaut)
-  const arrowQuaternion = new THREE.Quaternion().setFromUnitVectors(
-    new THREE.Vector3(0, 1, 0),
-    direction,
-  );
-  const reverseArrowQuaternion = new THREE.Quaternion().setFromUnitVectors(
-    new THREE.Vector3(0, 1, 0),
-    direction.clone().negate(),
-  );
 
   return (
     <group

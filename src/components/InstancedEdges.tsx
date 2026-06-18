@@ -1,8 +1,7 @@
 import { useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import * as THREE from "three";
-import { useFrame } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import { EdgeData, NodeData } from "../types/ApiTypes/graph";
 import { useGraphStore } from "../stores/useGraphStore";
@@ -42,33 +41,55 @@ export default function InstancedEdges({
   const lineMeshRef = useRef<THREE.InstancedMesh>(null);
   const arrowMeshRef = useRef<THREE.InstancedMesh>(null);
 
-  const hoveredNodeId = useGraphStore((s) => s.hoveredNodeId);
-  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
-
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
   const isNeon = graphTheme === "neon";
   const isFocus = graphTheme === "focus";
 
-  const [hoveredEdgeIndex, setHoveredEdgeIndex] = useState<number | null>(null);
+  // Transient refs to avoid re-renders
+  const hoveredEdgeIndexRef = useRef<number | null>(null);
+  const [hoveredPopup, setHoveredPopup] = useState<{
+    position: THREE.Vector3;
+    formula: string;
+  } | null>(null);
 
-  const {
-    lineCount,
-    arrowCount,
-    lineMatrices,
-    arrowMatrices,
-    colors,
-    edgeMidpoints,
-    edgeMathFormulas,
-  } = useMemo(() => {
+  // Compute base structure data once when graph changes
+  const baseData = useMemo(() => {
+    type ValidEdgeData =
+      | null
+      | {
+          hidden: true;
+          lineIdx: number;
+          arrowIdxStart: number;
+          numArrows: number;
+        }
+      | {
+          hidden: false;
+          edge: EdgeData;
+          startNode: NodeData;
+          endNode: NodeData;
+          s: THREE.Vector3;
+          e: THREE.Vector3;
+          dir: THREE.Vector3;
+          dist: number;
+          mathFormula: string;
+          lineIdx: number;
+          arrowIdxStart: number;
+          numArrows: number;
+        };
+    const validEdges: ValidEdgeData[] = [];
     let lCount = 0;
     let aCount = 0;
 
-    // First pass to count
-    for (const edge of edges) {
+    for (let i = 0; i < edges.length; i++) {
+      const edge = edges[i];
       const startNode = nodesMap.get(edge.start);
       const endNode = nodesMap.get(edge.end);
-      if (!startNode || !endNode) continue;
+
+      if (!startNode || !endNode) {
+        validEdges.push(null);
+        continue;
+      }
 
       const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
       const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
@@ -77,24 +98,88 @@ export default function InstancedEdges({
       const isEndFiltered =
         endTypeKey in filters ? !(filters[endTypeKey] ?? false) : false;
 
-      if (isStartFiltered || isEndFiltered) continue;
+      if (isStartFiltered || isEndFiltered) {
+        validEdges.push(null);
+        continue;
+      }
+
+      const s = getNodePos(startNode, currentView);
+      const e = getNodePos(endNode, currentView);
+      const dist = s.distanceTo(e);
+
+      if (dist < 0.6) {
+        validEdges.push({
+          hidden: true,
+          lineIdx: lCount,
+          arrowIdxStart: aCount,
+          numArrows:
+            edge.type === "equivalence" || edge.type === "reciproque" ? 2 : 1,
+        });
+        lCount++;
+        aCount++;
+        if (edge.type === "equivalence" || edge.type === "reciproque") aCount++;
+        continue;
+      }
+
+      const dir = e.clone().sub(s).normalize();
+
+      let mathFormula = `$A \\text{ ${edge.type} } B$`;
+      if (edge.type === "implication") mathFormula = "$A \\implies B$";
+      else if (edge.type === "reciproque") mathFormula = "$B \\implies A$";
+      else if (edge.type === "equivalence") mathFormula = "$A \\iff B$";
+      else if (edge.type === "utilise") mathFormula = "$A \\supset B$";
+
+      validEdges.push({
+        hidden: false,
+        edge,
+        startNode,
+        endNode,
+        s,
+        e,
+        dir,
+        dist,
+        mathFormula,
+        lineIdx: lCount,
+        arrowIdxStart: aCount,
+        numArrows:
+          edge.type === "equivalence" || edge.type === "reciproque" ? 2 : 1,
+      });
 
       lCount++;
       aCount++;
-      if (edge.type === "equivalence" || edge.type === "reciproque") {
-        aCount++;
-      }
+      if (edge.type === "equivalence" || edge.type === "reciproque") aCount++;
     }
 
-    const _lineMatrices = new Float32Array(lCount * 16);
-    const _arrowMatrices = new Float32Array(aCount * 16);
-    const _colors = new Float32Array(lCount * 3);
+    return { validEdges, lCount, aCount };
+  }, [edges, nodesMap, currentView, filters]);
 
-    const _edgeMidpoints: THREE.Vector3[] = [];
-    const _edgeMathFormulas: string[] = [];
+  const { validEdges, lCount: lineCount, aCount: arrowCount } = baseData;
 
-    let lineIdx = 0;
-    let arrowIdx = 0;
+  // Initialize buffers
+  const { lineMatrices, arrowMatrices, colors } = useMemo(() => {
+    return {
+      lineMatrices: new Float32Array(lineCount * 16),
+      arrowMatrices: new Float32Array(arrowCount * 16),
+      colors: new Float32Array(lineCount * 3),
+    };
+  }, [lineCount, arrowCount]);
+
+  const edgeMidpointsRef = useRef<THREE.Vector3[]>(
+    new Array(edges.length).fill(null),
+  );
+  const edgeMathFormulasRef = useRef<string[]>(
+    new Array(edges.length).fill(""),
+  );
+
+  // Update function that can be called imperatively
+  const updateInstances = useCallback(() => {
+    if (!lineMeshRef.current || !arrowMeshRef.current) return;
+
+    const state = useGraphStore.getState();
+    const hoveredNodeId = state.hoveredNodeId;
+    const selectedNodeId = state.selectedNodeId;
+    const hoveredEdgeIndex = hoveredEdgeIndexRef.current;
+
     const dummyMatrix = new THREE.Matrix4();
     const dummyQuaternion = new THREE.Quaternion();
     const upZ = new THREE.Vector3(0, 0, 1);
@@ -110,31 +195,21 @@ export default function InstancedEdges({
     const highlightColor = new THREE.Color("#38bdf8");
     const dimColor = new THREE.Color(darkMode ? "#1e293b" : "#e2e8f0");
 
-    for (let i = 0; i < edges.length; i++) {
-      const edge = edges[i];
-      const startNode = nodesMap.get(edge.start);
-      const endNode = nodesMap.get(edge.end);
-      if (!startNode || !endNode) {
-        _edgeMidpoints.push(new THREE.Vector3());
-        _edgeMathFormulas.push("");
+    for (let i = 0; i < validEdges.length; i++) {
+      const data = validEdges[i];
+      if (!data) continue;
+
+      if (data.hidden) {
+        dummyMatrix.makeScale(0, 0, 0);
+        dummyMatrix.toArray(lineMatrices, data.lineIdx * 16);
+        dummyMatrix.toArray(arrowMatrices, data.arrowIdxStart * 16);
+        if (data.numArrows === 2) {
+          dummyMatrix.toArray(arrowMatrices, (data.arrowIdxStart + 1) * 16);
+        }
         continue;
       }
 
-      const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
-      const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
-      const isStartFiltered =
-        startTypeKey in filters ? !(filters[startTypeKey] ?? false) : false;
-      const isEndFiltered =
-        endTypeKey in filters ? !(filters[endTypeKey] ?? false) : false;
-
-      if (isStartFiltered || isEndFiltered) {
-        _edgeMidpoints.push(new THREE.Vector3());
-        _edgeMathFormulas.push("");
-        continue;
-      }
-
-      const s = getNodePos(startNode, currentView);
-      const e = getNodePos(endNode, currentView);
+      const { edge, s, e, dir } = data;
 
       const startScale =
         selectedNodeId === edge.start
@@ -149,9 +224,6 @@ export default function InstancedEdges({
             ? 1.2
             : 1.0;
 
-      const dir = e.clone().sub(s).normalize();
-      const dist = s.distanceTo(e);
-
       const startRadius = 0.3 * startScale;
       const endRadius = 0.3 * endScale;
 
@@ -159,31 +231,9 @@ export default function InstancedEdges({
       const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15));
       const length = sOff.distanceTo(eOff);
 
-      if (dist < 0.6) {
-        _edgeMidpoints.push(new THREE.Vector3());
-        _edgeMathFormulas.push("");
-        // Hide by scaling to 0
-        dummyMatrix.makeScale(0, 0, 0);
-        dummyMatrix.toArray(_lineMatrices, lineIdx * 16);
-        dummyMatrix.toArray(_arrowMatrices, arrowIdx * 16);
-        lineIdx++;
-        arrowIdx++;
-        if (edge.type === "equivalence" || edge.type === "reciproque") {
-          dummyMatrix.toArray(_arrowMatrices, arrowIdx * 16);
-          arrowIdx++;
-        }
-        continue;
-      }
-
       const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
-      _edgeMidpoints.push(mid);
-
-      let mathFormula = `$A \\text{ ${edge.type} } B$`;
-      if (edge.type === "implication") mathFormula = "$A \\implies B$";
-      else if (edge.type === "reciproque") mathFormula = "$B \\implies A$";
-      else if (edge.type === "equivalence") mathFormula = "$A \\iff B$";
-      else if (edge.type === "utilise") mathFormula = "$A \\supset B$";
-      _edgeMathFormulas.push(mathFormula);
+      edgeMidpointsRef.current[i] = mid;
+      edgeMathFormulasRef.current[i] = data.mathFormula;
 
       const isHovered = hoveredEdgeIndex === i;
       const isConnectedToHovered =
@@ -200,21 +250,19 @@ export default function InstancedEdges({
 
       scaleVec.set(widthMultiplier, widthMultiplier, length);
       dummyMatrix.compose(sOff, dummyQuaternion, scaleVec);
-      dummyMatrix.toArray(_lineMatrices, lineIdx * 16);
+      dummyMatrix.toArray(lineMatrices, data.lineIdx * 16);
 
       scaleVec.set(widthMultiplier, widthMultiplier, widthMultiplier);
       dummyMatrix.compose(eOff, dummyQuaternion, scaleVec);
-      dummyMatrix.toArray(_arrowMatrices, arrowIdx * 16);
-      arrowIdx++;
+      dummyMatrix.toArray(arrowMatrices, data.arrowIdxStart * 16);
 
-      if (edge.type === "equivalence" || edge.type === "reciproque") {
+      if (data.numArrows === 2) {
         const reverseQuaternion = new THREE.Quaternion().setFromUnitVectors(
           upZ,
           dir.clone().negate(),
         );
         dummyMatrix.compose(sOff, reverseQuaternion, scaleVec);
-        dummyMatrix.toArray(_arrowMatrices, arrowIdx * 16);
-        arrowIdx++;
+        dummyMatrix.toArray(arrowMatrices, (data.arrowIdxStart + 1) * 16);
       }
 
       let c = defaultColor;
@@ -224,42 +272,41 @@ export default function InstancedEdges({
         c = dimColor;
       }
 
-      c.toArray(_colors, lineIdx * 3);
-      lineIdx++;
+      c.toArray(colors, data.lineIdx * 3);
     }
 
-    return {
-      lineCount: lCount,
-      arrowCount: aCount,
-      lineMatrices: _lineMatrices,
-      arrowMatrices: _arrowMatrices,
-      colors: _colors,
-      edgeMidpoints: _edgeMidpoints,
-      edgeMathFormulas: _edgeMathFormulas,
-    };
+    lineMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
+    if (lineMeshRef.current.geometry.attributes.instanceColor) {
+      lineMeshRef.current.geometry.attributes.instanceColor.needsUpdate = true;
+    }
+    arrowMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
   }, [
-    edges,
-    nodesMap,
-    currentView,
-    filters,
-    colorSides,
+    validEdges,
+    lineMatrices,
+    arrowMatrices,
+    colors,
     isNeon,
-    hoveredNodeId,
-    selectedNodeId,
-    hoveredEdgeIndex,
+    colorSides,
     darkMode,
   ]);
 
-  useFrame(() => {
-    if (lineMeshRef.current && lineCount > 0) {
-      lineMeshRef.current.instanceMatrix.needsUpdate = true;
-      if (lineMeshRef.current.instanceColor)
-        lineMeshRef.current.instanceColor.needsUpdate = true;
-    }
-    if (arrowMeshRef.current && arrowCount > 0) {
-      arrowMeshRef.current.instanceMatrix.needsUpdate = true;
-    }
-  });
+  // Run update initially and when base structures change
+  useEffect(() => {
+    updateInstances();
+  }, [updateInstances]);
+
+  // Subscribe to Zustand store for imperative updates
+  useEffect(() => {
+    const unsub = useGraphStore.subscribe((state, prevState) => {
+      if (
+        state.hoveredNodeId !== prevState.hoveredNodeId ||
+        state.selectedNodeId !== prevState.selectedNodeId
+      ) {
+        updateInstances();
+      }
+    });
+    return () => unsub();
+  }, [updateInstances]);
 
   if (lineCount === 0) return null;
 
@@ -270,10 +317,30 @@ export default function InstancedEdges({
         args={[cylinderGeometry, undefined, lineCount]}
         onPointerMove={(e) => {
           e.stopPropagation();
-          setHoveredEdgeIndex(e.instanceId ?? null);
+          const id = e.instanceId ?? null;
+          if (hoveredEdgeIndexRef.current !== id) {
+            hoveredEdgeIndexRef.current = id;
+            updateInstances();
+            if (
+              id !== null &&
+              edgeMidpointsRef.current[id] &&
+              edgeMathFormulasRef.current[id]
+            ) {
+              setHoveredPopup({
+                position: edgeMidpointsRef.current[id],
+                formula: edgeMathFormulasRef.current[id],
+              });
+            } else {
+              setHoveredPopup(null);
+            }
+          }
         }}
         onPointerOut={() => {
-          setHoveredEdgeIndex(null);
+          if (hoveredEdgeIndexRef.current !== null) {
+            hoveredEdgeIndexRef.current = null;
+            setHoveredPopup(null);
+            updateInstances();
+          }
         }}
       >
         <instancedBufferAttribute
@@ -283,7 +350,9 @@ export default function InstancedEdges({
         <instancedBufferAttribute attach="instanceColor" args={[colors, 3]} />
         <meshStandardMaterial
           transparent
-          opacity={isFocus && selectedNodeId ? 0.3 : 0.8}
+          opacity={
+            isFocus && useGraphStore.getState().selectedNodeId ? 0.3 : 0.8
+          }
           toneMapped={!isNeon}
           depthWrite={false}
         />
@@ -317,40 +386,40 @@ export default function InstancedEdges({
           }
           emissiveIntensity={isNeon ? 2 : 0}
           transparent
-          opacity={isFocus && selectedNodeId ? 0.3 : 0.8}
+          opacity={
+            isFocus && useGraphStore.getState().selectedNodeId ? 0.3 : 0.8
+          }
           depthWrite={false}
         />
       </instancedMesh>
 
-      {hoveredEdgeIndex !== null &&
-        edgeMidpoints[hoveredEdgeIndex] &&
-        edgeMathFormulas[hoveredEdgeIndex] && (
-          <Html
-            position={edgeMidpoints[hoveredEdgeIndex].toArray()}
-            center
-            style={{ pointerEvents: "none", zIndex: 100 }}
+      {hoveredPopup !== null && (
+        <Html
+          position={hoveredPopup.position.toArray()}
+          center
+          style={{ pointerEvents: "none", zIndex: 100 }}
+        >
+          <div
+            style={{
+              background: darkMode
+                ? alpha(theme.palette.background.paper, 0.9)
+                : alpha(theme.palette.background.paper, 0.95),
+              backdropFilter: "blur(8px)",
+              color: darkMode ? "#E2E8F0" : "#0F172A",
+              border: darkMode
+                ? `1px solid ${alpha(theme.palette.divider, 0.15)}`
+                : `1px solid ${alpha(theme.palette.divider, 0.12)}`,
+              padding: "4px 10px",
+              borderRadius: "8px",
+              boxShadow: `0 6px 20px ${alpha(theme.palette.common.black, 0.25)}`,
+              whiteSpace: "nowrap",
+              fontFamily: "Inter, Roboto, sans-serif",
+            }}
           >
-            <div
-              style={{
-                background: darkMode
-                  ? alpha(theme.palette.background.paper, 0.9)
-                  : alpha(theme.palette.background.paper, 0.95),
-                backdropFilter: "blur(8px)",
-                color: darkMode ? "#E2E8F0" : "#0F172A",
-                border: darkMode
-                  ? `1px solid ${alpha(theme.palette.divider, 0.15)}`
-                  : `1px solid ${alpha(theme.palette.divider, 0.12)}`,
-                padding: "4px 10px",
-                borderRadius: "8px",
-                boxShadow: `0 6px 20px ${alpha(theme.palette.common.black, 0.25)}`,
-                whiteSpace: "nowrap",
-                fontFamily: "Inter, Roboto, sans-serif",
-              }}
-            >
-              <MathMarkdown content={edgeMathFormulas[hoveredEdgeIndex]} />
-            </div>
-          </Html>
-        )}
+            <MathMarkdown content={hoveredPopup.formula} />
+          </div>
+        </Html>
+      )}
     </group>
   );
 }
