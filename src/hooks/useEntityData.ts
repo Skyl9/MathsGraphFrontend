@@ -97,17 +97,38 @@ export const useEntityData = <T extends object>(
   };
 
   const updateField = async (field: keyof T, value: unknown) => {
+    const queryKey = [entityType, id];
+    // 1. Sauvegarder l'état précédent pour un éventuel rollback
+    const previousData = queryClient.getQueryData<T>(queryKey);
+
+    // 2. Annuler les requêtes en cours pour ne pas écraser notre mise à jour optimiste
+    await queryClient.cancelQueries({ queryKey });
+
+    // 3. Mise à jour optimiste du cache
+    if (previousData) {
+      queryClient.setQueryData<T>(queryKey, {
+        ...previousData,
+        [field]: value,
+      });
+    }
+
     try {
       setMutationError(null);
+      // 4. Exécuter l'appel API
       await config.update(id, field as string, value);
-
-      await queryClient.invalidateQueries({ queryKey: [entityType, id] });
       return true;
     } catch (err) {
+      // 5. Rollback en cas d'erreur
+      if (previousData) {
+        queryClient.setQueryData<T>(queryKey, previousData);
+      }
       setMutationError(
         err instanceof Error ? err.message : "An unknown error occurred.",
       );
       return false;
+    } finally {
+      // 6. Re-synchroniser avec le serveur dans tous les cas
+      await queryClient.invalidateQueries({ queryKey });
     }
   };
 
