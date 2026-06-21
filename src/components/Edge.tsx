@@ -79,18 +79,18 @@ const Edge = memo(function Edge({
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
 
-  // Lecture de l'état de survol et de sélection
-  const hoveredNodeId = useGraphStore((s) => s.hoveredNodeId);
-  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
-
-  const isHoverHighlighted =
-    hoveredNodeId !== null &&
-    (startId === hoveredNodeId || endId === hoveredNodeId);
-  const isSelectedHighlighted =
-    selectedNodeId !== null &&
-    (startId === selectedNodeId || endId === selectedNodeId);
-
-  const isAnyNodeHovered = hoveredNodeId !== null;
+  // Lecture de l'état de survol et de sélection (Sélecteurs optimisés au grain fin)
+  const isHoverHighlighted = useGraphStore(
+    (s) =>
+      s.hoveredNodeId !== null &&
+      (startId === s.hoveredNodeId || endId === s.hoveredNodeId),
+  );
+  const isSelectedHighlighted = useGraphStore(
+    (s) =>
+      s.selectedNodeId !== null &&
+      (startId === s.selectedNodeId || endId === s.selectedNodeId),
+  );
+  const isAnyNodeHovered = useGraphStore((s) => s.hoveredNodeId !== null);
   const isHighlighted = isHoverHighlighted || isSelectedHighlighted;
 
   const [hovered, setHovered] = useState(false);
