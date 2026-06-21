@@ -2,7 +2,7 @@ import { useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, useRef, memo, useEffect } from "react";
 import { Line, Html } from "@react-three/drei";
-import * as THREE from "three";
+import { Vector3, Quaternion, ConeGeometry, BoxGeometry } from "three";
 import { Line2 } from "three-stdlib";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
@@ -10,9 +10,9 @@ import { getEdgeMaterial } from "../utils/materialCache";
 import MathMarkdown from "./MathMarkdown";
 
 // Optimisation R3F: Instanciation unique de la géométrie pour éviter de cloner 1000+ ConeGeometry (Fuite VRAM)
-const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
-const hitboxGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
-const UP_Y = new THREE.Vector3(0, 1, 0);
+const arrowGeometry = new ConeGeometry(0.08, 0.2, 8);
+const hitboxGeometry = new BoxGeometry(0.2, 0.2, 0.2);
+const UP_Y = new Vector3(0, 1, 0);
 
 export interface EdgeDataRef {
   lineRef: React.MutableRefObject<Line2 | null>;
@@ -105,8 +105,8 @@ const Edge = memo(function Edge({
     arrowQuaternion,
     reverseArrowQuaternion,
   } = useMemo(() => {
-    const s = new THREE.Vector3(...start);
-    const e = new THREE.Vector3(...end);
+    const s = new Vector3(...start);
+    const e = new Vector3(...end);
     const dir = e.clone().sub(s).normalize();
     const len = s.distanceTo(e);
 
@@ -117,10 +117,10 @@ const Edge = memo(function Edge({
     // On décale le début et la fin
     const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
     const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15)); // -0.15 laisse la place à la pointe de la flèche
-    const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
+    const mid = new Vector3().lerpVectors(sOff, eOff, 0.5);
 
-    const arrowQuat = new THREE.Quaternion().setFromUnitVectors(UP_Y, dir);
-    const reverseArrowQuat = new THREE.Quaternion().setFromUnitVectors(
+    const arrowQuat = new Quaternion().setFromUnitVectors(UP_Y, dir);
+    const reverseArrowQuat = new Quaternion().setFromUnitVectors(
       UP_Y,
       dir.clone().negate(),
     );

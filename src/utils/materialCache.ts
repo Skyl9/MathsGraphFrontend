@@ -1,7 +1,7 @@
-import * as THREE from "three";
+import { MeshPhysicalMaterial, MeshStandardMaterial } from "three";
 
-const nodeMaterialsCache = new Map<string, THREE.MeshPhysicalMaterial>();
-const edgeMaterialsCache = new Map<string, THREE.MeshStandardMaterial>();
+const nodeMaterialsCache = new Map<string, MeshPhysicalMaterial>();
+const edgeMaterialsCache = new Map<string, MeshStandardMaterial>();
 
 export function getNodeMaterial(
   color: string,
@@ -10,7 +10,7 @@ export function getNodeMaterial(
   isNeon: boolean,
   isFiltered: boolean,
   opacity: number,
-): THREE.MeshPhysicalMaterial {
+): MeshPhysicalMaterial {
   const finalColor = hovered ? "#99C2FF" : color;
   const emissiveColor = isNeon || isSelected ? finalColor : "black";
   const emissiveIntensity = isNeon
@@ -28,7 +28,7 @@ export function getNodeMaterial(
     return nodeMaterialsCache.get(key)!;
   }
 
-  const mat = new THREE.MeshPhysicalMaterial({
+  const mat = new MeshPhysicalMaterial({
     color: finalColor,
     emissive: emissiveColor,
     emissiveIntensity: emissiveIntensity,
@@ -50,7 +50,7 @@ export function getEdgeMaterial(
   activeColor: string,
   isNeon: boolean,
   finalOpacity: number,
-): THREE.MeshStandardMaterial {
+): MeshStandardMaterial {
   const emissiveColor = isNeon ? activeColor : "black";
   const emissiveIntensity = isNeon ? 2 : 0;
 
@@ -60,7 +60,7 @@ export function getEdgeMaterial(
     return edgeMaterialsCache.get(key)!;
   }
 
-  const mat = new THREE.MeshStandardMaterial({
+  const mat = new MeshStandardMaterial({
     color: activeColor,
     emissive: emissiveColor,
     emissiveIntensity: emissiveIntensity,

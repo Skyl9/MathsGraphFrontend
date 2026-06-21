@@ -1,18 +1,26 @@
 import { useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useMemo, useRef, useState, useEffect, useCallback } from "react";
-import * as THREE from "three";
+import {
+  CylinderGeometry,
+  ConeGeometry,
+  Vector3,
+  Matrix4,
+  Quaternion,
+  Color,
+  InstancedMesh,
+} from "three";
 import { Html } from "@react-three/drei";
 import { EdgeData, NodeData } from "../types/ApiTypes/graph";
 import { useGraphStore } from "../stores/useGraphStore";
 import { useUIStore } from "../stores/useUIStore";
 import MathMarkdown from "./MathMarkdown";
 
-const cylinderGeometry = new THREE.CylinderGeometry(0.015, 0.015, 1, 8);
+const cylinderGeometry = new CylinderGeometry(0.015, 0.015, 1, 8);
 cylinderGeometry.translate(0, 0.5, 0); // Origin at bottom
 cylinderGeometry.rotateX(Math.PI / 2); // Point along Z axis
 
-const arrowGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
+const arrowGeometry = new ConeGeometry(0.08, 0.2, 8);
 arrowGeometry.rotateX(Math.PI / 2); // Point along Z axis
 
 interface InstancedEdgesProps {
@@ -23,11 +31,11 @@ interface InstancedEdgesProps {
   filters: Record<string, boolean>;
 }
 
-const getNodePos = (node: NodeData, view: string): THREE.Vector3 => {
+const getNodePos = (node: NodeData, view: string): Vector3 => {
   const p = node.position[view] ||
     node.position["grille"] ||
     node.position["physique"] || { x: 0, y: 0, z: 0 };
-  return new THREE.Vector3(p.x, p.y, p.z);
+  return new Vector3(p.x, p.y, p.z);
 };
 
 export default function InstancedEdges({
@@ -38,8 +46,8 @@ export default function InstancedEdges({
   filters,
 }: InstancedEdgesProps) {
   const theme = useTheme();
-  const lineMeshRef = useRef<THREE.InstancedMesh>(null);
-  const arrowMeshRef = useRef<THREE.InstancedMesh>(null);
+  const lineMeshRef = useRef<InstancedMesh>(null);
+  const arrowMeshRef = useRef<InstancedMesh>(null);
 
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
@@ -49,7 +57,7 @@ export default function InstancedEdges({
   // Transient refs to avoid re-renders
   const hoveredEdgeIndexRef = useRef<number | null>(null);
   const [hoveredPopup, setHoveredPopup] = useState<{
-    position: THREE.Vector3;
+    position: Vector3;
     formula: string;
   } | null>(null);
 
@@ -68,9 +76,9 @@ export default function InstancedEdges({
           edge: EdgeData;
           startNode: NodeData;
           endNode: NodeData;
-          s: THREE.Vector3;
-          e: THREE.Vector3;
-          dir: THREE.Vector3;
+          s: Vector3;
+          e: Vector3;
+          dir: Vector3;
           dist: number;
           mathFormula: string;
           lineIdx: number;
@@ -176,11 +184,11 @@ export default function InstancedEdges({
     const dColors = new Float32Array(lineCount * 3);
     const dimColorsArr = new Float32Array(lineCount * 3);
 
-    const dummyMatrix = new THREE.Matrix4();
-    const dummyQuaternion = new THREE.Quaternion();
-    const upZ = new THREE.Vector3(0, 0, 1);
-    const scaleVec = new THREE.Vector3();
-    const defaultColor = new THREE.Color(
+    const dummyMatrix = new Matrix4();
+    const dummyQuaternion = new Quaternion();
+    const upZ = new Vector3(0, 0, 1);
+    const scaleVec = new Vector3();
+    const defaultColor = new Color(
       isNeon &&
         (colorSides === "black" ||
           colorSides === "#888888" ||
@@ -188,7 +196,7 @@ export default function InstancedEdges({
         ? "#ffffff"
         : colorSides,
     );
-    const dimColor = new THREE.Color(darkMode ? "#1e293b" : "#e2e8f0");
+    const dimColor = new Color(darkMode ? "#1e293b" : "#e2e8f0");
 
     for (let i = 0; i < validEdges.length; i++) {
       const data = validEdges[i];
@@ -223,7 +231,7 @@ export default function InstancedEdges({
       dummyMatrix.toArray(bArrows, data.arrowIdxStart * 16);
 
       if (data.numArrows === 2) {
-        const reverseQuaternion = new THREE.Quaternion().setFromUnitVectors(
+        const reverseQuaternion = new Quaternion().setFromUnitVectors(
           upZ,
           dir.clone().negate(),
         );
@@ -243,7 +251,7 @@ export default function InstancedEdges({
     };
   }, [validEdges, isNeon, colorSides, darkMode, lineCount, arrowCount]);
 
-  const edgeMidpointsRef = useRef<THREE.Vector3[]>(
+  const edgeMidpointsRef = useRef<Vector3[]>(
     new Array(edges.length).fill(null),
   );
   const edgeMathFormulasRef = useRef<string[]>(
@@ -269,11 +277,11 @@ export default function InstancedEdges({
       colors.set(defaultColorsArray);
     }
 
-    const dummyMatrix = new THREE.Matrix4();
-    const dummyQuaternion = new THREE.Quaternion();
-    const upZ = new THREE.Vector3(0, 0, 1);
-    const scaleVec = new THREE.Vector3();
-    const highlightColor = new THREE.Color("#38bdf8");
+    const dummyMatrix = new Matrix4();
+    const dummyQuaternion = new Quaternion();
+    const upZ = new Vector3(0, 0, 1);
+    const scaleVec = new Vector3();
+    const highlightColor = new Color("#38bdf8");
 
     // 🌟 2. Surcharge des matrices/couleurs UNIQUEMENT pour les arêtes impactées
     for (let i = 0; i < validEdges.length; i++) {
@@ -299,7 +307,7 @@ export default function InstancedEdges({
       const eOffMid = e
         .clone()
         .add(dir.clone().multiplyScalar(-endRadiusForMid - 0.15));
-      edgeMidpointsRef.current[i] = new THREE.Vector3().lerpVectors(
+      edgeMidpointsRef.current[i] = new Vector3().lerpVectors(
         sOffMid,
         eOffMid,
         0.5,
@@ -343,7 +351,7 @@ export default function InstancedEdges({
       dummyMatrix.toArray(arrowMatrices, data.arrowIdxStart * 16);
 
       if (data.numArrows === 2) {
-        const reverseQuaternion = new THREE.Quaternion().setFromUnitVectors(
+        const reverseQuaternion = new Quaternion().setFromUnitVectors(
           upZ,
           dir.clone().negate(),
         );
