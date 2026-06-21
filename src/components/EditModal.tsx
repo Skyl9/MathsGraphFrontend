@@ -13,6 +13,11 @@ import {
   Select,
   Switch,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 import FieldAddAlias from "./NodeFields/FieldAddAlias";
 import FieldAddRelation from "./NodeFields/FieldAddRelation";
@@ -23,7 +28,6 @@ import TagEdit from "./NodeFields/TagEdit";
 import { useTranslation } from "react-i18next";
 import { useEditModalLogic } from "../hooks/useEditModalLogic";
 import { isAllNodeData, isCategory } from "../utils/typeGuards";
-import FocusTrap from "focus-trap-react";
 
 export const EditModal = <T extends object>({
   onClose,
@@ -250,46 +254,49 @@ export const EditModal = <T extends object>({
   };
 
   return (
-    <FocusTrap
-      focusTrapOptions={{
-        escapeDeactivates: true,
-        clickOutsideDeactivates: false,
-        onDeactivate: onClose,
-        initialFocus: false,
+    <Dialog
+      open={true}
+      onClose={(_event, reason) => {
+        if (reason !== "backdropClick") {
+          onClose();
+        }
       }}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="modal-title"
     >
-      <div
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-      >
-        <div className="modal-content">
-          <h2 id="modal-title">Modifier {fieldConfig.label}</h2>
-          {valError && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {valError}
-            </Alert>
-          )}
+      <DialogTitle id="modal-title">Modifier {fieldConfig.label}</DialogTitle>
 
-          {renderField()}
+      <DialogContent dividers>
+        {valError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {valError}
+          </Alert>
+        )}
+        {renderField()}
+      </DialogContent>
 
-          {fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
-            <div className="modal-buttons">
-              <button onClick={onClose}>Sortir</button>
-            </div>
-          ) : (
-            <div className="modal-buttons">
-              <button onClick={handleSaveClick} disabled={isSaving}>
-                {isSaving ? "Sauvegarde..." : "Sauvegarder"}
-              </button>
-              <button onClick={onClose} disabled={isSaving}>
-                Annuler
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-    </FocusTrap>
+      <DialogActions>
+        {fieldConfig.type === "tag" && data && isAllNodeData(data) ? (
+          <Button onClick={onClose} color="inherit">
+            Sortir
+          </Button>
+        ) : (
+          <>
+            <Button onClick={onClose} disabled={isSaving} color="inherit">
+              Annuler
+            </Button>
+            <Button
+              onClick={handleSaveClick}
+              disabled={isSaving}
+              variant="contained"
+              color="primary"
+            >
+              {isSaving ? "Sauvegarde..." : "Sauvegarder"}
+            </Button>
+          </>
+        )}
+      </DialogActions>
+    </Dialog>
   );
 };

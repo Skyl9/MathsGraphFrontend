@@ -93,7 +93,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
-                    aria-label={t("common.aria.action_button")}
+                    aria-label={t("common.edit")}
                     size="small"
                     onClick={() => handleEdit("categorie")}
                   >
@@ -118,7 +118,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
-                    aria-label={t("common.aria.action_button")}
+                    aria-label={t("common.edit")}
                     size="small"
                     onClick={() => handleEdit("type")}
                   >
@@ -142,7 +142,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
-                    aria-label={t("common.aria.action_button")}
+                    aria-label={t("common.edit")}
                     size="small"
                     onClick={() => handleEdit("date_ajout")}
                   >
@@ -166,7 +166,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
-                    aria-label={t("common.aria.action_button")}
+                    aria-label={t("common.edit")}
                     size="small"
                     onClick={() => handleEdit("noms_etrangers")}
                   >
@@ -187,7 +187,7 @@ export const NodeSidebar = ({
                 </span>
                 {editModeActive && (
                   <IconButton
-                    aria-label={t("common.aria.action_button")}
+                    aria-label={t("common.edit")}
                     size="small"
                     onClick={() => handleEdit("tags")}
                   >

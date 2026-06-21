@@ -143,7 +143,7 @@ export default function Menu({ graphData }: MenuProps) {
             >
               <MenuButtonToggle
                 color="primary"
-                aria-label="menu"
+                aria-label={t("menu.open")}
                 onClick={() => setOpen(true)}
               >
                 <MenuIcon />
@@ -190,7 +190,7 @@ export default function Menu({ graphData }: MenuProps) {
                       {t("menu.configuration")}
                     </Typography>
                     <IconButton
-                      aria-label={t("common.aria.action_button")}
+                      aria-label={t("common.close")}
                       size="small"
                       onClick={() => setOpen(false)}
                     >

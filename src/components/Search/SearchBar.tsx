@@ -62,7 +62,7 @@ export const SearchBar = ({
           InputProps={{
             startAdornment: (
               <IconButton
-                aria-label={t("common.aria.action_button")}
+                aria-label={t("search.action")}
                 type="submit"
                 color="primary"
                 sx={{ mr: 0.5 }}
