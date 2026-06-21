@@ -78,7 +78,7 @@ const Node = memo(function Node({
   const theme = useTheme();
 
   const graphTheme = useUIStore((s) => s.graphTheme);
-  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
+  const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
 
   // Détermine la couleur de label contrastée en fonction du thème (clair/sombre)
   const labelColor = useMemo(() => {
@@ -87,8 +87,7 @@ const Node = memo(function Node({
 
   const isNeon = graphTheme === "neon";
   const isFocus = graphTheme === "focus";
-  const shouldDim =
-    isFocus && selectedNodeId !== null && !isSelected && !isNeighbor;
+  const shouldDim = isFocus && hasSelection && !isSelected && !isNeighbor;
   const opacity = shouldDim ? 0.15 : 1;
 
   const tempV = useMemo(() => new Vector3(...position), [position]);
