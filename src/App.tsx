@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,36 +12,70 @@ import NodeDetails from "./components/NodeDetails";
 import { GraphHUD } from "./components/GraphHUD";
 import { AnimatePresence } from "framer-motion";
 import { useGraphStore } from "./stores/useGraphStore";
-import ConceptPage from "./pages/NodePage";
+const ConceptPage = lazy(() => import("./pages/NodePage"));
+const AboutPage = lazy(() =>
+  import("./pages/AboutPage").then((m) => ({ default: m.AboutPage })),
+);
+const SupportPage = lazy(() =>
+  import("./pages/SupportPage").then((m) => ({ default: m.SupportPage })),
+);
+const HomePage = lazy(() =>
+  import("./pages/HomePage").then((m) => ({ default: m.HomePage })),
+);
+const LostPage = lazy(() =>
+  import("./pages/LostPage").then((m) => ({ default: m.LostPage })),
+);
+const Login = lazy(() =>
+  import("./pages/Login").then((m) => ({ default: m.Login })),
+);
+const Register = lazy(() =>
+  import("./pages/Register").then((m) => ({ default: m.Register })),
+);
+const MathematicienPage = lazy(() => import("./pages/MathematicienPage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const TypePage = lazy(() => import("./pages/TypePage"));
+const CategoryList = lazy(() => import("./pages/CategoryList"));
+const MathematicienList = lazy(() => import("./pages/MathematicienList"));
+const TypeList = lazy(() => import("./pages/TypeList"));
+const ConceptList = lazy(() => import("./pages/ConceptList"));
+const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
+const PasswordReset = lazy(() => import("./pages/PasswordReset"));
+const PasswordResetVerification = lazy(
+  () => import("./pages/PasswordResetVerification"),
+);
+const UserRedirect = lazy(() => import("./Redirection/UserRedirect"));
+const CategoryRedirect = lazy(() =>
+  import("./Redirection/CategoryRedirect").then((m) => ({
+    default: m.CategoryRedirect,
+  })),
+);
+const TypeRedirect = lazy(() =>
+  import("./Redirection/TypeRedirect").then((m) => ({
+    default: m.TypeRedirect,
+  })),
+);
+const MathematicienRedirect = lazy(() =>
+  import("./Redirection/MathematicienRedirect").then((m) => ({
+    default: m.MathematicienRedirect,
+  })),
+);
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const DashboardPage = lazy(() => import("./pages/admin/DashboardPage"));
+const UsersPage = lazy(() => import("./pages/admin/UsersPage"));
+const ContentsPage = lazy(() => import("./pages/admin/ContentsPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsManagement"));
+const ContributionPage = lazy(() => import("./pages/ContributionPage"));
+const RecentChangesPage = lazy(() =>
+  import("./pages/RecentChangesPage").then((m) => ({
+    default: m.RecentChangesPage,
+  })),
+);
+const SearchPage = lazy(() =>
+  import("./pages/SearchPage.tsx").then((m) => ({ default: m.SearchPage })),
+);
+const NewContentPage = lazy(() => import("./pages/admin/NewContentPage.tsx"));
 import { ThemeProvider } from "@mui/material";
-import { AboutPage } from "./pages/AboutPage";
-import { SupportPage } from "./pages/SupportPage";
-import { HomePage } from "./pages/HomePage";
-import { LostPage } from "./pages/LostPage";
 import { AuthProvider } from "./contexts/Authprovider";
-import { Login } from "./pages/Login";
-import { Register } from "./pages/Register";
-import MathematicienPage from "./pages/MathematicienPage";
-import CategoryPage from "./pages/CategoryPage";
-import TypePage from "./pages/TypePage";
-import CategoryList from "./pages/CategoryList";
-import MathematicienList from "./pages/MathematicienList";
-import TypeList from "./pages/TypeList";
-import ConceptList from "./pages/ConceptList";
-import UserProfilePage from "./pages/UserProfilePage";
-import PasswordReset from "./pages/PasswordReset";
-import PasswordResetVerification from "./pages/PasswordResetVerification";
-import UserRedirect from "./Redirection/UserRedirect";
-import { CategoryRedirect } from "./Redirection/CategoryRedirect";
-import { TypeRedirect } from "./Redirection/TypeRedirect";
-import { MathematicienRedirect } from "./Redirection/MathematicienRedirect";
-import AdminLayout from "./pages/admin/AdminLayout";
-import DashboardPage from "./pages/admin/DashboardPage";
-import UsersPage from "./pages/admin/UsersPage";
-import ContentsPage from "./pages/admin/ContentsPage";
-import SettingsPage from "./pages/SettingsManagement";
-import ContributionPage from "./pages/ContributionPage";
-import { RecentChangesPage } from "./pages/RecentChangesPage";
 import { getTheme } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useGraphData } from "./hooks/useGraphData";
@@ -52,9 +86,7 @@ import { Box, Alert } from "@mui/material";
 import ErrorBoundary from "./ErrorBoundary";
 import { GraphSkeleton } from "./components/GraphSkeleton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SearchPage } from "./pages/SearchPage.tsx";
 import { useUIStore } from "./stores/useUIStore";
-import NewContentPage from "./pages/admin/NewContentPage.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -110,7 +142,19 @@ const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
-    <>
+    <Suspense
+      fallback={
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="100vh"
+          bgcolor="transparent"
+        >
+          <GraphSkeleton />
+        </Box>
+      }
+    >
       <Routes location={location}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -157,7 +201,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<LostPage />} />
         </Route>
       </Routes>
-    </>
+    </Suspense>
   );
 };
 
