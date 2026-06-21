@@ -8,8 +8,14 @@ export const GraphHUDContainer = styled(Box)(() => ({
   transform: "translateX(-50%)",
   zIndex: 100,
   display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "12px",
   justifyContent: "center",
-  pointerEvents: "auto",
+  pointerEvents: "none", // The container shouldn't block clicks
+  "& > *": {
+    pointerEvents: "auto", // Children block clicks
+  },
 }));
 
 export const HUDPill = styled(Box)(({ theme }) => ({

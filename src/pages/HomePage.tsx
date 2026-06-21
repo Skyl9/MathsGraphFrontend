@@ -17,6 +17,8 @@ import {
   getStaggerContainer,
   fadeInUp,
   bouncySpring,
+  slowFadeInUp,
+  getScaleFadeIn,
 } from "../utils/animations";
 
 // Icônes
@@ -91,11 +93,7 @@ export function HomePage() {
       />
       <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
         {/* Section Hero Moderne */}
-        <HeroSection
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        <HeroSection variants={slowFadeInUp} initial="hidden" animate="show">
           <HeroContent>
             <HeroTitle variant="h1">{t("home.hero_title")}</HeroTitle>
             <HeroSubtitle variant="body1">
@@ -184,9 +182,9 @@ export function HomePage() {
 
         {/* Bannière de Contribution */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.35, duration: 0.5 }}
+          variants={getScaleFadeIn(0.35)}
+          initial="hidden"
+          animate="show"
         >
           <ContributionBanner component="aside" elevation={0}>
             <CardContent sx={{ p: 0 }}>

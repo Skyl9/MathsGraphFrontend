@@ -7,6 +7,7 @@ import {
   Popover,
   Typography,
   Divider,
+  Breadcrumbs,
 } from "@mui/material";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
@@ -129,8 +130,75 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
     }
   };
 
+  const renderBreadcrumbs = () => {
+    if (history.length <= 1) return null;
+
+    // On affiche les 5 derniers éléments pour ne pas surcharger l'écran
+    const maxVisible = 5;
+    const startIdx = Math.max(0, history.length - maxVisible);
+    const visibleHistory = history.slice(startIdx);
+
+    return (
+      <HUDPill
+        sx={{
+          px: 3,
+          py: 0.5,
+          background: darkMode
+            ? alpha(theme.palette.background.paper, 0.6)
+            : alpha(theme.palette.background.paper, 0.6),
+          backdropFilter: "blur(12px)",
+          border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+        }}
+      >
+        <Breadcrumbs aria-label="breadcrumb" separator="›">
+          {visibleHistory.map((id, localIdx) => {
+            const globalIdx = startIdx + localIdx;
+            const isCurrent = globalIdx === currentIndex;
+            const node = graphData?.nodes?.find((n) => n.id === id);
+            const label = node?.nom || `Concept ${id}`;
+
+            return (
+              <Typography
+                key={`${globalIdx}-${id}`}
+                variant="caption"
+                sx={{
+                  cursor: "pointer",
+                  fontWeight: isCurrent ? 800 : 500,
+                  fontSize: isCurrent ? "0.8rem" : "0.75rem",
+                  color: isCurrent
+                    ? theme.palette.primary.main
+                    : darkMode
+                      ? "#94A3B8"
+                      : "#64748B",
+                  transition: "all 0.2s ease",
+                  "&:hover": {
+                    color: theme.palette.primary.light,
+                    transform: "translateY(-1px)",
+                  },
+                }}
+                onClick={() => {
+                  useGraphStore.getState().setCurrentIndex(globalIdx);
+                  useGraphStore.getState().setSelectedNodeId(id);
+                  if (node) {
+                    const pos = node.position[currentView] ||
+                      node.position["grille"] ||
+                      node.position["physique"] || { x: 0, y: 0, z: 0 };
+                    setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
+                  }
+                }}
+              >
+                {label.length > 25 ? label.substring(0, 22) + "..." : label}
+              </Typography>
+            );
+          })}
+        </Breadcrumbs>
+      </HUDPill>
+    );
+  };
+
   return (
     <GraphHUDContainer>
+      {renderBreadcrumbs()}
       <HUDPill
         sx={{
           background: darkMode

@@ -1,6 +1,6 @@
 import { alpha } from "@mui/material/styles";
 import React from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { useOutlet, useLocation } from "react-router-dom";
 import {
   Box,
   Container,
@@ -20,6 +20,7 @@ export const MainLayout: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const location = useLocation();
+  const outlet = useOutlet();
 
   return (
     <Box
@@ -27,7 +28,8 @@ export const MainLayout: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         minHeight: "100vh",
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: alpha(theme.palette.background.default, 0.85),
+        backdropFilter: "blur(4px)",
         color: theme.palette.text.primary,
         transition: "background-color 0.3s ease, color 0.3s ease",
       }}
@@ -59,7 +61,7 @@ export const MainLayout: React.FC = () => {
               width: "100%",
             }}
           >
-            <Outlet />
+            {outlet}
           </motion.div>
         </AnimatePresence>
       </Box>

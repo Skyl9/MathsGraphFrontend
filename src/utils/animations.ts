@@ -25,6 +25,12 @@ export const bouncySpring: Transition = {
   damping: 20,
 };
 
+export const layoutSpring: Transition = {
+  type: "spring",
+  bounce: 0,
+  duration: 0.3,
+};
+
 // Variantes conteneurs avec "stagger"
 export const getStaggerContainer = (staggerDelay = 0.1): Variants => ({
   hidden: { opacity: 0 },
@@ -46,6 +52,20 @@ export const fadeOutDown: Variants = {
   hidden: { opacity: 0, y: -20 },
   show: { opacity: 1, y: 0, transition: gentleSpring },
 };
+
+export const slowFadeInUp: Variants = {
+  hidden: { opacity: 0, y: -20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
+
+export const getScaleFadeIn = (delay = 0): Variants => ({
+  hidden: { opacity: 0, scale: 0.98 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: { delay, duration: 0.5, ease: "easeOut" },
+  },
+});
 
 export const slideInLeft: Variants = {
   hidden: { opacity: 0, x: -40 },

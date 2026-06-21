@@ -21,6 +21,7 @@ import {
 import { NodeData, EdgeData } from "../types/ApiTypes/graph";
 import { RecentChange } from "../types/ApiTypes/concept";
 import { RecentComment } from "../types/ApiTypes/comments";
+import { toast } from "react-toastify";
 
 declare global {
   interface Window {
@@ -136,18 +137,30 @@ const request = async <T>(
         Token.clearToken();
         // On évite les boucles infinies de redirection
         if (window.location.pathname !== "/login") {
+          toast.info("Session expirée. Veuillez vous reconnecter.");
           window.location.href = "/login?session_expired=true";
         }
+      } else if (config.method && config.method !== "GET") {
+        // Afficher un toast d'erreur uniquement pour les mutations (POST, PATCH, DELETE)
+        toast.error(error.message);
       }
 
       throw error;
     }
 
+    // Afficher un toast de succès générique pour les requêtes POST/PATCH/DELETE (Optionnel, ou à la demande)
+    // Mais on préférera généralement les afficher côté UI pour plus de contexte.
+
     return data.data;
   } catch (error) {
     clearTimeout(timeoutId);
     if (error instanceof DOMException && error.name === "AbortError") {
+      toast.error("La requête a expiré. Veuillez vérifier votre connexion.");
       throw { status: 408, message: "La requête a expiré." } as ApiError;
+    }
+    // Ne pas afficher de toast ici si on l'a déjà fait au-dessus
+    if (!isApiError(error) && config.method && config.method !== "GET") {
+      toast.error("Erreur réseau ou serveur injoignable.");
     }
     throw error;
   }

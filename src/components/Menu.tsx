@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { useMenuLogic } from "../hooks/useMenuLogic";
 import FocusTrap from "focus-trap-react";
 import { useEffect } from "react";
-import { slideInLeft } from "../utils/animations";
+import { slideInLeft, getScaleFadeIn } from "../utils/animations";
 import {
   MenuContainer,
   FloatingGlassMenu,
@@ -92,10 +92,10 @@ export default function Menu({ graphData }: MenuProps) {
         <AnimatePresence>
           {!open ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ duration: 0.2 }}
+              variants={getScaleFadeIn(0)}
+              initial="hidden"
+              animate="show"
+              exit="hidden"
             >
               <MenuButtonToggle
                 color="primary"

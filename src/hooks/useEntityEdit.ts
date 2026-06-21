@@ -40,7 +40,7 @@ export const useEntityEdit = <T extends object>(
 
   const [newContent, setNewContent] = useState<unknown>(undefined);
 
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving, _] = useState(false);
 
   const editableFields = useMemo(() => {
     const generateFields =
@@ -77,18 +77,20 @@ export const useEntityEdit = <T extends object>(
   const saveChanges = async () => {
     if (!currentEditField) return;
 
-    setIsSaving(true); // On désactive le bouton
-    try {
-      await updateField(currentEditField, newContent);
+    const field = currentEditField;
+    const value = newContent;
 
-      cancelChanges();
-      await refetchData();
-      toast.success("Modifications sauvegardées avec succès");
+    // Optimistic UI : On ferme la modale instantanément
+    cancelChanges();
+
+    try {
+      const success = await updateField(field, value);
+      if (success) {
+        toast.success("Modifications sauvegardées avec succès");
+      }
+      // Les erreurs (success === false) sont déjà affichées via un toast global dans api.ts
     } catch (err) {
-      console.error("Erreur lors de la sauvegarde:", err);
-      toast.error("Erreur lors de la sauvegarde.");
-    } finally {
-      setIsSaving(false);
+      console.error("Erreur critique lors de la sauvegarde:", err);
     }
   };
 

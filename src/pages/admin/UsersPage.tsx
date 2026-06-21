@@ -7,10 +7,10 @@ import {
   TextField,
   InputAdornment,
   Chip,
-  Paper,
   useTheme,
   Skeleton,
 } from "@mui/material";
+import { GlassPaper } from "../../components/GlassPaper";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -168,9 +168,9 @@ const UsersPage = () => {
             sx={{ borderRadius: 3 }}
           />
         </Box>
-        <Paper elevation={0} sx={{ p: 0, borderRadius: 4 }}>
+        <GlassPaper elevation={0} sx={{ p: 0 }}>
           <Skeleton variant="rounded" width="100%" height={600} />
-        </Paper>
+        </GlassPaper>
       </Box>
     );
   }
@@ -241,23 +241,11 @@ const UsersPage = () => {
         />
       </Box>
 
-      <Paper
+      <GlassPaper
         elevation={0}
         sx={{
           p: 0,
-          borderRadius: 4,
           overflow: "hidden",
-          background: isDark
-            ? "rgba(255, 255, 255, 0.02)"
-            : "rgba(255, 255, 255, 0.65)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid",
-          borderColor: isDark
-            ? "rgba(255, 255, 255, 0.08)"
-            : "rgba(0, 0, 0, 0.06)",
-          boxShadow: isDark
-            ? "0 8px 32px 0 rgba(0, 0, 0, 0.2)"
-            : "0 8px 32px 0 rgba(31, 38, 135, 0.04)",
         }}
       >
         <Box sx={{ height: 600, width: "100%" }}>
@@ -295,7 +283,7 @@ const UsersPage = () => {
             }}
           />
         </Box>
-      </Paper>
+      </GlassPaper>
     </Box>
   );
 };

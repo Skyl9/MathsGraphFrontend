@@ -7,10 +7,10 @@ import {
   ListItemText,
   ListItemAvatar,
   Avatar,
-  Paper,
-  useTheme,
   Skeleton,
+  useTheme,
 } from "@mui/material";
+import { GlassPaper } from "./GlassPaper";
 import ForumIcon from "@mui/icons-material/Forum";
 import { Link } from "react-router-dom";
 import dayjs from "dayjs";
@@ -40,20 +40,11 @@ export const RecentComments: React.FC = () => {
 
   if (loading) {
     return (
-      <Paper
+      <GlassPaper
         component="section"
         elevation={0}
         sx={{
           p: 3,
-          borderRadius: 4,
-          background: isDark
-            ? "rgba(255, 255, 255, 0.02)"
-            : "rgba(255, 255, 255, 0.65)",
-          backdropFilter: "blur(16px)",
-          border: "1px solid",
-          borderColor: isDark
-            ? "rgba(255, 255, 255, 0.08)"
-            : "rgba(0, 0, 0, 0.06)",
         }}
       >
         <Typography
@@ -90,7 +81,7 @@ export const RecentComments: React.FC = () => {
             </ListItem>
           ))}
         </List>
-      </Paper>
+      </GlassPaper>
     );
   }
   if (error) {
@@ -115,25 +106,13 @@ export const RecentComments: React.FC = () => {
   }
 
   return (
-    <Paper
+    <GlassPaper
       component="section"
       elevation={0}
       sx={{
         p: 3,
-        borderRadius: 4,
         maxHeight: "520px",
         overflowY: "auto",
-        background: isDark
-          ? "rgba(255, 255, 255, 0.02)"
-          : "rgba(255, 255, 255, 0.65)",
-        backdropFilter: "blur(16px)",
-        border: "1px solid",
-        borderColor: isDark
-          ? "rgba(255, 255, 255, 0.08)"
-          : "rgba(0, 0, 0, 0.06)",
-        boxShadow: isDark
-          ? "0 8px 32px 0 rgba(0, 0, 0, 0.2)"
-          : "0 8px 32px 0 rgba(31, 38, 135, 0.04)",
         "&::-webkit-scrollbar": {
           width: "6px",
         },
@@ -299,6 +278,6 @@ export const RecentComments: React.FC = () => {
           </ListItem>
         ))}
       </List>
-    </Paper>
+    </GlassPaper>
   );
 };

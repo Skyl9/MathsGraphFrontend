@@ -11,6 +11,7 @@ import {
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import SearchIcon from "@mui/icons-material/Search";
 import { motion } from "framer-motion";
+import { fadeInUp, getScaleFadeIn } from "../../utils/animations";
 
 interface SearchEmptyStateProps {
   queryTerm: string;
@@ -28,11 +29,7 @@ export const SearchEmptyState = ({
   const theme = useTheme();
   if (!queryTerm) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+      <motion.div variants={fadeInUp} initial="hidden" animate="show">
         <Paper
           elevation={0}
           sx={{
@@ -113,11 +110,7 @@ export const SearchEmptyState = ({
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-    >
+    <motion.div variants={getScaleFadeIn(0)} initial="hidden" animate="show">
       <Paper
         elevation={0}
         sx={{

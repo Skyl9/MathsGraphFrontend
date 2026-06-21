@@ -95,9 +95,10 @@ const GlobalGraph = () => {
         width: "100vw",
         height: "100vh",
         zIndex: 0,
-        opacity: isGraph ? 1 : 0,
+        opacity: isGraph ? 1 : 0.4,
+        filter: isGraph ? "none" : "blur(10px)",
         pointerEvents: isGraph ? "auto" : "none",
-        transition: "opacity 0.4s ease-in-out",
+        transition: "opacity 0.6s ease-in-out, filter 0.6s ease-in-out",
       }}
     >
       <AppContent />
@@ -201,6 +202,7 @@ const AppContent = () => {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
   const isSearchActive = useGraphStore((s) => s.isSearchActive);
+  const location = useLocation();
 
   const getBackground = () => {
     if (graphTheme === "neon") {
@@ -280,14 +282,22 @@ const AppContent = () => {
       >
         <Scene graphData={graphData} />
       </Canvas>
-      <Menu graphData={graphData} />
-      <GraphHUD graphData={graphData} />
 
-      <AnimatePresence>
-        {selectedNodeId !== null && !isSearchActive && (
-          <NodeDetails id={selectedNodeId} onClose={handleCloseNodeDetails} />
-        )}
-      </AnimatePresence>
+      {location.pathname === "/graph" && (
+        <>
+          <Menu graphData={graphData} />
+          <GraphHUD graphData={graphData} />
+
+          <AnimatePresence>
+            {selectedNodeId !== null && !isSearchActive && (
+              <NodeDetails
+                id={selectedNodeId}
+                onClose={handleCloseNodeDetails}
+              />
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </div>
   );
 };

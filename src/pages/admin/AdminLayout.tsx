@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Outlet, useNavigate, useLocation, Navigate } from "react-router-dom";
+import {
+  useOutlet,
+  useNavigate,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -46,6 +51,7 @@ const AdminLayout = () => {
   const location = useLocation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const outlet = useOutlet();
   const [currentUser, setCurrentUser] = useState<Partial<User>>({});
 
   const [isAdmin] = useState(() => Token.getUserRoleFromToken() === "admin");
@@ -304,7 +310,7 @@ const AdminLayout = () => {
             exit="exit"
             style={{ width: "100%", height: "100%" }}
           >
-            <Outlet />
+            {outlet}
           </motion.div>
         </AnimatePresence>
       </Box>

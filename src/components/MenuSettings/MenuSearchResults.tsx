@@ -48,15 +48,9 @@ export default function MenuSearchResults({
     <>
       {searchResults.length > 0 && (
         <SearchResultsBox
-          style={{
-            background: darkMode
-              ? alpha(theme.palette.background.paper, 0.85)
-              : alpha(theme.palette.background.paper, 0.85),
-            backdropFilter: "blur(16px)",
-            border: darkMode
-              ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
-              : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-            color: darkMode ? "#F1F5F9" : "#0F172A",
+          sx={{
+            ...theme.glassmorphism.main,
+            color: "text.primary",
           }}
         >
           {searchResults.map((result) => {
@@ -98,15 +92,9 @@ export default function MenuSearchResults({
       )}
       {searchResults.length === 0 && (
         <SearchResultsBox
-          style={{
-            background: darkMode
-              ? alpha(theme.palette.background.paper, 0.85)
-              : alpha(theme.palette.background.paper, 0.85),
-            backdropFilter: "blur(16px)",
-            border: darkMode
-              ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
-              : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-            color: darkMode ? "#F1F5F9" : "#0F172A",
+          sx={{
+            ...theme.glassmorphism.main,
+            color: "text.primary",
           }}
         >
           <SearchNoResults>{t("search.no_concept_found")}</SearchNoResults>
