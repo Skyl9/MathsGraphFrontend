@@ -5,7 +5,6 @@ import { HistoryModal } from "../components/HistoryModal";
 
 import { Navigate, useParams } from "react-router-dom";
 import { AllNodeData } from "../types/types";
-import "../styles/EditNodeModal.css";
 import { useEntityEdit } from "../hooks/useEntityEdit";
 import { EditModal } from "../components/EditModal";
 

@@ -2,6 +2,13 @@ import { alpha } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { getNodeColor } from "../../utils/nodeColors";
+import {
+  SearchResultsBox,
+  SearchResultItem,
+  SearchResultTitle,
+  SearchResultMeta,
+  SearchNoResults,
+} from "../Menu.styles";
 
 interface MenuSearchResultsProps {
   searchResults: any[];
@@ -40,8 +47,7 @@ export default function MenuSearchResults({
   return (
     <>
       {searchResults.length > 0 && (
-        <div
-          className="search-results"
+        <SearchResultsBox
           style={{
             background: darkMode
               ? alpha(theme.palette.background.paper, 0.85)
@@ -66,9 +72,8 @@ export default function MenuSearchResults({
             ]);
 
             return (
-              <div
+              <SearchResultItem
                 key={result.id}
-                className="search-result-item"
                 onClick={() => handleResultsSearch(result)}
                 style={{
                   borderLeft: `3px solid ${badgeColor}`,
@@ -82,21 +87,17 @@ export default function MenuSearchResults({
                   e.currentTarget.style.background = "transparent";
                 }}
               >
-                <span className="search-result-title">{result.nom}</span>
-                <span
-                  className="search-result-meta"
-                  style={{ color: badgeColor }}
-                >
+                <SearchResultTitle>{result.nom}</SearchResultTitle>
+                <SearchResultMeta style={{ color: badgeColor }}>
                   {result.typeMath}
-                </span>
-              </div>
+                </SearchResultMeta>
+              </SearchResultItem>
             );
           })}
-        </div>
+        </SearchResultsBox>
       )}
       {searchResults.length === 0 && (
-        <div
-          className="search-results"
+        <SearchResultsBox
           style={{
             background: darkMode
               ? alpha(theme.palette.background.paper, 0.85)
@@ -108,10 +109,8 @@ export default function MenuSearchResults({
             color: darkMode ? "#F1F5F9" : "#0F172A",
           }}
         >
-          <div className="search-no-results">
-            {t("search.no_concept_found")}
-          </div>
-        </div>
+          <SearchNoResults>{t("search.no_concept_found")}</SearchNoResults>
+        </SearchResultsBox>
       )}
     </>
   );

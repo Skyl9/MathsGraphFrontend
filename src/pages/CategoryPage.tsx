@@ -3,7 +3,6 @@ import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams, Link } from "react-router-dom";
 import { useEntityEdit } from "../hooks/useEntityEdit.ts";
 import Token from "../services/token";
-import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {

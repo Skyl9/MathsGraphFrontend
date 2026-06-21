@@ -354,11 +354,15 @@ export default function InstancedEdges({
       highlightColor.toArray(colors, data.lineIdx * 3);
     }
 
-    lineMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
-    if (lineMeshRef.current.geometry.attributes.instanceColor) {
-      lineMeshRef.current.geometry.attributes.instanceColor.needsUpdate = true;
+    if (lineMeshRef.current.instanceMatrix) {
+      lineMeshRef.current.instanceMatrix.needsUpdate = true;
     }
-    arrowMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
+    if (lineMeshRef.current.instanceColor) {
+      lineMeshRef.current.instanceColor.needsUpdate = true;
+    }
+    if (arrowMeshRef.current.instanceMatrix) {
+      arrowMeshRef.current.instanceMatrix.needsUpdate = true;
+    }
   }, [
     arrowMatrices,
     colors,

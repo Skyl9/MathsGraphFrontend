@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams } from "react-router-dom";
 import Token from "../services/token";
-import "../styles/EditNodeModal.css";
 import EditIcon from "@mui/icons-material/Edit";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {

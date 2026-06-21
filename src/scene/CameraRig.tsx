@@ -3,7 +3,7 @@ import { useThree } from "@react-three/fiber";
 import gsap from "gsap";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
-import { NodeData, EdgeData } from "../types/ApiTypes/graph";
+import { NodeData } from "../types/ApiTypes/graph";
 import { Vector3 } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
@@ -20,13 +20,13 @@ const getNodePos = (
 
 interface CameraRigProps {
   nodesMap: Map<number, NodeData>;
-  edges: EdgeData[];
+  adjacencyList: Map<number, number[]>;
   controlsRef: React.RefObject<OrbitControlsImpl | null>;
 }
 
 export default function CameraRig({
   nodesMap,
-  edges,
+  adjacencyList,
   controlsRef,
 }: CameraRigProps) {
   const { camera } = useThree();
@@ -48,13 +48,10 @@ export default function CameraRig({
       const sumPosition = new Vector3(x, y, z);
       let count = 1;
 
-      edges.forEach((edge) => {
-        let neighbor: NodeData | undefined;
-        if (edge.start === selectedNode.id) {
-          neighbor = nodesMap.get(edge.end);
-        } else if (edge.end === selectedNode.id) {
-          neighbor = nodesMap.get(edge.start);
-        }
+      const neighborIds = adjacencyList.get(selectedNode.id) || [];
+
+      neighborIds.forEach((neighborId) => {
+        const neighbor = nodesMap.get(neighborId);
         if (neighbor) {
           const pos = getNodePos(neighbor, currentView);
           sumPosition.add(new Vector3(pos.x, pos.y, pos.z));
@@ -68,7 +65,7 @@ export default function CameraRig({
         z: sumPosition.z / count,
       });
     }
-  }, [selectedNode, setTargetPosition, currentView, edges, nodesMap]);
+  }, [selectedNode, setTargetPosition, currentView, adjacencyList, nodesMap]);
 
   // Animations GSAP : Cadrage intelligent
   useEffect(() => {
@@ -77,13 +74,10 @@ export default function CameraRig({
       let maxDistance = 3;
 
       // Trouver la distance maximale avec les voisins pour ajuster le zoom
-      edges.forEach((edge) => {
-        let neighbor: NodeData | undefined;
-        if (edge.start === selectedNode.id) {
-          neighbor = nodesMap.get(edge.end);
-        } else if (edge.end === selectedNode.id) {
-          neighbor = nodesMap.get(edge.start);
-        }
+      const neighborIds = adjacencyList.get(selectedNode.id) || [];
+
+      neighborIds.forEach((neighborId) => {
+        const neighbor = nodesMap.get(neighborId);
         if (neighbor) {
           const pos = getNodePos(neighbor, currentView);
           const d = new Vector3(pos.x, pos.y, pos.z).distanceTo(
@@ -116,7 +110,7 @@ export default function CameraRig({
     camera,
     controlsRef,
     currentView,
-    edges,
+    adjacencyList,
     nodesMap,
   ]);
 

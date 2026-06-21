@@ -2,7 +2,6 @@ import { alpha } from "@mui/material/styles";
 import React, { useState, useRef, useEffect } from "react";
 import {
   useTheme,
-  Box,
   IconButton,
   Tooltip,
   Popover,
@@ -21,8 +20,14 @@ import { useGraphStore } from "../stores/useGraphStore";
 import { useUIStore } from "../stores/useUIStore";
 import { useTranslation } from "react-i18next";
 import { Graph, NodeData } from "../types/ApiTypes/graph";
-import "../styles/GraphHUD.css";
-
+import {
+  GraphHUDContainer,
+  HUDPill,
+  ShortcutsPopoverContainer,
+  ShortcutsTitle,
+  ShortcutRow,
+  ShortcutKey,
+} from "./GraphHUD.styles";
 interface GraphHUDProps {
   graphData: Graph | null;
 }
@@ -125,9 +130,8 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
   };
 
   return (
-    <Box className="graph-hud-container">
-      <Box
-        className="hud-pill"
+    <GraphHUDContainer>
+      <HUDPill
         sx={{
           background: darkMode
             ? alpha(theme.palette.background.paper, 0.75)
@@ -262,7 +266,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             <KeyboardIcon fontSize="small" />
           </IconButton>
         </Tooltip>
-      </Box>
+      </HUDPill>
 
       {/* Raccourcis Popover */}
       <Popover
@@ -296,41 +300,41 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
           },
         }}
       >
-        <Box className="shortcuts-popover">
-          <Typography variant="subtitle2" className="shortcuts-title">
+        <ShortcutsPopoverContainer>
+          <ShortcutsTitle variant="subtitle2">
             {t("graph_hud.shortcuts")}
-          </Typography>
+          </ShortcutsTitle>
 
-          <Box className="shortcut-row">
+          <ShortcutRow>
             <Typography variant="caption">
               {t("graph_hud.nav_right")}
             </Typography>
-            <span className="shortcut-key">D</span>
-          </Box>
-          <Box className="shortcut-row">
+            <ShortcutKey>D</ShortcutKey>
+          </ShortcutRow>
+          <ShortcutRow>
             <Typography variant="caption">{t("graph_hud.nav_left")}</Typography>
-            <span className="shortcut-key">Q</span>
-          </Box>
-          <Box className="shortcut-row">
+            <ShortcutKey>Q</ShortcutKey>
+          </ShortcutRow>
+          <ShortcutRow>
             <Typography variant="caption">
               {t("graph_hud.next_concept")}
             </Typography>
-            <span className="shortcut-key">→</span>
-          </Box>
-          <Box className="shortcut-row">
+            <ShortcutKey>→</ShortcutKey>
+          </ShortcutRow>
+          <ShortcutRow>
             <Typography variant="caption">
               {t("graph_hud.prev_concept")}
             </Typography>
-            <span className="shortcut-key">←</span>
-          </Box>
-          <Box className="shortcut-row">
+            <ShortcutKey>←</ShortcutKey>
+          </ShortcutRow>
+          <ShortcutRow>
             <Typography variant="caption">
               {t("graph_hud.debug_mode")}
             </Typography>
-            <span className="shortcut-key">M</span>
-          </Box>
-        </Box>
+            <ShortcutKey>M</ShortcutKey>
+          </ShortcutRow>
+        </ShortcutsPopoverContainer>
       </Popover>
-    </Box>
+    </GraphHUDContainer>
   );
 };

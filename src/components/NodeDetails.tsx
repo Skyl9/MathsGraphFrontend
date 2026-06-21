@@ -1,10 +1,8 @@
 import { useMemo, useEffect } from "react";
 import FocusTrap from "focus-trap-react";
-import { motion } from "framer-motion";
 import {
   Typography,
   IconButton,
-  Button,
   Box,
   Divider,
   useTheme,
@@ -19,10 +17,20 @@ import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
 import MathMarkdown from "./MathMarkdown";
 import { useTranslation } from "react-i18next";
-import { GlassPaper } from "./GlassPaper";
 
-import "../styles/NodeDetails.css";
-
+import {
+  NodeDetailsSidebar,
+  SidebarContainer,
+  SidebarHeader,
+  SidebarTitle,
+  MathTypeBadge,
+  SidebarBody,
+  SectionLabel,
+  NeighborsList,
+  NeighborChip,
+  SidebarFooter,
+  SidebarFooterBtn,
+} from "./NodeDetails.styles";
 interface NodeDetailsProps {
   id: number;
   onClose: () => void;
@@ -119,7 +127,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         clickOutsideDeactivates: true,
       }}
     >
-      <motion.aside
+      <NodeDetailsSidebar
         initial={{
           opacity: 0,
           x: isMobile ? 0 : 40,
@@ -132,15 +140,10 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
           y: isMobile ? "100%" : 0,
         }}
         transition={{ type: "spring", stiffness: 280, damping: 26 }}
-        className="node-details-sidebar"
       >
-        <GlassPaper className="sidebar-container" blur={20} opacity={0.75}>
+        <SidebarContainer blur={20} opacity={0.75}>
           {/* Header */}
-          <Box
-            component="header"
-            className="sidebar-header"
-            style={{ borderLeft: `4px solid ${typeColor}` }}
-          >
+          <SidebarHeader style={{ borderLeft: `4px solid ${typeColor}` }}>
             <IconButton
               aria-label={t("common.close")}
               size="small"
@@ -151,16 +154,14 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               <CloseIcon fontSize="small" />
             </IconButton>
 
-            <Typography
+            <SidebarTitle
               variant="h5"
-              className="sidebar-title"
               sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
             >
               {concept.nom}
-            </Typography>
+            </SidebarTitle>
 
-            <Box
-              className="math-type-badge"
+            <MathTypeBadge
               style={{
                 background: typeColor,
                 color: theme.palette.getContrastText(typeColor),
@@ -168,19 +169,16 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               }}
             >
               {typeLabel}
-            </Box>
-          </Box>
+            </MathTypeBadge>
+          </SidebarHeader>
 
           {/* Body */}
-          <Box className="sidebar-body">
+          <SidebarBody>
             {/* Section Description / Type */}
             <Box>
-              <Typography
-                className="section-label"
-                sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
-              >
+              <SectionLabel sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}>
                 {t("node_details.description")}
-              </Typography>
+              </SectionLabel>
               <Box
                 sx={{
                   color: darkMode ? "#CBD5E1" : "#334155",
@@ -203,14 +201,11 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
 
             {/* Section Relations */}
             <Box>
-              <Typography
-                className="section-label"
-                sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}
-              >
+              <SectionLabel sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}>
                 {t("node_details.linked_concepts", { count: neighbors.length })}
-              </Typography>
+              </SectionLabel>
               {neighbors.length > 0 ? (
-                <Box className="neighbors-list">
+                <NeighborsList>
                   {neighbors.map((n) => {
                     const nColor = getNodeColor(n.typeMath, [
                       colorLemme,
@@ -224,11 +219,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                     ]);
 
                     return (
-                      <Box
-                        component="a"
-                        href={`/concept/${n.id}`}
-                        key={n.id}
-                        className="neighbor-chip"
+                      <NeighborChip
                         onClick={(e) => {
                           e.preventDefault();
                           handleSelectNeighbor(n.id, n.position);
@@ -260,10 +251,10 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                             ({n.relType})
                           </span>
                         )}
-                      </Box>
+                      </NeighborChip>
                     );
                   })}
-                </Box>
+                </NeighborsList>
               ) : (
                 <Typography
                   variant="body2"
@@ -273,11 +264,11 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
                 </Typography>
               )}
             </Box>
-          </Box>
+          </SidebarBody>
 
           {/* Footer Actions */}
-          <footer className="sidebar-footer">
-            <Button
+          <SidebarFooter>
+            <SidebarFooterBtn
               variant="outlined"
               color="inherit"
               className="sidebar-footer-btn"
@@ -296,8 +287,8 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               }}
             >
               {t("node_details.focus")}
-            </Button>
-            <Button
+            </SidebarFooterBtn>
+            <SidebarFooterBtn
               variant="contained"
               className="sidebar-footer-btn"
               href={`/concept/${concept.id}`}
@@ -315,10 +306,10 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               }}
             >
               {t("node_details.profile")}
-            </Button>
-          </footer>
-        </GlassPaper>
-      </motion.aside>
+            </SidebarFooterBtn>
+          </SidebarFooter>
+        </SidebarContainer>
+      </NodeDetailsSidebar>
     </FocusTrap>
   );
 }

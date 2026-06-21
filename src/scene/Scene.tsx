@@ -398,7 +398,11 @@ export default function Scene({ graphData }: SceneProps) {
   return (
     <>
       <EnvironmentLights />
-      <CameraRig nodesMap={nodesMap} edges={edges} controlsRef={controlsRef} />
+      <CameraRig
+        nodesMap={nodesMap}
+        adjacencyList={adjacencyList}
+        controlsRef={controlsRef}
+      />
       <ControlsManager nodes={nodes} controlsRef={controlsRef} />
 
       <group onPointerMissed={handleCanvasClick}>
