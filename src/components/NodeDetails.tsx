@@ -162,9 +162,9 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
             <Box
               className="math-type-badge"
               style={{
-                background: `${typeColor}20`,
-                color: typeColor,
-                border: `1px solid ${typeColor}40`,
+                background: typeColor,
+                color: theme.palette.getContrastText(typeColor),
+                border: `1px solid ${typeColor}`,
               }}
             >
               {typeLabel}

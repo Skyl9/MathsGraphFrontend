@@ -6,6 +6,8 @@ export const useGlobalShortcuts = () => {
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
   const setIsSearchActive = useGraphStore((s) => s.setIsSearchActive);
   const isSearchActive = useGraphStore((s) => s.isSearchActive);
+  const goBack = useGraphStore((s) => s.goBack);
+  const goForward = useGraphStore((s) => s.goForward);
   const toggleDarkMode = useUIStore((s) => s.toggleDarkMode);
 
   useEffect(() => {
@@ -28,6 +30,14 @@ export const useGlobalShortcuts = () => {
           // Echap : Désélectionne le nœud courant et ferme la recherche
           setSelectedNodeId(null);
           setIsSearchActive(false);
+          break;
+
+        case "ArrowLeft":
+          goBack();
+          break;
+
+        case "ArrowRight":
+          goForward();
           break;
 
         case "f":
@@ -54,5 +64,12 @@ export const useGlobalShortcuts = () => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setSelectedNodeId, setIsSearchActive, isSearchActive, toggleDarkMode]);
+  }, [
+    setSelectedNodeId,
+    setIsSearchActive,
+    isSearchActive,
+    toggleDarkMode,
+    goBack,
+    goForward,
+  ]);
 };

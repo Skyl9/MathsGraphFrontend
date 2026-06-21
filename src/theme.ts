@@ -33,6 +33,12 @@ export const getTheme = (dark: boolean) => {
             WebkitFontSmoothing: "antialiased",
             MozOsxFontSmoothing: "grayscale",
           },
+          "*:focus-visible": {
+            outline: `3px solid ${dark ? "#7DD3FC" : "#0EA5E9"} !important`,
+            outlineOffset: "3px",
+            borderRadius: "4px",
+            transition: "outline-color 0.2s ease-in-out",
+          },
           '.mjx-container[jax="CHTML"][display="true"], mjx-container[jax="CHTML"][display="true"]':
             {
               overflowX: "auto",
