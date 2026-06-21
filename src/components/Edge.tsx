@@ -44,7 +44,6 @@ const areEdgesEqual = (prev: EdgeProps, next: EdgeProps) => {
     prev.endId === next.endId &&
     prev.color === next.color &&
     prev.type === next.type &&
-    prev.opacity === next.opacity &&
     prev.debug === next.debug &&
     prev.startScale === next.startScale &&
     prev.endScale === next.endScale &&
@@ -65,7 +64,6 @@ const Edge = memo(function Edge({
   color = "#888888",
   type,
   debug,
-  opacity = 1,
   startScale = 1,
   endScale = 1,
   isStartFiltered = false,
@@ -159,6 +157,8 @@ const Edge = memo(function Edge({
     darkMode,
   ]);
 
+  const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
+
   // Opacité dynamique au survol et filtrage
   const finalOpacity = useMemo(() => {
     if (isFiltered) return 0;
@@ -166,13 +166,16 @@ const Edge = memo(function Edge({
       return isHoverHighlighted ? 1.0 : 0.08;
     }
     if (isSelectedHighlighted) return 1.0;
-    return opacity;
+
+    const isFocus = graphTheme === "focus";
+    return isFocus && hasSelection && !isSelectedHighlighted ? 0.1 : 1.0;
   }, [
     isFiltered,
     isAnyNodeHovered,
     isHoverHighlighted,
     isSelectedHighlighted,
-    opacity,
+    graphTheme,
+    hasSelection,
   ]);
 
   // Épaisseur de ligne dynamique

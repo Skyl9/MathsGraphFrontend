@@ -1,8 +1,6 @@
-import { useEffect, useMemo, useCallback, useRef, useState, memo } from "react";
+import { useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import {
-  Billboard,
-  Text,
   Instances,
   Instance,
   GizmoHelper,
@@ -12,7 +10,6 @@ import {
   Vector3,
   Color,
   Mesh,
-  Group,
   MathUtils,
   SphereGeometry,
   TorusGeometry,
@@ -32,18 +29,13 @@ import { getNodeSize } from "../constants/graphTokens";
 import EnvironmentLights from "./EnvironmentLights";
 import CameraRig from "./CameraRig";
 import ControlsManager from "./ControlsManager";
+import { GlobalLabelsLOD } from "./GlobalLabelsLOD";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
 const ringGeometry = new TorusGeometry(0.55, 0.015, 8, 48);
 
-export interface GraphNodeData {
-  billboard: Group;
-  pos: Vector3;
-  shouldShowBase: boolean;
-  isFarShow: boolean;
-  isFiltered: boolean;
-}
+// Interfaces supprimées pour graphNodesMap car géré centralement
 
 // 🌟 Sécurité : Fallback de coordonnées si un layout n'est pas encore calculé par le backend
 const getNodePos = (
@@ -55,6 +47,44 @@ const getNodePos = (
     node.position["grille"] ||
     node.position["physique"] || { x: 0, y: 0, z: 0 }
   );
+};
+
+// 🌟 Composant extrait pour éviter le re-rendu de Scene au clic
+const GlobalSelectionRing = ({
+  nodesMap,
+  colors,
+  currentView,
+  getNodeScale,
+}: any) => {
+  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
+  if (!selectedNodeId) return null;
+  const node = nodesMap.get(selectedNodeId);
+  if (!node) return null;
+  const pos = getNodePos(node, currentView);
+  return (
+    <SelectionRing
+      position={[pos.x, pos.y, pos.z]}
+      color={getNodeColor(node?.typeMath ?? "", colors)}
+      scale={getNodeScale(selectedNodeId) + 0.3}
+    />
+  );
+};
+
+const GlobalBloom = ({ graphTheme, renderMode }: any) => {
+  const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
+  if (graphTheme === "neon" && renderMode === "quality" && hasSelection) {
+    return (
+      <EffectComposer enableNormalPass={false}>
+        <Bloom
+          luminanceThreshold={0.2}
+          mipmapBlur
+          intensity={1.5}
+          radius={0.8}
+        />
+      </EffectComposer>
+    );
+  }
+  return null;
 };
 
 // 🌟 NOUVEAU : Anneau holographique de sélection
@@ -104,35 +134,26 @@ interface GraphNodeProps {
   node: NodeData;
   currentView: string;
   color: string;
-  isSelected: boolean;
   onClick: (id: number) => void;
   debug: boolean;
-  shouldDim: boolean;
   scale: number;
   isFiltered: boolean;
+  adjacencyList: Map<number, number[]>;
+  graphTheme: string;
   onHoverStart?: (id: number) => void;
   onHoverEnd?: () => void;
 }
 
-const areGraphNodesEqual = (
-  prev: GraphNodeProps & {
-    registerGraphNode?: (id: number, data: GraphNodeData) => void;
-    unregisterGraphNode?: (id: number) => void;
-  },
-  next: GraphNodeProps & {
-    registerGraphNode?: (id: number, data: GraphNodeData) => void;
-    unregisterGraphNode?: (id: number) => void;
-  },
-) => {
+const areGraphNodesEqual = (prev: GraphNodeProps, next: GraphNodeProps) => {
   return (
     prev.node.id === next.node.id &&
     prev.currentView === next.currentView &&
     prev.color === next.color &&
-    prev.isSelected === next.isSelected &&
     prev.debug === next.debug &&
-    prev.shouldDim === next.shouldDim &&
     prev.scale === next.scale &&
-    prev.isFiltered === next.isFiltered
+    prev.isFiltered === next.isFiltered &&
+    prev.graphTheme === next.graphTheme &&
+    prev.adjacencyList === next.adjacencyList
   );
 };
 
@@ -142,27 +163,30 @@ const GraphNode = memo(
     node,
     currentView,
     color,
-    isSelected,
     onClick,
     debug,
-    shouldDim,
     scale,
     isFiltered,
+    adjacencyList,
+    graphTheme,
     onHoverStart,
     onHoverEnd,
-    registerGraphNode,
-    unregisterGraphNode,
-  }: GraphNodeProps & {
-    registerGraphNode?: (id: number, data: GraphNodeData) => void;
-    unregisterGraphNode?: (id: number) => void;
-  }) => {
+  }: GraphNodeProps) => {
     const [hovered, setHovered] = useState(false);
-    const sphereSize = 0.3;
-    const billboardRef = useRef<Group>(null);
     const posVec = useMemo(() => {
       const pos = getNodePos(node, currentView);
       return new Vector3(pos.x, pos.y, pos.z);
     }, [node, currentView]);
+
+    const isSelected = useGraphStore((s) => s.selectedNodeId === node.id);
+    const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
+    const isNeighbor = useGraphStore(
+      (s) =>
+        s.selectedNodeId !== null &&
+        (adjacencyList.get(s.selectedNodeId)?.includes(node.id) ?? false),
+    );
+    const shouldDim =
+      graphTheme === "focus" && hasSelection && !isSelected && !isNeighbor;
 
     // Calcul de la couleur finale :
     // Si on est en mode "Focus" et que ce nœud n'est pas lié, on l'assombrit drastiquement.
@@ -173,32 +197,6 @@ const GraphNode = memo(
       if (shouldDim) return c.multiplyScalar(0.15); // Très sombre si hors focus
       return c;
     }, [hovered, color, isSelected, shouldDim]);
-
-    const shouldShowBase = !shouldDim || hovered;
-    const isFarShow = isSelected || hovered;
-
-    useEffect(() => {
-      if (billboardRef.current && registerGraphNode) {
-        registerGraphNode(node.id, {
-          billboard: billboardRef.current,
-          pos: posVec,
-          shouldShowBase,
-          isFarShow,
-          isFiltered,
-        });
-      }
-      return () => {
-        if (unregisterGraphNode) unregisterGraphNode(node.id);
-      };
-    }, [
-      node.id,
-      posVec,
-      shouldShowBase,
-      isFarShow,
-      isFiltered,
-      registerGraphNode,
-      unregisterGraphNode,
-    ]);
 
     const targetScale = isFiltered ? 0.0 : scale;
 
@@ -226,16 +224,6 @@ const GraphNode = memo(
             if (onHoverEnd) onHoverEnd();
           }}
         />
-
-        {/* On garde le Billboard pour le texte, affiché intelligemment via LOD */}
-        <Billboard
-          ref={billboardRef}
-          position={[0, sphereSize * scale + 0.3, 0]}
-        >
-          <Text fontSize={0.3} color={color} anchorX="center" anchorY="middle">
-            {node.nom}
-          </Text>
-        </Billboard>
 
         {/* Hitbox debug optionnelle */}
         {debug && (
@@ -272,7 +260,6 @@ export default function Scene({ graphData }: SceneProps) {
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
-  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
   const setHoveredNodeId = useGraphStore((s) => s.setHoveredNodeId);
@@ -289,7 +276,6 @@ export default function Scene({ graphData }: SceneProps) {
   }, [setHoveredNodeId]);
 
   const customNodesMap = useRef(new Map<number, CustomNodeData>());
-  const graphNodesMap = useRef(new Map<number, GraphNodeData>());
   const edgesMap = useRef(new Map<string, EdgeDataRef>());
 
   const registerCustomNode = useCallback((id: number, data: CustomNodeData) => {
@@ -299,13 +285,6 @@ export default function Scene({ graphData }: SceneProps) {
     customNodesMap.current.delete(id);
   }, []);
 
-  const registerGraphNode = useCallback((id: number, data: GraphNodeData) => {
-    graphNodesMap.current.set(id, data);
-  }, []);
-  const unregisterGraphNode = useCallback((id: number) => {
-    graphNodesMap.current.delete(id);
-  }, []);
-
   const registerEdge = useCallback((id: string, data: EdgeDataRef) => {
     edgesMap.current.set(id, data);
   }, []);
@@ -313,18 +292,10 @@ export default function Scene({ graphData }: SceneProps) {
     edgesMap.current.delete(id);
   }, []);
 
-  const { camera, gl } = useThree();
+  const { gl } = useThree();
 
   useFrame((state) => {
-    // Handle GraphNodes (Performance)
-    graphNodesMap.current.forEach((data) => {
-      const dist = camera.position.distanceTo(data.pos);
-      const isFar = dist > 35;
-      data.billboard.visible =
-        !data.isFiltered && data.shouldShowBase && (data.isFarShow || !isFar);
-    });
-
-    // Handle CustomNodes (Quality)
+    // Handle CustomNodes (Quality) - Only scaling logic remains
     customNodesMap.current.forEach((data) => {
       // Lerp
       data.currentScaleObj.value = MathUtils.lerp(
@@ -337,15 +308,6 @@ export default function Scene({ graphData }: SceneProps) {
         data.currentScaleObj.value,
         data.currentScaleObj.value,
       );
-
-      // Billboard orientation
-      const dist = camera.position.distanceTo(data.pos);
-      const isFar = dist > 35;
-      const isScaleTiny = data.currentScaleObj.value < 0.1;
-
-      data.billboard.visible =
-        !isScaleTiny && data.shouldShowBase && (data.isFarShow || !isFar);
-      data.billboard.quaternion.copy(camera.quaternion);
     });
 
     // Handle Edges
@@ -393,11 +355,18 @@ export default function Scene({ graphData }: SceneProps) {
       colorPropriete,
     ],
   );
-  const selectedNode = useMemo(
-    () =>
-      (selectedNodeId !== null ? nodesMap.get(selectedNodeId) : null) || null,
-    [nodesMap, selectedNodeId],
-  );
+
+  // 🌟 Pré-calcul de la liste d'adjacence pour O(1) lookups
+  const adjacencyList = useMemo(() => {
+    const list = new Map<number, number[]>();
+    edges.forEach((e) => {
+      if (!list.has(e.start)) list.set(e.start, []);
+      if (!list.has(e.end)) list.set(e.end, []);
+      list.get(e.start)!.push(e.end);
+      list.get(e.end)!.push(e.start);
+    });
+    return list;
+  }, [edges]);
 
   // Calcul des degrés de chaque nœud pour la taille dynamique
   const nodeDegrees = useMemo(() => {
@@ -416,16 +385,6 @@ export default function Scene({ graphData }: SceneProps) {
     },
     [nodeDegrees],
   );
-
-  const neighborIds = useMemo(() => {
-    if (selectedNodeId === null) return new Set<number>();
-    const neighbors = new Set<number>();
-    edges.forEach((edge) => {
-      if (edge.start === selectedNodeId) neighbors.add(edge.end);
-      if (edge.end === selectedNodeId) neighbors.add(edge.start);
-    });
-    return neighbors;
-  }, [selectedNodeId, edges]);
 
   const handleCanvasClick = useCallback(
     (event: MouseEvent) => {
@@ -455,14 +414,6 @@ export default function Scene({ graphData }: SceneProps) {
               emissiveIntensity={graphTheme === "neon" ? 0.8 : 0}
             />
             {nodes.map((node) => {
-              const isSelected = selectedNodeId === node.id;
-              const isNeighbor = neighborIds.has(node.id);
-              const isFocus = graphTheme === "focus";
-              const shouldDim =
-                isFocus &&
-                selectedNodeId !== null &&
-                !isSelected &&
-                !isNeighbor;
               const typeKey = (node.typeMath ?? "").toLowerCase();
               const isFiltered =
                 typeKey in filters
@@ -475,16 +426,14 @@ export default function Scene({ graphData }: SceneProps) {
                   node={node}
                   currentView={currentView}
                   color={getNodeColor(node.typeMath, colors)}
-                  isSelected={isSelected}
-                  shouldDim={shouldDim}
                   debug={debugMode}
                   scale={getNodeScale(node.id)}
                   isFiltered={isFiltered}
+                  adjacencyList={adjacencyList}
+                  graphTheme={graphTheme}
                   onHoverStart={setHoveredNodeId}
                   onHoverEnd={handleNodeHoverEnd}
                   onClick={handleNodeClick}
-                  registerGraphNode={registerGraphNode}
-                  unregisterGraphNode={unregisterGraphNode}
                 />
               );
             })}
@@ -506,10 +455,9 @@ export default function Scene({ graphData }: SceneProps) {
                 position={[pos.x, pos.y, pos.z]}
                 color={getNodeColor(node.typeMath, colors)}
                 nom={node.nom}
-                isSelected={selectedNodeId === node.id}
-                isNeighbor={neighborIds.has(node.id)}
                 scale={getNodeScale(node.id)}
                 isFiltered={isFiltered}
+                adjacencyList={adjacencyList}
                 onHoverStart={setHoveredNodeId}
                 onHoverEnd={handleNodeHoverEnd}
                 onClick={handleNodeClick}
@@ -548,14 +496,6 @@ export default function Scene({ graphData }: SceneProps) {
                 ? !(filters[endTypeKey as keyof typeof filters] ?? false)
                 : false;
 
-            const isFocus = graphTheme === "focus";
-            const isLineConnectedToSelected =
-              edge.start === selectedNodeId || edge.end === selectedNodeId;
-            const lineOpacity =
-              isFocus && selectedNodeId !== null && !isLineConnectedToSelected
-                ? 0.1
-                : 1;
-
             const startPos = getNodePos(startNode, currentView);
             const endPos = getNodePos(endNode, currentView);
 
@@ -569,7 +509,6 @@ export default function Scene({ graphData }: SceneProps) {
                   type={edge.type}
                   color={colorSides}
                   debug={debugMode}
-                  opacity={lineOpacity}
                   startScale={getNodeScale(edge.start)}
                   endScale={getNodeScale(edge.end)}
                   isStartFiltered={isStartFiltered}
@@ -582,32 +521,25 @@ export default function Scene({ graphData }: SceneProps) {
           })
         )}
 
-        {/* 🌟 Anneau de sélection holographique */}
-        {selectedNodeId && selectedNode && (
-          <SelectionRing
-            position={[
-              getNodePos(selectedNode, currentView).x,
-              getNodePos(selectedNode, currentView).y,
-              getNodePos(selectedNode, currentView).z,
-            ]}
-            color={getNodeColor(selectedNode?.typeMath ?? "", colors)}
-            scale={getNodeScale(selectedNodeId) + 0.3}
-          />
-        )}
+        {/* 🌟 Anneau de sélection holographique et Bloom */}
+        <GlobalSelectionRing
+          nodesMap={nodesMap}
+          colors={colors}
+          currentView={currentView}
+          getNodeScale={getNodeScale}
+        />
+
+        {/* 🌟 NOUVEAU: Textes LOD centralisés (Détruit le VDOM des nœuds lointains) */}
+        <GlobalLabelsLOD
+          nodes={nodes}
+          colors={colors}
+          currentView={currentView}
+          adjacencyList={adjacencyList}
+          getNodeScale={getNodeScale}
+        />
       </group>
 
-      {graphTheme === "neon" &&
-        renderMode === "quality" &&
-        selectedNodeId !== null && (
-          <EffectComposer enableNormalPass={false}>
-            <Bloom
-              luminanceThreshold={0.2}
-              mipmapBlur
-              intensity={1.5}
-              radius={0.8}
-            />
-          </EffectComposer>
-        )}
+      <GlobalBloom graphTheme={graphTheme} renderMode={renderMode} />
 
       <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
         <GizmoViewport

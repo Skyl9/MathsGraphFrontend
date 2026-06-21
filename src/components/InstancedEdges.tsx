@@ -164,6 +164,85 @@ export default function InstancedEdges({
     };
   }, [lineCount, arrowCount]);
 
+  // 🌟 Pré-calcul du Layout de base (Matrices et Couleurs statiques) O(N) calculé 1 seule fois
+  const {
+    baseLineMatrices,
+    baseArrowMatrices,
+    defaultColorsArray,
+    dimColorsArray,
+  } = useMemo(() => {
+    const bLines = new Float32Array(lineCount * 16);
+    const bArrows = new Float32Array(arrowCount * 16);
+    const dColors = new Float32Array(lineCount * 3);
+    const dimColorsArr = new Float32Array(lineCount * 3);
+
+    const dummyMatrix = new THREE.Matrix4();
+    const dummyQuaternion = new THREE.Quaternion();
+    const upZ = new THREE.Vector3(0, 0, 1);
+    const scaleVec = new THREE.Vector3();
+    const defaultColor = new THREE.Color(
+      isNeon &&
+        (colorSides === "black" ||
+          colorSides === "#888888" ||
+          colorSides === "#ffffff")
+        ? "#ffffff"
+        : colorSides,
+    );
+    const dimColor = new THREE.Color(darkMode ? "#1e293b" : "#e2e8f0");
+
+    for (let i = 0; i < validEdges.length; i++) {
+      const data = validEdges[i];
+      if (!data) continue;
+
+      if (data.hidden) {
+        dummyMatrix.makeScale(0, 0, 0);
+        dummyMatrix.toArray(bLines, data.lineIdx * 16);
+        dummyMatrix.toArray(bArrows, data.arrowIdxStart * 16);
+        if (data.numArrows === 2) {
+          dummyMatrix.toArray(bArrows, (data.arrowIdxStart + 1) * 16);
+        }
+        continue;
+      }
+
+      const { s, e, dir } = data;
+      const startRadius = 0.3; // Scale 1.0
+      const endRadius = 0.3; // Scale 1.0
+
+      const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
+      const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15));
+      const length = sOff.distanceTo(eOff);
+
+      dummyQuaternion.setFromUnitVectors(upZ, dir);
+
+      scaleVec.set(1.0, 1.0, length);
+      dummyMatrix.compose(sOff, dummyQuaternion, scaleVec);
+      dummyMatrix.toArray(bLines, data.lineIdx * 16);
+
+      scaleVec.set(1.0, 1.0, 1.0);
+      dummyMatrix.compose(eOff, dummyQuaternion, scaleVec);
+      dummyMatrix.toArray(bArrows, data.arrowIdxStart * 16);
+
+      if (data.numArrows === 2) {
+        const reverseQuaternion = new THREE.Quaternion().setFromUnitVectors(
+          upZ,
+          dir.clone().negate(),
+        );
+        dummyMatrix.compose(sOff, reverseQuaternion, scaleVec);
+        dummyMatrix.toArray(bArrows, (data.arrowIdxStart + 1) * 16);
+      }
+
+      defaultColor.toArray(dColors, data.lineIdx * 3);
+      dimColor.toArray(dimColorsArr, data.lineIdx * 3);
+    }
+
+    return {
+      baseLineMatrices: bLines,
+      baseArrowMatrices: bArrows,
+      defaultColorsArray: dColors,
+      dimColorsArray: dimColorsArr,
+    };
+  }, [validEdges, isNeon, colorSides, darkMode, lineCount, arrowCount]);
+
   const edgeMidpointsRef = useRef<THREE.Vector3[]>(
     new Array(edges.length).fill(null),
   );
@@ -180,36 +259,56 @@ export default function InstancedEdges({
     const selectedNodeId = state.selectedNodeId;
     const hoveredEdgeIndex = hoveredEdgeIndexRef.current;
 
+    // 🌟 1. Restauration ultra-rapide O(1) via copie mémoire
+    lineMatrices.set(baseLineMatrices);
+    arrowMatrices.set(baseArrowMatrices);
+
+    if (hoveredNodeId !== null) {
+      colors.set(dimColorsArray);
+    } else {
+      colors.set(defaultColorsArray);
+    }
+
     const dummyMatrix = new THREE.Matrix4();
     const dummyQuaternion = new THREE.Quaternion();
     const upZ = new THREE.Vector3(0, 0, 1);
     const scaleVec = new THREE.Vector3();
-    const defaultColor = new THREE.Color(
-      isNeon &&
-        (colorSides === "black" ||
-          colorSides === "#888888" ||
-          colorSides === "#ffffff")
-        ? "#ffffff"
-        : colorSides,
-    );
     const highlightColor = new THREE.Color("#38bdf8");
-    const dimColor = new THREE.Color(darkMode ? "#1e293b" : "#e2e8f0");
 
+    // 🌟 2. Surcharge des matrices/couleurs UNIQUEMENT pour les arêtes impactées
     for (let i = 0; i < validEdges.length; i++) {
       const data = validEdges[i];
-      if (!data) continue;
-
-      if (data.hidden) {
-        dummyMatrix.makeScale(0, 0, 0);
-        dummyMatrix.toArray(lineMatrices, data.lineIdx * 16);
-        dummyMatrix.toArray(arrowMatrices, data.arrowIdxStart * 16);
-        if (data.numArrows === 2) {
-          dummyMatrix.toArray(arrowMatrices, (data.arrowIdxStart + 1) * 16);
-        }
-        continue;
-      }
+      if (!data || data.hidden) continue;
 
       const { edge, s, e, dir } = data;
+
+      const isHovered = hoveredEdgeIndex === i;
+      const isConnectedToHovered =
+        hoveredNodeId !== null &&
+        (hoveredNodeId === edge.start || hoveredNodeId === edge.end);
+      const isConnectedToSelected =
+        selectedNodeId !== null &&
+        (selectedNodeId === edge.start || selectedNodeId === edge.end);
+
+      // Pré-enregistrement pour les popups (toujours exécuté pour être dispo au hover de la souris)
+      const startRadiusForMid = 0.3;
+      const endRadiusForMid = 0.3;
+      const sOffMid = s
+        .clone()
+        .add(dir.clone().multiplyScalar(startRadiusForMid));
+      const eOffMid = e
+        .clone()
+        .add(dir.clone().multiplyScalar(-endRadiusForMid - 0.15));
+      edgeMidpointsRef.current[i] = new THREE.Vector3().lerpVectors(
+        sOffMid,
+        eOffMid,
+        0.5,
+      );
+      edgeMathFormulasRef.current[i] = data.mathFormula;
+
+      if (!isHovered && !isConnectedToHovered && !isConnectedToSelected) {
+        continue; // Gain de performance majeur : on skip la géométrie 3D !
+      }
 
       const startScale =
         selectedNodeId === edge.start
@@ -231,20 +330,7 @@ export default function InstancedEdges({
       const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15));
       const length = sOff.distanceTo(eOff);
 
-      const mid = new THREE.Vector3().lerpVectors(sOff, eOff, 0.5);
-      edgeMidpointsRef.current[i] = mid;
-      edgeMathFormulasRef.current[i] = data.mathFormula;
-
-      const isHovered = hoveredEdgeIndex === i;
-      const isConnectedToHovered =
-        hoveredNodeId !== null &&
-        (hoveredNodeId === edge.start || hoveredNodeId === edge.end);
-      const isConnectedToSelected =
-        selectedNodeId !== null &&
-        (selectedNodeId === edge.start || selectedNodeId === edge.end);
-
-      const widthMultiplier =
-        isHovered || isConnectedToHovered || isConnectedToSelected ? 2.5 : 1.0;
+      const widthMultiplier = 2.5;
 
       dummyQuaternion.setFromUnitVectors(upZ, dir);
 
@@ -265,14 +351,7 @@ export default function InstancedEdges({
         dummyMatrix.toArray(arrowMatrices, (data.arrowIdxStart + 1) * 16);
       }
 
-      let c = defaultColor;
-      if (isHovered || isConnectedToHovered || isConnectedToSelected) {
-        c = highlightColor;
-      } else if (hoveredNodeId !== null) {
-        c = dimColor;
-      }
-
-      c.toArray(colors, data.lineIdx * 3);
+      highlightColor.toArray(colors, data.lineIdx * 3);
     }
 
     lineMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
@@ -281,13 +360,12 @@ export default function InstancedEdges({
     }
     arrowMeshRef.current.geometry.attributes.instanceMatrix.needsUpdate = true;
   }, [
-    validEdges,
-    lineMatrices,
     arrowMatrices,
     colors,
-    isNeon,
-    colorSides,
-    darkMode,
+    baseLineMatrices,
+    baseArrowMatrices,
+    defaultColorsArray,
+    dimColorsArray,
   ]);
 
   // Run update initially and when base structures change
