@@ -14,6 +14,11 @@ vi.mock("./MathMarkdown", () => ({
     <div data-testid="math-markdown">{content}</div>
   ),
 }));
+vi.mock("focus-trap-react", () => ({
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
 
 describe("NodeDetails Component", () => {
   const mockOnClose = vi.fn();
@@ -33,19 +38,25 @@ describe("NodeDetails Component", () => {
       setTargetPosition: vi.fn(),
     });
 
+    const mockNodes = [
+      {
+        id: 1,
+        nom: "Théorème de Pythagore",
+        typeMath: "théorème",
+        enonce: "a^2 + b^2 = c^2",
+      },
+      { id: 2, nom: "Triangle rectangle", typeMath: "concept" },
+    ];
+
+    const mockNodesMap = new Map();
+    mockNodes.forEach((node) => mockNodesMap.set(node.id, node));
+
     (useGraphData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       graphData: {
-        nodes: [
-          {
-            id: 1,
-            nom: "Théorème de Pythagore",
-            typeMath: "théorème",
-            enonce: "a^2 + b^2 = c^2",
-          },
-          { id: 2, nom: "Triangle rectangle", typeMath: "concept" },
-        ],
+        nodes: mockNodes,
         edges: [{ start: 1, end: 2, type: "utilise" }],
       },
+      nodesMap: mockNodesMap,
     });
   });
 

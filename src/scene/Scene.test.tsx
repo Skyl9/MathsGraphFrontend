@@ -34,6 +34,10 @@ vi.mock("@react-three/drei", () => ({
   Text: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   Stars: () => <div />,
   Grid: () => <div />,
+  GizmoHelper: ({ children }: { children?: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  GizmoViewport: () => <div />,
 }));
 
 vi.mock("@react-three/postprocessing", () => ({
