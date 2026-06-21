@@ -13,7 +13,11 @@ import {
 import { RecentChanges } from "../components/RecentChanges.tsx";
 import { RecentComments } from "../components/recentComment.tsx";
 import { motion } from "framer-motion";
-import { getStaggerContainer, fadeInUp } from "../utils/animations";
+import {
+  getStaggerContainer,
+  fadeInUp,
+  bouncySpring,
+} from "../utils/animations";
 
 // Icônes
 import FunctionsIcon from "@mui/icons-material/Functions";
@@ -121,7 +125,7 @@ export function HomePage() {
                   variants={itemVariants}
                   style={{ height: "100%" }}
                   whileHover={{ y: -6, scale: 1.015 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  transition={bouncySpring}
                 >
                   <GlassCard
                     component="article"

@@ -109,8 +109,8 @@ const AnimatedRoutes = () => {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
+    <>
+      <Routes location={location}>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/graph" element={<></>} />
@@ -156,7 +156,7 @@ const AnimatedRoutes = () => {
           <Route path="*" element={<LostPage />} />
         </Route>
       </Routes>
-    </AnimatePresence>
+    </>
   );
 };
 

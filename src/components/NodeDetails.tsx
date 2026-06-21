@@ -8,6 +8,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import { defaultSpring } from "../utils/animations";
 import CloseIcon from "@mui/icons-material/Close";
 import CenterFocusStrongIcon from "@mui/icons-material/CenterFocusStrong";
 import LaunchIcon from "@mui/icons-material/Launch";
@@ -139,7 +140,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
           x: isMobile ? 0 : "100%",
           y: isMobile ? "100%" : 0,
         }}
-        transition={{ type: "spring", stiffness: 280, damping: 26 }}
+        transition={defaultSpring}
       >
         <SidebarContainer>
           {/* Header */}

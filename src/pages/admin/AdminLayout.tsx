@@ -28,6 +28,8 @@ import { nodeApi } from "../../services/api";
 import Token from "../../services/token";
 import { User } from "../../types/ApiTypes/user";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from "framer-motion";
+import { pageTransitionVariants } from "../../utils/animations";
 
 const navItems = [
   { label: "Dashboard", path: "/admin", icon: <DashboardIcon /> },
@@ -293,7 +295,18 @@ const AdminLayout = () => {
         sx={{ flexGrow: 1, p: 4, bgcolor: "background.default" }}
       >
         <Toolbar />
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            variants={pageTransitionVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            style={{ width: "100%", height: "100%" }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </Box>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
 export const MenuContainer = styled(Box)(({ theme }) => ({
@@ -18,7 +18,7 @@ export const MenuContainer = styled(Box)(({ theme }) => ({
 
 export const FloatingGlassMenu = styled(Box)(({ theme }) => ({
   scrollbarWidth: "thin",
-  scrollbarColor: "rgba(255, 255, 255, 0.1) transparent",
+  scrollbarColor: `${alpha(theme.palette.common.white, 0.1)} transparent`,
   "&::-webkit-scrollbar": {
     width: 6,
   },
@@ -26,10 +26,10 @@ export const FloatingGlassMenu = styled(Box)(({ theme }) => ({
     background: "transparent",
   },
   "&::-webkit-scrollbar-thumb": {
-    background: "rgba(148, 163, 184, 0.2)",
+    background: alpha(theme.palette.text.secondary, 0.2),
     borderRadius: 4,
     "&:hover": {
-      background: "rgba(148, 163, 184, 0.4)",
+      background: alpha(theme.palette.text.secondary, 0.4),
     },
   },
   [theme.breakpoints.down("md")]: {
@@ -58,12 +58,11 @@ export const SearchBarContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const SearchResultsBox = styled(Box)(() => ({
+export const SearchResultsBox = styled(Box)(({ theme }) => ({
   marginTop: 8,
   padding: 8,
   borderRadius: 12,
-  boxShadow:
-    "0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15)",
+  boxShadow: `0 10px 25px -5px ${alpha(theme.palette.common.black, 0.15)}, 0 8px 10px -6px ${alpha(theme.palette.common.black, 0.15)}`,
   maxHeight: 280,
   overflowY: "auto",
   fontFamily: '"Inter", Roboto, sans-serif',
@@ -72,7 +71,7 @@ export const SearchResultsBox = styled(Box)(() => ({
     width: 4,
   },
   "&::-webkit-scrollbar-thumb": {
-    background: "rgba(148, 163, 184, 0.3)",
+    background: alpha(theme.palette.text.secondary, 0.3),
     borderRadius: 2,
   },
 }));

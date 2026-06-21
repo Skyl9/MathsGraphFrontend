@@ -1,4 +1,4 @@
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 
 export const GraphHUDContainer = styled(Box)(() => ({
@@ -54,12 +54,12 @@ export const ShortcutRow = styled(Box)(() => ({
   },
 }));
 
-export const ShortcutKey = styled("span")(() => ({
-  background: "rgba(148, 163, 184, 0.15)",
-  border: "1px solid rgba(148, 163, 184, 0.3)",
+export const ShortcutKey = styled("span")(({ theme }) => ({
+  background: alpha(theme.palette.text.secondary, 0.15),
+  border: `1px solid ${alpha(theme.palette.text.secondary, 0.3)}`,
   borderRadius: 4,
   padding: "2px 6px",
   fontFamily: "monospace",
   fontWeight: "bold",
-  boxShadow: "0 1px 1px rgba(0, 0, 0, 0.1)",
+  boxShadow: `0 1px 1px ${alpha(theme.palette.common.black, 0.1)}`,
 }));

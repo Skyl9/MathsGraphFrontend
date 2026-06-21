@@ -1,6 +1,6 @@
 import { alpha } from "@mui/material/styles";
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import {
   Box,
   Container,
@@ -14,10 +14,12 @@ import { TopBar } from "./TopBar";
 import { motion, AnimatePresence } from "framer-motion";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { useTranslation } from "react-i18next";
+import { pageTransitionVariants } from "../utils/animations";
 
 export const MainLayout: React.FC = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const location = useLocation();
 
   return (
     <Box
@@ -45,10 +47,11 @@ export const MainLayout: React.FC = () => {
       >
         <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            key={location.pathname}
+            variants={pageTransitionVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
             style={{
               display: "flex",
               flexDirection: "column",

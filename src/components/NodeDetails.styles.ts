@@ -1,4 +1,4 @@
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import { GlassPaper } from "./GlassPaper";
@@ -40,10 +40,10 @@ export const SidebarContainer = styled(GlassPaper)(({ theme }) => ({
   },
 }));
 
-export const SidebarHeader = styled("header")(() => ({
+export const SidebarHeader = styled("header")(({ theme }) => ({
   padding: 24,
   position: "relative",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+  borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.08)}`,
 }));
 
 export const SidebarTitle = styled(Typography)(() => ({
@@ -53,7 +53,7 @@ export const SidebarTitle = styled(Typography)(() => ({
   marginRight: "24px !important",
 }));
 
-export const MathTypeBadge = styled(Box)(() => ({
+export const MathTypeBadge = styled(Box)(({ theme }) => ({
   display: "inline-flex",
   alignItems: "center",
   padding: "4px 10px",
@@ -63,10 +63,10 @@ export const MathTypeBadge = styled(Box)(() => ({
   textTransform: "uppercase",
   letterSpacing: "0.05em",
   marginTop: 10,
-  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+  boxShadow: `0 2px 8px ${alpha(theme.palette.common.black, 0.1)}`,
 }));
 
-export const SidebarBody = styled(Box)(() => ({
+export const SidebarBody = styled(Box)(({ theme }) => ({
   padding: 24,
   flexGrow: 1,
   overflowY: "auto",
@@ -77,10 +77,10 @@ export const SidebarBody = styled(Box)(() => ({
     width: 6,
   },
   "&::-webkit-scrollbar-thumb": {
-    background: "rgba(148, 163, 184, 0.2)",
+    background: alpha(theme.palette.text.secondary, 0.2),
     borderRadius: 3,
     "&:hover": {
-      background: "rgba(148, 163, 184, 0.4)",
+      background: alpha(theme.palette.text.secondary, 0.4),
     },
   },
 }));
@@ -113,9 +113,9 @@ export const NeighborChip = styled(Box)(() => ({
   border: "1px solid transparent",
 }));
 
-export const SidebarFooter = styled("footer")(() => ({
+export const SidebarFooter = styled("footer")(({ theme }) => ({
   padding: "20px 24px",
-  borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+  borderTop: `1px solid ${alpha(theme.palette.common.white, 0.08)}`,
   display: "flex",
   gap: 12,
 }));

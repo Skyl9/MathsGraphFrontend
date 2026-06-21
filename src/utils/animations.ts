@@ -19,6 +19,12 @@ export const slowSpring: Transition = {
   damping: 15,
 };
 
+export const bouncySpring: Transition = {
+  type: "spring",
+  stiffness: 300,
+  damping: 20,
+};
+
 // Variantes conteneurs avec "stagger"
 export const getStaggerContainer = (staggerDelay = 0.1): Variants => ({
   hidden: { opacity: 0 },
@@ -49,6 +55,13 @@ export const slideInLeft: Variants = {
 
 export const fadeVariants: Variants = {
   hidden: { opacity: 0 },
-  show: { opacity: 1 },
-  exit: { opacity: 0 },
+  show: { opacity: 1, transition: { duration: 0.3 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
+};
+
+// Variantes pour les transitions de page (React Router)
+export const pageTransitionVariants: Variants = {
+  hidden: { opacity: 0, y: 15 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } },
+  exit: { opacity: 0, y: -15, transition: { duration: 0.2, ease: "easeIn" } },
 };
