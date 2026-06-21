@@ -150,6 +150,7 @@ const AdminLayout = () => {
               }}
             >
               <Avatar
+                alt={`Avatar admin ${currentUser.username}`}
                 src={currentUser.avatar_url || "/default-avatar.png"}
                 sx={{ width: 28, height: 28 }}
               />

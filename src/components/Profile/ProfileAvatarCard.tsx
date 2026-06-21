@@ -45,6 +45,7 @@ export const ProfileAvatarCard = ({
     >
       <Box sx={{ position: "relative", display: "inline-block", mb: 3 }}>
         <Avatar
+          alt={`Avatar de ${user.username}`}
           src={user.avatar_url || "/default-avatar.png"}
           sx={{
             width: 150,

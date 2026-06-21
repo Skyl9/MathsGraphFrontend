@@ -19,6 +19,7 @@ import { FixedSizeList as List } from "react-window";
 import { useTranslation } from "react-i18next";
 import { ListSkeleton } from "../components/Skeletons";
 import { SEOMeta } from "../components/SEOMeta";
+import { Link } from "react-router-dom";
 
 const ConceptList = () => {
   const theme = useTheme();
@@ -162,7 +163,8 @@ const ConceptList = () => {
                                 <Button
                                   variant="outlined"
                                   color="primary"
-                                  href={`/concept/${concept.id}`}
+                                  component={Link}
+                                  to={`/concept/${concept.id}`}
                                   endIcon={
                                     <ArrowForwardIcon fontSize="small" />
                                   }
@@ -199,7 +201,7 @@ const ConceptList = () => {
                 <ul>
                   {concepts.map((c) => (
                     <li key={`seo-${c.id}`}>
-                      <a href={`/concept/${c.id}`}>{c.nom}</a>
+                      <Link to={`/concept/${c.id}`}>{c.nom}</Link>
                     </li>
                   ))}
                 </ul>
