@@ -11,7 +11,7 @@ import {
   useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { nodeApi } from "../services/api";
 
@@ -137,41 +137,56 @@ export const GlobalSearchBar: React.FC = () => {
       renderOption={(props, option) => {
         const { key: _key, ...restProps } = props;
         return (
-          <li {...restProps} key={`${option.entity_type}-${option.id}`}>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              width="100%"
-              sx={{ py: 0.5 }}
+          <li
+            {...restProps}
+            key={`${option.entity_type}-${option.id}`}
+            style={{ padding: 0 }}
+          >
+            <Link
+              to={`/${option.entity_type === "concept" ? "concept" : option.entity_type === "mathematicien" ? "mathematicien" : "category"}/${option.id}`}
+              style={{
+                display: "flex",
+                width: "100%",
+                textDecoration: "none",
+                color: "inherit",
+                padding: "6px 16px",
+              }}
+              onClick={() => setOpen(false)}
             >
-              <Typography variant="body2" sx={{ fontWeight: 550 }}>
-                {option.nom}
-              </Typography>
-              <Chip
-                size="small"
-                label={
-                  option.entity_type === "concept"
-                    ? t("search.concept")
-                    : option.entity_type === "mathematicien"
-                      ? t("search.mathematician")
-                      : t("search.category")
-                }
-                color={
-                  option.entity_type === "concept"
-                    ? "info"
-                    : option.entity_type === "mathematicien"
-                      ? "secondary"
-                      : "warning"
-                }
-                sx={{
-                  fontWeight: 700,
-                  fontSize: "0.65rem",
-                  height: 18,
-                  borderRadius: 1.5,
-                }}
-              />
-            </Box>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+                width="100%"
+                sx={{ py: 0.5 }}
+              >
+                <Typography variant="body2" sx={{ fontWeight: 550 }}>
+                  {option.nom}
+                </Typography>
+                <Chip
+                  size="small"
+                  label={
+                    option.entity_type === "concept"
+                      ? t("search.concept")
+                      : option.entity_type === "mathematicien"
+                        ? t("search.mathematician")
+                        : t("search.category")
+                  }
+                  color={
+                    option.entity_type === "concept"
+                      ? "info"
+                      : option.entity_type === "mathematicien"
+                        ? "secondary"
+                        : "warning"
+                  }
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: "0.65rem",
+                    height: 20,
+                  }}
+                />
+              </Box>
+            </Link>
           </li>
         );
       }}

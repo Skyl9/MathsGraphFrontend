@@ -104,7 +104,9 @@ const TypePage = () => {
           {/* Information Card */}
           <MathCard cardtype="enonce">
             <MathCardHeader>
-              <MathCardTitle>{t("entities.type_presentation")}</MathCardTitle>
+              <MathCardTitle variant="h6" component="h2">
+                {t("entities.type_presentation")}
+              </MathCardTitle>
             </MathCardHeader>
             <MathCardBody>
               <Typography variant="body1">

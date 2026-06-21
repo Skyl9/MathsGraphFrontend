@@ -1,5 +1,5 @@
 import { styled, alpha } from "@mui/material/styles";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, ButtonProps } from "@mui/material";
 import { motion } from "framer-motion";
 import { GlassPaper } from "./GlassPaper";
 
@@ -120,7 +120,7 @@ export const SidebarFooter = styled("footer")(({ theme }) => ({
   gap: 12,
 }));
 
-export const SidebarFooterBtn = styled(Button)(() => ({
+export const SidebarFooterBtn = styled(Button)<ButtonProps<any>>(() => ({
   flex: 1,
   borderRadius: "12px !important",
   fontWeight: "700 !important",

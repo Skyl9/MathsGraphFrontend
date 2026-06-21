@@ -130,7 +130,9 @@ const CategoryPage = () => {
             {/* Description Card */}
             <MathCard cardtype="enonce">
               <MathCardHeader>
-                <MathCardTitle>{t("entities.description_title")}</MathCardTitle>
+                <MathCardTitle variant="h6" component="h2">
+                  {t("entities.description_title")}
+                </MathCardTitle>
                 {editModeActive &&
                   isUserConnected &&
                   editableFields["description"] &&

@@ -18,6 +18,7 @@ import { useGraphStore } from "../stores/useGraphStore";
 import { useGraphData } from "../hooks/useGraphData";
 import MathMarkdown from "./MathMarkdown";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 import {
   NodeDetailsSidebar,
@@ -292,7 +293,8 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
             <SidebarFooterBtn
               variant="contained"
               className="sidebar-footer-btn"
-              href={`/concept/${concept.id}`}
+              component={Link}
+              to={`/concept/${concept.id}`}
               startIcon={<LaunchIcon />}
               sx={{
                 background: darkMode
