@@ -8,8 +8,8 @@ import {
   ListItemAvatar,
   Avatar,
   Paper,
-  CircularProgress,
   useTheme,
+  Skeleton,
 } from "@mui/material";
 import ForumIcon from "@mui/icons-material/Forum";
 import { Link } from "react-router-dom";
@@ -40,9 +40,57 @@ export const RecentComments: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" p={8}>
-        <CircularProgress />
-      </Box>
+      <Paper
+        component="section"
+        elevation={0}
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          background: isDark
+            ? "rgba(255, 255, 255, 0.02)"
+            : "rgba(255, 255, 255, 0.65)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid",
+          borderColor: isDark
+            ? "rgba(255, 255, 255, 0.08)"
+            : "rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ mb: 3, display: "flex", alignItems: "center", gap: 1.5 }}
+        >
+          <Skeleton variant="circular" width={24} height={24} />
+          <Skeleton variant="text" width={200} height={32} />
+        </Typography>
+        <List sx={{ py: 0 }}>
+          {[1, 2, 3].map((i) => (
+            <ListItem
+              key={i}
+              alignItems="flex-start"
+              sx={{ px: 1, py: 1.5, mb: 1 }}
+            >
+              <ListItemAvatar sx={{ mt: 0.5 }}>
+                <Skeleton variant="circular" width={36} height={36} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={<Skeleton variant="text" width="60%" height={24} />}
+                secondary={
+                  <Box mt={1}>
+                    <Skeleton
+                      variant="rounded"
+                      width="100%"
+                      height={40}
+                      sx={{ mb: 1 }}
+                    />
+                    <Skeleton variant="text" width="30%" height={16} />
+                  </Box>
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
     );
   }
   if (error) {

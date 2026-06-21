@@ -2,7 +2,6 @@ import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Box,
-  CircularProgress,
   Typography,
   useTheme,
   Button,
@@ -10,6 +9,7 @@ import {
   CardContent,
   TextField,
   Grid,
+  Skeleton,
 } from "@mui/material";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { Link } from "react-router-dom";
@@ -128,12 +128,64 @@ export const MathematicianTimeline: React.FC = () => {
     return filtered;
   }, [mathematicians, searchText, searchStartYear, searchEndYear]);
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <Box display="flex" justifyContent="center" p={4}>
-        <CircularProgress />
+      <Box sx={{ width: "100%", height: "100%", p: 2 }}>
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+          <Skeleton variant="text" width={300} height={40} />
+        </Box>
+        <Box sx={{ mb: 5, maxWidth: 900, mx: "auto" }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Skeleton variant="rounded" height={56} />
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Skeleton variant="rounded" height={56} />
+            </Grid>
+            <Grid size={{ xs: 6, md: 3 }}>
+              <Skeleton variant="rounded" height={56} />
+            </Grid>
+          </Grid>
+        </Box>
+        <Timeline position="alternate">
+          {[1, 2, 3].map((i) => (
+            <TimelineItem key={i}>
+              <TimelineOppositeContent sx={{ m: "auto 0" }}>
+                <Skeleton
+                  variant="text"
+                  width={120}
+                  height={30}
+                  sx={{ display: "inline-block" }}
+                />
+              </TimelineOppositeContent>
+              <TimelineSeparator>
+                <TimelineConnector />
+                <TimelineDot
+                  color="primary"
+                  variant={i % 2 === 0 ? "filled" : "outlined"}
+                />
+                <TimelineConnector />
+              </TimelineSeparator>
+              <TimelineContent sx={{ py: "12px", px: 2 }}>
+                <Card sx={{ borderRadius: 3 }}>
+                  <CardContent>
+                    <Skeleton variant="text" width="50%" height={32} />
+                    <Skeleton
+                      variant="text"
+                      width="30%"
+                      height={20}
+                      sx={{ mb: 2 }}
+                    />
+                    <Skeleton variant="rounded" width="100%" height={80} />
+                  </CardContent>
+                </Card>
+              </TimelineContent>
+            </TimelineItem>
+          ))}
+        </Timeline>
       </Box>
     );
+  }
   if (error)
     return <Typography color="error">{t("timeline.error")}</Typography>;
 

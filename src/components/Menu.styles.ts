@@ -1,5 +1,5 @@
 import { styled, alpha } from "@mui/material/styles";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, IconButton, Button } from "@mui/material";
 
 export const MenuContainer = styled(Box)(({ theme }) => ({
   position: "absolute",
@@ -106,4 +106,53 @@ export const SearchNoResults = styled(Box)(() => ({
   fontSize: "0.875rem",
   textAlign: "center",
   opacity: 0.7,
+}));
+
+export const MenuButtonToggle = styled(IconButton)(({ theme }) => ({
+  backdropFilter: "blur(12px)",
+  background: alpha(theme.palette.background.paper, 0.75),
+  border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+  boxShadow: `0 4px 15px ${alpha(theme.palette.common.black, 0.15)}`,
+  padding: theme.spacing(1.5),
+  "&:hover": {
+    background: alpha(theme.palette.background.paper, 0.85),
+  },
+}));
+
+export const NavigationButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  justifyContent: "flex-start",
+  borderColor: alpha(theme.palette.text.primary, 0.15),
+  borderRadius: "10px",
+  fontWeight: 600,
+  fontSize: "0.875rem",
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  "&:hover": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.05 : 0.03,
+    ),
+    borderColor: alpha(theme.palette.text.primary, 0.3),
+  },
+}));
+
+export const ActionButton = styled(Button)(({ theme }) => ({
+  borderRadius: "10px",
+  fontWeight: 600,
+  paddingTop: theme.spacing(1),
+  paddingBottom: theme.spacing(1),
+  color: theme.palette.text.primary,
+  "&:hover": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.05 : 0.03,
+    ),
+  },
+  "&:active": {
+    background: alpha(
+      theme.palette.text.primary,
+      theme.palette.mode === "dark" ? 0.15 : 0.1,
+    ),
+  },
 }));

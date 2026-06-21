@@ -131,8 +131,8 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
       <NodeDetailsSidebar
         initial={{
           opacity: 0,
-          x: isMobile ? 0 : 40,
-          y: isMobile ? 100 : 0,
+          x: isMobile ? 0 : "100%",
+          y: isMobile ? "100%" : 0,
         }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         exit={{

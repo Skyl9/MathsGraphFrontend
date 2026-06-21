@@ -9,9 +9,9 @@ import {
   Avatar,
   Paper,
   Chip,
-  CircularProgress,
   useTheme,
   Button,
+  Skeleton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import RestoreIcon from "@mui/icons-material/Restore";
@@ -44,9 +44,54 @@ export const RecentChanges: React.FC = () => {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" p={8}>
-        <CircularProgress />
-      </Box>
+      <Paper
+        component="section"
+        elevation={0}
+        sx={{
+          p: 3,
+          borderRadius: 4,
+          background: isDark
+            ? "rgba(255, 255, 255, 0.02)"
+            : "rgba(255, 255, 255, 0.65)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid",
+          borderColor: isDark
+            ? "rgba(255, 255, 255, 0.08)"
+            : "rgba(0, 0, 0, 0.06)",
+        }}
+      >
+        <Typography
+          variant="h6"
+          sx={{ mb: 3, display: "flex", alignItems: "center", gap: 1.5 }}
+        >
+          <Skeleton variant="circular" width={24} height={24} />
+          <Skeleton variant="text" width={200} height={32} />
+        </Typography>
+        <List sx={{ py: 0 }}>
+          {[1, 2, 3].map((i) => (
+            <ListItem
+              key={i}
+              alignItems="flex-start"
+              sx={{ px: 1, py: 1.5, mb: 1 }}
+            >
+              <ListItemAvatar sx={{ mt: 0.5 }}>
+                <Skeleton variant="circular" width={36} height={36} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={<Skeleton variant="text" width="70%" height={24} />}
+                secondary={
+                  <Skeleton
+                    variant="text"
+                    width="40%"
+                    height={20}
+                    sx={{ mt: 1 }}
+                  />
+                }
+              />
+            </ListItem>
+          ))}
+        </List>
+      </Paper>
     );
   }
   if (error) {

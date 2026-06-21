@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   Typography,
-  CircularProgress,
   Box,
   Paper,
   Table,
@@ -23,6 +22,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Skeleton,
 } from "@mui/material";
 import { nodeApi } from "../../services/api";
 import { useQuery } from "@tanstack/react-query";
@@ -83,13 +83,35 @@ const DashboardPage = () => {
 
   if (loadingStats || loadingAnalytics || loadingActivity) {
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="50vh"
-      >
-        <CircularProgress />
+      <Box sx={{ p: 1 }}>
+        <Stack direction="row" justifyContent="space-between" sx={{ mb: 3 }}>
+          <Skeleton variant="text" width={300} height={40} />
+          <Skeleton variant="rounded" width={150} height={36} />
+        </Stack>
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={i}>
+              <Skeleton
+                variant="rounded"
+                height={140}
+                sx={{ borderRadius: 4 }}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        <Grid container spacing={4}>
+          <Grid size={{ xs: 12, md: 8 }}>
+            <Skeleton
+              variant="rounded"
+              height={300}
+              sx={{ borderRadius: 4, mb: 4 }}
+            />
+            <Skeleton variant="rounded" height={400} sx={{ borderRadius: 4 }} />
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Skeleton variant="rounded" height={700} sx={{ borderRadius: 4 }} />
+          </Grid>
+        </Grid>
       </Box>
     );
   }

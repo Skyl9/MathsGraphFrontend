@@ -2,7 +2,6 @@ import { useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   Box,
-  CircularProgress,
   Button,
   Alert,
   Typography,
@@ -11,6 +10,7 @@ import {
   Chip,
   Paper,
   useTheme,
+  Skeleton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -136,15 +136,30 @@ const ContentsPage = () => {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "50vh",
-        }}
-      >
-        <CircularProgress />
+      <Box sx={{ p: 1 }}>
+        <Box sx={{ mb: 4, display: "flex", justifyContent: "space-between" }}>
+          <Box>
+            <Skeleton variant="text" width={200} height={40} sx={{ mb: 0.5 }} />
+            <Skeleton variant="text" width={300} height={20} />
+          </Box>
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Skeleton
+              variant="rounded"
+              width={240}
+              height={40}
+              sx={{ borderRadius: 3 }}
+            />
+            <Skeleton
+              variant="rounded"
+              width={160}
+              height={40}
+              sx={{ borderRadius: 3 }}
+            />
+          </Box>
+        </Box>
+        <Paper elevation={0} sx={{ p: 0, borderRadius: 4 }}>
+          <Skeleton variant="rounded" width="100%" height={600} />
+        </Paper>
       </Box>
     );
   }

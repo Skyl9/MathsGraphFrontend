@@ -2,12 +2,10 @@ import {
   IconButton,
   Typography,
   Box,
-  Button,
   FormControlLabel,
   Divider,
   Switch,
 } from "@mui/material";
-import { alpha, styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
@@ -27,60 +25,14 @@ import {
   MenuContainer,
   FloatingGlassMenu,
   SearchBarContainer,
+  MenuButtonToggle,
+  NavigationButton,
+  ActionButton,
 } from "./Menu.styles";
 
 interface MenuProps {
   graphData: Graph;
 }
-
-const MenuButtonToggle = styled(IconButton)(({ theme }) => ({
-  backdropFilter: "blur(12px)",
-  background: alpha(theme.palette.background.paper, 0.75),
-  border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-  boxShadow: `0 4px 15px ${alpha(theme.palette.common.black, 0.15)}`,
-  padding: theme.spacing(1.5),
-  "&:hover": {
-    background: alpha(theme.palette.background.paper, 0.85),
-  },
-}));
-
-const NavigationButton = styled(Button)(({ theme }) => ({
-  marginBottom: theme.spacing(2),
-  justifyContent: "flex-start",
-  borderColor: alpha(theme.palette.text.primary, 0.15),
-  borderRadius: "10px",
-  fontWeight: 600,
-  fontSize: "0.875rem",
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1),
-  "&:hover": {
-    background: alpha(
-      theme.palette.text.primary,
-      theme.palette.mode === "dark" ? 0.05 : 0.03,
-    ),
-    borderColor: alpha(theme.palette.text.primary, 0.3),
-  },
-}));
-
-const ActionButton = styled(Button)(({ theme }) => ({
-  borderRadius: "10px",
-  fontWeight: 600,
-  paddingTop: theme.spacing(1),
-  paddingBottom: theme.spacing(1),
-  color: theme.palette.text.primary,
-  "&:hover": {
-    background: alpha(
-      theme.palette.text.primary,
-      theme.palette.mode === "dark" ? 0.05 : 0.03,
-    ),
-  },
-  "&:active": {
-    background: alpha(
-      theme.palette.text.primary,
-      theme.palette.mode === "dark" ? 0.15 : 0.1,
-    ),
-  },
-}));
 
 export default function Menu({ graphData }: MenuProps) {
   const { t } = useTranslation();

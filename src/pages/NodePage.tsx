@@ -24,14 +24,11 @@ import FavoriteButton from "../components/FavoriteButton";
 import { nodeApi } from "../services/api";
 import MathMarkdown from "../components/MathMarkdown";
 import { useTranslation } from "react-i18next";
+import { SectionCard } from "../components/SectionCard";
 
 import {
   DetailsGrid,
   MainContentColumn,
-  MathCard,
-  MathCardHeader,
-  MathCardTitle,
-  MathCardBody,
   ConceptHeader,
   ConceptTitleRow,
   ConceptTitle,
@@ -196,139 +193,63 @@ const NodePage = () => {
           </ConceptHeader>
           {/* Énoncé Card */}
           {editableFields["enonce"] && (
-            <MathCard cardtype="enonce">
-              <MathCardHeader>
-                <MathCardTitle
-                  variantcolor="primary"
-                  variant="h6"
-                  component="h2"
-                >
-                  {t("concept.enonce")}
-                </MathCardTitle>
-                {editModeActive && isUserConnected && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    onClick={() => handleEdit("enonce")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </MathCardHeader>
-              <MathCardBody>
-                <MathMarkdown content={data?.enonce} />
-              </MathCardBody>
-            </MathCard>
+            <SectionCard
+              title={t("concept.enonce")}
+              cardtype="enonce"
+              variantcolor="primary"
+              isEditable={editModeActive && isUserConnected}
+              onEdit={() => handleEdit("enonce")}
+            >
+              <MathMarkdown content={data?.enonce} />
+            </SectionCard>
           )}
 
           {/* Démonstration Card */}
           {editableFields["demonstration"] && (
-            <MathCard cardtype="proof">
-              <MathCardHeader>
-                <MathCardTitle
-                  variantcolor="secondary"
-                  variant="h6"
-                  component="h2"
-                >
-                  {t("concept.demonstration")}
-                </MathCardTitle>
-                {editModeActive && isUserConnected && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    onClick={() => handleEdit("demonstration")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </MathCardHeader>
-              <MathCardBody>
-                <MathMarkdown
-                  content={data?.demonstration || t("concept.no_demonstration")}
-                />
-              </MathCardBody>
-            </MathCard>
+            <SectionCard
+              title={t("concept.demonstration")}
+              cardtype="proof"
+              variantcolor="secondary"
+              isEditable={editModeActive && isUserConnected}
+              onEdit={() => handleEdit("demonstration")}
+            >
+              <MathMarkdown
+                content={data?.demonstration || t("concept.no_demonstration")}
+              />
+            </SectionCard>
           )}
 
           {/* Relations Card */}
           {editableFields["relations"] && (
-            <MathCard>
-              <MathCardHeader>
-                <MathCardTitle
-                  variantcolor="default"
-                  variant="h6"
-                  component="h2"
-                >
-                  Relations
-                </MathCardTitle>
-                {editModeActive && isUserConnected && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    onClick={() => handleEdit("relations")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </MathCardHeader>
-              <MathCardBody>
-                <NodeFieldRenderer field="relations" value={data?.relations} />
-              </MathCardBody>
-            </MathCard>
+            <SectionCard
+              title="Relations"
+              isEditable={editModeActive && isUserConnected}
+              onEdit={() => handleEdit("relations")}
+            >
+              <NodeFieldRenderer field="relations" value={data?.relations} />
+            </SectionCard>
           )}
 
           {/* Sources Card */}
           {editableFields["sources"] && (
-            <MathCard>
-              <MathCardHeader>
-                <MathCardTitle
-                  variantcolor="default"
-                  variant="h6"
-                  component="h2"
-                >
-                  Sources
-                </MathCardTitle>
-                {editModeActive && isUserConnected && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    onClick={() => handleEdit("sources")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </MathCardHeader>
-              <MathCardBody>
-                <NodeFieldRenderer field="sources" value={data?.sources} />
-              </MathCardBody>
-            </MathCard>
+            <SectionCard
+              title="Sources"
+              isEditable={editModeActive && isUserConnected}
+              onEdit={() => handleEdit("sources")}
+            >
+              <NodeFieldRenderer field="sources" value={data?.sources} />
+            </SectionCard>
           )}
 
           {/* Aliases Card */}
           {editableFields["aliases"] && (
-            <MathCard>
-              <MathCardHeader>
-                <MathCardTitle
-                  variantcolor="default"
-                  variant="h6"
-                  component="h2"
-                >
-                  Alias
-                </MathCardTitle>
-                {editModeActive && isUserConnected && (
-                  <IconButton
-                    aria-label={t("common.aria.action_button")}
-                    size="small"
-                    onClick={() => handleEdit("aliases")}
-                  >
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                )}
-              </MathCardHeader>
-              <MathCardBody>
-                <NodeFieldRenderer field="aliases" value={data?.aliases} />
-              </MathCardBody>
-            </MathCard>
+            <SectionCard
+              title="Alias"
+              isEditable={editModeActive && isUserConnected}
+              onEdit={() => handleEdit("aliases")}
+            >
+              <NodeFieldRenderer field="aliases" value={data?.aliases} />
+            </SectionCard>
           )}
         </MainContentColumn>
 
