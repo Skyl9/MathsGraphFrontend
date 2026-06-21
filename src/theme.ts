@@ -1,4 +1,21 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { createTheme, responsiveFontSizes, alpha } from "@mui/material/styles";
+
+declare module "@mui/material/styles" {
+  interface Theme {
+    glassmorphism: {
+      main: any;
+      card: any;
+      pill: any;
+    };
+  }
+  interface ThemeOptions {
+    glassmorphism?: {
+      main?: any;
+      card?: any;
+      pill?: any;
+    };
+  }
+}
 
 export const getTheme = (dark: boolean) => {
   const base = createTheme({
@@ -26,6 +43,35 @@ export const getTheme = (dark: boolean) => {
     },
     shape: { borderRadius: 12 },
     spacing: 8, // 8px grid
+    glassmorphism: {
+      main: {
+        backgroundColor: dark ? alpha("#0F1428", 0.75) : alpha("#FFFFFF", 0.75),
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        border: `1px solid ${dark ? alpha("#FFFFFF", 0.08) : alpha("#FFFFFF", 0.5)}`,
+        boxShadow: dark
+          ? "0 8px 32px 0 rgba(0, 0, 0, 0.3)"
+          : "0 8px 32px 0 rgba(31, 38, 135, 0.05)",
+      },
+      card: {
+        backgroundColor: dark ? alpha("#0B1020", 0.85) : alpha("#FFFFFF", 0.85),
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: `1px solid ${dark ? alpha("#FFFFFF", 0.1) : alpha("#FFFFFF", 0.6)}`,
+        boxShadow: dark
+          ? "0 4px 16px 0 rgba(0, 0, 0, 0.2)"
+          : "0 4px 16px 0 rgba(31, 38, 135, 0.03)",
+      },
+      pill: {
+        backgroundColor: dark ? alpha("#0F1428", 0.8) : alpha("#FFFFFF", 0.8),
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        border: `1px solid ${dark ? alpha("#FFFFFF", 0.12) : alpha("#FFFFFF", 0.8)}`,
+        boxShadow: dark
+          ? "0 2px 8px 0 rgba(0, 0, 0, 0.25)"
+          : "0 2px 8px 0 rgba(31, 38, 135, 0.04)",
+      },
+    },
     components: {
       MuiCssBaseline: {
         styleOverrides: {

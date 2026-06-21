@@ -141,7 +141,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
         }}
         transition={{ type: "spring", stiffness: 280, damping: 26 }}
       >
-        <SidebarContainer blur={20} opacity={0.75}>
+        <SidebarContainer>
           {/* Header */}
           <SidebarHeader style={{ borderLeft: `4px solid ${typeColor}` }}>
             <IconButton

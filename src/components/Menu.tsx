@@ -22,7 +22,6 @@ import { useTranslation } from "react-i18next";
 import { useMenuLogic } from "../hooks/useMenuLogic";
 import FocusTrap from "focus-trap-react";
 import { useEffect } from "react";
-import { GlassPaper } from "./GlassPaper";
 import { slideInLeft } from "../utils/animations";
 import {
   MenuContainer,
@@ -172,115 +171,110 @@ export default function Menu({ graphData }: MenuProps) {
                     color: "text.primary",
                     maxHeight: "88vh",
                   }}
+                  sx={{
+                    width: 280,
+                    p: "20px",
+                    overflowY: "auto",
+                    maxHeight: "88vh",
+                  }}
                 >
-                  <GlassPaper
-                    blur={20}
-                    opacity={0.75}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    sx={{ mb: 2 }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
+                    >
+                      {t("menu.configuration")}
+                    </Typography>
+                    <IconButton
+                      aria-label={t("common.close")}
+                      size="small"
+                      onClick={() => setOpen(false)}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+
+                  <NavigationButton
+                    variant="outlined"
+                    color="inherit"
+                    fullWidth
+                    href="/"
+                    startIcon={<HomeIcon />}
+                  >
+                    {t("menu.backToPortal")}
+                  </NavigationButton>
+
+                  <Divider sx={{ my: 1.5, opacity: 0.4 }} />
+
+                  <MenuLayoutSettings
+                    currentView={currentView}
+                    setCurrentView={setCurrentView}
+                    renderMode={renderMode}
+                    setRenderMode={setRenderMode}
+                    useInstancedEdges={useInstancedEdges}
+                    setUseInstancedEdges={setUseInstancedEdges}
+                    graphTheme={graphTheme}
+                    setGraphTheme={setGraphTheme}
+                  />
+
+                  <MenuColorsSettings
+                    darkMode={darkMode}
+                    colorAxiome={colorAxiome}
+                    colorLemme={colorLemme}
+                    colorTheoreme={colorTheoreme}
+                    colorReciproque={colorReciproque}
+                    colorDefinition={colorDefinition}
+                    colorCorollaire={colorCorollaire}
+                    colorProposition={colorProposition}
+                    colorPropriete={colorPropriete}
+                    setColorAxiome={setColorAxiome}
+                    setColorLemme={setColorLemme}
+                    setColorTheoreme={setColorTheoreme}
+                    setColorReciproque={setColorReciproque}
+                    setColorDefinition={setColorDefinition}
+                    setColorCorollaire={setColorCorollaire}
+                    setColorProposition={setColorProposition}
+                    setColorPropriete={setColorPropriete}
+                    filters={filters}
+                    setFilters={setFilters}
+                  />
+
+                  <Box
                     sx={{
-                      width: 280,
-                      p: "20px",
-                      overflowY: "auto",
-                      maxHeight: "88vh",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 1.5,
                     }}
                   >
-                    <Box
-                      display="flex"
-                      justifyContent="space-between"
-                      alignItems="center"
-                      sx={{ mb: 2 }}
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
-                      >
-                        {t("menu.configuration")}
-                      </Typography>
-                      <IconButton
-                        aria-label={t("common.close")}
-                        size="small"
-                        onClick={() => setOpen(false)}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          size="small"
+                          checked={darkMode}
+                          onChange={() => setDarkMode(!darkMode)}
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                          {darkMode ? t("theme.dark") : t("theme.light")}
+                        </Typography>
+                      }
+                    />
 
-                    <NavigationButton
-                      variant="outlined"
-                      color="inherit"
+                    <ActionButton
+                      variant="contained"
+                      onClick={exportGraph}
+                      startIcon={<FileDownloadIcon />}
                       fullWidth
-                      href="/"
-                      startIcon={<HomeIcon />}
                     >
-                      {t("menu.backToPortal")}
-                    </NavigationButton>
-
-                    <Divider sx={{ my: 1.5, opacity: 0.4 }} />
-
-                    <MenuLayoutSettings
-                      currentView={currentView}
-                      setCurrentView={setCurrentView}
-                      renderMode={renderMode}
-                      setRenderMode={setRenderMode}
-                      useInstancedEdges={useInstancedEdges}
-                      setUseInstancedEdges={setUseInstancedEdges}
-                      graphTheme={graphTheme}
-                      setGraphTheme={setGraphTheme}
-                    />
-
-                    <MenuColorsSettings
-                      darkMode={darkMode}
-                      colorAxiome={colorAxiome}
-                      colorLemme={colorLemme}
-                      colorTheoreme={colorTheoreme}
-                      colorReciproque={colorReciproque}
-                      colorDefinition={colorDefinition}
-                      colorCorollaire={colorCorollaire}
-                      colorProposition={colorProposition}
-                      colorPropriete={colorPropriete}
-                      setColorAxiome={setColorAxiome}
-                      setColorLemme={setColorLemme}
-                      setColorTheoreme={setColorTheoreme}
-                      setColorReciproque={setColorReciproque}
-                      setColorDefinition={setColorDefinition}
-                      setColorCorollaire={setColorCorollaire}
-                      setColorProposition={setColorProposition}
-                      setColorPropriete={setColorPropriete}
-                      filters={filters}
-                      setFilters={setFilters}
-                    />
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 1.5,
-                      }}
-                    >
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            size="small"
-                            checked={darkMode}
-                            onChange={() => setDarkMode(!darkMode)}
-                          />
-                        }
-                        label={
-                          <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                            {darkMode ? t("theme.dark") : t("theme.light")}
-                          </Typography>
-                        }
-                      />
-
-                      <ActionButton
-                        variant="contained"
-                        onClick={exportGraph}
-                        startIcon={<FileDownloadIcon />}
-                        fullWidth
-                      >
-                        {t("menu.exportJson")}
-                      </ActionButton>
-                    </Box>
-                  </GlassPaper>
+                      {t("menu.exportJson")}
+                    </ActionButton>
+                  </Box>
                 </FloatingGlassMenu>
               </motion.div>
             </FocusTrap>

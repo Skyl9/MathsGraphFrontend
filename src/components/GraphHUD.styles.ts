@@ -13,13 +13,16 @@ export const GraphHUDContainer = styled(Box)(() => ({
 }));
 
 export const HUDPill = styled(Box)(({ theme }) => ({
+  ...theme.glassmorphism.pill,
   display: "flex",
   alignItems: "center",
-  padding: "6px 12px",
-  borderRadius: 9999,
-  boxShadow:
-    "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)",
-  gap: 4,
+  gap: 8,
+  padding: "8px 16px",
+  borderRadius: 24,
+  transition: "all 0.3s ease",
+  "&:hover": {
+    transform: "translateY(-2px)",
+  },
   [theme.breakpoints.down("md")]: {
     "& .MuiIconButton-root": {
       minWidth: 44,
@@ -28,7 +31,8 @@ export const HUDPill = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const ShortcutsPopoverContainer = styled(Box)(() => ({
+export const ShortcutsPopoverContainer = styled(Box)(({ theme }) => ({
+  ...theme.glassmorphism.card,
   padding: 16,
   minWidth: 200,
 }));
