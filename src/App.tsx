@@ -5,7 +5,8 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
-const GraphCanvas = lazy(() => import("./components/GraphCanvas"));
+import { Canvas } from "@react-three/fiber";
+import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
 import NodeDetails from "./components/NodeDetails";
 import { GraphHUD } from "./components/GraphHUD";
@@ -319,9 +320,12 @@ const AppContent = () => {
       }}
       className={darkMode ? "dark-mode" : ""}
     >
-      <Suspense fallback={null}>
-        <GraphCanvas graphData={graphData} />
-      </Suspense>
+      <Canvas
+        gl={{ antialias: true, alpha: true }}
+        style={{ background: "transparent" }}
+      >
+        <Scene graphData={graphData} />
+      </Canvas>
 
       {location.pathname === "/graph" && (
         <>
