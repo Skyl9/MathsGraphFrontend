@@ -1,7 +1,8 @@
 import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
-export const GraphHUDContainer = styled(Box)(() => ({
+export const GraphHUDContainer = styled(motion.div)(() => ({
   position: "absolute",
   bottom: 24,
   left: "50%",

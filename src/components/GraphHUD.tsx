@@ -208,7 +208,11 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
   };
 
   return (
-    <GraphHUDContainer>
+    <GraphHUDContainer
+      initial={{ y: 40, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.1 }}
+    >
       {renderBreadcrumbs()}
       <HUDPill
         sx={{
