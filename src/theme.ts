@@ -100,7 +100,7 @@ export const getTheme = (dark: boolean) => {
       text: {
         primary: dark
           ? "linear-gradient(90deg, #7DD3FC 0%, #C4B5FD 100%)"
-          : "linear-gradient(90deg, #0EA5E9 0%, #7C3AED 100%)",
+          : "linear-gradient(90deg, #0284C7 0%, #6D28D9 100%)",
       },
     },
     components: {
