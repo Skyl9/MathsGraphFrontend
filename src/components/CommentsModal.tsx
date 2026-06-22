@@ -272,18 +272,18 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
             />
           </>
         )}
-
-        <DialogActions>
-          <Button onClick={onClose}>{t("common.close")}</Button>
-          <Button
-            variant="contained"
-            onClick={handlePost}
-            disabled={submitting || !newComment.trim() || !currentUserId}
-          >
-            {submitting ? t("comments.sending") : t("comments.send")}
-          </Button>
-        </DialogActions>
       </DialogContent>
+
+      <DialogActions>
+        <Button onClick={onClose}>{t("common.close")}</Button>
+        <Button
+          variant="contained"
+          onClick={handlePost}
+          disabled={submitting || !newComment.trim() || !currentUserId}
+        >
+          {submitting ? t("comments.sending") : t("comments.send")}
+        </Button>
+      </DialogActions>
     </Dialog>
   );
 };

@@ -161,6 +161,9 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
               <Typography
                 key={`${globalIdx}-${id}`}
                 variant="caption"
+                role="button"
+                tabIndex={0}
+                aria-label={`Aller au concept ${label}`}
                 sx={{
                   cursor: "pointer",
                   fontWeight: isCurrent ? 800 : 500,
@@ -184,6 +187,19 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
                       node.position["grille"] ||
                       node.position["physique"] || { x: 0, y: 0, z: 0 };
                     setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    useGraphStore.getState().setCurrentIndex(globalIdx);
+                    useGraphStore.getState().setSelectedNodeId(id);
+                    if (node) {
+                      const pos = node.position[currentView] ||
+                        node.position["grille"] ||
+                        node.position["physique"] || { x: 0, y: 0, z: 0 };
+                      setTargetPosition({ x: pos.x, y: pos.y, z: pos.z });
+                    }
                   }
                 }}
               >
