@@ -15,9 +15,20 @@ import { CommentsModal, FieldOption } from "../components/CommentsModal";
 import VerifiedIcon from "@mui/icons-material/Verified";
 import EditIcon from "@mui/icons-material/Edit";
 
-import { Tooltip, IconButton } from "@mui/material";
+import {
+  Tooltip,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Divider,
+} from "@mui/material";
 import Token from "../services/token";
 import { logger } from "../utils/logger";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import HistoryIcon from "@mui/icons-material/History";
+import CommentIcon from "@mui/icons-material/Comment";
+import EditOffIcon from "@mui/icons-material/EditOff";
 
 import FavoriteButton from "../components/FavoriteButton";
 
@@ -40,6 +51,15 @@ const NodePage = () => {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [editModeActive, setEditModeActive] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpen = Boolean(menuAnchorEl);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
 
   logger.info("NodePage rendu", { id });
   const {
@@ -148,16 +168,85 @@ const NodePage = () => {
                   <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />
                 </Tooltip>
               )}
-              <FavoriteButton itemId={id as string} itemType={"concept"} />
-              {editModeActive && isUserConnected && editableFields["nom"] && (
-                <IconButton
-                  aria-label={t("common.aria.action_button")}
-                  size="small"
-                  onClick={() => handleEdit("nom")}
+              <IconButton
+                aria-label="Plus d'actions"
+                onClick={handleMenuClick}
+                sx={{ ml: "auto" }}
+              >
+                <MoreVertIcon />
+              </IconButton>
+
+              <Menu
+                anchorEl={menuAnchorEl}
+                open={isMenuOpen}
+                onClose={handleMenuClose}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                PaperProps={{
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+                    mt: 1.5,
+                    borderRadius: "12px",
+                    minWidth: "200px",
+                  },
+                }}
+              >
+                <FavoriteButton
+                  itemId={id as string}
+                  itemType={"concept"}
+                  variant="menuItem"
+                  onClickCallback={handleMenuClose}
+                />
+
+                <MenuItem
+                  onClick={() => {
+                    setIsCommentsOpen(true);
+                    handleMenuClose();
+                  }}
                 >
-                  <EditIcon fontSize="small" />
-                </IconButton>
-              )}
+                  <ListItemIcon>
+                    <CommentIcon fontSize="small" />
+                  </ListItemIcon>
+                  {t("concept.comments", "Commentaires")}
+                </MenuItem>
+
+                <MenuItem
+                  onClick={() => {
+                    setIsHistoryOpen(true);
+                    handleMenuClose();
+                  }}
+                >
+                  <ListItemIcon>
+                    <HistoryIcon fontSize="small" />
+                  </ListItemIcon>
+                  {t("concept.history", "Historique")}
+                </MenuItem>
+
+                {isUserConnected && (
+                  <>
+                    <Divider />
+                    <MenuItem
+                      onClick={() => {
+                        setEditModeActive(!editModeActive);
+                        handleMenuClose();
+                      }}
+                    >
+                      <ListItemIcon>
+                        {editModeActive ? (
+                          <EditOffIcon fontSize="small" />
+                        ) : (
+                          <EditIcon fontSize="small" />
+                        )}
+                      </ListItemIcon>
+                      {editModeActive
+                        ? t("concept.disable_edit_mode", "Quitter l'édition")
+                        : t("concept.enable_edit_mode", "Mode Édition")}
+                    </MenuItem>
+                  </>
+                )}
+              </Menu>
             </ConceptTitleRow>
           </ConceptHeader>
           {/* Énoncé Card */}
@@ -226,12 +315,9 @@ const NodePage = () => {
         <NodeSidebar
           data={data || {}}
           editModeActive={editModeActive}
-          setEditModeActive={setEditModeActive}
           isUserConnected={isUserConnected}
           editableFields={editableFields}
           handleEdit={handleEdit}
-          setIsCommentsOpen={setIsCommentsOpen}
-          setIsHistoryOpen={setIsHistoryOpen}
         />
       </DetailsGrid>
 

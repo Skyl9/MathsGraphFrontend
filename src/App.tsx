@@ -235,6 +235,9 @@ const App = () => {
 };
 
 const AppContent = () => {
+  const location = useLocation();
+  const isGraphRoute = location.pathname === "/graph";
+
   // Synchronisation de l'URL avec les stores
   useUrlSync();
   // Gestion globale des raccourcis clavier
@@ -326,14 +329,21 @@ const AppContent = () => {
         <Scene graphData={graphData} />
       </Canvas>
 
-      <Menu graphData={graphData} />
-      <GraphHUD graphData={graphData} />
+      {isGraphRoute && (
+        <>
+          <Menu graphData={graphData} />
+          <GraphHUD graphData={graphData} />
 
-      <AnimatePresence>
-        {selectedNodeId !== null && !isSearchActive && (
-          <NodeDetails id={selectedNodeId} onClose={handleCloseNodeDetails} />
-        )}
-      </AnimatePresence>
+          <AnimatePresence>
+            {selectedNodeId !== null && !isSearchActive && (
+              <NodeDetails
+                id={selectedNodeId}
+                onClose={handleCloseNodeDetails}
+              />
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </div>
   );
 };

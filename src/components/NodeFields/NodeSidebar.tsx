@@ -1,8 +1,5 @@
-import { Switch, FormControlLabel, IconButton, Button } from "@mui/material";
+import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import CommentIcon from "@mui/icons-material/Comment";
-import HistoryIcon from "@mui/icons-material/History";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { ReportIssueButton } from "../Issue";
 import { NodeFieldRenderer } from "./NodeFieldRenderer";
 import {
@@ -13,7 +10,6 @@ import {
   MetadataItem,
   MetadataLabel,
   MetadataValue,
-  SidebarActions,
 } from "../../pages/NodePage.styles";
 import { AllNodeData, EditableField } from "../../types/types";
 import { useTranslation } from "react-i18next";
@@ -21,49 +17,21 @@ import { useTranslation } from "react-i18next";
 interface NodeSidebarProps {
   data: Partial<AllNodeData>;
   editModeActive: boolean;
-  setEditModeActive: (val: boolean) => void;
   isUserConnected: boolean;
   editableFields: Record<string, EditableField>;
   handleEdit: (field: any) => void;
-  setIsCommentsOpen: (val: boolean) => void;
-  setIsHistoryOpen: (val: boolean) => void;
 }
 
 export const NodeSidebar = ({
   data,
   editModeActive,
-  setEditModeActive,
-  isUserConnected,
   editableFields,
   handleEdit,
-  setIsCommentsOpen,
-  setIsHistoryOpen,
 }: NodeSidebarProps) => {
   const { t } = useTranslation();
 
   return (
     <SidebarColumn>
-      {/* Mode Edition */}
-      {isUserConnected && (
-        <SidebarCard>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={editModeActive}
-                onChange={(e) => setEditModeActive(e.target.checked)}
-                color="primary"
-              />
-            }
-            label={t("concept.edit_mode")}
-            sx={{
-              m: 0,
-              width: "100%",
-              "& .MuiFormControlLabel-label": { fontWeight: 600 },
-            }}
-          />
-        </SidebarCard>
-      )}
-
       {/* Carte Métadonnées */}
       <SidebarCard>
         <SidebarCardTitle variant="h6" component="h2">
@@ -198,44 +166,6 @@ export const NodeSidebar = ({
             </MetadataItem>
           )}
         </MetadataList>
-      </SidebarCard>
-
-      {/* Carte Actions */}
-      <SidebarCard>
-        <SidebarCardTitle variant="h6" component="h2">
-          Actions
-        </SidebarCardTitle>
-        <SidebarActions>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<CommentIcon />}
-            onClick={() => setIsCommentsOpen(true)}
-            sx={{ borderRadius: 2 }}
-          >
-            Commentaires
-          </Button>
-
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<HistoryIcon />}
-            onClick={() => setIsHistoryOpen(true)}
-            sx={{ borderRadius: 2 }}
-          >
-            Historique
-          </Button>
-
-          <Button
-            fullWidth
-            variant="text"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => window.history.back()}
-            sx={{ borderRadius: 2, mt: 1 }}
-          >
-            Retour
-          </Button>
-        </SidebarActions>
       </SidebarCard>
 
       <ReportIssueButton />

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { IconButton, CircularProgress, Tooltip } from "@mui/material";
+import {
+  IconButton,
+  CircularProgress,
+  Tooltip,
+  MenuItem,
+  ListItemIcon,
+} from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { nodeApi } from "../services/api";
@@ -10,11 +16,15 @@ import { useTranslation } from "react-i18next";
 export interface FavoriteButtonProps {
   itemId: string;
   itemType: string; // ex. "category", "mathematicien", "concept", etc.
+  variant?: "icon" | "menuItem";
+  onClickCallback?: () => void;
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   itemId,
   itemType,
+  variant = "icon",
+  onClickCallback,
 }) => {
   const userId = Token.getUserIdFromToken();
   const { t } = useTranslation();
@@ -57,11 +67,23 @@ const FavoriteButton: React.FC<FavoriteButtonProps> = ({
       console.error(err);
     } finally {
       setSubmitting(false);
+      if (onClickCallback) onClickCallback();
     }
   };
 
   if (!userId) return null;
   if (loading) return <CircularProgress size={24} />;
+
+  if (variant === "menuItem") {
+    return (
+      <MenuItem onClick={handleClick} disabled={submitting}>
+        <ListItemIcon>
+          {isFav ? <FavoriteIcon color="error" /> : <FavoriteBorderIcon />}
+        </ListItemIcon>
+        {isFav ? t("favorite_button.remove") : t("favorite_button.add")}
+      </MenuItem>
+    );
+  }
 
   return (
     <Tooltip
