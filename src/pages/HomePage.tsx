@@ -95,7 +95,9 @@ export function HomePage() {
         {/* Section Hero Moderne */}
         <HeroSection variants={slowFadeInUp} initial="hidden" animate="show">
           <HeroContent>
-            <HeroTitle variant="h1">{t("home.hero_title")}</HeroTitle>
+            <HeroTitle variant="h1" component="h1">
+              {t("home.hero_title")}
+            </HeroTitle>
             <HeroSubtitle variant="body1">
               {t("home.hero_subtitle")}
             </HeroSubtitle>

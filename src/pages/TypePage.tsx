@@ -83,7 +83,9 @@ const TypePage = () => {
         <MainContentColumn>
           <ConceptHeader>
             <ConceptTitleRow>
-              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
+              <ConceptTitle variant="h1" component="h1">
+                {data?.nom}
+              </ConceptTitle>
               <FavoriteButton itemId={id as string} itemType={"type"} />
               {editModeActive &&
                 isUserConnected &&

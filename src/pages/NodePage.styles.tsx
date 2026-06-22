@@ -172,7 +172,9 @@ export const ConceptTitleRow = styled(Box)({
   flexWrap: "wrap",
 });
 
-export const ConceptTitle = styled(Typography)({
+export const ConceptTitle = styled(Typography)<{
+  component?: React.ElementType;
+}>({
   fontSize: "2.2rem !important",
   fontWeight: "800 !important",
   lineHeight: "1.2 !important",

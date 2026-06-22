@@ -185,7 +185,11 @@ export const Login: React.FC = () => {
             }}
           >
             <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              <Typography variant="h4" sx={{ fontWeight: 800, mb: 1 }}>
+              <Typography
+                variant="h4"
+                component="h1"
+                sx={{ fontWeight: 800, mb: 1 }}
+              >
                 {t("auth.login_title")}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>

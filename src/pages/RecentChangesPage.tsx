@@ -84,6 +84,7 @@ export const RecentChangesPage: React.FC = () => {
       >
         <Typography
           variant="h3"
+          component="h1"
           fontWeight={800}
           gutterBottom
           sx={{

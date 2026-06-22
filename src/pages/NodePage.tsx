@@ -162,7 +162,9 @@ const NodePage = () => {
         <MainContentColumn>
           <ConceptHeader>
             <ConceptTitleRow>
-              <ConceptTitle variant="h1">{data?.nom}</ConceptTitle>
+              <ConceptTitle variant="h1" component="h1">
+                {data?.nom}
+              </ConceptTitle>
               {data?.verification && (
                 <Tooltip title={t("concept.verified")} arrow>
                   <VerifiedIcon color="primary" sx={{ fontSize: 32 }} />

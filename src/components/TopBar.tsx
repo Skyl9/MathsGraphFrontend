@@ -34,7 +34,8 @@ export const TopBar: React.FC = () => {
   return (
     <AppBar position="static" color="default">
       <Toolbar sx={{ justifyContent: "space-around" }}>
-        <div
+        <Box
+          component="nav"
           style={{
             display: "flex",
             gap: 2,
@@ -65,8 +66,9 @@ export const TopBar: React.FC = () => {
               <Brightness4Icon />
             )}
           </IconButton>
-        </div>
-        <div
+        </Box>
+        <Box
+          component="nav"
           style={{
             justifyContent: "flex-end",
             display: "flex",
@@ -95,7 +97,7 @@ export const TopBar: React.FC = () => {
               </Button>
             </Box>
           )}
-        </div>
+        </Box>
       </Toolbar>
     </AppBar>
   );

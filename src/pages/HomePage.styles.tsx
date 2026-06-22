@@ -46,7 +46,9 @@ export const HeroContent = styled("header")({
   alignItems: "center",
 });
 
-export const HeroTitle = styled(Typography)(({ theme }) => {
+export const HeroTitle = styled(Typography)<{
+  component?: React.ElementType;
+}>(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
     fontSize: "clamp(2.8rem, 6.5vw, 4.2rem) !important",

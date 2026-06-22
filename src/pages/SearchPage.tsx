@@ -170,6 +170,7 @@ export const SearchPage = () => {
         <Grid
           size={{ xs: 0, md: 3.5 }}
           sx={{ display: { xs: "none", md: "block" } }}
+          component="aside"
         >
           <Paper
             elevation={0}
@@ -242,7 +243,7 @@ export const SearchPage = () => {
         </Drawer>
 
         {/* 3. Section des résultats */}
-        <Grid size={{ xs: 12, md: 8.5 }}>
+        <Grid size={{ xs: 12, md: 8.5 }} component="main">
           {isLoading && (
             <Box py={4}>
               <ListSkeleton count={4} />
