@@ -7,12 +7,30 @@ declare module "@mui/material/styles" {
       card: any;
       pill: any;
     };
+    gradients: {
+      background: {
+        neon: string;
+        default: string;
+      };
+      text: {
+        primary: string;
+      };
+    };
   }
   interface ThemeOptions {
     glassmorphism?: {
       main?: any;
       card?: any;
       pill?: any;
+    };
+    gradients?: {
+      background?: {
+        neon?: string;
+        default?: string;
+      };
+      text?: {
+        primary?: string;
+      };
     };
   }
 }
@@ -70,6 +88,19 @@ export const getTheme = (dark: boolean) => {
         boxShadow: dark
           ? "0 2px 8px 0 rgba(0, 0, 0, 0.25)"
           : "0 2px 8px 0 rgba(31, 38, 135, 0.04)",
+      },
+    },
+    gradients: {
+      background: {
+        neon: "radial-gradient(circle at center, #0B0B1E 0%, #03030A 100%)",
+        default: dark
+          ? "radial-gradient(circle at center, #0F172A 0%, #020617 100%)"
+          : "radial-gradient(circle at center, #F8FAFC 0%, #E2E8F0 100%)",
+      },
+      text: {
+        primary: dark
+          ? "linear-gradient(90deg, #7DD3FC 0%, #C4B5FD 100%)"
+          : "linear-gradient(90deg, #0EA5E9 0%, #7C3AED 100%)",
       },
     },
     components: {

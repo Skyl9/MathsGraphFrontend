@@ -1,4 +1,3 @@
-import { alpha } from "@mui/material/styles";
 import React, { useState, useRef, useEffect } from "react";
 import {
   useTheme,
@@ -143,11 +142,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         sx={{
           px: 3,
           py: 0.5,
-          background: darkMode
-            ? alpha(theme.palette.background.paper, 0.6)
-            : alpha(theme.palette.background.paper, 0.6),
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+          ...theme.glassmorphism.pill,
         }}
       >
         <Breadcrumbs aria-label="breadcrumb" separator="›">
@@ -217,13 +212,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
       {renderBreadcrumbs()}
       <HUDPill
         sx={{
-          background: darkMode
-            ? alpha(theme.palette.background.paper, 0.75)
-            : alpha(theme.palette.background.paper, 0.75),
-          backdropFilter: "blur(12px)",
-          border: darkMode
-            ? `1px solid ${alpha(theme.palette.divider, 0.08)}`
-            : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
+          ...theme.glassmorphism.pill,
         }}
       >
         {/* Historique Précédent */}
@@ -371,14 +360,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
           paper: {
             sx: {
               borderRadius: "12px",
-              background: darkMode
-                ? alpha(theme.palette.background.paper, 0.9)
-                : alpha(theme.palette.background.paper, 0.95),
-              backdropFilter: "blur(8px)",
-              border: darkMode
-                ? `1px solid ${alpha(theme.palette.divider, 0.1)}`
-                : `1px solid ${alpha(theme.palette.divider, 0.08)}`,
-              boxShadow: `0 10px 20px ${alpha(theme.palette.common.black, 0.15)}`,
+              ...theme.glassmorphism.card,
               color: darkMode ? "#E2E8F0" : "#0F172A",
             },
           },

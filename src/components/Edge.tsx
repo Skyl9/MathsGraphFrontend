@@ -1,8 +1,9 @@
 import { useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useMemo, useState, useRef, memo, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import { Line, Html } from "@react-three/drei";
-import { Vector3, Quaternion, ConeGeometry, BoxGeometry } from "three";
+import { Vector3, Quaternion, ConeGeometry, BoxGeometry, Mesh } from "three";
 import { Line2 } from "three-stdlib";
 import { useUIStore } from "../stores/useUIStore";
 import { useGraphStore } from "../stores/useGraphStore";
@@ -77,19 +78,13 @@ const Edge = memo(function Edge({
   const graphTheme = useUIStore((s) => s.graphTheme);
   const darkMode = useUIStore((s) => s.darkMode);
 
-  // Lecture de l'état de survol et de sélection (Sélecteurs optimisés au grain fin)
-  const isHoverHighlighted = useGraphStore(
-    (s) =>
-      s.hoveredNodeId !== null &&
-      (startId === s.hoveredNodeId || endId === s.hoveredNodeId),
-  );
+  // Sélection reste réactive (le clic est rare, le re-rendu global est acceptable)
   const isSelectedHighlighted = useGraphStore(
     (s) =>
       s.selectedNodeId !== null &&
       (startId === s.selectedNodeId || endId === s.selectedNodeId),
   );
-  const isAnyNodeHovered = useGraphStore((s) => s.hoveredNodeId !== null);
-  const isHighlighted = isHoverHighlighted || isSelectedHighlighted;
+  const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
 
   const [hovered, setHovered] = useState(false);
   const lineRef = useRef<Line2>(null);
@@ -138,30 +133,30 @@ const Edge = memo(function Edge({
 
   const isNeon = graphTheme === "neon";
 
-  // Couleur dynamique d'arête : highlight au survol ou à la sélection
-  const activeColor = useMemo(() => {
-    if (hovered || isHoverHighlighted) return "#38bdf8";
+  // Fonctions statiques pour le calcul des propriétés matérielles
+  const getActiveColor = (
+    hoveredId: number | null,
+    isLocalHovered: boolean,
+  ) => {
+    const isHoverHighlighted =
+      hoveredId !== null && (startId === hoveredId || endId === hoveredId);
+    const isAnyNodeHovered = hoveredId !== null;
+
+    if (isLocalHovered || isHoverHighlighted) return "#38bdf8";
     if (isAnyNodeHovered) return darkMode ? "#1e293b" : "#e2e8f0";
     if (isSelectedHighlighted) return "#38bdf8";
     return isNeon &&
       (color === "black" || color === "#888888" || color === "#ffffff")
       ? "#ffffff"
       : color;
-  }, [
-    hovered,
-    isAnyNodeHovered,
-    isHoverHighlighted,
-    isSelectedHighlighted,
-    isNeon,
-    color,
-    darkMode,
-  ]);
+  };
 
-  const hasSelection = useGraphStore((s) => s.selectedNodeId !== null);
-
-  // Opacité dynamique au survol et filtrage
-  const finalOpacity = useMemo(() => {
+  const getFinalOpacity = (hoveredId: number | null) => {
     if (isFiltered) return 0;
+    const isHoverHighlighted =
+      hoveredId !== null && (startId === hoveredId || endId === hoveredId);
+    const isAnyNodeHovered = hoveredId !== null;
+
     if (isAnyNodeHovered) {
       return isHoverHighlighted ? 1.0 : 0.08;
     }
@@ -169,28 +164,53 @@ const Edge = memo(function Edge({
 
     const isFocus = graphTheme === "focus";
     return isFocus && hasSelection && !isSelectedHighlighted ? 0.1 : 1.0;
-  }, [
-    isFiltered,
-    isAnyNodeHovered,
-    isHoverHighlighted,
-    isSelectedHighlighted,
-    graphTheme,
-    hasSelection,
-  ]);
+  };
 
-  // Épaisseur de ligne dynamique
-  const finalLineWidth = useMemo(() => {
-    if (hovered || isHoverHighlighted) return 3.5;
+  const getFinalLineWidth = (
+    hoveredId: number | null,
+    isLocalHovered: boolean,
+  ) => {
+    const isHoverHighlighted =
+      hoveredId !== null && (startId === hoveredId || endId === hoveredId);
+    const isAnyNodeHovered = hoveredId !== null;
+
+    if (isLocalHovered || isHoverHighlighted) return 3.5;
     if (isAnyNodeHovered) return isNeon ? 2.0 : 1.5;
     if (isSelectedHighlighted) return 3.5;
     return isNeon ? 2.0 : 1.5;
-  }, [
-    hovered,
-    isAnyNodeHovered,
-    isHoverHighlighted,
-    isSelectedHighlighted,
-    isNeon,
-  ]);
+  };
+
+  const arrowRef1 = useRef<Mesh>(null);
+  const arrowRef2 = useRef<Mesh>(null);
+
+  // Valeurs initiales pour le premier rendu
+  const initialHoveredId = useGraphStore.getState().hoveredNodeId;
+  const initialColor = getActiveColor(initialHoveredId, hovered);
+  const initialOpacity = getFinalOpacity(initialHoveredId);
+  const initialLineWidth = getFinalLineWidth(initialHoveredId, hovered);
+
+  useFrame(() => {
+    const hoveredNodeId = useGraphStore.getState().hoveredNodeId;
+    const activeColStr = getActiveColor(hoveredNodeId, hovered);
+    const finalOp = getFinalOpacity(hoveredNodeId);
+    const finalWidth = getFinalLineWidth(hoveredNodeId, hovered);
+
+    if (lineRef.current && lineRef.current.material) {
+      lineRef.current.material.color.set(activeColStr);
+      lineRef.current.material.opacity = finalOp;
+      lineRef.current.material.linewidth = finalWidth;
+    }
+
+    const arrMat = getEdgeMaterial(activeColStr, isNeon, finalOp);
+    if (arrowRef1.current) {
+      arrowRef1.current.material = arrMat;
+      arrowRef1.current.visible = finalOp > 0.1;
+    }
+    if (arrowRef2.current) {
+      arrowRef2.current.material = arrMat;
+      arrowRef2.current.visible = finalOp > 0.1;
+    }
+  });
 
   // Détermination du style de ligne (Solid vs Dashed animé pour les implications/équivalences)
   const isAnimatedDash =
@@ -206,7 +226,15 @@ const Edge = memo(function Edge({
         lineRef,
         isAnimatedDash,
         type: type || "",
-        getMultiplier: () => (hovered || isHighlighted ? 2.5 : 1.0),
+        getMultiplier: () => {
+          const hoveredId = useGraphStore.getState().hoveredNodeId;
+          const isHoverHighlighted =
+            hoveredId !== null &&
+            (startId === hoveredId || endId === hoveredId);
+          return hovered || isHoverHighlighted || isSelectedHighlighted
+            ? 2.5
+            : 1.0;
+        },
       });
     }
     return () => {
@@ -218,8 +246,7 @@ const Edge = memo(function Edge({
     isAnimatedDash,
     type,
     hovered,
-    isAnyNodeHovered,
-    isHighlighted,
+    isSelectedHighlighted,
     registerEdge,
     unregisterEdge,
   ]);
@@ -233,9 +260,9 @@ const Edge = memo(function Edge({
     return `$A \\text{ ${type} } B$`;
   }, [type]);
 
-  const arrowMaterial = useMemo(() => {
-    return getEdgeMaterial(activeColor, isNeon, finalOpacity);
-  }, [activeColor, isNeon, finalOpacity]);
+  const initialArrowMaterial = useMemo(() => {
+    return getEdgeMaterial(initialColor, isNeon, initialOpacity);
+  }, [initialColor, isNeon, initialOpacity]);
 
   // Sécurité : Si les noeuds sont trop proches ou superposés, on ne dessine rien
   if (length < 0.6) return null;
@@ -257,10 +284,10 @@ const Edge = memo(function Edge({
       <Line
         ref={lineRef}
         points={[startOffset.toArray(), endOffset.toArray()]}
-        color={activeColor}
-        lineWidth={finalLineWidth}
+        color={initialColor}
+        lineWidth={initialLineWidth}
         transparent={true}
-        opacity={finalOpacity}
+        opacity={initialOpacity}
         toneMapped={!isNeon} // Permet au Bloom d'ignorer la correction colorimétrique
         dashed={isAnimatedDash}
         dashScale={1}
@@ -270,21 +297,23 @@ const Edge = memo(function Edge({
 
       {/* 2. La pointe de la flèche (Cone) */}
       <mesh
+        ref={arrowRef1}
         position={endOffset}
         quaternion={arrowQuaternion}
         geometry={arrowGeometry}
-        material={arrowMaterial}
-        visible={finalOpacity > 0.1}
+        material={initialArrowMaterial}
+        visible={initialOpacity > 0.1}
       />
 
       {/* Optionnel : Flèche retour si équivalence ou reciproque */}
       {(type === "equivalence" || type === "reciproque") && (
         <mesh
+          ref={arrowRef2}
           position={startOffset}
           quaternion={reverseArrowQuaternion}
           geometry={arrowGeometry}
-          material={arrowMaterial}
-          visible={finalOpacity > 0.1}
+          material={initialArrowMaterial}
+          visible={initialOpacity > 0.1}
         />
       )}
 

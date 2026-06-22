@@ -39,7 +39,7 @@ export const TopBar: React.FC = () => {
             display: "flex",
             gap: 2,
             justifyContent: "flex-start",
-            width: "100%",
+            flex: 1,
             flexDirection: "row",
             alignItems: "center",
           }}
@@ -72,7 +72,7 @@ export const TopBar: React.FC = () => {
             display: "flex",
             gap: 2,
             alignItems: "center",
-            width: "100%",
+            flex: 1,
           }}
         >
           <GlobalSearchBar />

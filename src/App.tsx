@@ -82,7 +82,7 @@ import { useGraphData } from "./hooks/useGraphData";
 import { useUrlSync } from "./hooks/useUrlSync";
 import { useGlobalShortcuts } from "./hooks/useGlobalShortcuts";
 
-import { Box, Alert } from "@mui/material";
+import { Box, Alert, useTheme } from "@mui/material";
 import ErrorBoundary from "./ErrorBoundary";
 import { GraphSkeleton } from "./components/GraphSkeleton";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -124,13 +124,13 @@ const GlobalGraph = () => {
         position: "fixed",
         top: 0,
         left: 0,
-        width: "100vw",
+        width: "100%",
         height: "100vh",
         zIndex: 0,
-        opacity: isGraph ? 1 : 0.4,
-        filter: isGraph ? "none" : "blur(10px)",
+        opacity: isGraph ? 1 : 0,
+        visibility: isGraph ? "visible" : "hidden",
         pointerEvents: isGraph ? "auto" : "none",
-        transition: "opacity 0.6s ease-in-out, filter 0.6s ease-in-out",
+        transition: "opacity 0.6s ease-in-out",
       }}
     >
       <AppContent />
@@ -246,22 +246,21 @@ const AppContent = () => {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
   const isSearchActive = useGraphStore((s) => s.isSearchActive);
-  const location = useLocation();
+
+  const theme = useTheme();
 
   const getBackground = () => {
     if (graphTheme === "neon") {
-      return "radial-gradient(circle at center, #0B0B1E 0%, #03030A 100%)";
+      return theme.gradients.background.neon;
     }
-    return darkMode
-      ? "radial-gradient(circle at center, #0F172A 0%, #020617 100%)"
-      : "radial-gradient(circle at center, #F8FAFC 0%, #E2E8F0 100%)";
+    return theme.gradients.background.default;
   };
 
   if (loading) {
     return (
       <div
         style={{
-          width: "100vw",
+          width: "100%",
           height: "100vh",
           position: "relative",
           overflow: "hidden",
@@ -311,7 +310,7 @@ const AppContent = () => {
   return (
     <div
       style={{
-        width: "100vw",
+        width: "100%",
         height: "100vh",
         position: "relative",
         overflow: "hidden",
@@ -327,21 +326,14 @@ const AppContent = () => {
         <Scene graphData={graphData} />
       </Canvas>
 
-      {location.pathname === "/graph" && (
-        <>
-          <Menu graphData={graphData} />
-          <GraphHUD graphData={graphData} />
+      <Menu graphData={graphData} />
+      <GraphHUD graphData={graphData} />
 
-          <AnimatePresence>
-            {selectedNodeId !== null && !isSearchActive && (
-              <NodeDetails
-                id={selectedNodeId}
-                onClose={handleCloseNodeDetails}
-              />
-            )}
-          </AnimatePresence>
-        </>
-      )}
+      <AnimatePresence>
+        {selectedNodeId !== null && !isSearchActive && (
+          <NodeDetails id={selectedNodeId} onClose={handleCloseNodeDetails} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -23,6 +23,12 @@ cylinderGeometry.rotateX(Math.PI / 2); // Point along Z axis
 const arrowGeometry = new ConeGeometry(0.08, 0.2, 8);
 arrowGeometry.rotateX(Math.PI / 2); // Point along Z axis
 
+// Variables globales pour éviter le Garbage Collection (GC stuttering)
+const _dummyVec1 = new Vector3();
+const _dummyVec2 = new Vector3();
+const _dummyDir = new Vector3();
+const _dummyReverseQuat = new Quaternion();
+
 interface InstancedEdgesProps {
   edges: EdgeData[];
   nodesMap: Map<number, NodeData>;
@@ -301,17 +307,18 @@ export default function InstancedEdges({
       // Pré-enregistrement pour les popups (toujours exécuté pour être dispo au hover de la souris)
       const startRadiusForMid = 0.3;
       const endRadiusForMid = 0.3;
-      const sOffMid = s
-        .clone()
-        .add(dir.clone().multiplyScalar(startRadiusForMid));
-      const eOffMid = e
-        .clone()
-        .add(dir.clone().multiplyScalar(-endRadiusForMid - 0.15));
-      edgeMidpointsRef.current[i] = new Vector3().lerpVectors(
-        sOffMid,
-        eOffMid,
-        0.5,
-      );
+
+      _dummyDir.copy(dir).multiplyScalar(startRadiusForMid);
+      _dummyVec1.copy(s).add(_dummyDir);
+
+      _dummyDir.copy(dir).multiplyScalar(-endRadiusForMid - 0.15);
+      _dummyVec2.copy(e).add(_dummyDir);
+
+      if (!edgeMidpointsRef.current[i]) {
+        edgeMidpointsRef.current[i] = new Vector3();
+      }
+      edgeMidpointsRef.current[i].lerpVectors(_dummyVec1, _dummyVec2, 0.5);
+
       edgeMathFormulasRef.current[i] = data.mathFormula;
 
       if (!isHovered && !isConnectedToHovered && !isConnectedToSelected) {
@@ -334,28 +341,30 @@ export default function InstancedEdges({
       const startRadius = 0.3 * startScale;
       const endRadius = 0.3 * endScale;
 
-      const sOff = s.clone().add(dir.clone().multiplyScalar(startRadius));
-      const eOff = e.clone().add(dir.clone().multiplyScalar(-endRadius - 0.15));
-      const length = sOff.distanceTo(eOff);
+      _dummyDir.copy(dir).multiplyScalar(startRadius);
+      _dummyVec1.copy(s).add(_dummyDir);
+
+      _dummyDir.copy(dir).multiplyScalar(-endRadius - 0.15);
+      _dummyVec2.copy(e).add(_dummyDir);
+
+      const length = _dummyVec1.distanceTo(_dummyVec2);
 
       const widthMultiplier = 2.5;
 
       dummyQuaternion.setFromUnitVectors(upZ, dir);
 
       scaleVec.set(widthMultiplier, widthMultiplier, length);
-      dummyMatrix.compose(sOff, dummyQuaternion, scaleVec);
+      dummyMatrix.compose(_dummyVec1, dummyQuaternion, scaleVec);
       dummyMatrix.toArray(lineMatrices, data.lineIdx * 16);
 
       scaleVec.set(widthMultiplier, widthMultiplier, widthMultiplier);
-      dummyMatrix.compose(eOff, dummyQuaternion, scaleVec);
+      dummyMatrix.compose(_dummyVec2, dummyQuaternion, scaleVec);
       dummyMatrix.toArray(arrowMatrices, data.arrowIdxStart * 16);
 
       if (data.numArrows === 2) {
-        const reverseQuaternion = new Quaternion().setFromUnitVectors(
-          upZ,
-          dir.clone().negate(),
-        );
-        dummyMatrix.compose(sOff, reverseQuaternion, scaleVec);
+        _dummyDir.copy(dir).negate();
+        _dummyReverseQuat.setFromUnitVectors(upZ, _dummyDir);
+        dummyMatrix.compose(_dummyVec1, _dummyReverseQuat, scaleVec);
         dummyMatrix.toArray(arrowMatrices, (data.arrowIdxStart + 1) * 16);
       }
 
