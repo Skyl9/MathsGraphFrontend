@@ -25,6 +25,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import { ListSkeleton } from "../components/Skeletons";
 import { useTranslation } from "react-i18next";
+import { SEOMeta } from "../components/SEOMeta";
 
 interface SearchResult {
   id: number | string;
@@ -147,6 +148,13 @@ export const SearchPage = () => {
     <Box
       sx={{ p: 1, maxWidth: 1200, margin: "0 auto", minHeight: "85vh", py: 6 }}
     >
+      <SEOMeta
+        title={t("search.title", "Recherche Avancée")}
+        description={t(
+          "search.description",
+          "Recherchez parmi les concepts mathématiques, théorèmes, catégories et mathématiciens de la base de données MathGraph.",
+        )}
+      />
       {/* Header / Champ de recherche */}
       <SearchBar
         queryTerm={queryTerm}

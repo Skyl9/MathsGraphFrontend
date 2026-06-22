@@ -22,6 +22,7 @@ import Token from "../services/token.ts";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import i18n from "../i18n";
 import { useTranslation } from "react-i18next";
+import { SEOMeta } from "../components/SEOMeta";
 
 const loginSchema = z.object({
   username: z.string().min(1, i18n.t("auth.username_req") as string),
@@ -73,6 +74,13 @@ export const Login: React.FC = () => {
         bgcolor: "background.default",
       }}
     >
+      <SEOMeta
+        title={t("auth.login")}
+        description={t(
+          "auth.login_description",
+          "Connectez-vous à votre compte MathGraph pour sauvegarder vos favoris et contribuer.",
+        )}
+      />
       <TopBar />
 
       <Grid container sx={{ flexGrow: 1 }}>

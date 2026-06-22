@@ -16,6 +16,7 @@ import PsychologyIcon from "@mui/icons-material/Psychology";
 import GroupsIcon from "@mui/icons-material/Groups";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useTranslation } from "react-i18next";
+import { SEOMeta } from "../components/SEOMeta";
 
 export function AboutPage() {
   const theme = useTheme();
@@ -50,7 +51,8 @@ export function AboutPage() {
   ];
 
   return (
-    <Container maxWidth="lg" sx={{ py: 8 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
+      <SEOMeta title={t("about.title")} description={t("about.description")} />
       <motion.div variants={containerVariants} initial="hidden" animate="show">
         <Stack spacing={8}>
           {/* Hero Section */}

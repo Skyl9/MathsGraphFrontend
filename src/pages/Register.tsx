@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import FunctionsIcon from "@mui/icons-material/Functions";
 import i18n from "../i18n";
 import { useTranslation } from "react-i18next";
+import { SEOMeta } from "../components/SEOMeta";
 
 const registerSchema = z.object({
   username: z
@@ -86,6 +87,13 @@ export const Register: React.FC = () => {
         bgcolor: "background.default",
       }}
     >
+      <SEOMeta
+        title={t("auth.register_btn")}
+        description={t(
+          "auth.register_description",
+          "Créez votre compte MathGraph pour contribuer et sauvegarder vos concepts mathématiques favoris.",
+        )}
+      />
       <TopBar />
 
       <Grid container sx={{ flexGrow: 1 }}>

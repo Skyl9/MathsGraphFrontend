@@ -18,6 +18,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import EmojiObjectsIcon from "@mui/icons-material/EmojiObjects";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useTranslation } from "react-i18next";
+import { SEOMeta } from "../components/SEOMeta";
 
 const ContributionPage: React.FC = () => {
   const theme = useTheme();
@@ -49,6 +50,10 @@ const ContributionPage: React.FC = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 8 }}>
+      <SEOMeta
+        title={t("contribution.title")}
+        description={t("contribution.description")}
+      />
       <motion.div variants={containerVariants} initial="hidden" animate="show">
         <Stack spacing={6}>
           {/* Header */}
