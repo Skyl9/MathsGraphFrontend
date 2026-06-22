@@ -65,20 +65,20 @@ const FieldAddSource: React.FC<FieldWithAddProps> = ({ createField, id }) => {
           ></TextField>
 
           <TextField
-            label="Auteur"
+            label={t("source.fields.author")}
             value={newAuteur}
             onChange={(e) => setnewAuteur(e.target.value)}
           ></TextField>
           <TextField
             className="source-input"
             type="number"
-            placeholder="Année"
+            placeholder={t("source.fields.year")}
             value={selectedDate}
             onChange={(e) => setSelectedDate(parseInt(e.target.value))}
           />
 
           <Select
-            label="type "
+            label={t("source.fields.type")}
             value={typeSource} // Associe la valeur actuelle de typeSource
             onChange={(e) => settypeSource(e.target.value)} // Met à jour typeSource
             displayEmpty // Affiche un placeholder lorsqu'aucune option n'est sélectionnée
@@ -102,7 +102,7 @@ const FieldAddSource: React.FC<FieldWithAddProps> = ({ createField, id }) => {
           </Select>
 
           <TextField
-            label="Entrer une URL"
+            label={t("source.fields.url_placeholder")}
             type="url" // Spécifie un champ de type URL
             value={url} // Associe l'état à ce champ
             onChange={handleChangeUrl} // Gestion des modifications

@@ -18,8 +18,10 @@ import { nodeApi } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "../../types/ApiTypes/user";
+import { useTranslation } from "react-i18next";
 
 const UsersPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const theme = useTheme();
@@ -146,7 +148,7 @@ const UsersPage = () => {
         <GridActionsCellItem
           key="delete"
           icon={<DeleteIcon sx={{ color: "error.main" }} />}
-          label="Supprimer"
+          label={t("admin.common.delete")}
           onClick={() => handleDelete(Number(params.id))}
         />,
       ],
@@ -212,7 +214,7 @@ const UsersPage = () => {
           </Typography>
         </Box>
         <TextField
-          placeholder="Rechercher..."
+          placeholder={t("admin.common.search_placeholder")}
           variant="outlined"
           size="small"
           value={searchQuery}

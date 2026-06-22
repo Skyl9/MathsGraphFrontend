@@ -209,7 +209,7 @@ const ContentsPage = () => {
           }}
         >
           <TextField
-            placeholder="Rechercher..."
+            placeholder={t("admin.common.search_placeholder")}
             variant="outlined"
             size="small"
             value={searchQuery}

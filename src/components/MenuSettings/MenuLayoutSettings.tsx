@@ -87,7 +87,7 @@ export default function MenuLayoutSettings({
         <Select
           labelId="edges-mode-label"
           value={useInstancedEdges ? "instanced" : "standard"}
-          label="Moteur des arêtes"
+          label={t("menu.settings.edge_engine")}
           onChange={(e) => setUseInstancedEdges(e.target.value === "instanced")}
           sx={{ borderRadius: "10px" }}
         >

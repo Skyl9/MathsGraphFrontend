@@ -24,7 +24,7 @@ const SourceEdit: React.FC<SourceEditProps> = ({ source, onChange }) => {
           className="source-input"
           label={t("source.fields.title")}
           type="text"
-          placeholder="Titre"
+          placeholder={t("source.fields.title")}
           value={source.titre || ""}
           onChange={(e) => onChange({ ...source, titre: e.target.value })}
           variant="outlined"
@@ -35,7 +35,7 @@ const SourceEdit: React.FC<SourceEditProps> = ({ source, onChange }) => {
           className="source-input"
           label={t("source.fields.author")}
           type="text"
-          placeholder="Auteur"
+          placeholder={t("source.fields.author")}
           value={source.auteur || ""}
           onChange={(e) => onChange({ ...source, auteur: e.target.value })}
         />
@@ -44,14 +44,14 @@ const SourceEdit: React.FC<SourceEditProps> = ({ source, onChange }) => {
           className="source-input"
           label={t("source.fields.year")}
           type="number"
-          placeholder="Année"
+          placeholder={t("source.fields.year")}
           value={source.annee || ""}
           onChange={(e) =>
             onChange({ ...source, annee: parseInt(e.target.value) })
           }
         />
         <Select
-          label="Type de source"
+          label={t("source.fields.type")}
           className="source-select"
           value={source.type}
           onChange={(e) => onChange({ ...source, type: e.target.value })}

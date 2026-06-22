@@ -46,7 +46,7 @@ export const RelationEdit: React.FC<RelationEditProps> = ({
       <TextField
         className="relation-description"
         type="text"
-        placeholder="Description"
+        placeholder={t("relation.fields.description")}
         value={relation.description ?? ""}
         label={t("relation.fields.description")}
         margin="dense"

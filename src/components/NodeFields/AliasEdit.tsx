@@ -1,5 +1,6 @@
-import React from 'react';
-import {FormControl, OutlinedInput} from "@mui/material";
+import React from "react";
+import { FormControl, OutlinedInput } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface AliasEditProps {
   alias: string;
@@ -8,16 +9,19 @@ interface AliasEditProps {
 }
 
 const AliasEdit: React.FC<AliasEditProps> = ({ alias, index, onChange }) => {
+  const { t } = useTranslation();
   return (
-      <div className={"alias-edit-line"}>
+    <div className={"alias-edit-line"}>
       <form noValidate autoComplete="off">
-          <FormControl sx={{ width: '25ch' }}>
-              <OutlinedInput placeholder="Entrer l'alias"
-                             value ={alias}
-                             onChange={(e) => onChange(index, e.target.value)}/>
-          </FormControl>
+        <FormControl sx={{ width: "25ch" }}>
+          <OutlinedInput
+            placeholder={t("alias.placeholder")}
+            value={alias}
+            onChange={(e) => onChange(index, e.target.value)}
+          />
+        </FormControl>
       </form>
-      </div>
+    </div>
   );
 };
 

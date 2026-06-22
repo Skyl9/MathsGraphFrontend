@@ -151,7 +151,7 @@ const NewContentPage = () => {
                   multiline
                   rows={6}
                   fullWidth
-                  placeholder="Décrivez l'énoncé. Le Markdown et le LaTeX (ex: $a^2 + b^2 = c^2$) sont supportés."
+                  placeholder={t("admin.new_content.placeholders.statement")}
                   value={formData.enonce}
                   onChange={(e) =>
                     setFormData({ ...formData, enonce: e.target.value })
