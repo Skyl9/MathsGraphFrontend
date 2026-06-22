@@ -323,6 +323,7 @@ const AppContent = () => {
       className={darkMode ? "dark-mode" : ""}
     >
       <Canvas
+        frameloop={isGraphRoute ? "always" : "demand"}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
       >

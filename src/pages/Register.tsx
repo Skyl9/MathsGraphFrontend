@@ -42,6 +42,7 @@ export const Register: React.FC = () => {
   const navigate = useNavigate();
   const [apiError, setApiError] = useState<string | null>(null);
   const [apiSuccess, setApiSuccess] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslation();
@@ -61,11 +62,20 @@ export const Register: React.FC = () => {
     try {
       await nodeApi.register(data.username, data.email, data.password);
       setApiSuccess(t("auth.register_success"));
-      setTimeout(() => navigate("/login"), 2000);
+      setCountdown(3);
     } catch (err) {
       setApiError((err as Error).message || t("auth.register_error"));
     }
   };
+
+  React.useEffect(() => {
+    if (countdown !== null && countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0) {
+      navigate("/login");
+    }
+  }, [countdown, navigate]);
 
   return (
     <Box
@@ -194,7 +204,26 @@ export const Register: React.FC = () => {
               )}
               {apiSuccess && (
                 <Alert severity="success" sx={{ mb: 3, borderRadius: 2 }}>
-                  {apiSuccess}
+                  <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+                    {apiSuccess}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    display="block"
+                    sx={{ mb: 1.5 }}
+                  >
+                    Redirection automatique vers la connexion dans {countdown}
+                    s...
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    size="small"
+                    onClick={() => navigate("/login")}
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Aller à la connexion maintenant
+                  </Button>
                 </Alert>
               )}
 
@@ -236,7 +265,7 @@ export const Register: React.FC = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || apiSuccess !== null}
                   sx={{
                     mt: 1,
                     py: 1.5,

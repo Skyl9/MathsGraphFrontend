@@ -5,7 +5,6 @@ import AliasEdit from "./NodeFields/AliasEdit";
 import NomEtrangerEdit from "./NodeFields/NomEtrangerEdit";
 import FieldAdd from "./NodeFields/FieldAdd";
 import {
-  Alert,
   FormControl,
   FormControlLabel,
   InputLabel,
@@ -18,6 +17,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  FormHelperText,
 } from "@mui/material";
 import FieldAddAlias from "./NodeFields/FieldAddAlias";
 import FieldAddRelation from "./NodeFields/FieldAddRelation";
@@ -81,7 +81,7 @@ export const EditModal = <T extends object>({
         ) : null,
       select: () =>
         fieldConfig.options ? (
-          <FormControl fullWidth>
+          <FormControl fullWidth error={!!valError}>
             <InputLabel id="labelField">{fieldConfig.label}</InputLabel>
             <Select
               labelId="LabelSelection"
@@ -120,6 +120,7 @@ export const EditModal = <T extends object>({
                 createField={createField}
               />
             )}
+            {valError && <FormHelperText>{valError}</FormHelperText>}
           </FormControl>
         ) : null,
       checkbox: () => (
@@ -213,6 +214,7 @@ export const EditModal = <T extends object>({
         <LatexEditor
           onChange={onChange}
           text={typeof value === "string" ? value : ""}
+          error={valError}
         />
       ),
       tag: () =>
@@ -232,19 +234,15 @@ export const EditModal = <T extends object>({
           onChange={(e) => onChange(e.target.value)}
           label={fieldConfig.label}
           variant="outlined"
+          error={!!valError}
+          helperText={valError}
         />
       ),
       default: () => (
-        <TextField
-          label={`Modifier ${fieldConfig.label} (Markdown & LaTeX)`}
-          multiline
-          fullWidth
-          minRows={8}
-          maxRows={15}
-          value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
-          variant="outlined"
-          placeholder={t("edit_modal.placeholder.content")}
+        <LatexEditor
+          onChange={onChange}
+          text={typeof value === "string" ? value : ""}
+          error={valError}
         />
       ),
     };
@@ -262,19 +260,16 @@ export const EditModal = <T extends object>({
         }
       }}
       fullWidth
-      maxWidth="sm"
+      maxWidth={
+        ["latex", "default"].includes(fieldConfig.type) || !fieldConfig.type
+          ? "md"
+          : "sm"
+      }
       aria-labelledby="modal-title"
     >
       <DialogTitle id="modal-title">Modifier {fieldConfig.label}</DialogTitle>
 
-      <DialogContent dividers>
-        {valError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {valError}
-          </Alert>
-        )}
-        {renderField()}
-      </DialogContent>
+      <DialogContent dividers>{renderField()}</DialogContent>
 
       <DialogActions>
         {fieldConfig.type === "tag" && data && isAllNodeData(data) ? (

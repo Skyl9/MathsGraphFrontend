@@ -102,7 +102,6 @@ const request = async <T>(
   options?: RequestInit,
   _authRequired: boolean = true,
 ): Promise<T> => {
-  void _authRequired; // Désactive proprement le linter no-unused-vars
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
   const headers = new Headers({
@@ -135,9 +134,15 @@ const request = async <T>(
           "Session expirée ou token invalide. Déconnexion automatique.",
         );
         Token.clearToken();
-        // On évite les boucles infinies de redirection
-        if (window.location.pathname !== "/login") {
-          toast.info("Session expirée. Veuillez vous reconnecter.");
+        // On évite les boucles infinies de redirection et on ne redirige que si l'authentification est requise
+        if (
+          _authRequired &&
+          window.location.pathname !== "/login" &&
+          window.location.pathname !== "/register"
+        ) {
+          toast.info(
+            "Veuillez vous connecter pour accéder à cette fonctionnalité.",
+          );
           window.location.href = "/login?session_expired=true";
         }
       } else if (config.method && config.method !== "GET") {

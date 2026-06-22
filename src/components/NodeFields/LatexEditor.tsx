@@ -7,9 +7,10 @@ import { useTranslation } from "react-i18next";
 interface LatexEditorProps {
   text: string;
   onChange: (value: string) => void;
+  error?: string | null;
 }
 
-const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
+const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange, error }) => {
   const { t } = useTranslation();
   return (
     <Box sx={{ mt: 2 }}>
@@ -26,7 +27,8 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange }) => {
             onChange={(e) => onChange(e.target.value)}
             variant="outlined"
             placeholder={t("latex_editor.placeholder")}
-            helperText="Le rendu s'affiche en temps réel."
+            error={!!error}
+            helperText={error || "Le rendu s'affiche en temps réel."}
           />
         </Grid>
 
