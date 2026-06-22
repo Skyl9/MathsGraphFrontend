@@ -1,6 +1,6 @@
 // src/hooks/useEntityData.ts
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
 
@@ -88,47 +88,50 @@ export const useEntityData = <T extends object>(
 
   const [editableFieldsOptions] = useState(config.defaultFields);
 
-  const [mutationError, setMutationError] = useState<string | null>(null);
-
-  const finalError = queryError ? queryError.message : mutationError;
-
-  const setData = (newData: T) => {
-    queryClient.setQueryData([entityType, id], newData);
-  };
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      field,
+      value,
+    }: {
+      field: keyof T;
+      value: unknown;
+    }) => {
+      await config.update(id, field as string, value);
+    },
+    onMutate: async ({ field, value }) => {
+      const queryKey = [entityType, id];
+      // 1. Annuler les requêtes en cours
+      await queryClient.cancelQueries({ queryKey });
+      // 2. Sauvegarder l'état précédent
+      const previousData = queryClient.getQueryData<T>(queryKey);
+      // 3. Mise à jour optimiste du cache
+      if (previousData) {
+        queryClient.setQueryData<T>(queryKey, {
+          ...previousData,
+          [field]: value,
+        });
+      }
+      return { previousData };
+    },
+    onError: (_err, _newTodo, context) => {
+      // 4. Rollback en cas d'erreur
+      if (context?.previousData) {
+        queryClient.setQueryData([entityType, id], context.previousData);
+      }
+    },
+    onSettled: () => {
+      // 5. Re-synchroniser avec le serveur
+      queryClient.invalidateQueries({ queryKey: [entityType, id] });
+      queryClient.invalidateQueries({ queryKey: ["graphData"] });
+    },
+  });
 
   const updateField = async (field: keyof T, value: unknown) => {
-    const queryKey = [entityType, id];
-    // 1. Sauvegarder l'état précédent pour un éventuel rollback
-    const previousData = queryClient.getQueryData<T>(queryKey);
-
-    // 2. Annuler les requêtes en cours pour ne pas écraser notre mise à jour optimiste
-    await queryClient.cancelQueries({ queryKey });
-
-    // 3. Mise à jour optimiste du cache
-    if (previousData) {
-      queryClient.setQueryData<T>(queryKey, {
-        ...previousData,
-        [field]: value,
-      });
-    }
-
     try {
-      setMutationError(null);
-      // 4. Exécuter l'appel API
-      await config.update(id, field as string, value);
+      await updateMutation.mutateAsync({ field, value });
       return true;
-    } catch (err) {
-      // 5. Rollback en cas d'erreur
-      if (previousData) {
-        queryClient.setQueryData<T>(queryKey, previousData);
-      }
-      setMutationError(
-        err instanceof Error ? err.message : "An unknown error occurred.",
-      );
+    } catch {
       return false;
-    } finally {
-      // 6. Re-synchroniser avec le serveur dans tous les cas
-      await queryClient.invalidateQueries({ queryKey });
     }
   };
 
@@ -136,9 +139,8 @@ export const useEntityData = <T extends object>(
   const isObject = (v: unknown): v is Record<string, unknown> =>
     typeof v === "object" && v !== null;
 
-  const createField = async (field: string, value: unknown) => {
-    try {
-      setMutationError(null);
+  const createMutation = useMutation({
+    mutationFn: async ({ field, value }: { field: string; value: unknown }) => {
       switch (field.toLowerCase()) {
         case "categorie":
           if (!isString(value))
@@ -179,15 +181,29 @@ export const useEntityData = <T extends object>(
           break;
         default:
           console.log("Champ de création non géré:", field);
+          throw new Error("Champ de création non géré: " + field);
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: [entityType, id] });
+      queryClient.invalidateQueries({ queryKey: ["graphData"] });
+    },
+  });
 
-      await queryClient.invalidateQueries({ queryKey: [entityType, id] });
-    } catch (err) {
-      setMutationError(
-        err instanceof Error ? err.message : "An unknown error occurred.",
-      );
+  const createField = async (field: string, value: unknown) => {
+    try {
+      await createMutation.mutateAsync({ field, value });
+    } catch {
       return false;
     }
+  };
+
+  const finalError = queryError
+    ? queryError.message
+    : updateMutation.error?.message || createMutation.error?.message || null;
+
+  const setData = (newData: T) => {
+    queryClient.setQueryData([entityType, id], newData);
   };
 
   return {
