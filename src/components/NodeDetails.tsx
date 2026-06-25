@@ -130,6 +130,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
       }}
     >
       <NodeDetailsSidebar
+        layoutId={`concept-card-${concept.id}`}
         initial={{
           opacity: 0,
           x: isMobile ? 0 : "100%",

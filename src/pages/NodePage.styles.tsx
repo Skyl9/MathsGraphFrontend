@@ -1,6 +1,7 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
+import { motion } from "framer-motion";
 
 export const DetailsGrid = styled("div")(({ theme }) => ({
   display: "grid",
@@ -14,7 +15,7 @@ export const DetailsGrid = styled("div")(({ theme }) => ({
   },
 }));
 
-export const MainContentColumn = styled("main")({
+export const MainContentColumn = styled(motion.main)({
   display: "flex",
   flexDirection: "column",
   gap: "24px",

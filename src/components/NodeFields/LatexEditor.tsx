@@ -1,6 +1,15 @@
-import React from "react";
-import { TextField, Box, Typography, Paper, Grid } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import React, { useState } from "react";
+import {
+  TextField,
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  IconButton,
+} from "@mui/material";
+import { alpha, type SxProps, type Theme } from "@mui/material/styles";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import FullscreenExitIcon from "@mui/icons-material/FullscreenExit";
 import MathMarkdown from "../MathMarkdown";
 import { useTranslation } from "react-i18next";
 
@@ -12,17 +21,68 @@ interface LatexEditorProps {
 
 const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange, error }) => {
   const { t } = useTranslation();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => setIsFullscreen(!isFullscreen);
+
+  const containerSx: SxProps<Theme> = isFullscreen
+    ? {
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        zIndex: 9999,
+        backgroundColor: "background.paper",
+        p: 4,
+        overflow: "auto",
+      }
+    : { mt: 2, position: "relative" };
+
   return (
-    <Box sx={{ mt: 2 }}>
-      <Grid container spacing={3}>
-        {/* Zone de Saisie */}
-        <Grid size={{ xs: 12, md: 6 }}>
+    <Box sx={containerSx}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          mb: 1,
+          position: isFullscreen ? "absolute" : "relative",
+          right: isFullscreen ? 16 : 0,
+          top: isFullscreen ? 16 : 0,
+          zIndex: 10000,
+        }}
+      >
+        <IconButton onClick={toggleFullscreen} aria-label="Toggle Fullscreen">
+          {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+        </IconButton>
+      </Box>
+      <Grid
+        container
+        spacing={3}
+        sx={isFullscreen ? { height: "calc(100% - 48px)", mt: 2 } : {}}
+      >
+        <Grid
+          size={{ xs: 12, md: 6 }}
+          sx={isFullscreen ? { height: "100%" } : {}}
+        >
           <TextField
-            label="Éditeur LaTeX / Markdown"
+            label={t("latex_editor.label", "Éditeur LaTeX / Markdown")}
             multiline
             fullWidth
-            minRows={10}
-            maxRows={16}
+            sx={
+              isFullscreen
+                ? {
+                    height: "100%",
+                    "& .MuiInputBase-root": {
+                      height: "100%",
+                      alignItems: "flex-start",
+                      overflow: "auto",
+                    },
+                  }
+                : {}
+            }
+            minRows={isFullscreen ? undefined : 10}
+            maxRows={isFullscreen ? undefined : 16}
             value={text}
             onChange={(e) => onChange(e.target.value)}
             variant="outlined"
@@ -32,10 +92,13 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange, error }) => {
           />
         </Grid>
 
-        {/* Zone de Prévisualisation */}
         <Grid
           size={{ xs: 12, md: 6 }}
-          sx={{ display: "flex", flexDirection: "column" }}
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: isFullscreen ? "100%" : "auto",
+          }}
         >
           <Typography
             variant="subtitle2"
@@ -58,8 +121,8 @@ const LatexEditor: React.FC<LatexEditorProps> = ({ text, onChange, error }) => {
                   : alpha(theme.palette.divider, 0.2),
               borderRadius: 2,
               flexGrow: 1,
-              minHeight: "250px",
-              maxHeight: "400px",
+              minHeight: isFullscreen ? "auto" : "250px",
+              maxHeight: isFullscreen ? "100%" : "400px",
               overflowY: "auto",
             }}
           >

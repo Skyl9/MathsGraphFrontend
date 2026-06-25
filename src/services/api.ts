@@ -97,6 +97,8 @@ interface ApiResponse<T> {
 export type EditableFieldsOptions = Record<keyof AllNodeData, string[]>;
 
 // Define a custom, centralized request function
+const SLOW_REQUEST_THRESHOLD_MS = 3000;
+
 const request = async <T>(
   endpoint: string,
   options?: RequestInit,
@@ -116,9 +118,26 @@ const request = async <T>(
     signal: controller.signal,
   };
 
+  // Toast "chargement long" déclenché après SLOW_REQUEST_THRESHOLD_MS sur les mutations
+  const isMutation = config.method && config.method !== "GET";
+  let slowToastId: ReturnType<typeof toast.loading> | null = null;
+  const slowToastTimer = isMutation
+    ? setTimeout(() => {
+        slowToastId = toast.loading("Chargement long en cours...", {
+          toastId: `slow-request-${endpoint}`,
+        });
+      }, SLOW_REQUEST_THRESHOLD_MS)
+    : null;
+
+  const dismissSlowToast = () => {
+    if (slowToastTimer) clearTimeout(slowToastTimer);
+    if (slowToastId !== null) toast.dismiss(slowToastId);
+  };
+
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, config);
     clearTimeout(timeoutId);
+    dismissSlowToast();
 
     const data: ApiResponse<T> = await response.json();
 
@@ -159,6 +178,7 @@ const request = async <T>(
     return data.data;
   } catch (error) {
     clearTimeout(timeoutId);
+    dismissSlowToast();
     if (error instanceof DOMException && error.name === "AbortError") {
       toast.error("La requête a expiré. Veuillez vérifier votre connexion.");
       throw { status: 408, message: "La requête a expiré." } as ApiError;

@@ -159,7 +159,7 @@ const NodePage = () => {
 
       <DetailsGrid>
         {/* Colonne Principale (Gauche) */}
-        <MainContentColumn>
+        <MainContentColumn layoutId={`concept-card-${id}`}>
           <ConceptHeader>
             <ConceptTitleRow>
               <ConceptTitle variant="h1" component="h1">
