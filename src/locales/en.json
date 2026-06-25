@@ -2,7 +2,11 @@
   "app": {
     "login": "Login",
     "register": "Register",
-    "hello": "Hello"
+    "hello": "Hello",
+    "graph_unavailable": "Graph unavailable or not found.",
+    "redirecting": "Redirecting...",
+    "error_boundary_title": "Oops, something went wrong.",
+    "error_boundary_subtitle": "We apologize for the inconvenience."
   },
   "nav": {
     "home": "Home",
@@ -68,7 +72,9 @@
   },
   "menu": {
     "settings": {
-      "edge_engine": "Edges Engine"
+      "edge_engine": "Edges Engine",
+      "layout_standard": "Standard (Quality)",
+      "layout_instanced": "Instanced (Performance +)"
     },
     "configuration": "Configuration"
   },
@@ -89,7 +95,8 @@
       "type": "Type",
       "mathematician": "Mathematician",
       "from_year": "From (e.g., -300)",
-      "to_year": "To (e.g., 1800)"
+      "to_year": "To (e.g., 1800)",
+      "all": "All"
     },
     "bar": {
       "placeholder": "Modify or launch a search..."
@@ -212,7 +219,8 @@
     "unknown": "Unknown",
     "death_date": "Date of Death",
     "unknown_or_alive": "Unknown (or alive)",
-    "nationality": "Nationality"
+    "nationality": "Nationality",
+    "study_field": "Field of Study"
   },
   "about": {
     "title": "About MathGraph",
@@ -444,23 +452,39 @@
       "type": "Source type",
       "url_placeholder": "Enter a URL"
     },
-    "add_button": "Add a Source"
+    "add_button": "Add a Source",
+    "title": "Sources",
+    "types": {
+      "livre": "Book",
+      "article": "Article",
+      "site_web": "Website",
+      "autre": "Other"
+    }
   },
   "alias": {
     "add_button": "Add an Alias",
-    "placeholder": "Enter alias"
+    "placeholder": "Enter alias",
+    "title": "Aliases"
   },
   "relation": {
     "fields": {
       "target_node": "Theorem 2",
       "description": "Description"
+    },
+    "types": {
+      "implique": "implies",
+      "implique_par": "implied by",
+      "utilise": "uses",
+      "implication": "implication",
+      "reciproque": "Reciprocal"
     }
   },
   "foreign_name": {
     "fields": {
       "name": "Foreign name",
       "language": "Language"
-    }
+    },
+    "title": "Foreign Names"
   },
   "tag": {
     "fields": {
@@ -491,6 +515,10 @@
         "statement": "Describe the statement",
         "proof": "Write the step-by-step proof if applicable."
       }
+    },
+    "dashboard": {
+      "method": "Method",
+      "route": "Route"
     }
   }
 }

@@ -230,9 +230,9 @@ const MathematicienPage = () => {
               {/* Domaine */}
               {editableFields["domaine"] && (
                 <MetadataItem>
-                  <MetadataLabel>Domaine d'étude</MetadataLabel>
+                  <MetadataLabel>{t("entities.study_field")}</MetadataLabel>
                   <MetadataValue>
-                    <span>{data?.domaine || "Non classifié"}</span>
+                    <span>{data?.domaine || t("entities.unknown")}</span>
                     {editModeActive &&
                       editableFields["domaine"].type !== "none" && (
                         <IconButton
@@ -253,7 +253,7 @@ const MathematicienPage = () => {
           {/* Carte Actions */}
           <SidebarCard>
             <SidebarCardTitle variant="h6" component="h2">
-              Actions
+              {t("entities.actions_title")}
             </SidebarCardTitle>
             <SidebarActions>
               <Button
@@ -263,7 +263,7 @@ const MathematicienPage = () => {
                 onClick={() => window.history.back()}
                 sx={{ borderRadius: 2 }}
               >
-                Retour
+                {t("entities.back")}
               </Button>
             </SidebarActions>
           </SidebarCard>

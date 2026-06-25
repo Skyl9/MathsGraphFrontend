@@ -91,6 +91,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { MainLayout } from "./components/MainLayout";
+import { useTranslation } from "react-i18next";
 
 // QueryClient instancié UNE SEULE FOIS en dehors du composant
 // pour éviter de perdre le cache React Query à chaque re-render
@@ -243,6 +244,8 @@ const AppContent = () => {
   // Gestion globale des raccourcis clavier
   useGlobalShortcuts();
 
+  const { t } = useTranslation();
+
   const { loading, error, graphData } = useGraphData();
   const darkMode = useUIStore((s) => s.darkMode);
   const graphTheme = useUIStore((s) => s.graphTheme);
@@ -296,7 +299,7 @@ const AppContent = () => {
         alignItems="center"
         height="100vh"
       >
-        <Alert severity="info">Graphique non disponible ou introuvable.</Alert>
+        <Alert severity="info">{t("app.graph_unavailable")}</Alert>
       </Box>
     );
   }

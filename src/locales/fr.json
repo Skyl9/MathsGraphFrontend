@@ -2,7 +2,11 @@
   "app": {
     "login": "Connexion",
     "register": "Inscription",
-    "hello": "Bonjour"
+    "hello": "Bonjour",
+    "graph_unavailable": "Graphique non disponible ou introuvable.",
+    "redirecting": "Redirection en cours...",
+    "error_boundary_title": "Oups, quelque chose s'est mal passé.",
+    "error_boundary_subtitle": "Nous sommes désolés pour le désagrément."
   },
   "nav": {
     "home": "Accueil",
@@ -68,7 +72,9 @@
   },
   "menu": {
     "settings": {
-      "edge_engine": "Moteur des arêtes"
+      "edge_engine": "Moteur des arêtes",
+      "layout_standard": "Standard (Beauté)",
+      "layout_instanced": "Instancié (Performance +)"
     },
     "configuration": "Configuration"
   },
@@ -89,7 +95,8 @@
       "type": "Type",
       "mathematician": "Mathématicien",
       "from_year": "De (ex: -300)",
-      "to_year": "À (ex: 1800)"
+      "to_year": "À (ex: 1800)",
+      "all": "Tous"
     },
     "bar": {
       "placeholder": "Modifier ou lancer une recherche..."
@@ -212,7 +219,8 @@
     "unknown": "Inconnue",
     "death_date": "Date de décès",
     "unknown_or_alive": "Inconnue (ou en vie)",
-    "nationality": "Nationalité"
+    "nationality": "Nationalité",
+    "study_field": "Domaine d'étude"
   },
   "about": {
     "title": "À Propos de MathGraph",
@@ -444,23 +452,39 @@
       "type": "Type de source",
       "url_placeholder": "Entrer une URL"
     },
-    "add_button": "Ajouter une Source"
+    "add_button": "Ajouter une Source",
+    "title": "Sources",
+    "types": {
+      "livre": "Livre",
+      "article": "Article",
+      "site_web": "Site web",
+      "autre": "Autre"
+    }
   },
   "alias": {
     "add_button": "Ajouter un Alias",
-    "placeholder": "Entrer l'alias"
+    "placeholder": "Entrer l'alias",
+    "title": "Alias"
   },
   "relation": {
     "fields": {
       "target_node": "Théorème 2",
       "description": "Description"
+    },
+    "types": {
+      "implique": "implique",
+      "implique_par": "impliqué par",
+      "utilise": "utilise",
+      "implication": "implication",
+      "reciproque": "Réciproque"
     }
   },
   "foreign_name": {
     "fields": {
       "name": "Nom étranger",
       "language": "Langue"
-    }
+    },
+    "title": "Noms étrangers"
   },
   "tag": {
     "fields": {
@@ -491,6 +515,10 @@
         "statement": "Décrivez l'énoncé",
         "proof": "Écrivez la démonstration étape par étape si applicable."
       }
+    },
+    "dashboard": {
+      "method": "Méthode",
+      "route": "Route"
     }
   }
 }

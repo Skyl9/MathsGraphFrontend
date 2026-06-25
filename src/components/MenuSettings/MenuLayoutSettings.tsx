@@ -91,8 +91,12 @@ export default function MenuLayoutSettings({
           onChange={(e) => setUseInstancedEdges(e.target.value === "instanced")}
           sx={{ borderRadius: "10px" }}
         >
-          <MenuItem value="standard">Standard (Beauté)</MenuItem>
-          <MenuItem value="instanced">Instancié (Performance +)</MenuItem>
+          <MenuItem value="standard">
+            {t("menu.settings.layout_standard")}
+          </MenuItem>
+          <MenuItem value="instanced">
+            {t("menu.settings.layout_instanced")}
+          </MenuItem>
         </Select>
       </FormControl>
 

@@ -2,20 +2,22 @@
 import React, { useState } from "react";
 import { NomEtranger } from "../../types/types";
 import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
+import { useTranslation } from "react-i18next";
 
 export const NomsEtrangersCollapse: React.FC<{ noms: NomEtranger[] }> = ({
   noms,
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
     <FieldWrapper>
-      <FieldTitle>Noms étrangers :</FieldTitle>
+      <FieldTitle>{t("foreign_name.title")} :</FieldTitle>
       <button
         onClick={() => setOpen((prev) => !prev)}
         className="collapse-button"
       >
-        {open ? "Masquer" : "Afficher"}
+        {open ? t("common.close") : t("entities.view")}
       </button>
       {open && (
         <FieldContent>
@@ -25,7 +27,7 @@ export const NomsEtrangersCollapse: React.FC<{ noms: NomEtranger[] }> = ({
                   {n.Nom_étranger} ({n.langue})
                 </div>
               ))
-            : "Aucun nom étranger"}
+            : t("entities.no_description")}
         </FieldContent>
       )}
     </FieldWrapper>

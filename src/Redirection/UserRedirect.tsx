@@ -36,7 +36,7 @@ const UserRedirect = () => {
         }}
       >
         <CircularProgress />
-        <Typography variant="body1">Redirection en cours...</Typography>
+        <Typography variant="body1">PLACEHOLDER_REDIRECT</Typography>
       </Box>
     </Container>
   );

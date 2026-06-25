@@ -1,6 +1,7 @@
 import React from "react";
 import { Source } from "../../types/ApiTypes/source";
 import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
+import { useTranslation } from "react-i18next";
 
 interface SourcesFieldProps {
   sources: Source[];
@@ -9,9 +10,10 @@ interface SourcesFieldProps {
 }
 
 const SourcesField: React.FC<SourcesFieldProps> = ({ sources }) => {
+  const { t } = useTranslation();
   return (
     <FieldWrapper>
-      <FieldTitle>Sources :</FieldTitle>
+      <FieldTitle>{t("source.title")} :</FieldTitle>
       <FieldContent>
         {sources.length > 0
           ? sources.map((source, index) => (
@@ -19,7 +21,7 @@ const SourcesField: React.FC<SourcesFieldProps> = ({ sources }) => {
                 {source.titre}, {source.auteur}, {source.annee}, {source.type}
               </div>
             ))
-          : "Aucune source"}
+          : t("entities.no_description")}
       </FieldContent>
     </FieldWrapper>
   );
