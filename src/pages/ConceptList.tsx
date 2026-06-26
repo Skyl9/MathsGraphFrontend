@@ -1,29 +1,16 @@
-import {
-  Container,
-  Typography,
-  Stack,
-  Box,
-  Alert,
-  Card,
-  Button,
-  useTheme,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
-import { ReportIssueButton } from "../components/Issue";
 import { motion } from "framer-motion";
 import { getStaggerContainer, fadeInUp } from "../utils/animations";
 import FunctionsIcon from "@mui/icons-material/Functions";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { FixedSizeList as List } from "react-window";
 import { useTranslation } from "react-i18next";
-import { ListSkeleton } from "../components/Skeletons";
-import { SEOMeta } from "../components/SEOMeta";
 import { Link } from "react-router-dom";
+import { EntityListLayout } from "../components/EntityList/EntityListLayout";
+import { EntityGlassCard } from "../components/EntityList/EntityGlassCard";
 
 const ConceptList = () => {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
   const {
     data: concepts = [],
     isLoading: loading,
@@ -38,180 +25,56 @@ const ConceptList = () => {
   const itemVariants = fadeInUp;
 
   return (
-    <>
-      <SEOMeta
-        title={t("entities.concepts_title") || "Concepts"}
-        description="Explorez tous les concepts mathématiques, théorèmes et définitions de MathGraph."
-      />
-      <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
-        <Stack spacing={4}>
-          <Typography
-            variant="h3"
-            component="h1"
-            textAlign="center"
-            sx={{ fontWeight: 800, mb: 2 }}
+    <EntityListLayout
+      title={t("entities.concepts_title") || "Concepts"}
+      seoTitle={t("entities.concepts_title") || "Concepts"}
+      seoDescription="Explorez tous les concepts mathématiques, théorèmes et définitions de MathGraph."
+      loading={loading}
+      error={error as Error}
+      errorMessage={t("entities.error_occurred")}
+      isEmpty={concepts.length === 0}
+      emptyMessage={t("entities.no_concept_found")}
+      seoFallback={
+        <ul>
+          {concepts.map((c) => (
+            <li key={`seo-${c.id}`}>
+              <Link to={`/concept/${c.id}`}>{c.nom}</Link>
+            </li>
+          ))}
+        </ul>
+      }
+    >
+      <motion.div variants={containerVariants} initial="hidden" animate="show">
+        <Box sx={{ height: "65vh", width: "100%", bgcolor: "transparent" }}>
+          <List
+            height={window.innerHeight * 0.65}
+            itemCount={concepts.length}
+            itemSize={90}
+            width={"100%"}
           >
-            {t("entities.concepts_title")}
-          </Typography>
-
-          {loading && <ListSkeleton count={6} />}
-
-          {error && (
-            <Alert severity="error">
-              {error instanceof Error
-                ? error.message
-                : t("entities.error_occurred")}
-            </Alert>
-          )}
-
-          {!loading && !error && (
-            <>
-              {concepts.length === 0 ? (
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  textAlign="center"
-                >
-                  {t("entities.no_concept_found")}
-                </Typography>
-              ) : (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                >
-                  <Box
-                    sx={{
-                      height: "65vh",
-                      width: "100%",
-                      bgcolor: "transparent",
-                    }}
+            {({ index, style }) => {
+              const concept = concepts[index];
+              return (
+                <div style={{ ...style, paddingBottom: "16px" }}>
+                  <motion.div
+                    variants={itemVariants}
+                    style={{ height: "100%" }}
                   >
-                    <List
-                      height={window.innerHeight * 0.65}
-                      itemCount={concepts.length}
-                      itemSize={90}
-                      width={"100%"}
-                    >
-                      {({ index, style }) => {
-                        const concept = concepts[index];
-                        return (
-                          <div style={{ ...style, paddingBottom: "16px" }}>
-                            <motion.div
-                              variants={itemVariants}
-                              style={{ height: "100%" }}
-                            >
-                              <Card
-                                className="glass-card"
-                                elevation={0}
-                                sx={{
-                                  height: "100%",
-                                  display: "flex",
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  background: isDark
-                                    ? "rgba(15, 20, 40, 0.7)"
-                                    : "rgba(255, 255, 255, 0.7)",
-                                  backdropFilter: "blur(8px)",
-                                  border: isDark
-                                    ? "1px solid rgba(255, 255, 255, 0.05)"
-                                    : "1px solid rgba(0, 0, 0, 0.06)",
-                                  borderRadius: 4,
-                                  p: 2,
-                                  transition: "all 0.3s ease",
-                                  "&:hover": {
-                                    transform: "translateY(-2px)",
-                                    boxShadow:
-                                      "0 10px 20px rgba(14, 165, 233, 0.08)",
-                                    borderColor: "primary.main",
-                                  },
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 2,
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: 40,
-                                      height: 40,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      borderRadius: 2,
-                                      background: "rgba(14, 165, 233, 0.1)",
-                                      color: "primary.main",
-                                    }}
-                                  >
-                                    <FunctionsIcon />
-                                  </Box>
-                                  <Typography
-                                    variant="h6"
-                                    component="h2"
-                                    sx={{
-                                      fontWeight: 700,
-                                      lineBreak: "anywhere",
-                                    }}
-                                  >
-                                    {concept.nom}
-                                  </Typography>
-                                </Box>
-                                <Button
-                                  variant="outlined"
-                                  color="primary"
-                                  component={Link}
-                                  to={`/concept/${concept.id}`}
-                                  endIcon={
-                                    <ArrowForwardIcon fontSize="small" />
-                                  }
-                                  sx={{
-                                    borderRadius: 2,
-                                    textTransform: "none",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {t("entities.view")}
-                                </Button>
-                              </Card>
-                            </motion.div>
-                          </div>
-                        );
-                      }}
-                    </List>
-                  </Box>
-                </motion.div>
-              )}
-
-              {/* Fallback statique caché pour l'indexation SEO */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  width: 1,
-                  height: 1,
-                  overflow: "hidden",
-                  clip: "rect(0 0 0 0)",
-                  clipPath: "inset(50%)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <ul>
-                  {concepts.map((c) => (
-                    <li key={`seo-${c.id}`}>
-                      <Link to={`/concept/${c.id}`}>{c.nom}</Link>
-                    </li>
-                  ))}
-                </ul>
-              </Box>
-            </>
-          )}
-        </Stack>
-        <ReportIssueButton />
-      </Container>
-    </>
+                    <EntityGlassCard
+                      title={concept.nom}
+                      icon={<FunctionsIcon />}
+                      actionTo={`/concept/${concept.id}`}
+                      actionText={t("entities.view")}
+                      isSecondary={false}
+                    />
+                  </motion.div>
+                </div>
+              );
+            }}
+          </List>
+        </Box>
+      </motion.div>
+    </EntityListLayout>
   );
 };
 

@@ -1,28 +1,15 @@
-import {
-  Container,
-  Typography,
-  Stack,
-  Box,
-  Alert,
-  Card,
-  Button,
-  useTheme,
-} from "@mui/material";
+import { Box } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
-import { ReportIssueButton } from "../components/Issue";
 import { motion } from "framer-motion";
 import { getStaggerContainer, fadeInUp } from "../utils/animations";
 import LayersIcon from "@mui/icons-material/Layers";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { FixedSizeList as List } from "react-window";
 import { useTranslation } from "react-i18next";
-import { ListSkeleton } from "../components/Skeletons";
-import { SEOMeta } from "../components/SEOMeta";
+import { EntityListLayout } from "../components/EntityList/EntityListLayout";
+import { EntityGlassCard } from "../components/EntityList/EntityGlassCard";
 
 const TypeList = () => {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
   const {
     data: types = [],
     isLoading: loading,
@@ -37,180 +24,56 @@ const TypeList = () => {
   const itemVariants = fadeInUp;
 
   return (
-    <>
-      <SEOMeta
-        title={t("entities.types_title") || "Types"}
-        description="Découvrez les différents types de concepts mathématiques présents dans MathGraph."
-      />
-      <Container component="main" maxWidth="lg" sx={{ py: 6 }}>
-        <Stack spacing={4}>
-          <Typography
-            variant="h3"
-            component="h1"
-            textAlign="center"
-            sx={{ fontWeight: 800, mb: 2 }}
+    <EntityListLayout
+      title={t("entities.types_title") || "Types"}
+      seoTitle={t("entities.types_title") || "Types"}
+      seoDescription="Découvrez les différents types de concepts mathématiques présents dans MathGraph."
+      loading={loading}
+      error={error as Error}
+      errorMessage={t("entities.error_occurred")}
+      isEmpty={types.length === 0}
+      emptyMessage={t("entities.no_type_found")}
+      seoFallback={
+        <ul>
+          {types.map((tItem) => (
+            <li key={`seo-${tItem.id}`}>
+              <a href={`/type/${tItem.id}`}>{tItem.nom}</a>
+            </li>
+          ))}
+        </ul>
+      }
+    >
+      <motion.div variants={containerVariants} initial="hidden" animate="show">
+        <Box sx={{ height: "65vh", width: "100%", bgcolor: "transparent" }}>
+          <List
+            height={window.innerHeight * 0.65}
+            itemCount={types.length}
+            itemSize={90}
+            width={"100%"}
           >
-            {t("entities.types_title")}
-          </Typography>
-
-          {loading && <ListSkeleton count={6} />}
-
-          {error && (
-            <Alert severity="error">
-              {error instanceof Error
-                ? error.message
-                : t("entities.error_occurred")}
-            </Alert>
-          )}
-
-          {!loading && !error && (
-            <>
-              {types.length === 0 ? (
-                <Typography
-                  variant="body1"
-                  color="textSecondary"
-                  textAlign="center"
-                >
-                  {t("entities.no_type_found")}
-                </Typography>
-              ) : (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                >
-                  <Box
-                    sx={{
-                      height: "65vh",
-                      width: "100%",
-                      bgcolor: "transparent",
-                    }}
+            {({ index, style }) => {
+              const typeItem = types[index];
+              return (
+                <div style={{ ...style, paddingBottom: "16px" }}>
+                  <motion.div
+                    variants={itemVariants}
+                    style={{ height: "100%" }}
                   >
-                    <List
-                      height={window.innerHeight * 0.65}
-                      itemCount={types.length}
-                      itemSize={90}
-                      width={"100%"}
-                    >
-                      {({ index, style }) => {
-                        const typeItem = types[index];
-                        return (
-                          <div style={{ ...style, paddingBottom: "16px" }}>
-                            <motion.div
-                              variants={itemVariants}
-                              style={{ height: "100%" }}
-                            >
-                              <Card
-                                className="glass-card"
-                                elevation={0}
-                                sx={{
-                                  height: "100%",
-                                  display: "flex",
-                                  flexDirection: "row",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  background: isDark
-                                    ? "rgba(15, 20, 40, 0.7)"
-                                    : "rgba(255, 255, 255, 0.7)",
-                                  backdropFilter: "blur(8px)",
-                                  border: isDark
-                                    ? "1px solid rgba(255, 255, 255, 0.05)"
-                                    : "1px solid rgba(0, 0, 0, 0.06)",
-                                  borderRadius: 4,
-                                  p: 2,
-                                  transition: "all 0.3s ease",
-                                  "&:hover": {
-                                    transform: "translateY(-2px)",
-                                    boxShadow:
-                                      "0 10px 20px rgba(124, 58, 237, 0.08)",
-                                    borderColor: "secondary.main",
-                                  },
-                                }}
-                              >
-                                <Box
-                                  sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: 2,
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      width: 40,
-                                      height: 40,
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      borderRadius: 2,
-                                      background: "rgba(124, 58, 237, 0.1)",
-                                      color: "secondary.main",
-                                    }}
-                                  >
-                                    <LayersIcon />
-                                  </Box>
-                                  <Typography
-                                    variant="h6"
-                                    component="h2"
-                                    sx={{
-                                      fontWeight: 700,
-                                      lineBreak: "anywhere",
-                                      textTransform: "capitalize",
-                                    }}
-                                  >
-                                    {typeItem.nom}
-                                  </Typography>
-                                </Box>
-                                <Button
-                                  variant="outlined"
-                                  color="secondary"
-                                  href={`/type/${typeItem.id}`}
-                                  endIcon={
-                                    <ArrowForwardIcon fontSize="small" />
-                                  }
-                                  sx={{
-                                    borderRadius: 2,
-                                    textTransform: "none",
-                                    fontWeight: 600,
-                                  }}
-                                >
-                                  {t("entities.view")}
-                                </Button>
-                              </Card>
-                            </motion.div>
-                          </div>
-                        );
-                      }}
-                    </List>
-                  </Box>
-                </motion.div>
-              )}
-
-              {/* Fallback statique caché pour l'indexation SEO */}
-              <Box
-                sx={{
-                  position: "absolute",
-                  width: 1,
-                  height: 1,
-                  overflow: "hidden",
-                  clip: "rect(0 0 0 0)",
-                  clipPath: "inset(50%)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                <ul>
-                  {types.map((tItem) => (
-                    <li key={`seo-${tItem.id}`}>
-                      <a href={`/type/${tItem.id}`}>{tItem.nom}</a>
-                    </li>
-                  ))}
-                </ul>
-              </Box>
-            </>
-          )}
-        </Stack>
-        <ReportIssueButton />
-      </Container>
-    </>
+                    <EntityGlassCard
+                      title={typeItem.nom}
+                      icon={<LayersIcon />}
+                      actionTo={`/type/${typeItem.id}`}
+                      actionText={t("entities.view")}
+                      isSecondary={true}
+                    />
+                  </motion.div>
+                </div>
+              );
+            }}
+          </List>
+        </Box>
+      </motion.div>
+    </EntityListLayout>
   );
 };
 
