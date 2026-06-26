@@ -16,6 +16,18 @@ export default defineConfig({
             deps: {
                 inline: [/@exodus\/bytes/, /html-encoding-sniffer/]
             }
+        },
+        coverage: {
+            provider: 'v8',
+            reporter: ['text', 'json', 'html'],
+            include: ['src/**/*.{ts,tsx}'],
+            exclude: ['src/main.tsx', 'src/index.tsx', 'src/vite-env.d.ts', 'src/**/*.d.ts', 'src/**/__tests__/**', 'src/setupTests.ts', 'src/utils/test-utils.tsx'],
+            thresholds: {
+                lines: 25,
+                functions: 25,
+                branches: 15,
+                statements: 25
+            }
         }
     },
     build: {

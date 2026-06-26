@@ -46,8 +46,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Run Tests (Vitest)
-        run: npm run test
+      - name: Run Tests with Coverage (Vitest)
+        run: npm run test -- --coverage
 
   build:
     runs-on: ubuntu-latest

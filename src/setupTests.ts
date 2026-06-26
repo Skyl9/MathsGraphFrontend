@@ -19,9 +19,17 @@ Object.defineProperty(window, "matchMedia", {
 vi.mock("react-i18next", () => ({
   useTranslation: () => ({
     t: (key: string) => key,
-    i18n: { changeLanguage: vi.fn() },
+    i18n: { changeLanguage: vi.fn(), language: "fr" },
   }),
   initReactI18next: { type: "3rdParty", init: vi.fn() },
+}));
+
+vi.mock("./i18n", () => ({
+  default: {
+    t: (key: string) => key,
+    language: "fr",
+    changeLanguage: vi.fn(),
+  },
 }));
 
 class ResizeObserver {
