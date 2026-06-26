@@ -97,6 +97,8 @@ const CategoryPage = () => {
       <SEOMeta
         title={data?.nom || t("search.filters.category")}
         description={`Découvrez la catégorie ${data?.nom} sur MathGraph`}
+        canonicalUrl={`${window.location.origin}/category/${id}`}
+        imageUrl={`${import.meta.env.VITE_BACKEND_LINK || "http://localhost:8000"}/seo/share-image/category/${id}`}
       />
       <Container
         maxWidth="lg"

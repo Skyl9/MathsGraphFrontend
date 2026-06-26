@@ -77,6 +77,8 @@ const TypePage = () => {
       <SEOMeta
         title={data?.nom || t("search.filters.type")}
         description={`Découvrez le type ${data?.nom} sur MathGraph`}
+        canonicalUrl={`${window.location.origin}/type/${id}`}
+        imageUrl={`${import.meta.env.VITE_BACKEND_LINK || "http://localhost:8000"}/seo/share-image/type/${id}`}
       />
       <DetailsGrid>
         {/* Colonne Principale (Gauche) */}

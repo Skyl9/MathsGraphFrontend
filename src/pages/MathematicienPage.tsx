@@ -72,6 +72,8 @@ const MathematicienPage = () => {
       <SEOMeta
         title={data?.nom || t("search.filters.mathematician")}
         description={`Découvrez le mathématicien ${data?.nom} sur MathGraph`}
+        canonicalUrl={`${window.location.origin}/mathematicien/${id}`}
+        imageUrl={`${import.meta.env.VITE_BACKEND_LINK || "http://localhost:8000"}/seo/share-image/mathematicien/${id}`}
       />
       <DetailsGrid>
         {/* Colonne Principale (Gauche) */}

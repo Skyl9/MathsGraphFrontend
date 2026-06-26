@@ -143,6 +143,8 @@ const NodePage = () => {
             ? data.enonce.replace(/\$/g, "").substring(0, 160)
             : `Découvrez le concept mathématique de ${data?.nom || "ce graphe"} sur MathGraph.`
         }
+        canonicalUrl={`${window.location.origin}/concept/${id}`}
+        imageUrl={`${import.meta.env.VITE_BACKEND_LINK || "http://localhost:8000"}/seo/share-image/concept/${id}`}
       />
 
       <HistoryModal
