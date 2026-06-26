@@ -5,3 +5,5 @@ pre-commit:
       run: npx lint-staged
     typecheck:
       run: npx tsc --noEmit
+    test:
+      run: npm run test

@@ -387,6 +387,8 @@ export default function InstancedEdges({
     baseArrowMatrices,
     defaultColorsArray,
     dimColorsArray,
+    lineMatrices,
+    validEdges,
   ]);
 
   // Run update initially and when base structures change

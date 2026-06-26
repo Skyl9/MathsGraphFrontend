@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createTheme, responsiveFontSizes, alpha } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {

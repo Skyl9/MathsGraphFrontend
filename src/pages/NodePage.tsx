@@ -226,28 +226,27 @@ const NodePage = () => {
                   {t("concept.history", "Historique")}
                 </MenuItem>
 
-                {isUserConnected && (
-                  <>
-                    <Divider />
-                    <MenuItem
-                      onClick={() => {
-                        setEditModeActive(!editModeActive);
-                        handleMenuClose();
-                      }}
-                    >
-                      <ListItemIcon>
-                        {editModeActive ? (
-                          <EditOffIcon fontSize="small" />
-                        ) : (
-                          <EditIcon fontSize="small" />
-                        )}
-                      </ListItemIcon>
-                      {editModeActive
-                        ? t("concept.disable_edit_mode", "Quitter l'édition")
-                        : t("concept.enable_edit_mode", "Mode Édition")}
-                    </MenuItem>
-                  </>
-                )}
+                {isUserConnected && [
+                  <Divider key="divider" />,
+                  <MenuItem
+                    key="edit-mode"
+                    onClick={() => {
+                      setEditModeActive(!editModeActive);
+                      handleMenuClose();
+                    }}
+                  >
+                    <ListItemIcon>
+                      {editModeActive ? (
+                        <EditOffIcon fontSize="small" />
+                      ) : (
+                        <EditIcon fontSize="small" />
+                      )}
+                    </ListItemIcon>
+                    {editModeActive
+                      ? t("concept.disable_edit_mode", "Quitter l'édition")
+                      : t("concept.enable_edit_mode", "Mode Édition")}
+                  </MenuItem>,
+                ]}
               </Menu>
             </ConceptTitleRow>
           </ConceptHeader>

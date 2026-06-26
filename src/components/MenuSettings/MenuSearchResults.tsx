@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { alpha } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";

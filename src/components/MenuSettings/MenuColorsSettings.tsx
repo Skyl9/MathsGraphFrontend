@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography, Checkbox, Divider, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";

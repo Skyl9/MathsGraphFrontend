@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { nodeApi } from "../services/api";
 import Token from "../services/token";
@@ -24,7 +25,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const userPayload = await nodeApi.getMe();
         Token.saveUserInfo(userPayload);
         setIsAuthenticated(true);
-      } catch (e) {
+      } catch {
         setIsAuthenticated(false);
         Token.clearToken();
       } finally {

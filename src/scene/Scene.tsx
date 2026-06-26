@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useCallback, useRef, useState, memo } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import {

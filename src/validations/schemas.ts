@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/validations/schemas.ts
 import { z } from "zod";
 

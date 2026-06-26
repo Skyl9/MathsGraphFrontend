@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent } from "../utils/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import NodeDetails from "./NodeDetails";
 import { useGraphData } from "../hooks/useGraphData";
@@ -28,7 +28,18 @@ describe("NodeDetails Component", () => {
 
     (useUIStore as unknown as ReturnType<typeof vi.fn>).mockImplementation(
       (selector: (state: Record<string, unknown>) => unknown) => {
-        const state = { darkMode: false, currentView: "grille" };
+        const state = {
+          darkMode: false,
+          currentView: "grille",
+          colorAxiome: "#52C575",
+          colorLemme: "#AE66CC",
+          colorTheoreme: "#F99D1C",
+          colorReciproque: "#FF5E5E",
+          colorDefinition: "#3B82F6",
+          colorCorollaire: "#F43F5E",
+          colorProposition: "#EAB308",
+          colorPropriete: "#14B8A6",
+        };
         return selector(state);
       },
     );

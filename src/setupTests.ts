@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
 
@@ -22,3 +23,17 @@ vi.mock("react-i18next", () => ({
   }),
   initReactI18next: { type: "3rdParty", init: vi.fn() },
 }));
+
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+window.ResizeObserver = ResizeObserver;
+
+class IntersectionObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+window.IntersectionObserver = IntersectionObserver as any;

@@ -40,7 +40,7 @@ export const useEntityEdit = <T extends object>(
 
   const [newContent, setNewContent] = useState<unknown>(undefined);
 
-  const [isSaving, _] = useState(false);
+  const [isSaving] = useState(false);
 
   const editableFields = useMemo(() => {
     const generateFields =

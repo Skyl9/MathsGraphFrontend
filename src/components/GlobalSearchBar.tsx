@@ -135,6 +135,7 @@ export const GlobalSearchBar: React.FC = () => {
       onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
       onChange={handleSelect}
       renderOption={(props, option) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { key: _key, ...restProps } = props;
         return (
           <li

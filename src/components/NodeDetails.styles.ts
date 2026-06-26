@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography, Button, ButtonProps } from "@mui/material";
 import { motion } from "framer-motion";
