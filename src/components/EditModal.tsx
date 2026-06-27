@@ -37,7 +37,6 @@ export const EditModal = <T extends object>({
   onChange,
   fieldConfig,
   data,
-  setData,
   createField,
   refetchData,
   isSaving,
@@ -52,7 +51,7 @@ export const EditModal = <T extends object>({
     handleAliasChange,
     handleNomEtrangerChange,
     handleSaveClick,
-  } = useEditModalLogic({ data, setData, field, value, onSave });
+  } = useEditModalLogic({ data, field, value, onChange, onSave });
 
   const renderField = () => {
     const renderers: Record<string, () => React.ReactNode> = {

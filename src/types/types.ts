@@ -12,7 +12,7 @@ export interface ModalProps<T> {
   onChange: (value: unknown) => void;
   fieldConfig: EditableField;
   data: T | null;
-  setData: (data: T) => void;
+
   createField: (field: string, value: unknown) => Promise<boolean | void>;
   refetchData: () => Promise<unknown>;
   isSaving: boolean;

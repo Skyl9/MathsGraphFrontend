@@ -24,7 +24,6 @@ export const useEntityEdit = <T extends object>(
 ) => {
   const {
     data,
-    setData,
     loading,
     error,
     editableFieldsOptions,
@@ -106,7 +105,6 @@ export const useEntityEdit = <T extends object>(
     setNewContent: handleChange,
     cancelChanges,
     refetchData,
-    setData,
     editableFields,
     updateField,
     createField,

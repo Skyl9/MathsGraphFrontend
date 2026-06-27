@@ -22,6 +22,7 @@ import { NodeData, EdgeData } from "../types/ApiTypes/graph";
 import { RecentChange } from "../types/ApiTypes/concept";
 import { RecentComment } from "../types/ApiTypes/comments";
 import { toast } from "react-toastify";
+import { captureException } from "./logger";
 
 declare global {
   interface Window {
@@ -187,6 +188,19 @@ const request = async <T>(
     if (!isApiError(error) && config.method && config.method !== "GET") {
       toast.error("Erreur réseau ou serveur injoignable.");
     }
+
+    if (isApiError(error)) {
+      captureException(
+        new Error(`API Error: ${error.status} ${error.message}`),
+        { endpoint, method: config.method, error },
+      );
+    } else {
+      captureException(
+        error instanceof Error ? error : new Error(String(error)),
+        { endpoint, method: config.method },
+      );
+    }
+
     throw error;
   }
 };

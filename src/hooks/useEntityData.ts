@@ -202,13 +202,8 @@ export const useEntityData = <T extends object>(
     ? queryError.message
     : updateMutation.error?.message || createMutation.error?.message || null;
 
-  const setData = (newData: T) => {
-    queryClient.setQueryData([entityType, id], newData);
-  };
-
   return {
     data: data || null,
-    setData,
     loading,
     error: finalError,
     editableFieldsOptions,

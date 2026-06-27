@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { nodeApi } from "../services/api";
-import { AllNodeData, ModalProps, NomEtranger } from "../types/types";
+import { ModalProps, NomEtranger } from "../types/types";
 import { Relations } from "../types/ApiTypes/Relations";
 import { Source } from "../types/ApiTypes/source";
 import { Category } from "../types/ApiTypes/category";
@@ -13,11 +13,11 @@ import {
 
 export const useEditModalLogic = <T extends object>({
   data,
-  setData,
   field,
   value,
+  onChange,
   onSave,
-}: Pick<ModalProps<T>, "data" | "setData" | "field" | "value" | "onSave">) => {
+}: Pick<ModalProps<T>, "data" | "field" | "value" | "onChange" | "onSave">) => {
   const [valError, setValError] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
 
@@ -33,52 +33,50 @@ export const useEditModalLogic = <T extends object>({
 
   // Pour les relations
   const handleRelationChange = (index: number, updatedRelation: Relations) => {
-    if (data && isAllNodeData(data)) {
-      const updated = [...data.relations];
-      updated[index] = updatedRelation;
-      (setData as unknown as (data: AllNodeData) => void)({
-        ...data,
-        relations: updated,
-      });
-    }
+    const currentList = Array.isArray(value)
+      ? value
+      : data && isAllNodeData(data)
+        ? data.relations
+        : [];
+    const updated = [...currentList];
+    updated[index] = updatedRelation;
+    onChange(updated);
   };
 
   // Pour les sources
   const handleSourceChange = (index: number, updatedSource: Source) => {
-    if (data && isAllNodeData(data)) {
-      const updated = [...data.sources];
-      updated[index] = updatedSource;
-      (setData as unknown as (data: AllNodeData) => void)({
-        ...data,
-        sources: updated,
-      });
-    }
+    const currentList = Array.isArray(value)
+      ? value
+      : data && isAllNodeData(data)
+        ? data.sources
+        : [];
+    const updated = [...currentList];
+    updated[index] = updatedSource;
+    onChange(updated);
   };
 
   // Pour les alias
   const handleAliasChange = (index: number, updatedValue: string) => {
-    if (data && isAllNodeData(data)) {
-      const updated = [...data.aliases];
-      updated[index] = updatedValue;
-      (setData as unknown as (data: AllNodeData) => void)({
-        ...data,
-        aliases: updated,
-      });
-    }
+    const currentList = Array.isArray(value)
+      ? value
+      : data && isAllNodeData(data)
+        ? data.aliases
+        : [];
+    const updated = [...currentList];
+    updated[index] = updatedValue;
+    onChange(updated);
   };
 
   // Pour les noms étrangers
   const handleNomEtrangerChange = (index: number, updatedNom: NomEtranger) => {
-    if (data && isAllNodeData(data)) {
-      if (data.noms_etrangers) {
-        const updated = [...data.noms_etrangers];
-        updated[index] = updatedNom;
-        (setData as unknown as (data: AllNodeData) => void)({
-          ...data,
-          noms_etrangers: updated,
-        });
-      }
-    }
+    const currentList = Array.isArray(value)
+      ? value
+      : data && isAllNodeData(data) && data.noms_etrangers
+        ? data.noms_etrangers
+        : [];
+    const updated = [...currentList];
+    updated[index] = updatedNom;
+    onChange(updated);
   };
 
   const handleSaveClick = () => {

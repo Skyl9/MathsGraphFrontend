@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams } from "react-router-dom";
 import { useEntityEdit } from "../hooks/useEntityEdit.ts";
@@ -45,7 +45,6 @@ const MathematicienPage = () => {
     setNewContent,
     handleEdit,
     cancelChanges,
-    setData,
     editableFields,
     createField,
     saveChanges,
@@ -55,12 +54,6 @@ const MathematicienPage = () => {
   const [isUserConnected] = useState<boolean>(() => Token.isUserConnected());
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (data) {
-      setData(data);
-    }
-  }, [data, setData]);
 
   if (loading) return <NodePageSkeleton />;
   if (!loading && (error || !data || !data.id)) {
@@ -284,7 +277,6 @@ const MathematicienPage = () => {
           onChange={setNewContent}
           fieldConfig={editableFields[currentEditField]}
           data={data}
-          setData={setData}
           createField={createField}
           refetchData={refetchData}
           isSaving={false}

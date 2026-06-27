@@ -74,7 +74,6 @@ const NodePage = () => {
     handleEdit,
     saveChanges,
     cancelChanges,
-    setData,
     createField,
     refetchData,
   } = useEntityEdit<AllNodeData>("concept", id || "");
@@ -88,13 +87,6 @@ const NodePage = () => {
     }
     return connected;
   });
-
-  useEffect(() => {
-    if (data) {
-      logger.debug("Mise à jour state local avec data", data);
-      setData(data);
-    }
-  }, [data, setData]);
 
   useEffect(() => {
     if (id) {
@@ -334,7 +326,6 @@ const NodePage = () => {
           onChange={setNewContent}
           fieldConfig={editableFields[currentEditField]}
           data={data}
-          setData={setData}
           createField={createField}
           refetchData={refetchData}
           isSaving={false}

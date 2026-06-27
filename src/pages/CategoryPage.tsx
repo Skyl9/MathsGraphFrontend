@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NodePageSkeleton } from "../components/Skeletons";
 import { Navigate, useParams, Link } from "react-router-dom";
 import { useEntityEdit } from "../hooks/useEntityEdit.ts";
@@ -53,7 +53,6 @@ const CategoryPage = () => {
     setNewContent,
     handleEdit,
     cancelChanges,
-    setData,
     editableFields,
     createField,
     saveChanges,
@@ -68,12 +67,6 @@ const CategoryPage = () => {
   const [editModeActive, setEditModeActive] = useState<boolean>(false);
 
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (data) {
-      setData(data);
-    }
-  }, [data, setData]);
 
   if (data?.parent_id !== prevParentId) {
     setPrevParentId(data?.parent_id);
@@ -265,7 +258,6 @@ const CategoryPage = () => {
               onChange={setNewContent}
               fieldConfig={editableFields[currentEditField]}
               data={data}
-              setData={setData}
               createField={createField}
               refetchData={refetchData}
               isSaving={false}
