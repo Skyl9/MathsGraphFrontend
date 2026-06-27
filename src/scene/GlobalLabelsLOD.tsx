@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Billboard, Text } from "@react-three/drei";
@@ -17,13 +16,21 @@ const getNodePos = (node: NodeData, view: string) => {
   );
 };
 
+interface GlobalLabelsLODProps {
+  nodes: NodeData[];
+  colors: string[];
+  currentView: string;
+  adjacencyList: Map<number, number[]>;
+  getNodeScale: (id: number) => number;
+}
+
 export const GlobalLabelsLOD = ({
   nodes,
   colors,
   currentView,
   adjacencyList,
   getNodeScale,
-}: any) => {
+}: GlobalLabelsLODProps) => {
   const [visibleNodes, setVisibleNodes] = useState<NodeData[]>([]);
   const theme = useTheme();
 

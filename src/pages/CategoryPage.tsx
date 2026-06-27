@@ -72,7 +72,7 @@ const CategoryPage = () => {
     setPrevParentId(data?.parent_id);
     if (data?.parent_id) {
       nodeApi
-        .getOneCategory(data.parent_id as string)
+        .getOneCategory(String(data.parent_id))
         .then(setParentCategory)
         .catch(() => setParentCategory(null));
     } else {

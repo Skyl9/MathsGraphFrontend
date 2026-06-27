@@ -240,7 +240,7 @@ export const nodeApi = {
     request<History[]>(`/concepts/history/${conceptId}`, undefined, false),
   getEditableFieldsOptions: () =>
     request<EditableFieldsOptions>(
-      `/getEditableFieldsOptions`,
+      `/concepts/getEditableFieldsOptions`,
       undefined,
       false,
     ),
@@ -254,7 +254,7 @@ export const nodeApi = {
     request<MathematicienName[]>(`/mathematiciens/`, undefined, false),
   getAllTypeNames: () => request<Type[]>(`/types/`, undefined, false),
   getAllConceptNames: () =>
-    request<ConceptName[]>(`/getAllConceptName`, undefined, false),
+    request<ConceptName[]>(`/concepts/getAllConceptName`, undefined, false),
   getUserInfo: (id: string) => request<User>(`/users/${id}`, undefined, false),
   getUserIdByUsername: (username: string) =>
     request<{ id: number }>(`/users/id/${username}`, undefined, false),
@@ -263,7 +263,11 @@ export const nodeApi = {
   getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
   getGraph: () => request<GraphData>(`/graph`, undefined, false),
   getRecentHistory: (limit: number = 20) =>
-    request<RecentChange[]>(`/recent-history?limit=${limit}`, undefined, false),
+    request<RecentChange[]>(
+      `/concepts/recent-history?limit=${limit}`,
+      undefined,
+      false,
+    ),
   getRecentComments: (limit: number = 20) =>
     request<RecentComment[]>(
       `/comments/recent?limit=${limit}`,
@@ -277,7 +281,7 @@ export const nodeApi = {
       false,
     ),
   getMathematiciensTimeline: () =>
-    request<MathTimelineData[]>("/mathematicien/timeline/all"),
+    request<MathTimelineData[]>("/mathematiciens/timeline/all"),
   quickSearch: (inputValue: string) =>
     request<SearchResult[]>(
       `/search/quick?q=${encodeURIComponent(inputValue)}`,

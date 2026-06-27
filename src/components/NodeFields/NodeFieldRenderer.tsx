@@ -1,6 +1,4 @@
-import { AllNodeData, NomEtranger, Tag } from "../../types/types";
-import { Source } from "../../types/ApiTypes/source";
-import { Relations } from "../../types/ApiTypes/Relations";
+import { AllNodeData } from "../../types/types";
 import HtmlField from "./HtmlField";
 import AliasesField from "./AliasesField";
 import SourcesField from "./SourcesField";
@@ -14,55 +12,42 @@ import DOMPurify from "dompurify";
 import { useTranslation } from "react-i18next";
 import { FieldWrapper, FieldTitle, FieldContent } from "./NodeField.styles";
 
-interface Props {
-  field: keyof AllNodeData;
-  value: unknown;
-}
+type FieldProps = {
+  [K in keyof AllNodeData]-?: {
+    field: K;
+    value: AllNodeData[K] | undefined | null;
+  };
+}[keyof AllNodeData];
 
-export const NodeFieldRenderer = ({ field, value }: Props) => {
+export const NodeFieldRenderer = (props: FieldProps) => {
   const { t } = useTranslation();
 
-  switch (field) {
+  switch (props.field) {
     case "nom":
-      return <HtmlField title={"Nom"} content={value as string} />;
+      return <HtmlField title={"Nom"} content={props.value ?? ""} />;
     case "demonstration":
-      return <HtmlField title={"Démonstration"} content={value as string} />;
+      return <HtmlField title={"Démonstration"} content={props.value ?? ""} />;
     case "enonce":
-      return <HtmlField title={"Enoncé"} content={value as string} />;
+      return <HtmlField title={"Enoncé"} content={props.value ?? ""} />;
     case "aliases":
-      return <AliasesField aliases={value as string[]} />;
+      return <AliasesField aliases={props.value || []} />;
     case "sources":
-      return <SourcesField sources={value as Source[]} />;
+      return <SourcesField sources={props.value || []} />;
     case "noms_etrangers":
-      return (
-        <NomsEtrangersCollapse
-          noms={Array.isArray(value) ? (value as NomEtranger[]) : []}
-        />
-      );
+      return <NomsEtrangersCollapse noms={props.value || []} />;
     case "relations":
-      return (
-        <RelationsField
-          relations={Array.isArray(value) ? (value as Relations[]) : []}
-        />
-      );
+      return <RelationsField relations={props.value || []} />;
     case "id":
-      return <HtmlField title={"Id"} content={value as string} />;
+      return <HtmlField title={"Id"} content={String(props.value)} />;
     case "categorie":
       return (
         <FieldWrapper>
           <FieldTitle>{t("concept.category")}</FieldTitle>
           <FieldContent>
-            {typeof value === "object" &&
-            value !== null &&
-            "category" in value ? (
-              <Link
-                href={
-                  "/category/redirect/" +
-                  (value as Record<string, unknown>).category
-                }
-              >
+            {props.value ? (
+              <Link href={"/category/redirect/" + props.value.category}>
                 {" "}
-                {(value as Record<string, unknown>).category as string}
+                {props.value.category}
               </Link>
             ) : (
               t("concept.no_category")
@@ -71,23 +56,18 @@ export const NodeFieldRenderer = ({ field, value }: Props) => {
         </FieldWrapper>
       );
     case "date_ajout":
-      return <DateField date={value as string} />;
+      return <DateField date={props.value || ""} />;
     case "mathematicien":
       return (
         <FieldWrapper>
           <FieldTitle>{t("concept.mathematician")}</FieldTitle>
           <FieldContent>
-            {typeof value === "object" &&
-            value !== null &&
-            "mathematicien" in value ? (
+            {props.value ? (
               <Link
-                href={
-                  "/mathematicien/redirect/" +
-                  (value as Record<string, unknown>).mathematicien
-                }
+                href={"/mathematicien/redirect/" + props.value.mathematicien}
               >
                 {" "}
-                {(value as Record<string, unknown>).mathematicien as string}
+                {props.value.mathematicien}
               </Link>
             ) : (
               t("concept.no_mathematician")
@@ -96,23 +76,23 @@ export const NodeFieldRenderer = ({ field, value }: Props) => {
         </FieldWrapper>
       );
     case "verification":
-      return <VerifField title={"Vérification"} value={value as string} />;
+      return <VerifField title={"Vérification"} value={String(props.value)} />;
     case "type":
       return (
         <FieldWrapper>
           <FieldTitle>{t("concept.type")}</FieldTitle>
-          <Link href={"/type/redirect/" + value}>
+          <Link href={"/type/redirect/" + props.value}>
             <FieldContent
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(String(value)),
+                __html: DOMPurify.sanitize(String(props.value || "")),
               }}
             />
           </Link>
         </FieldWrapper>
       );
     case "tags":
-      return <TagsField tags={value as Tag[] | null} />;
+      return <TagsField tags={props.value || null} />;
     default:
-      return <HtmlField title={"Défaut"} content={value as string} />;
+      return <HtmlField title={"Défaut"} content={String(props.value || "")} />;
   }
 };

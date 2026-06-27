@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Typography, Checkbox, Divider, useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
@@ -22,7 +21,7 @@ interface MenuColorsSettingsProps {
   setColorProposition: (v: string) => void;
   setColorPropriete: (v: string) => void;
   filters: { [key: string]: boolean };
-  setFilters: (v: any) => void; // Using any or explicit type based on useMenuLogic
+  setFilters: (v: { [key: string]: boolean }) => void;
 }
 
 export default function MenuColorsSettings({

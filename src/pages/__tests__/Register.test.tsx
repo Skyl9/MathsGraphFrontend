@@ -67,7 +67,6 @@ describe("Register", () => {
   });
 
   it("submits the form successfully and displays success message", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
     // @ts-expect-error - mock
     nodeApi.register.mockResolvedValue({ message: "Success" });
 
@@ -108,8 +107,6 @@ describe("Register", () => {
       },
       { timeout: 4000 },
     );
-
-    vi.useRealTimers();
   });
 
   it("displays an error message when API call fails", async () => {

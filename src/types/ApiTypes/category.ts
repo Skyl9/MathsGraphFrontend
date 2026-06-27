@@ -1,10 +1,10 @@
 export interface CategoryName {
-    id: string
-    nom: string
+  id: number;
+  nom: string;
 }
 export interface Category {
-    id:number;
-    nom:string;
-    description:string;
-    parent_id:string;
+  id: number;
+  nom: string;
+  description: string | null;
+  parent_id: number | null;
 }

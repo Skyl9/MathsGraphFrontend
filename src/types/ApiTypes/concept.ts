@@ -1,22 +1,22 @@
 import { Source } from "./source";
-import { Alias } from "./alias";
 import { Relations } from "./Relations";
 import { Tag } from "./tag";
+import { NomEtranger } from "./nom_etranger";
 
 export interface GetConcept {
   nom: string;
-  enonce: string;
-  demonstration: string;
+  enonce: string | null;
+  demonstration: string | null;
   verification: boolean;
-  type: string;
+  type: string | null;
   id: number;
-  mathematicien: { id: number; mathematicien: string };
-  categorie: { id: number; category: string };
+  mathematicien: { id: number; mathematicien: string } | null;
+  categorie: { id: number; category: string } | null;
   sources: Source[];
-  aliases: Alias[];
+  aliases: string[];
   relations: Relations[];
-  noms_etrangers: Record<string, unknown>[];
-  date_modification: string;
+  noms_etrangers: NomEtranger[];
+  date_modification: string | null;
   tags: Tag[];
 }
 

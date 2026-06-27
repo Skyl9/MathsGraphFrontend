@@ -205,7 +205,10 @@ export const ProfileInfoForm = ({
                 aria-label={t("common.cancel")}
                 onClick={() => {
                   setEditField(null);
-                  setLang(user.preferred_language);
+                  if (user.preferred_language) {
+                    i18n.changeLanguage(user.preferred_language);
+                  }
+                  setLang(user.preferred_language || "fr");
                 }}
                 color="error"
               >

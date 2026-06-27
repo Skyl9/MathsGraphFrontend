@@ -142,9 +142,11 @@ const Edge = memo(function Edge({
       hoveredId !== null && (startId === hoveredId || endId === hoveredId);
     const isAnyNodeHovered = hoveredId !== null;
 
-    if (isLocalHovered || isHoverHighlighted) return "#38bdf8";
-    if (isAnyNodeHovered) return darkMode ? "#1e293b" : "#e2e8f0";
-    if (isSelectedHighlighted) return "#38bdf8";
+    if (isLocalHovered || isHoverHighlighted)
+      return theme.palette.primary.light;
+    if (isAnyNodeHovered)
+      return darkMode ? theme.palette.divider : theme.palette.divider;
+    if (isSelectedHighlighted) return theme.palette.primary.light;
     return isNeon &&
       (color === "black" || color === "#888888" || color === "#ffffff")
       ? "#ffffff"
@@ -330,12 +332,12 @@ const Edge = memo(function Edge({
                 ? alpha(theme.palette.background.paper, 0.9)
                 : alpha(theme.palette.background.paper, 0.95),
               backdropFilter: "blur(8px)",
-              color: darkMode ? "#E2E8F0" : "#0F172A",
+              color: theme.palette.text.primary,
               border: darkMode
                 ? `1px solid ${alpha(theme.palette.divider, 0.15)}`
                 : `1px solid ${alpha(theme.palette.divider, 0.12)}`,
-              padding: "4px 10px",
-              borderRadius: "8px",
+              padding: theme.spacing(0.5, 1.25),
+              borderRadius: theme.shape.borderRadius,
               boxShadow: `0 6px 20px ${alpha(theme.palette.common.black, 0.25)}`,
               whiteSpace: "nowrap",
               fontFamily: "Inter, Roboto, sans-serif",

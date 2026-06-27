@@ -2,16 +2,16 @@ import { styled, alpha } from "@mui/material/styles";
 import { Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 
-export const GraphHUDContainer = styled(motion.div)(() => ({
+export const GraphHUDContainer = styled(motion.div)(({ theme }) => ({
   position: "absolute",
-  bottom: 24,
+  bottom: theme.spacing(3),
   left: "50%",
   transform: "translateX(-50%)",
-  zIndex: 100,
+  zIndex: theme.zIndex.speedDial,
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: "12px",
+  gap: theme.spacing(1.5),
   justifyContent: "center",
   pointerEvents: "none", // The container shouldn't block clicks
   "& > *": {
@@ -23,8 +23,8 @@ export const HUDPill = styled(Box)(({ theme }) => ({
   ...theme.glassmorphism.pill,
   display: "flex",
   alignItems: "center",
-  gap: 8,
-  padding: "8px 16px",
+  gap: theme.spacing(1),
+  padding: theme.spacing(1, 2),
   borderRadius: 24,
   transition: "all 0.3s ease",
   "&:hover": {
@@ -44,17 +44,17 @@ export const ShortcutsPopoverContainer = styled(Box)(({ theme }) => ({
   minWidth: 200,
 }));
 
-export const ShortcutsTitle = styled(Typography)(() => ({
+export const ShortcutsTitle = styled(Typography)(({ theme }) => ({
   fontWeight: "700 !important",
-  marginBottom: "12px !important",
+  marginBottom: `${theme.spacing(1.5)} !important`,
   fontSize: "0.9rem !important",
 }));
 
-export const ShortcutRow = styled(Box)(() => ({
+export const ShortcutRow = styled(Box)(({ theme }) => ({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-  marginBottom: 8,
+  marginBottom: theme.spacing(1),
   fontSize: "0.8rem",
   "&:last-child": {
     marginBottom: 0,

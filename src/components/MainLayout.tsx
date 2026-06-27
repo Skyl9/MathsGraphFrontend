@@ -69,7 +69,20 @@ export const MainLayout: React.FC = () => {
               width: "100%",
             }}
           >
-            {outlet}
+            <React.Suspense
+              fallback={
+                <Box
+                  display="flex"
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Typography color="text.secondary">Chargement...</Typography>
+                </Box>
+              }
+            >
+              {outlet}
+            </React.Suspense>
           </motion.div>
         </AnimatePresence>
       </MainContent>

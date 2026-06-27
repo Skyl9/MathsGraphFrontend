@@ -224,7 +224,7 @@ const TagEdit: React.FC<TagEditProps> = ({ tags, conceptId, refetchData }) => {
                 borderColor: "primary.light",
                 color: "primary.main",
                 px: 2,
-                background: "white",
+                background: "background.paper",
                 transition: "background 0.2s",
                 "&:hover": {
                   background: "primary.lighter",

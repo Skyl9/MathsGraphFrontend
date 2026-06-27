@@ -287,7 +287,7 @@ export default function InstancedEdges({
     const dummyQuaternion = new Quaternion();
     const upZ = new Vector3(0, 0, 1);
     const scaleVec = new Vector3();
-    const highlightColor = new Color("#38bdf8");
+    const highlightColor = new Color(theme.palette.primary.light);
 
     // 🌟 2. Surcharge des matrices/couleurs UNIQUEMENT pour les arêtes impactées
     for (let i = 0; i < validEdges.length; i++) {
@@ -506,12 +506,12 @@ export default function InstancedEdges({
                 ? alpha(theme.palette.background.paper, 0.9)
                 : alpha(theme.palette.background.paper, 0.95),
               backdropFilter: "blur(8px)",
-              color: darkMode ? "#E2E8F0" : "#0F172A",
+              color: theme.palette.text.primary,
               border: darkMode
                 ? `1px solid ${alpha(theme.palette.divider, 0.15)}`
                 : `1px solid ${alpha(theme.palette.divider, 0.12)}`,
-              padding: "4px 10px",
-              borderRadius: "8px",
+              padding: theme.spacing(0.5, 1.25),
+              borderRadius: theme.shape.borderRadius,
               boxShadow: `0 6px 20px ${alpha(theme.palette.common.black, 0.25)}`,
               whiteSpace: "nowrap",
               fontFamily: "Inter, Roboto, sans-serif",

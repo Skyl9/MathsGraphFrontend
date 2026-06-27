@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { alpha } from "@mui/material/styles";
 import { useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -11,10 +10,12 @@ import {
   SearchNoResults,
 } from "../Menu.styles";
 
+import { NodeData } from "../../types/ApiTypes/graph";
+
 interface MenuSearchResultsProps {
-  searchResults: any[];
+  searchResults: NodeData[];
   isSearchActive: boolean;
-  handleResultsSearch: (result: any) => void;
+  handleResultsSearch: (result: NodeData) => void;
   darkMode: boolean;
   colorAxiome: string;
   colorLemme: string;

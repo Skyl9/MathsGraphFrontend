@@ -44,7 +44,7 @@ const UserProfilePage: React.FC = () => {
   if (queryUser && queryUser !== prevQueryUser) {
     setPrevQueryUser(queryUser);
     setEmail(queryUser.email);
-    setLang(queryUser.preferred_language);
+    setLang(queryUser.preferred_language || "fr");
     setBio(queryUser.bio || "");
   }
 

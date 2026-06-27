@@ -37,7 +37,8 @@ export const useEntityEdit = <T extends object>(
     null,
   );
 
-  const [newContent, setNewContent] = useState<unknown>(undefined);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [newContent, setNewContent] = useState<any>(undefined);
 
   const [isSaving] = useState(false);
 

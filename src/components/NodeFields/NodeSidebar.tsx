@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { ReportIssueButton } from "../Issue";
@@ -20,7 +19,7 @@ interface NodeSidebarProps {
   editModeActive: boolean;
   isUserConnected: boolean;
   editableFields: Record<string, EditableField>;
-  handleEdit: (field: any) => void;
+  handleEdit: (field: keyof AllNodeData) => void;
 }
 
 export const NodeSidebar = ({

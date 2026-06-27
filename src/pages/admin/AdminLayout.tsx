@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useOutlet,
   useNavigate,
@@ -311,7 +311,20 @@ const AdminLayout = () => {
             exit="exit"
             style={{ width: "100%", height: "100%" }}
           >
-            {outlet}
+            <React.Suspense
+              fallback={
+                <Box
+                  display="flex"
+                  flex={1}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Typography color="text.secondary">Chargement...</Typography>
+                </Box>
+              }
+            >
+              {outlet}
+            </React.Suspense>
           </motion.div>
         </AnimatePresence>
       </Box>

@@ -51,12 +51,19 @@ const getNodePos = (
 };
 
 // 🌟 Composant extrait pour éviter le re-rendu de Scene au clic
+interface GlobalSelectionRingProps {
+  nodesMap: Map<number, NodeData>;
+  colors: string[];
+  currentView: string;
+  getNodeScale: (id: number) => number;
+}
+
 const GlobalSelectionRing = ({
   nodesMap,
   colors,
   currentView,
   getNodeScale,
-}: any) => {
+}: GlobalSelectionRingProps) => {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   if (!selectedNodeId) return null;
   const node = nodesMap.get(selectedNodeId);

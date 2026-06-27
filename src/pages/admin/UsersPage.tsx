@@ -50,7 +50,7 @@ const UsersPage = () => {
     return (
       user.username.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query) ||
-      user.role.toLowerCase().includes(query)
+      (user.role?.toLowerCase() || "").includes(query)
     );
   });
 

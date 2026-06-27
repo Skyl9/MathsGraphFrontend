@@ -37,8 +37,8 @@ export const MathCard = styled("article")<{
   if (cardtype === "proof") borderLeftColor = isDark ? "#c4b5fd" : "#8b5cf6";
 
   return {
-    background: isDark ? "#0f1428" : "white",
-    borderRadius: "16px",
+    background: theme.palette.background.paper,
+    borderRadius: 16,
     boxShadow: isDark
       ? "0 4px 20px rgba(0, 0, 0, 0.2)"
       : "0 4px 20px rgba(0, 0, 0, 0.04)",
@@ -94,9 +94,9 @@ export const MathCardBody = styled(Box)({
 export const SidebarCard = styled("section")(({ theme }) => {
   const isDark = theme.palette.mode === "dark";
   return {
-    background: isDark ? "#0f1428" : "white",
-    borderRadius: "16px",
-    padding: "24px",
+    background: theme.palette.background.paper,
+    borderRadius: 16,
+    padding: theme.spacing(3),
     boxShadow: isDark
       ? "0 4px 20px rgba(0, 0, 0, 0.2)"
       : "0 4px 20px rgba(0, 0, 0, 0.04)",

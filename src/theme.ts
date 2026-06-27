@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createTheme, responsiveFontSizes, alpha } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
   interface Theme {
     glassmorphism: {
-      main: any;
-      card: any;
-      pill: any;
+      main: Record<string, string | number>;
+      card: Record<string, string | number>;
+      pill: Record<string, string | number>;
     };
     gradients: {
       background: {
@@ -20,9 +19,9 @@ declare module "@mui/material/styles" {
   }
   interface ThemeOptions {
     glassmorphism?: {
-      main?: any;
-      card?: any;
-      pill?: any;
+      main?: Record<string, string | number>;
+      card?: Record<string, string | number>;
+      pill?: Record<string, string | number>;
     };
     gradients?: {
       background?: {

@@ -222,19 +222,21 @@ const MathematicienPage = () => {
                 </MetadataItem>
               )}
 
-              {/* Domaine */}
-              {editableFields["domaine"] && (
+              {/* Domaines */}
+              {editableFields["domaines"] && (
                 <MetadataItem>
-                  <MetadataLabel>{t("entities.study_field")}</MetadataLabel>
+                  <MetadataLabel>{t("entities.study_fields")}</MetadataLabel>
                   <MetadataValue>
-                    <span>{data?.domaine || t("entities.unknown")}</span>
+                    <span>
+                      {data?.domaines?.join(", ") || t("entities.unknown")}
+                    </span>
                     {editModeActive &&
-                      editableFields["domaine"].type !== "none" && (
+                      editableFields["domaines"].type !== "none" && (
                         <IconButton
                           aria-label={t("common.aria.action_button")}
                           size="small"
                           color="primary"
-                          onClick={() => handleEdit("domaine")}
+                          onClick={() => handleEdit("domaines")}
                         >
                           <EditIcon fontSize="small" />
                         </IconButton>
