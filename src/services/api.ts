@@ -140,7 +140,17 @@ const request = async <T>(
     clearTimeout(timeoutId);
     dismissSlowToast();
 
-    const data: ApiResponse<T> = await response.json();
+    let data: ApiResponse<T>;
+    if (response.status === 204) {
+      data = {
+        success: true,
+        data: null,
+        error: null,
+        meta: null,
+      } as unknown as ApiResponse<T>;
+    } else {
+      data = await response.json();
+    }
 
     if (!response.ok || !data.success) {
       const error: ApiError = {
@@ -208,7 +218,7 @@ const request = async <T>(
 export const nodeApi = {
   // GET requests
   getConcept: (id: string) =>
-    request<GetConcept>(`/concept/${id}`, undefined, false),
+    request<GetConcept>(`/concepts/${id}`, undefined, false),
   getComments: (concept_id: string) =>
     request<Comment[]>(`/comments/${concept_id}`, undefined, false),
   getAllUsers: () => request<User[]>(`/admin/users`),
@@ -216,18 +226,18 @@ export const nodeApi = {
   getAdminStats: () => request<AdminStats>(`/admin/stats`),
   getFavorites: (user_id?: string) =>
     request<Favorite[]>(
-      `/user/favorite/${user_id || Token.getUserIdFromToken() || ""}`,
+      `/users/favorite/${user_id || Token.getUserIdFromToken() || ""}`,
       undefined,
       false,
     ),
   getCategoryId: (name: string) =>
-    request<CategoryName>(`/category/name/${name}`, undefined, false),
+    request<CategoryName>(`/categories/name/${name}`, undefined, false),
   getMathematicienId: (name: string) =>
-    request<Mathematicien>(`/mathematicien/name/${name}`, undefined, false),
+    request<Mathematicien>(`/mathematiciens/name/${name}`, undefined, false),
   getTypeId: (name: string) =>
-    request<Type>(`/type/name/${name}`, undefined, false),
+    request<Type>(`/types/name/${name}`, undefined, false),
   getConceptHistory: (conceptId: string) =>
-    request<History[]>(`/concept/history/${conceptId}`, undefined, false),
+    request<History[]>(`/concepts/history/${conceptId}`, undefined, false),
   getEditableFieldsOptions: () =>
     request<EditableFieldsOptions>(
       `/getEditableFieldsOptions`,
@@ -235,19 +245,19 @@ export const nodeApi = {
       false,
     ),
   getOneMathematicien: (id: string) =>
-    request<Mathematicien>(`/mathematicien/${id}`, undefined, false),
-  getOneType: (id: string) => request<Type>(`/type/${id}`, undefined, false),
+    request<Mathematicien>(`/mathematiciens/${id}`, undefined, false),
+  getOneType: (id: string) => request<Type>(`/types/${id}`, undefined, false),
   getOneCategory: (id: string) =>
-    request<Category>(`/category/${id}`, undefined, false),
-  getAllCategories: () => request<Category[]>(`/category/`, undefined, false),
+    request<Category>(`/categories/${id}`, undefined, false),
+  getAllCategories: () => request<Category[]>(`/categories/`, undefined, false),
   getAllMathematicienName: () =>
-    request<MathematicienName[]>(`/mathematicien/`, undefined, false),
-  getAllTypeNames: () => request<Type[]>(`/type/`, undefined, false),
+    request<MathematicienName[]>(`/mathematiciens/`, undefined, false),
+  getAllTypeNames: () => request<Type[]>(`/types/`, undefined, false),
   getAllConceptNames: () =>
     request<ConceptName[]>(`/getAllConceptName`, undefined, false),
-  getUserInfo: (id: string) => request<User>(`/user/${id}`, undefined, false),
+  getUserInfo: (id: string) => request<User>(`/users/${id}`, undefined, false),
   getUserIdByUsername: (username: string) =>
-    request<{ id: number }>(`/user/id/${username}`, undefined, false),
+    request<{ id: number }>(`/users/id/${username}`, undefined, false),
   getTagsNameFromConceptId: (id: string) =>
     request<Tag[]>(`/tags/name/concept_id/${id}`, undefined, false),
   getAllTagName: () => request<Tag[]>(`/tags/all`, undefined, false),
@@ -262,7 +272,7 @@ export const nodeApi = {
     ), // CORRIGÉ
   getUserContributions: (userId: string, limit: number = 20) =>
     request<RecentChange[]>(
-      `/user/history/${userId}?limit=${limit}`,
+      `/users/history/${userId}?limit=${limit}`,
       undefined,
       false,
     ),
@@ -293,7 +303,7 @@ export const nodeApi = {
     value: unknown,
     username: string,
   ) =>
-    request<null>(`/concept/${id}`, {
+    request<null>(`/concepts/${id}`, {
       // 🌟 REST: /concept/{id}
       method: "PATCH",
       body: JSON.stringify({ field, value, username }),
@@ -323,7 +333,7 @@ export const nodeApi = {
       body: JSON.stringify({ content }),
     }),
   addFavorite: (general_id: string, type: string) =>
-    request<null>(`/user/favorite/${general_id}`, {
+    request<null>(`/users/favorite/${general_id}`, {
       // 🌟 REST: /user/favorite/{id}
       method: "POST",
       body: JSON.stringify({
@@ -332,7 +342,7 @@ export const nodeApi = {
       }),
     }),
   deleteFavorite: (general_id: string, type: string) =>
-    request<null>(`/user/favorite/${general_id}`, {
+    request<null>(`/users/favorite/${general_id}`, {
       // 🌟 REST: /user/favorite/{id}
       method: "DELETE",
       body: JSON.stringify({
@@ -341,7 +351,7 @@ export const nodeApi = {
       }),
     }),
   rollbackConcept: (id: string, data: RollbackConcept) =>
-    request<null>(`/concept/rollback/${id}`, {
+    request<null>(`/concepts/rollback/${id}`, {
       // On tolère "rollback" car c'est une action spécifique (RPC)
       method: "PATCH",
       body: JSON.stringify({
@@ -351,55 +361,55 @@ export const nodeApi = {
       }),
     }),
   createRelation: (dico: Record<string, unknown>) =>
-    request<null>(`/relation`, {
+    request<null>(`/relations`, {
       // 🌟 REST: /relation
       method: "POST",
       body: JSON.stringify({ value: dico }),
     }),
   createCategory: (nom: string) =>
-    request<null>(`/category`, {
+    request<null>(`/categories`, {
       // 🌟 REST: /category
       method: "POST",
       body: JSON.stringify({ value: nom }),
     }),
   createType: (nom: string) =>
-    request<null>(`/type`, {
+    request<null>(`/types`, {
       // 🌟 REST: /type
       method: "POST",
       body: JSON.stringify({ value: nom }),
     }),
   createMathematicien: (nom: string) =>
-    request<null>(`/mathematicien`, {
+    request<null>(`/mathematiciens`, {
       // 🌟 REST: /mathematicien
       method: "POST",
       body: JSON.stringify({ value: nom }),
     }),
   createAlias: (id: number, nom: string) =>
-    request<null>(`/alias`, {
+    request<null>(`/aliases`, {
       // 🌟 REST: /alias
       method: "POST",
       body: JSON.stringify({ id, value: nom }),
     }),
   createSources: (sources: unknown) =>
-    request<null>(`/source`, {
+    request<null>(`/sources`, {
       // 🌟 REST: /source
       method: "POST",
       body: JSON.stringify({ value: sources }),
     }),
   updateOneMathematicien: (id: string, field: string, value: unknown) =>
-    request<null>(`/mathematicien/${id}`, {
+    request<null>(`/mathematiciens/${id}`, {
       // 🌟 REST: /mathematicien/{id}
       method: "PATCH",
       body: JSON.stringify({ field, value }),
     }),
   updateOneCategory: (id: string, field: string, value: unknown) =>
-    request<null>(`/category/${id}`, {
+    request<null>(`/categories/${id}`, {
       // 🌟 REST: /category/{id}
       method: "PATCH",
       body: JSON.stringify({ field, value }),
     }),
   updateOneType: (id: string, field: string, value: unknown) =>
-    request<null>(`/type/${id}`, {
+    request<null>(`/types/${id}`, {
       // 🌟 REST: /type/{id}
       method: "PATCH",
       body: JSON.stringify({ field, value }),
@@ -440,7 +450,7 @@ export const nodeApi = {
       body: JSON.stringify({ concept_id, tag_id: tags_id }),
     }),
   patchUser: (data: { field: string; value: string }, id: string) =>
-    request<null>(`/user/${id}`, {
+    request<null>(`/users/${id}`, {
       // 🌟 REST: /user/{id}
       method: "PATCH",
       body: JSON.stringify(data),
@@ -470,7 +480,7 @@ export const nodeApi = {
     categorie_id?: number | null;
     mathematicien_id?: number | null;
   }) =>
-    request<{ id: number; nom: string }>(`/concept`, {
+    request<{ id: number; nom: string }>(`/concepts`, {
       method: "POST",
       body: JSON.stringify(data),
     }),

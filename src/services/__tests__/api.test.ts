@@ -73,7 +73,7 @@ describe("api.ts", () => {
       const result = await nodeApi.getConcept("1");
 
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/concept/1"),
+        expect.stringContaining("/concepts/1"),
         expect.objectContaining({
           credentials: "include",
         }),
@@ -235,7 +235,7 @@ describe("api.ts", () => {
 
       await nodeApi.createCategory("New Category");
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/category"),
+        expect.stringContaining("/categories"),
         expect.objectContaining({
           method: "POST",
           body: JSON.stringify({ value: "New Category" }),
@@ -251,7 +251,7 @@ describe("api.ts", () => {
 
       await nodeApi.updateConcept("1", "nom", "New Name", "user");
       expect(globalThis.fetch).toHaveBeenCalledWith(
-        expect.stringContaining("/concept/1"),
+        expect.stringContaining("/concepts/1"),
         expect.objectContaining({
           method: "PATCH",
           body: JSON.stringify({
