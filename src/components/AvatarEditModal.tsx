@@ -22,7 +22,7 @@ export const AvatarEditModal: React.FC<AvatarEditModalProps> = ({
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onClose} aria-labelledby="modal-avatar-title">
       <Box
         sx={{
           position: "absolute" as const,
@@ -36,7 +36,7 @@ export const AvatarEditModal: React.FC<AvatarEditModalProps> = ({
           minWidth: 300,
         }}
       >
-        <Typography variant="h6" gutterBottom>
+        <Typography id="modal-avatar-title" variant="h6" gutterBottom>
           {t("avatar_edit.instruction")}
         </Typography>
         <TextField

@@ -16,7 +16,6 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { nodeApi } from "../services/api";
 import dayjs from "dayjs";
-import "react-diff-view/style/index.css";
 import { VisualDiff } from "./VisualDiff";
 import Token from "../services/token";
 import { useTranslation } from "react-i18next";
@@ -177,8 +176,14 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({
   const current = filteredVersions[catIdx];
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
-      <DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="lg"
+      aria-labelledby="modal-history-title"
+    >
+      <DialogTitle id="modal-history-title">
         {t("history.title")}
         <IconButton
           aria-label={t("common.close")}

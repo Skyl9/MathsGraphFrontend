@@ -252,6 +252,7 @@ export const EditModal = <T extends object>({
 
   return (
     <Dialog
+      aria-labelledby="modal-title"
       open={true}
       onClose={(_event, reason) => {
         if (reason !== "backdropClick") {
@@ -264,7 +265,6 @@ export const EditModal = <T extends object>({
           ? "md"
           : "sm"
       }
-      aria-labelledby="modal-title"
     >
       <DialogTitle id="modal-title">Modifier {fieldConfig.label}</DialogTitle>
 

@@ -162,8 +162,14 @@ export const CommentsModal: React.FC<CommentsModalProps> = ({
   }, [visibleComments]);
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{t("comments.title")}</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      maxWidth="sm"
+      aria-labelledby="modal-comments-title"
+    >
+      <DialogTitle id="modal-comments-title">{t("comments.title")}</DialogTitle>
       <DialogContent dividers>
         {loading ? (
           <CircularProgress />

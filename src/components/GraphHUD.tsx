@@ -351,7 +351,6 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
         open={openShortcuts}
         anchorEl={anchorEl}
         onClose={handleCloseShortcuts}
-        disableRestoreFocus
         anchorOrigin={{
           vertical: "top",
           horizontal: "center",

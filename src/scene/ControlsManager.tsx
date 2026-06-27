@@ -40,7 +40,8 @@ export default function ControlsManager({
       if (nodes.length === 0) return;
       if (
         event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
+        event.target instanceof HTMLTextAreaElement ||
+        (event.target as HTMLElement).isContentEditable
       ) {
         return;
       }
@@ -83,6 +84,13 @@ export default function ControlsManager({
   // Mode debug
   useEffect(() => {
     const toggleDebug = (event: KeyboardEvent) => {
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement ||
+        (event.target as HTMLElement).isContentEditable
+      ) {
+        return;
+      }
       if (event.key.toLowerCase() === "m") setDebugMode(!debugMode);
     };
     window.addEventListener("keydown", toggleDebug);
