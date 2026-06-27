@@ -25,21 +25,23 @@ vi.mock("../../constants/editableFields", () => ({
 
 describe("useEntityEdit", () => {
   const mockUpdateField = vi.fn();
+  const mockData = { id: 1, nom: "Concept Test" };
+  const mockEditableFieldsOptions = {};
+  const mockRefetchData = vi.fn();
+  const mockCreateField = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     // Configuration par défaut du mock useEntityData
-    // @ts-expect-error - mock
-    useEntityData.mockReturnValue({
-      data: { id: 1, nom: "Concept Test" },
-      setData: vi.fn(),
+    (useEntityData as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
       loading: false,
       error: null,
-      editableFieldsOptions: {},
-      refetchData: vi.fn(),
+      editableFieldsOptions: mockEditableFieldsOptions,
+      refetchData: mockRefetchData,
       updateField: mockUpdateField,
-      createField: vi.fn(),
+      createField: mockCreateField,
     });
   });
 
