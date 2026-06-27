@@ -116,4 +116,66 @@ describe("useEntityEdit", () => {
     expect(result.current.isModalOpen).toBe(false);
     expect(result.current.currentEditField).toBeNull();
   });
+
+  it("handleEdit handles undefined data correctly and sets empty string", () => {
+    (useEntityData as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: null,
+      loading: false,
+      error: null,
+      editableFieldsOptions: mockEditableFieldsOptions,
+      refetchData: mockRefetchData,
+      updateField: mockUpdateField,
+      createField: mockCreateField,
+    });
+
+    const { result } = renderHook(() =>
+      useEntityEdit<{ nom: string }>("category", "1"),
+    );
+
+    act(() => {
+      result.current.handleEdit("nom");
+    });
+
+    expect(result.current.newContent).toBe("");
+  });
+
+  it("saveChanges returns early if currentEditField is null", async () => {
+    const { result } = renderHook(() =>
+      useEntityEdit<{ nom: string }>("category", "1"),
+    );
+
+    await act(async () => {
+      await result.current.saveChanges();
+    });
+
+    expect(mockUpdateField).not.toHaveBeenCalled();
+  });
+
+  it("saveChanges catches and logs error if updateField throws", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockUpdateField.mockRejectedValueOnce(new Error("Network Error"));
+
+    const { result } = renderHook(() =>
+      useEntityEdit<{ nom: string }>("category", "1"),
+    );
+
+    act(() => {
+      result.current.handleEdit("nom");
+    });
+
+    act(() => {
+      result.current.setNewContent("Nouveau Concept");
+    });
+
+    await act(async () => {
+      await result.current.saveChanges();
+    });
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Erreur critique lors de la sauvegarde:",
+      expect.any(Error),
+    );
+
+    consoleSpy.mockRestore();
+  });
 });
