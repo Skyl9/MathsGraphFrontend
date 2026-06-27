@@ -9,6 +9,24 @@ import {
   IconButton,
   useTheme,
 } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const NavLeft = styled("nav")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(2),
+  justifyContent: "flex-start",
+  flex: 1,
+  flexDirection: "row",
+  alignItems: "center",
+}));
+
+const NavRight = styled("nav")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(2),
+  justifyContent: "flex-end",
+  alignItems: "center",
+  flex: 1,
+}));
 import { LogoutButton } from "./LogoutButton";
 import Token from "../services/token";
 import logo from "../assets/logo.svg";
@@ -34,17 +52,7 @@ export const TopBar: React.FC = () => {
   return (
     <AppBar position="static" color="default">
       <Toolbar sx={{ justifyContent: "space-around" }}>
-        <Box
-          component="nav"
-          style={{
-            display: "flex",
-            gap: 2,
-            justifyContent: "flex-start",
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <NavLeft>
           <div>
             <Link href={"/"} underline="none" color={"textPrimary"}>
               <img src={logo} alt={"Logo"}></img>
@@ -66,17 +74,8 @@ export const TopBar: React.FC = () => {
               <Brightness4Icon />
             )}
           </IconButton>
-        </Box>
-        <Box
-          component="nav"
-          style={{
-            justifyContent: "flex-end",
-            display: "flex",
-            gap: 2,
-            alignItems: "center",
-            flex: 1,
-          }}
-        >
+        </NavLeft>
+        <NavRight>
           <GlobalSearchBar />
 
           {username ? (
@@ -97,7 +96,7 @@ export const TopBar: React.FC = () => {
               </Button>
             </Box>
           )}
-        </Box>
+        </NavRight>
       </Toolbar>
     </AppBar>
   );

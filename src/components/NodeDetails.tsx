@@ -152,15 +152,12 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
               size="small"
               onClick={onClose}
               className="sidebar-close-btn"
-              sx={{ color: darkMode ? "#94A3B8" : "#475569" }}
+              sx={{ color: "text.secondary" }}
             >
               <CloseIcon fontSize="small" />
             </IconButton>
 
-            <SidebarTitle
-              variant="h5"
-              sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
-            >
+            <SidebarTitle variant="h5" sx={{ color: "text.primary" }}>
               {concept.nom}
             </SidebarTitle>
 
@@ -179,7 +176,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
           <SidebarBody>
             {/* Section Description / Type */}
             <Box>
-              <SectionLabel sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}>
+              <SectionLabel sx={{ color: "text.secondary" }}>
                 {t("node_details.description")}
               </SectionLabel>
               <Box
@@ -204,7 +201,7 @@ export default function NodeDetails({ id, onClose }: NodeDetailsProps) {
 
             {/* Section Relations */}
             <Box>
-              <SectionLabel sx={{ color: darkMode ? "#94A3B8" : "#64748B" }}>
+              <SectionLabel sx={{ color: "text.secondary" }}>
                 {t("node_details.linked_concepts", { count: neighbors.length })}
               </SectionLabel>
               {neighbors.length > 0 ? (

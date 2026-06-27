@@ -227,7 +227,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
               size="small"
               onClick={goBack}
               disabled={!canGoBack}
-              sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+              sx={{ color: "text.primary" }}
             >
               <ArrowBackIcon fontSize="small" />
             </IconButton>
@@ -242,7 +242,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
               size="small"
               onClick={goForward}
               disabled={!canGoForward}
-              sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+              sx={{ color: "text.primary" }}
             >
               <ArrowForwardIcon fontSize="small" />
             </IconButton>
@@ -262,7 +262,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-label={t("graph_hud.prev_concept")}
             size="small"
             onClick={handlePrevConcept}
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            sx={{ color: "text.primary" }}
           >
             <SkipPreviousIcon fontSize="small" />
           </IconButton>
@@ -274,7 +274,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-label={t("graph_hud.next_concept")}
             size="small"
             onClick={handleNextConcept}
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            sx={{ color: "text.primary" }}
           >
             <SkipNextIcon fontSize="small" />
           </IconButton>
@@ -293,7 +293,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-label={t("graph_hud.zoom_in")}
             size="small"
             onClick={triggerZoomIn}
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            sx={{ color: "text.primary" }}
           >
             <ZoomInIcon fontSize="small" />
           </IconButton>
@@ -305,7 +305,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-label={t("graph_hud.zoom_out")}
             size="small"
             onClick={triggerZoomOut}
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            sx={{ color: "text.primary" }}
           >
             <ZoomOutIcon fontSize="small" />
           </IconButton>
@@ -317,7 +317,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-label={t("graph_hud.reset_view")}
             size="small"
             onClick={triggerReset}
-            sx={{ color: darkMode ? "#F8FAFC" : "#0F172A" }}
+            sx={{ color: "text.primary" }}
           >
             <RestartAltIcon fontSize="small" />
           </IconButton>
@@ -338,7 +338,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             aria-describedby={id}
             size="small"
             onClick={handleOpenShortcuts}
-            sx={{ color: darkMode ? "#7DD3FC" : "#0EA5E9" }}
+            sx={{ color: "primary.main" }}
           >
             <KeyboardIcon fontSize="small" />
           </IconButton>
@@ -364,7 +364,7 @@ export const GraphHUD: React.FC<GraphHUDProps> = ({ graphData }) => {
             sx: {
               borderRadius: "12px",
               ...theme.glassmorphism.card,
-              color: darkMode ? "#E2E8F0" : "#0F172A",
+              color: "text.secondary",
             },
           },
         }}

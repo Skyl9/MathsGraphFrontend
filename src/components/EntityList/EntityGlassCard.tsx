@@ -21,7 +21,6 @@ export const EntityGlassCard = ({
   isSecondary = false,
 }: EntityGlassCardProps) => {
   const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
   const mainColor = isSecondary ? "secondary.main" : "primary.main";
   const bgRgba = isSecondary
     ? "rgba(124, 58, 237, 0.1)"
@@ -40,13 +39,7 @@ export const EntityGlassCard = ({
         flexDirection: "row",
         alignItems: "center", // Align items vertically by default
         justifyContent: "space-between",
-        background: isDark
-          ? "rgba(15, 20, 40, 0.7)"
-          : "rgba(255, 255, 255, 0.7)",
-        backdropFilter: "blur(8px)",
-        border: isDark
-          ? "1px solid rgba(255, 255, 255, 0.05)"
-          : "1px solid rgba(0, 0, 0, 0.06)",
+        ...theme.glassmorphism.card,
         borderRadius: 4,
         p: 2,
         transition: "all 0.3s ease",

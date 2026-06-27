@@ -1,4 +1,4 @@
-import { alpha } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import React from "react";
 import { useOutlet, useLocation } from "react-router-dom";
 import {
@@ -16,37 +16,45 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { useTranslation } from "react-i18next";
 import { pageTransitionVariants } from "../utils/animations";
 
+const LayoutRoot = styled(Box)(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  minHeight: "100vh",
+  backgroundColor: alpha(theme.palette.background.default, 0.85),
+  backdropFilter: "blur(4px)",
+  color: theme.palette.text.primary,
+  transition: "background-color 0.3s ease, color 0.3s ease",
+}));
+
+const MainContent = styled("main")(() => ({
+  flexGrow: 1,
+  display: "flex",
+  flexDirection: "column",
+  width: "100%",
+}));
+
+const FooterContainer = styled("footer")(({ theme }) => ({
+  paddingTop: theme.spacing(4),
+  paddingBottom: theme.spacing(4),
+  paddingLeft: theme.spacing(2),
+  paddingRight: theme.spacing(2),
+  marginTop: "auto",
+  backgroundColor:
+    theme.palette.mode === "dark"
+      ? alpha(theme.palette.background.default, 0.5)
+      : theme.palette.grey[100],
+  borderTop: `1px solid ${alpha(theme.palette.divider, 0.06)}`,
+  transition: "background-color 0.3s ease, border-color 0.3s ease",
+}));
+
 export const MainLayout: React.FC = () => {
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
   const location = useLocation();
   const outlet = useOutlet();
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        backgroundColor: alpha(theme.palette.background.default, 0.85),
-        backdropFilter: "blur(4px)",
-        color: theme.palette.text.primary,
-        transition: "background-color 0.3s ease, color 0.3s ease",
-      }}
-    >
-      {/* Barre de navigation supérieure */}
+    <LayoutRoot>
       <TopBar />
-
-      {/* Zone de contenu principal avec animation d'entrée */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-        }}
-      >
+      <MainContent>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -64,32 +72,20 @@ export const MainLayout: React.FC = () => {
             {outlet}
           </motion.div>
         </AnimatePresence>
-      </Box>
+      </MainContent>
 
-      {/* Pied de page (Footer) */}
-      <Box
-        component="footer"
-        sx={{
-          py: 4,
-          px: 2,
-          mt: "auto",
-          backgroundColor: isDark ? "#080c18" : "#f1f5f9",
-          borderTop: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
-          transition: "background-color 0.3s ease, border-color 0.3s ease",
-        }}
-      >
+      <FooterContainer>
         <Container maxWidth="lg">
           <GridFooter />
         </Container>
-      </Box>
-    </Box>
+      </FooterContainer>
+    </LayoutRoot>
   );
 };
 
 const GridFooter: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const isDark = theme.palette.mode === "dark";
   const currentYear = new Date().getFullYear();
 
   return (
@@ -160,7 +156,7 @@ const GridFooter: React.FC = () => {
         </Stack>
       </Stack>
 
-      <Divider sx={{ opacity: isDark ? 0.1 : 0.6 }} />
+      <Divider sx={{ opacity: theme.palette.mode === "dark" ? 0.1 : 0.6 }} />
 
       <Stack
         direction={{ xs: "column", sm: "row" }}
