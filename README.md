@@ -20,13 +20,15 @@ Ce dépôt contient le code source de l'interface utilisateur (Frontend).
 
 Ce projet utilise des technologies modernes axées sur la performance et le typage strict :
 
-* **Cœur :** React 19, TypeScript
-* **Outil de Build :** Vite (Remplacement de Create React App)
+* **Cœur :** React 19, TypeScript (Mode Strict)
+* **Build Tool :** Vite
 * **3D & Rendu :** Three.js, React Three Fiber, React Three Drei
-* **UI & Styles :** Material-UI (MUI v7), Emotion, Framer Motion, GSAP
-* **Édition & Typographie :** React-Quill-new, Better-React-MathJax, DOMPurify (Sécurisation XSS)
+* **UI & Animations :** Material-UI (MUI v7), Emotion, Framer Motion, GSAP
+* **Édition & Mathématiques :** React-Quill-new, Better-React-MathJax, KaTeX, DOMPurify (Sécurisation XSS)
+* **Data Fetching & State :** @tanstack/react-query, Zustand
 * **Routage :** React Router DOM v7
-* **Gestion du temps :** Day.js
+* **Tests :** Vitest, React Testing Library, jsdom
+* **Qualité de code :** ESLint v9, Prettier, lint-staged, lefthook
 
 ## 🚀 Installation et Lancement en Local
 
@@ -57,9 +59,17 @@ VITE_PORT=8000
 
 ```Bash
 npm start
-# ou npm run dev (selon vos alias)
+# ou npm run dev (selon la configuration de votre environnement local)
 ```
-L'application sera accessible sur ```http://localhost:8000```.
+L'application sera accessible sur `http://localhost:3000` (port configuré par défaut dans vite.config.ts).
+
+### 5. Exécuter les tests et le Linter
+
+```Bash
+npm run test       # Lance Vitest
+npm run lint       # Lance ESLint
+npm run check-types # Vérifie le typage (tsc --noEmit)
+```
 
 # 🐳 Déploiement avec Docker
 Le projet inclut un Dockerfile optimisé (Multi-stage build) pour compiler l'application avec Node.js et la servir via Nginx.
