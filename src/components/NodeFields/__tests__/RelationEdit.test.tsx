@@ -7,8 +7,8 @@ const mockRelation: Relations = {
   id: 1,
   type_relation: "utilise",
   description: "Initial description",
-  concept_source: { id: 10, nom: "Source Concept" } as any,
-  concept_cible: { id: 20, nom: "Target Concept" } as any,
+  concept_source: { id: 10, nom: "Source Concept" },
+  concept_cible: { id: 20, nom: "Target Concept" },
 };
 
 describe("RelationEdit", () => {

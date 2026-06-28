@@ -389,6 +389,7 @@ export default function InstancedEdges({
     dimColorsArray,
     lineMatrices,
     validEdges,
+    theme.palette.primary.light,
   ]);
 
   // Run update initially and when base structures change

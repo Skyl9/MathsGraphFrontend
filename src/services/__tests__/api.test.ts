@@ -36,13 +36,17 @@ describe("api.ts", () => {
     globalThis.fetch = vi.fn();
 
     // Mock window.location
-    delete (window as any).location;
-    window.location = { ...originalLocation, href: "", pathname: "/" } as any;
+    delete (window as unknown as { location: unknown }).location;
+    window.location = {
+      ...originalLocation,
+      href: "",
+      pathname: "/",
+    } as unknown as string & Location;
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
-    window.location = originalLocation as any;
+    window.location = originalLocation as unknown as string & Location;
   });
 
   describe("isApiError", () => {
@@ -180,7 +184,7 @@ describe("api.ts", () => {
       vi.useFakeTimers();
 
       // Simulate a pending promise
-      let resolveRequest: any;
+      let resolveRequest!: (value: unknown) => void;
       const mockPromise = new Promise((resolve) => {
         resolveRequest = resolve;
       });

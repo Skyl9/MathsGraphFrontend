@@ -1,4 +1,7 @@
-export const captureException = (error: Error, extra?: Record<string, any>) => {
+export const captureException = (
+  error: Error,
+  extra?: Record<string, unknown>,
+) => {
   // Dans un vrai environnement de production, vous intégreriez Sentry ou LogRocket ici :
   // Sentry.captureException(error, { extra });
 
