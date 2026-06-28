@@ -39,6 +39,7 @@ const MathematicienList = lazy(() => import("./pages/MathematicienList"));
 const TypeList = lazy(() => import("./pages/TypeList"));
 const ConceptList = lazy(() => import("./pages/ConceptList"));
 const UserProfilePage = lazy(() => import("./pages/UserProfilePage"));
+const SandboxPage = lazy(() => import("./pages/SandboxPage"));
 const PasswordReset = lazy(() => import("./pages/PasswordReset"));
 const PasswordResetVerification = lazy(
   () => import("./pages/PasswordResetVerification"),
@@ -198,6 +199,7 @@ const AnimatedRoutes = () => {
             element={<MathematicienRedirect />}
           />
           <Route path={"/contribution"} element={<ContributionPage />} />
+          <Route path={"/sandbox"} element={<SandboxPage />} />
           <Route path={"/search"} element={<SearchPage />} />
           <Route path="*" element={<LostPage />} />
         </Route>

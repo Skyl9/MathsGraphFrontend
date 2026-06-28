@@ -1,9 +1,9 @@
 import { alpha } from "@mui/material/styles";
 import React, { useState } from "react";
-import { Box, Typography, Paper, Grid, useTheme } from "@mui/material";
+import { Box, Typography, Paper, Grid, useTheme, Button } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, Link as RouterLink } from "react-router-dom";
 import { AvatarEditModal } from "../components/AvatarEditModal";
 import FavoriteList from "../components/FavoriteList";
 import UserContributions from "../components/UserContributions.tsx";
@@ -157,9 +157,45 @@ const UserProfilePage: React.FC = () => {
           </Grid>
         </Box>
 
-        {/* Section Brouillons (uniquement pour le profil connecté) */}
+        {/* Section Bac à Sable & Brouillons (uniquement pour le profil connecté) */}
         {isOwnProfile && (
           <Box sx={{ mt: 5, mb: 4 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                mb: 4,
+                borderRadius: 4,
+                border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+                background: isDark
+                  ? alpha(theme.palette.primary.main, 0.1)
+                  : alpha(theme.palette.primary.main, 0.05),
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                justifyContent: "space-between",
+                alignItems: { xs: "flex-start", sm: "center" },
+                gap: 2,
+              }}
+            >
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 800 }}>
+                  Bac à Sable LaTeX
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Entraînez-vous à écrire du formatage complexe et des équations
+                  mathématiques en toute sécurité.
+                </Typography>
+              </Box>
+              <Button
+                component={RouterLink}
+                to="/sandbox"
+                variant="contained"
+                color="primary"
+              >
+                S'entraîner
+              </Button>
+            </Paper>
+
             <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
               Mes Brouillons
             </Typography>
