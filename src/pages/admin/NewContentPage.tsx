@@ -12,10 +12,11 @@ import {
   useTheme,
   Divider,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { nodeApi } from "../../services/api";
+import { nodeApi, draftApi } from "../../services/api";
 import SaveIcon from "@mui/icons-material/Save";
+import DraftsIcon from "@mui/icons-material/Drafts";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useTranslation } from "react-i18next";
 
@@ -25,14 +26,28 @@ const NewContentPage = () => {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const [formData, setFormData] = useState({
-    nom: "",
-    type: "théorème",
-    enonce: "",
-    demonstration: "",
-    categorie_id: "" as number | "",
-    mathematicien_id: "" as number | "",
-  });
+  const location = useLocation();
+  const draftToEdit = location.state?.draft;
+
+  const [formData, setFormData] = useState(
+    draftToEdit
+      ? {
+          nom: draftToEdit.draft_data.nom || "",
+          type: draftToEdit.draft_data.type || "théorème",
+          enonce: draftToEdit.draft_data.enonce || "",
+          demonstration: draftToEdit.draft_data.demonstration || "",
+          categorie_id: draftToEdit.draft_data.categorie_id ?? "",
+          mathematicien_id: draftToEdit.draft_data.mathematicien_id ?? "",
+        }
+      : {
+          nom: "",
+          type: "théorème",
+          enonce: "",
+          demonstration: "",
+          categorie_id: "" as number | "",
+          mathematicien_id: "" as number | "",
+        },
+  );
   const [error, setError] = useState<string | null>(null);
 
   // Récupération des données pour les listes déroulantes
@@ -59,11 +74,48 @@ const NewContentPage = () => {
         mathematicien_id:
           formData.mathematicien_id === "" ? null : formData.mathematicien_id,
       };
-      const result = await nodeApi.createConcept(payload);
+
+      let newConceptId;
+      if (draftToEdit) {
+        await draftApi.updateDraft(draftToEdit.id, { draft_data: payload });
+        const res = await draftApi.publishDraft(draftToEdit.id);
+        newConceptId = res?.concept_id;
+      } else {
+        const result = await nodeApi.createConcept(payload);
+        newConceptId = result.id;
+      }
+
       // Redirection vers la page du concept nouvellement créé
-      navigate(`/concept/${result.id}`);
+      navigate(`/concept/${newConceptId || ""}`);
     } catch (err) {
       setError((err as Error).message || "Erreur lors de la création.");
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    try {
+      const payload = {
+        ...formData,
+        categorie_id:
+          formData.categorie_id === "" ? null : Number(formData.categorie_id),
+        mathematicien_id:
+          formData.mathematicien_id === ""
+            ? null
+            : Number(formData.mathematicien_id),
+      };
+      if (draftToEdit) {
+        await draftApi.updateDraft(draftToEdit.id, { draft_data: payload });
+      } else {
+        await draftApi.createDraft({
+          concept_id: null,
+          draft_data: payload,
+        });
+      }
+      navigate("/profile");
+    } catch (err) {
+      setError(
+        (err as Error).message || "Erreur lors de la sauvegarde du brouillon.",
+      );
     }
   };
 
@@ -293,6 +345,21 @@ const NewContentPage = () => {
                     }}
                   >
                     Annuler
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    fullWidth
+                    startIcon={<DraftsIcon />}
+                    onClick={handleSaveDraft}
+                    sx={{
+                      borderRadius: 2.5,
+                      textTransform: "none",
+                      fontWeight: 600,
+                      mb: 2,
+                    }}
+                  >
+                    Brouillon
                   </Button>
                   <Button
                     type="submit"

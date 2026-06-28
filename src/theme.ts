@@ -110,11 +110,28 @@ export const getTheme = (dark: boolean) => {
             WebkitFontSmoothing: "antialiased",
             MozOsxFontSmoothing: "grayscale",
           },
+          "*::-webkit-scrollbar": {
+            width: "8px",
+            height: "8px",
+          },
+          "*::-webkit-scrollbar-track": {
+            background: "transparent",
+          },
+          "*::-webkit-scrollbar-thumb": {
+            backgroundColor: dark ? "#334155" : "#CBD5E1",
+            borderRadius: "4px",
+          },
+          "*::-webkit-scrollbar-thumb:hover": {
+            backgroundColor: dark ? "#475569" : "#94A3B8",
+          },
           "*:focus-visible": {
             outline: `3px solid ${dark ? "#7DD3FC" : "#0EA5E9"} !important`,
             outlineOffset: "3px",
             borderRadius: "4px",
             transition: "outline-color 0.2s ease-in-out",
+          },
+          ".MuiInputBase-input:focus-visible": {
+            outline: "none !important",
           },
           '.mjx-container[jax="CHTML"][display="true"], mjx-container[jax="CHTML"][display="true"]':
             {

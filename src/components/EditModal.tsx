@@ -32,6 +32,7 @@ import { isAllNodeData, isCategory } from "../utils/typeGuards";
 export const EditModal = <T extends object>({
   onClose,
   onSave,
+  onSaveDraft,
   field,
   value,
   onChange,
@@ -280,6 +281,16 @@ export const EditModal = <T extends object>({
             <Button onClick={onClose} disabled={isSaving} color="inherit">
               Annuler
             </Button>
+            {onSaveDraft && (
+              <Button
+                onClick={onSaveDraft}
+                disabled={isSaving}
+                variant="outlined"
+                color="secondary"
+              >
+                Brouillon
+              </Button>
+            )}
             <Button
               onClick={handleSaveClick}
               disabled={isSaving}

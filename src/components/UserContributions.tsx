@@ -107,6 +107,8 @@ const UserContributions: React.FC<UserContributionsProps> = ({ userId }) => {
                   </Typography>
                 </Box>
               }
+              secondaryTypographyProps={{ component: "div" }}
+              primaryTypographyProps={{ component: "div" }}
             />
           </ListItem>
         ))}

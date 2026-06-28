@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import { ProfileSkeleton } from "../components/Skeletons";
 import { ProfileAvatarCard } from "../components/Profile/ProfileAvatarCard";
 import { ProfileInfoForm } from "../components/Profile/ProfileInfoForm";
+import { DraftsPanel } from "../components/Profile/DraftsPanel";
+import Token from "../services/token";
 
 import { ReportIssueButton } from "../components/Issue";
 
@@ -80,6 +82,7 @@ const UserProfilePage: React.FC = () => {
   }
 
   const user = queryUser;
+  const isOwnProfile = Token.getUserInfo()?.sub === user.username;
 
   return (
     <>
@@ -153,6 +156,28 @@ const UserProfilePage: React.FC = () => {
             </Grid>
           </Grid>
         </Box>
+
+        {/* Section Brouillons (uniquement pour le profil connecté) */}
+        {isOwnProfile && (
+          <Box sx={{ mt: 5, mb: 4 }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, mb: 2.5 }}>
+              Mes Brouillons
+            </Typography>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 4,
+                border: `1px solid ${isDark ? alpha(theme.palette.divider, 0.06) : alpha(theme.palette.divider, 0.06)}`,
+                background: isDark
+                  ? alpha(theme.palette.background.paper, 0.4)
+                  : "#ffffff",
+              }}
+            >
+              <DraftsPanel />
+            </Paper>
+          </Box>
+        )}
 
         <Box
           textAlign="center"

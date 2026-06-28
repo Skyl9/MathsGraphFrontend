@@ -336,13 +336,18 @@ export const nodeApi = {
       method: "PATCH",
       body: JSON.stringify({ content }),
     }),
-  addFavorite: (general_id: string, type: string) =>
+  addFavorite: (
+    general_id: string,
+    type: string,
+    notify_on_change: boolean = false,
+  ) =>
     request<null>(`/users/favorite/${general_id}`, {
       // 🌟 REST: /user/favorite/{id}
       method: "POST",
       body: JSON.stringify({
         type,
         user_id: String(Token.getUserIdFromToken()) || "",
+        notify_on_change,
       }),
     }),
   deleteFavorite: (general_id: string, type: string) =>
@@ -508,4 +513,42 @@ export const nodeApi = {
     }
     return await response.json();
   },
+  getNotifications: () =>
+    request<import("../types/ApiTypes/notification").Notification[]>(
+      "/notifications",
+      undefined,
+      false,
+    ),
+  markNotificationRead: (id: number) =>
+    request<null>(`/notifications/${id}/read`, { method: "PATCH" }),
+  markAllNotificationsRead: () =>
+    request<null>("/notifications/read-all", { method: "PATCH" }),
+};
+
+export const draftApi = {
+  getMyDrafts: () =>
+    request<import("../types/ApiTypes/draft").Draft[]>("/drafts/me"),
+  getDraft: (id: number) =>
+    request<import("../types/ApiTypes/draft").Draft>(`/drafts/${id}`),
+  createDraft: (data: import("../types/ApiTypes/draft").DraftCreate) =>
+    request<import("../types/ApiTypes/draft").Draft>(`/drafts/`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  updateDraft: (
+    id: number,
+    data: import("../types/ApiTypes/draft").DraftUpdate,
+  ) =>
+    request<import("../types/ApiTypes/draft").Draft>(`/drafts/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+  publishDraft: (id: number) =>
+    request<{ message: string; concept_id: number }>(`/drafts/${id}/publish`, {
+      method: "POST",
+    }),
+  deleteDraft: (id: number) =>
+    request<{ message: string }>(`/drafts/${id}`, {
+      method: "DELETE",
+    }),
 };

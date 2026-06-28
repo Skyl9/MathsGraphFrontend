@@ -76,6 +76,7 @@ const NodePage = () => {
     cancelChanges,
     createField,
     refetchData,
+    saveDraft,
   } = useEntityEdit<AllNodeData>("concept", id || "");
 
   const [isUserConnected] = useState<boolean>(() => {
@@ -321,6 +322,7 @@ const NodePage = () => {
           isOpen={isModalOpen}
           onClose={cancelChanges}
           onSave={saveChanges}
+          onSaveDraft={saveDraft}
           field={currentEditField}
           value={newContent}
           onChange={setNewContent}

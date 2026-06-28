@@ -14,4 +14,5 @@ export interface Favorite {
   id: number;
   nom: string;
   category: string;
+  notify_on_change: boolean;
 }

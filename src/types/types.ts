@@ -7,6 +7,7 @@ export interface ModalProps<T> {
   isOpen: boolean;
   onClose: () => void;
   onSave: () => void;
+  onSaveDraft?: () => void;
   field: keyof T;
   value: unknown;
   onChange: (value: unknown) => void;

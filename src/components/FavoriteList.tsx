@@ -6,7 +6,9 @@ import {
   ListItemText,
   CircularProgress,
   Alert,
+  ListItemIcon,
 } from "@mui/material";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { nodeApi } from "../services/api";
@@ -17,6 +19,7 @@ interface Favorite {
   id: string | number;
   nom: string;
   category: string; // ex. "concept", "category", "mathematicien", etc.
+  notify_on_change?: boolean;
 }
 
 interface FavoritesListProps {
@@ -73,6 +76,11 @@ const FavoritesList: React.FC<FavoritesListProps> = ({ userId }) => {
               primary={fav.nom}
               secondary={`${t("favorite_list.type")} ${fav.category}`}
             />
+            {fav.notify_on_change && (
+              <ListItemIcon sx={{ minWidth: "unset" }}>
+                <NotificationsActiveIcon fontSize="small" color="primary" />
+              </ListItemIcon>
+            )}
           </ListItemButton>
         </ListItem>
       ))}

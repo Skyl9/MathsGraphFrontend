@@ -1,6 +1,7 @@
 // src/hooks/useEntityEdit.ts
 import { useState, useMemo } from "react";
 import { toast } from "react-toastify";
+import { draftApi } from "../services/api";
 import { useEntityData, EntityType } from "./useEntityData";
 import { EditableField } from "../types/types";
 import {
@@ -94,6 +95,25 @@ export const useEntityEdit = <T extends object>(
     }
   };
 
+  const saveDraft = async () => {
+    if (!currentEditField || entityType !== "concept") return;
+
+    const field = currentEditField;
+    const value = newContent;
+
+    cancelChanges();
+
+    try {
+      await draftApi.createDraft({
+        concept_id: parseInt(id),
+        draft_data: { [field]: value },
+      });
+      toast.success("Brouillon sauvegardé avec succès");
+    } catch (err) {
+      console.error("Erreur lors de la sauvegarde du brouillon:", err);
+    }
+  };
+
   return {
     data,
     loading,
@@ -110,5 +130,6 @@ export const useEntityEdit = <T extends object>(
     updateField,
     createField,
     saveChanges,
+    saveDraft,
   };
 };

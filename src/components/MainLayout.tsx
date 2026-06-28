@@ -19,7 +19,8 @@ import { pageTransitionVariants } from "../utils/animations";
 const LayoutRoot = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  minHeight: "100vh",
+  height: "100vh",
+  overflow: "hidden",
   backgroundColor: alpha(theme.palette.background.default, 0.85),
   backdropFilter: "blur(4px)",
   color: theme.palette.text.primary,
@@ -31,6 +32,8 @@ const MainContent = styled("main")(() => ({
   display: "flex",
   flexDirection: "column",
   width: "100%",
+  overflowY: "auto",
+  overflowX: "hidden",
 }));
 
 const FooterContainer = styled("footer")(({ theme }) => ({

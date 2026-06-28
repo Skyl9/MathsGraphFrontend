@@ -35,6 +35,7 @@ import Brightness7Icon from "@mui/icons-material/Brightness7"; // Icône Soleil
 import { useTranslation } from "react-i18next";
 import { GlobalSearchBar } from "./GlobalSearchBar.tsx";
 import { useUIStore } from "../stores/useUIStore.ts";
+import { NotificationsMenu } from "./NotificationsMenu.tsx";
 
 export const TopBar: React.FC = () => {
   const [username, setUsername] = useState<string | null>(() =>
@@ -80,6 +81,7 @@ export const TopBar: React.FC = () => {
 
           {username ? (
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              <NotificationsMenu />
               <Typography variant="body1">
                 {t("app.hello")},{" "}
                 <Link href={"/username/" + username}>{username}</Link>

@@ -274,6 +274,8 @@ export const RecentComments: React.FC = () => {
                   </Typography>
                 </Box>
               }
+              secondaryTypographyProps={{ component: "div" }}
+              primaryTypographyProps={{ component: "div" }}
             />
           </ListItem>
         ))}
