@@ -1,10 +1,13 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import App from "../App";
 import { describe, it, expect, vi } from "vitest";
+import React from "react";
 
 // Mocks to avoid rendering canvas and complex 3D logic in tests
 vi.mock("@react-three/fiber", () => ({
-  Canvas: ({ children }: any) => <div data-testid="canvas">{children}</div>,
+  Canvas: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="canvas">{children}</div>
+  ),
 }));
 
 vi.mock("../scene/Scene", () => ({

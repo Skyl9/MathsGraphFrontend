@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useCallback, useRef, useState, memo } from "react";
+import { useMemo, useCallback, useRef, useState, memo, useEffect } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import {
   Instances,
@@ -31,6 +31,7 @@ import EnvironmentLights from "./EnvironmentLights";
 import CameraRig from "./CameraRig";
 import ControlsManager from "./ControlsManager";
 import { GlobalLabelsLOD } from "./GlobalLabelsLOD";
+import { ClusterLabels } from "./ClusterLabels";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 
 const hitboxGeometry = new SphereGeometry(0.3 * 0.7, 16, 16);
@@ -207,9 +208,25 @@ const GraphNode = memo(
     }, [hovered, color, isSelected, shouldDim]);
 
     const targetScale = isFiltered ? 0.0 : scale;
+    const groupRef = useRef<import("three").Group>(null);
+
+    useEffect(() => {
+      if (groupRef.current) {
+        import("gsap").then((gsap) => {
+          if (!groupRef.current) return;
+          gsap.default.to(groupRef.current.position, {
+            x: posVec.x,
+            y: posVec.y,
+            z: posVec.z,
+            duration: 0.8,
+            ease: "power2.out",
+          });
+        });
+      }
+    }, [posVec]);
 
     return (
-      <group position={[posVec.x, posVec.y, posVec.z]}>
+      <group ref={groupRef} position={[posVec.x, posVec.y, posVec.z]}>
         {/* L'instance virtuelle de la sphère (1 draw call global) */}
         <Instance
           color={finalColor}
@@ -549,6 +566,8 @@ export default function Scene({ graphData }: SceneProps) {
           adjacencyList={adjacencyList}
           getNodeScale={getNodeScale}
         />
+
+        <ClusterLabels nodes={nodes} />
       </group>
 
       <GlobalBloom graphTheme={graphTheme} renderMode={renderMode} />

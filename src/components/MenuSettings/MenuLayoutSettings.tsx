@@ -61,6 +61,9 @@ export default function MenuLayoutSettings({
           <MenuItem value="timeline">
             <Timeline sx={{ mr: 1, fontSize: 18 }} /> {t("menu.timeline")}
           </MenuItem>
+          <MenuItem value="domaines">
+            <AutoGraph sx={{ mr: 1, fontSize: 18 }} /> Domaines
+          </MenuItem>
         </Select>
       </FormControl>
 

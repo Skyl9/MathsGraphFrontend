@@ -11,8 +11,8 @@ const mockPatchUser = vi.fn();
 
 vi.mock("../../services/api", () => ({
   nodeApi: {
-    getUserInfo: (...args: any[]) => mockGetUserInfo(...args),
-    patchUser: (...args: any[]) => mockPatchUser(...args),
+    getUserInfo: (...args: unknown[]) => mockGetUserInfo(...args),
+    patchUser: (...args: unknown[]) => mockPatchUser(...args),
   },
 }));
 

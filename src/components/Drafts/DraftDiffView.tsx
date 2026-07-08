@@ -115,7 +115,7 @@ export const DraftDiffView: React.FC<DraftDiffViewProps> = ({
                         ? JSON.parse(e.target.value)
                         : e.target.value;
                     setEditedData({ ...editedData, [key]: newVal });
-                  } catch (err) {
+                  } catch {
                     // Ignorer les erreurs de parse pendant la frappe
                   }
                 }}

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { nodeApi, GraphData } from "../services/api";
 import { useMemo } from "react";
 import { NodeData } from "../types/ApiTypes/graph";
+import { computeDomainsLayout } from "../utils/layoutUtils";
 
 export const useGraphData = () => {
   const {
@@ -13,7 +14,11 @@ export const useGraphData = () => {
     queryKey: ["graphData"],
     queryFn: async () => {
       console.log("Fetch réel du graphe via l'API !");
-      return await nodeApi.getGraph();
+      const data = await nodeApi.getGraph();
+      if (data && data.nodes) {
+        computeDomainsLayout(data.nodes);
+      }
+      return data;
     },
   });
 

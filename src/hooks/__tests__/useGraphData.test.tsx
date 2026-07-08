@@ -55,8 +55,12 @@ describe("useGraphData", () => {
 
     // Check nodesMap
     expect(result.current.nodesMap.size).toBe(2);
-    expect(result.current.nodesMap.get(1)).toEqual({ id: 1, nom: "Node 1" });
-    expect(result.current.nodesMap.get(2)).toEqual({ id: 2, nom: "Node 2" });
+    expect(result.current.nodesMap.get(1)).toEqual(
+      expect.objectContaining({ id: 1, nom: "Node 1" }),
+    );
+    expect(result.current.nodesMap.get(2)).toEqual(
+      expect.objectContaining({ id: 2, nom: "Node 2" }),
+    );
   });
 
   it("handles errors when fetching graph data", async () => {

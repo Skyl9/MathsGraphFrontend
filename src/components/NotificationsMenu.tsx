@@ -30,7 +30,7 @@ export const NotificationsMenu: React.FC = () => {
     resetUnreadCount,
   } = useNotificationStore();
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = React.useCallback(async () => {
     try {
       setLoading(true);
       const data = await nodeApi.getNotifications();
@@ -41,11 +41,15 @@ export const NotificationsMenu: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [setUnreadCount]);
 
   useEffect(() => {
-    fetchNotifications();
-  }, []);
+    // Avoid synchronous state updates in effect
+    const initFetch = async () => {
+      await fetchNotifications();
+    };
+    initFetch();
+  }, [fetchNotifications]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

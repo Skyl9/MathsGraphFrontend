@@ -53,7 +53,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "all": "tsc && vite build && vitest run && eslint ."
   },
   "eslintConfig": {
     "extends": [

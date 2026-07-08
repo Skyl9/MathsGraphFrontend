@@ -80,6 +80,24 @@ const Node = memo(function Node({
 
   const tempV = useMemo(() => new Vector3(...position), [position]);
   const currentScaleObj = useRef({ value: isFiltered ? 0.0 : scale });
+  const groupRef = useRef<import("three").Group>(null);
+
+  const [posX, posY, posZ] = position;
+
+  useEffect(() => {
+    if (groupRef.current) {
+      import("gsap").then((gsap) => {
+        if (!groupRef.current) return;
+        gsap.default.to(groupRef.current.position, {
+          x: posX,
+          y: posY,
+          z: posZ,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+      });
+    }
+  }, [posX, posY, posZ]);
 
   // Expose data to parent for central useFrame scale lerping
   const targetScaleVal = isFiltered ? 0.0 : scale;
@@ -113,6 +131,7 @@ const Node = memo(function Node({
 
   return (
     <group
+      ref={groupRef}
       position={position}
       onClick={() => {
         if (!isInteractive) return;
