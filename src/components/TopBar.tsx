@@ -60,6 +60,13 @@ export const TopBar: React.FC = () => {
               <Typography>MATHGRAPH</Typography>
             </Link>
           </div>
+          <Button
+            href="/wanted"
+            color="inherit"
+            sx={{ ml: 2, fontWeight: "bold" }}
+          >
+            Appel à contributions
+          </Button>
           <Button onClick={toggleLanguage} color="inherit" sx={{ ml: 2 }}>
             {i18n.language === "fr" ? "🇬🇧 EN" : "🇫🇷 FR"}
           </Button>

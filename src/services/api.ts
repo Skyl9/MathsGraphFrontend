@@ -1,7 +1,12 @@
 // src/services/api.ts
 import { AllNodeData, RollbackConcept } from "../types/types";
 import Token from "./token";
-import { ConceptName, GetConcept, History } from "../types/ApiTypes/concept";
+import {
+  ConceptName,
+  GetConcept,
+  History,
+  WantedConcept,
+} from "../types/ApiTypes/concept";
 import { accessTokens, Register } from "../types/ApiTypes/auth";
 import {
   Mathematicien,
@@ -255,6 +260,8 @@ export const nodeApi = {
   getAllTypeNames: () => request<Type[]>(`/types/`, undefined, false),
   getAllConceptNames: () =>
     request<ConceptName[]>(`/concepts/getAllConceptName`, undefined, false),
+  getWantedConcepts: () =>
+    request<WantedConcept[]>(`/concepts/wanted`, undefined, false),
   getUserInfo: (id: string) => request<User>(`/users/${id}`, undefined, false),
   getUserIdByUsername: (username: string) =>
     request<{ id: number }>(`/users/id/${username}`, undefined, false),

@@ -75,6 +75,7 @@ const RecentChangesPage = lazy(() =>
 const SearchPage = lazy(() =>
   import("./pages/SearchPage.tsx").then((m) => ({ default: m.SearchPage })),
 );
+const WantedPages = lazy(() => import("./pages/WantedPages"));
 const NewContentPage = lazy(() => import("./pages/admin/NewContentPage.tsx"));
 import { ThemeProvider } from "@mui/material";
 import { AuthProvider } from "./contexts/Authprovider";
@@ -202,6 +203,7 @@ const AnimatedRoutes = () => {
           <Route path={"/contribution"} element={<ContributionPage />} />
           <Route path={"/sandbox"} element={<SandboxPage />} />
           <Route path={"/search"} element={<SearchPage />} />
+          <Route path={"/wanted"} element={<WantedPages />} />
           <Route path="*" element={<LostPage />} />
         </Route>
       </Routes>

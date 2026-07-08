@@ -141,6 +141,14 @@ const GridFooter: React.FC = () => {
             {t("footer.about")}
           </Link>
           <Link
+            href="/wanted"
+            underline="none"
+            color="text.secondary"
+            sx={{ "&:hover": { color: "primary.main" } }}
+          >
+            Appel à contributions
+          </Link>
+          <Link
             href="/contribution"
             underline="none"
             color="text.secondary"

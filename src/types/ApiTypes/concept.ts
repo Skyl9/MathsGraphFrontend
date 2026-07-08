@@ -49,3 +49,10 @@ export interface RecentChange {
   old_value?: unknown;
   new_value?: unknown;
 }
+
+export interface WantedConcept {
+  id: number;
+  nom: string;
+  categorie: string | null;
+  missing_fields: string[];
+}
