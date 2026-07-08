@@ -55,10 +55,17 @@ export const GlobalLabelsLOD = ({
 
     nodes.forEach((node: NodeData) => {
       const typeKey = (node.typeMath ?? "").toLowerCase();
-      const isFiltered =
+      let isFiltered =
         typeKey in filters
           ? !(filters[typeKey as keyof typeof filters] ?? false)
           : false;
+
+      const timelineYear = useUIStore.getState().timelineYear;
+      if (timelineYear !== null) {
+        if (node.annee == null || node.annee > timelineYear) {
+          isFiltered = true;
+        }
+      }
 
       if (isFiltered) return;
 

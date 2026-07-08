@@ -43,6 +43,9 @@ interface UIState {
 
   hasSeenShortcuts: boolean;
   setHasSeenShortcuts: (value: boolean) => void;
+
+  timelineYear: number | null;
+  setTimelineYear: (year: number | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -94,6 +97,9 @@ export const useUIStore = create<UIState>()(
 
       hasSeenShortcuts: false,
       setHasSeenShortcuts: (value) => set({ hasSeenShortcuts: value }),
+
+      timelineYear: null,
+      setTimelineYear: (year) => set({ timelineYear: year }),
     }),
     {
       name: "mathgraph-ui-storage", // Nom dans le localStorage

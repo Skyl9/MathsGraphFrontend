@@ -10,6 +10,7 @@ import Scene from "./scene/Scene";
 import Menu from "./components/Menu";
 import NodeDetails from "./components/NodeDetails";
 import { GraphHUD } from "./components/GraphHUD";
+import { TimelineSlider } from "./components/TimelineSlider";
 import { AnimatePresence } from "framer-motion";
 import { useGraphStore } from "./stores/useGraphStore";
 const ConceptPage = lazy(() => import("./pages/NodePage"));
@@ -339,6 +340,7 @@ const AppContent = () => {
         <>
           <Menu graphData={graphData} />
           <GraphHUD graphData={graphData} />
+          <TimelineSlider graphData={graphData} />
 
           <AnimatePresence>
             {selectedNodeId !== null && !isSearchActive && (

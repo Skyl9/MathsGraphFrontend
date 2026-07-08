@@ -285,6 +285,8 @@ export default function Scene({ graphData }: SceneProps) {
   const filters = useFilterStore((s) => s.filters);
   const { t } = useTranslation();
 
+  const timelineYear = useUIStore((s) => s.timelineYear);
+
   const setSelectedNodeId = useGraphStore((s) => s.setSelectedNodeId);
 
   const setHoveredNodeId = useGraphStore((s) => s.setHoveredNodeId);
@@ -444,10 +446,16 @@ export default function Scene({ graphData }: SceneProps) {
             />
             {nodes.map((node) => {
               const typeKey = (node.typeMath ?? "").toLowerCase();
-              const isFiltered =
+              let isFiltered =
                 typeKey in filters
                   ? !(filters[typeKey as keyof typeof filters] ?? false)
                   : false;
+
+              if (timelineYear !== null) {
+                if (node.annee == null || node.annee > timelineYear) {
+                  isFiltered = true;
+                }
+              }
 
               return (
                 <GraphNode

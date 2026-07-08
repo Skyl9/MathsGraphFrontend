@@ -93,6 +93,7 @@ describe("Scene Layouts Integration", () => {
           showLabels: true,
           zoomAction: { action: null },
           setZoomAction: vi.fn(),
+          timelineYear: null,
         };
         return selector(state);
       },
@@ -124,6 +125,7 @@ describe("Scene Layouts Integration", () => {
           showLabels: true,
           zoomAction: { action: null },
           setZoomAction: vi.fn(),
+          timelineYear: null,
         }),
     );
     const { container } = render(<Scene graphData={missingLayoutData} />);

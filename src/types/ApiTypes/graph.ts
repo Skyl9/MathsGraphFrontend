@@ -20,4 +20,6 @@ export interface NodeData {
   };
   typeMath?: string; // Optionnel : peut être null si le concept n'a pas de type associé
   domaine?: string;
+  annee?: number | null;
+  epoque?: string | null;
 }

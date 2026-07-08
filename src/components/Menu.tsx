@@ -11,6 +11,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import SearchBar from "./SearchBar";
+import { useUIStore } from "../stores/useUIStore";
+import HistoryIcon from "@mui/icons-material/History";
 import MenuLayoutSettings from "./MenuSettings/MenuLayoutSettings";
 import MenuColorsSettings from "./MenuSettings/MenuColorsSettings";
 import MenuSearchResults from "./MenuSettings/MenuSearchResults";
@@ -217,6 +219,21 @@ export default function Menu({ graphData }: MenuProps) {
                         </Typography>
                       }
                     />
+
+                    <ActionButton
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => {
+                        useUIStore
+                          .getState()
+                          .setTimelineYear(new Date().getFullYear());
+                        setOpen(false);
+                      }}
+                      startIcon={<HistoryIcon />}
+                      fullWidth
+                    >
+                      Machine à Remonter le Temps
+                    </ActionButton>
 
                     <ActionButton
                       variant="contained"

@@ -59,6 +59,7 @@ export default function InstancedEdges({
   const darkMode = useUIStore((s) => s.darkMode);
   const isNeon = graphTheme === "neon";
   const isFocus = graphTheme === "focus";
+  const timelineYear = useUIStore((s) => s.timelineYear);
 
   // Transient refs to avoid re-renders
   const hoveredEdgeIndexRef = useRef<number | null>(null);
@@ -107,10 +108,19 @@ export default function InstancedEdges({
 
       const startTypeKey = (startNode.typeMath ?? "").toLowerCase();
       const endTypeKey = (endNode.typeMath ?? "").toLowerCase();
-      const isStartFiltered =
+      let isStartFiltered =
         startTypeKey in filters ? !(filters[startTypeKey] ?? false) : false;
-      const isEndFiltered =
+      let isEndFiltered =
         endTypeKey in filters ? !(filters[endTypeKey] ?? false) : false;
+
+      if (timelineYear !== null) {
+        if (startNode.annee == null || startNode.annee > timelineYear) {
+          isStartFiltered = true;
+        }
+        if (endNode.annee == null || endNode.annee > timelineYear) {
+          isEndFiltered = true;
+        }
+      }
 
       if (isStartFiltered || isEndFiltered) {
         validEdges.push(null);
@@ -165,7 +175,7 @@ export default function InstancedEdges({
     }
 
     return { validEdges, lCount, aCount };
-  }, [edges, nodesMap, currentView, filters]);
+  }, [edges, nodesMap, currentView, filters, timelineYear]);
 
   const { validEdges, lCount: lineCount, aCount: arrowCount } = baseData;
 

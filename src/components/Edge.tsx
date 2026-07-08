@@ -1,6 +1,6 @@
 import { useTheme } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-import { useMemo, useState, useRef, memo, useEffect } from "react";
+import React, { useMemo, useState, useRef, memo, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line, Html } from "@react-three/drei";
 import { Vector3, Quaternion, ConeGeometry, BoxGeometry, Mesh } from "three";
